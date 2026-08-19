@@ -23,6 +23,7 @@ module Sumitsubo
     Disallowed = Struct.new(:term, :reason)
     Term = Struct.new(:term, :definition, :disallowed)
     Section = Struct.new(:name, :includes, :terms)
+    Finding = Struct.new(:path, :line, :column, :term, :used, :reason)
 
     def self.load(path = PATH)
       raise Error, "no glossary at #{path}" unless File.exist?(path)
@@ -55,6 +56,59 @@ module Sumitsubo
         end
       end
       effective
+    end
+
+    # Whole words, case sensitive, over the file as written — comments and
+    # string bodies included. Narrowing that to identifiers needs an AST, and
+    # what the wider read costs is a report the reader judges, which is the
+    # side Sumitsubo is meant to err on.
+    def self.check(scope)
+      findings = []
+      scope.keys.sort.each do |path|
+        lines = File.readlines(path)
+        terms = scope[path]
+        terms.keys.sort.each do |name|
+          terms[name].disallowed.each do |entry|
+            findings.concat(findings_for(path, lines, name, entry))
+          end
+        end
+      end
+      # A key that leaves no ties: sorting on part of one would let Spinel and
+      # CRuby order the rest differently, and the snapshot compares the two.
+      findings.sort_by { |f| [f.path, f.line, f.column, f.term, f.used] }
+    end
+
+    # The pattern stays a local of this method and is never captured by a
+    # block: Spinel builds no closure cell for a runtime Regexp.
+    def self.findings_for(path, lines, name, entry)
+      found = []
+      pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")
+      index = 0
+      while index < lines.length
+        columns_in(lines[index], pattern).each do |column|
+          found.push(Finding.new(path, index + 1, column + 1, name, entry.term, entry.reason))
+        end
+        index += 1
+      end
+      found
+    end
+
+    # Walked with Regexp#match rather than String#index, which under Spinel
+    # takes no Regexp argument.
+    def self.columns_in(text, pattern)
+      columns = []
+      base = 0
+      rest = text
+      while true
+        found = pattern.match(rest)
+        break if found.nil?
+        at = found.begin(0)
+        columns.push(base + at)
+        base = base + at + 1
+        rest = rest[(at + 1), rest.length]
+        break if rest.nil?
+      end
+      columns
     end
 
     def self.paths_for(section)
