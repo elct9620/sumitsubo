@@ -1,1 +1,3 @@
-puts "Hello from sumitsubo"
+require "sumitsubo"
+
+exit Sumitsubo::CLI.new.run(ARGV)
