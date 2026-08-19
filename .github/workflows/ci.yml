@@ -38,3 +38,13 @@ jobs:
 
       - name: Run tests
         run: '"$SPIN" test'
+
+      # `spin test` compiles test/*.rb at -O1 and never touches bin/, so the
+      # configuration that ships — bin/sumi.rb, at the compiler's default
+      # optimization — is exercised nowhere else. Running it, rather than only
+      # building it, is what makes -O2 a checked assumption instead of one
+      # first tested by a release.
+      - name: Build and run the executable
+        run: |
+          "$SPIN" build
+          ./build/bin/sumi -v

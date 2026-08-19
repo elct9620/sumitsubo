@@ -40,7 +40,9 @@ jobs:
         run: '"$SPIN" build'
 
       - name: Smoke-run the executable
-        run: ./build/bin/sumi
+        # Through a flag rather than the empty-argument default: both reach the
+        # CLI, but a run that takes an argument shows the parser ran.
+        run: ./build/bin/sumi -v
 
       - name: Record artifact shape
         run: |
