@@ -1,0 +1,149 @@
+name: Setup Spinel
+description: >-
+  Make the Spinel toolchain (spinel + spin) available at a pinned revision,
+  restoring it from cache when the cached build is that revision and building
+  it from source when it is not.
+
+inputs:
+  repository:
+    description: Spinel source repository.
+    required: false
+    default: matz/spinel
+  ref:
+    description: >-
+      Commit SHA to build. A tag or branch would make both the cache key and
+      the revision check lie about what is installed, so this is a full SHA.
+    required: false
+    default: fe250951226961439535c80771b4107ef7ad2769
+  prefix:
+    description: Install prefix. `<prefix>/bin` holds the executables.
+    required: false
+    default: ~/.spinel
+
+outputs:
+  spin:
+    description: >-
+      Absolute path to `spin`. Callers must invoke it through this path, not by
+      bare name — a package carrying C only compiles when `spin` can derive its
+      own location. The same path is exported as $SPIN.
+    value: ${{ steps.resolve.outputs.spin }}
+  spinel:
+    description: Absolute path to the `spinel` compiler.
+    value: ${{ steps.resolve.outputs.spinel }}
+  prefix:
+    description: Absolute path to the install prefix.
+    value: ${{ steps.resolve.outputs.prefix }}
+  built:
+    description: Whether this run had to build the toolchain from source.
+    value: ${{ steps.check.outputs.usable == 'true' && 'false' || 'true' }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve install prefix
+      id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+        prefix="${{ inputs.prefix }}"
+        prefix="${prefix/#\~/$HOME}"
+        ref="${{ inputs.ref }}"
+        {
+          echo "prefix=$prefix"
+          echo "spin=$prefix/bin/spin"
+          echo "spinel=$prefix/bin/spinel"
+          # `spinel --version` reports the revision as a 12-character prefix.
+          echo "revision=${ref:0:12}"
+          # Read from the process environment, not the `env` expression
+          # context — the runner image sets ImageOS there, and the context
+          # would silently resolve to an empty key segment.
+          echo "image=${ImageOS:-unknown}"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Restore cached toolchain
+      id: cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ steps.resolve.outputs.prefix }}
+        # The toolchain is a native build: it is only valid for the runner
+        # image it was compiled on, so the image identity is part of the key.
+        key: spinel-${{ runner.os }}-${{ runner.arch }}-${{ steps.resolve.outputs.image }}-${{ inputs.ref }}
+
+    - name: Check the restored toolchain against the pinned revision
+      id: check
+      shell: bash
+      run: |
+        set -uo pipefail
+        spinel="${{ steps.resolve.outputs.spinel }}"
+        want="${{ steps.resolve.outputs.revision }}"
+        got=""
+        # The revision is compiled into the binary, so this asks the toolchain
+        # what it is rather than trusting the cache key that produced it — a
+        # half-written cache entry answers wrong here instead of silently
+        # compiling with the wrong compiler.
+        if [ -x "$spinel" ]; then
+          got=$("$spinel" --version 2>/dev/null | awk '{print $2}') || got=""
+        fi
+        if [ "$got" = "$want" ]; then
+          echo "usable=true" >> "$GITHUB_OUTPUT"
+          echo "toolchain reports $got — the pinned revision; skipping the build"
+        else
+          echo "usable=false" >> "$GITHUB_OUTPUT"
+          echo "toolchain reports '${got:-nothing}', want '$want' — building from source"
+        fi
+
+    - name: Build toolchain from source
+      if: steps.check.outputs.usable != 'true'
+      shell: bash
+      env:
+        SRC: ${{ runner.temp }}/spinel-src
+      run: |
+        set -euo pipefail
+        # Fetch the single pinned commit rather than cloning history, into the
+        # runner's temp directory — `actions/checkout` can only place a tree
+        # inside the workspace, where it would sit in the project being built.
+        rm -rf "$SRC" && mkdir -p "$SRC"
+        git -C "$SRC" init -q
+        git -C "$SRC" remote add origin "https://github.com/${{ inputs.repository }}.git"
+        git -C "$SRC" fetch -q --depth 1 origin "${{ inputs.ref }}"
+        git -C "$SRC" checkout -q FETCH_HEAD
+
+        # `make deps` pulls the libprism and rbs C sources from rubygems.org.
+        # They are linked into the compiler, so nothing here is fetched again
+        # once the prefix is cached.
+        make -C "$SRC" deps
+        make -C "$SRC" -j"$(getconf _NPROCESSORS_ONLN)"
+        make -C "$SRC" install PREFIX="${{ steps.resolve.outputs.prefix }}"
+
+        # The installed prefix is self-contained, so the 70 MB source tree has
+        # no reader left. Dropping it here — after a successful install, so a
+        # failed build keeps its evidence — makes the prefix the only thing
+        # this action leaves behind.
+        rm -rf "$SRC"
+
+    - name: Publish toolchain paths
+      shell: bash
+      run: |
+        set -euo pipefail
+        prefix="${{ steps.resolve.outputs.prefix }}"
+        want="${{ steps.resolve.outputs.revision }}"
+
+        # Whichever branch got us here, the toolchain now on disk must be the
+        # pinned revision. Asserting it once at the end makes that a fact the
+        # steps downstream can build on.
+        got=$("$prefix/bin/spinel" --version | awk '{print $2}')
+        if [ "$got" != "$want" ]; then
+          echo "::error::spinel reports $got, expected $want" >&2
+          exit 1
+        fi
+        "$prefix/bin/spinel" --version
+
+        # `spin` derives the runtime header location from $0. Invoked by bare
+        # name off PATH it derives nothing, and any package carrying C fails to
+        # compile — so the absolute path is what callers use. PATH is still set
+        # so `spin` can find its sibling `spinel`.
+        echo "$prefix/bin" >> "$GITHUB_PATH"
+        {
+          echo "SPIN=$prefix/bin/spin"
+          echo "SPINEL=$prefix/bin/spinel"
+        } >> "$GITHUB_ENV"

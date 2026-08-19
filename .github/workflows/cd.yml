@@ -1,0 +1,65 @@
+name: CD
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # One runner per target: `spin build` on the native host produces the
+          # executable in one step, so no cross toolchain is involved.
+          # Windows has no entry — the Spinel runtime depends on POSIX
+          # structurally, so there is no native path to add here.
+          - name: linux-x86_64
+            runner: ubuntu-latest
+          - name: linux-aarch64
+            runner: ubuntu-24.04-arm
+          - name: macos-aarch64
+            runner: macos-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: ./.github/actions/setup-spinel
+
+      - name: Build executable
+        run: '"$SPIN" build'
+
+      - name: Smoke-run the executable
+        run: ./build/bin/sumi
+
+      - name: Record artifact shape
+        run: |
+          set -euo pipefail
+          bin=build/bin/sumi
+          {
+            echo "### ${{ matrix.name }}"
+            echo
+            echo '```'
+            file "$bin"
+            ls -lh "$bin" | awk '{print "size: " $5}'
+            # What the executable still needs from the host is the property
+            # that decides whether it is usable outside this runner.
+            if [ "$RUNNER_OS" = "macOS" ]; then otool -L "$bin"; else ldd "$bin" || true; fi
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: sumi-${{ matrix.name }}
+          path: build/bin/sumi
+          if-no-files-found: error
