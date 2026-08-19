@@ -13,10 +13,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "spinel/runtime.h"
-// Reached by path rather than -I: spin puts only the package root on the
-// include path, so the header the declarations are written against travels
-// with them.
-#include "include/tree_sitter/api.h"
+// The header the declarations are written against travels with them: spin puts
+// only the package root on the include path, so a carried .c cannot reach one
+// anywhere else.
+#include "tree_sitter/api.h"
 
 static char *tsq_out = NULL;
 static size_t tsq_out_len = 0;

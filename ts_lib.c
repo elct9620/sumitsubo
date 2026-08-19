@@ -4,4 +4,4 @@
 // must not also be compiled on their own. Keeping the vendored tree under
 // vendor/ — which spin does not scan — is what stops that, and this file is the
 // one translation unit that pulls it in.
-#include "../vendor/tree-sitter/lib/src/lib.c"
+#include "vendor/tree-sitter/lib/src/lib.c"

@@ -36,7 +36,7 @@ fetch tree-sitter-ruby tree-sitter/tree-sitter-ruby "$GRAMMAR"
 # home: re-pointing RUNTIME above refreshes the committed copy, and the diff is
 # where a version change becomes visible.
 cp "$vendor/tree-sitter/lib/include/tree_sitter/api.h" \
-   "$root/.packages/tree-sitter/include/tree_sitter/api.h"
+   "$root/.packages/tree-sitter/tree_sitter/api.h"
 
 # tree-sitter's sources reach their headers as "tree_sitter/api.h" and
 # "unicode/ptypes.h", which normally resolve through -I lib/src and
@@ -50,6 +50,6 @@ src="$vendor/tree-sitter/lib/src"
 # spin decides what to recompile from the mtimes of the files it scans, and
 # vendor/ is not one of them. Re-pinning would otherwise link yesterday's
 # runtime against today's header.
-touch "$root"/native/*.c 2>/dev/null || true
+touch "$root"/*.c 2>/dev/null || true
 
 echo "vendored into $vendor"
