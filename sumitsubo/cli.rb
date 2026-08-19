@@ -3,10 +3,9 @@ require "sumitsubo/version"
 
 module Sumitsubo
   class CLI
-    # Written out rather than derived from the parser: Spinel's optparse is a
-    # subset that drops option descriptions from `to_s`, so a generated help
-    # text would differ between the compiled binary and the CRuby run that
-    # produces the snapshot.
+    # Literal rather than rendered by the parser: this text has to read
+    # the same under Spinel and under the CRuby run that produces the
+    # snapshot.
     HELP = <<~TEXT
       Usage: sumi [options]
 
@@ -27,9 +26,9 @@ module Sumitsubo
       rescue OptionParser::ParseError
         show_version = false
       end
-      # Anything the parser did not consume falls back to help. CRuby arrives
-      # here through the rescue above; Spinel's optparse never raises and
-      # leaves the argument in `rest` instead, so both routes are needed.
+      # Unrecognised input means help. CRuby raises and is caught above,
+      # Spinel leaves the argument in `rest`, so reaching one answer on
+      # both runtimes takes both routes.
       show_version = false unless rest.empty?
 
       if show_version

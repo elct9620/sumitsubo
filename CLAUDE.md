@@ -52,6 +52,23 @@ change.
 | Render  | Render the structured specification to the markdown specification.   |
 | Verify  | Verify the source code is aligned with the verifiable specification. |
 
+## Comments
+
+The code says what it does; a comment says why it is that way — the intent it
+serves, not the story of how it came to be written. A comment that recounts
+what was tried, or defends the code against a misreading, is that story and
+belongs in the commit instead.
+
+Two or three lines, around fifty words. The limit is loose; it is there to
+keep an intent from turning into an account. Where this file already holds
+the reason, the comment points at it rather than repeating it.
+
+Three things earn more room:
+
+- Behaviour a reader would otherwise take for a mistake and remove.
+- An intent that needs an example to be readable.
+- A piece of specification, such as a binary layout.
+
 ## Build
 
 The command is `sumi`, shipped as a single native executable.

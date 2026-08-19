@@ -54,9 +54,9 @@ runs:
           echo "spinel=$prefix/bin/spinel"
           # `spinel --version` reports the revision as a 12-character prefix.
           echo "revision=${ref:0:12}"
-          # Read from the process environment, not the `env` expression
-          # context — the runner image sets ImageOS there, and the context
-          # would silently resolve to an empty key segment.
+          # The runner image sets ImageOS in the process environment
+          # rather than the `env` expression context, so the key is
+          # built from the former.
           echo "image=${ImageOS:-unknown}"
         } >> "$GITHUB_OUTPUT"
 
@@ -77,10 +77,9 @@ runs:
         spinel="${{ steps.resolve.outputs.spinel }}"
         want="${{ steps.resolve.outputs.revision }}"
         got=""
-        # The revision is compiled into the binary, so this asks the toolchain
-        # what it is rather than trusting the cache key that produced it — a
-        # half-written cache entry answers wrong here instead of silently
-        # compiling with the wrong compiler.
+        # The revision is compiled into the binary, so this asks the
+        # toolchain what it is rather than trusting the cache key that
+        # produced it.
         if [ -x "$spinel" ]; then
           got=$("$spinel" --version 2>/dev/null | awk '{print $2}') || got=""
         fi
@@ -115,10 +114,9 @@ runs:
         make -C "$SRC" -j"$(getconf _NPROCESSORS_ONLN)"
         make -C "$SRC" install PREFIX="${{ steps.resolve.outputs.prefix }}"
 
-        # The installed prefix is self-contained, so the 70 MB source tree has
-        # no reader left. Dropping it here — after a successful install, so a
-        # failed build keeps its evidence — makes the prefix the only thing
-        # this action leaves behind.
+        # The installed prefix is self-contained, so the source tree has
+        # no reader left. Dropped after a successful install, so a failed
+        # build keeps its evidence.
         rm -rf "$SRC"
 
     - name: Publish toolchain paths
@@ -138,10 +136,9 @@ runs:
         fi
         "$prefix/bin/spinel" --version
 
-        # `spin` derives the runtime header location from $0. Invoked by bare
-        # name off PATH it derives nothing, and any package carrying C fails to
-        # compile — so the absolute path is what callers use. PATH is still set
-        # so `spin` can find its sibling `spinel`.
+        # `spin` derives the runtime header location from $0, so callers
+        # invoke it by absolute path. PATH is set so `spin` can find its
+        # sibling `spinel`.
         echo "$prefix/bin" >> "$GITHUB_PATH"
         {
           echo "SPIN=$prefix/bin/spin"

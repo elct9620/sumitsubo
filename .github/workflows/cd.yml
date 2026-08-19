@@ -20,10 +20,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # One runner per target: `spin build` on the native host produces the
-          # executable in one step, so no cross toolchain is involved.
-          # Windows has no entry — the Spinel runtime depends on POSIX
-          # structurally, so there is no native path to add here.
+          # One runner per target: `spin build` on the native host is
+          # the whole build, so no cross toolchain is involved. Windows
+          # has no entry — the runtime depends on POSIX structurally.
           - name: linux-x86_64
             runner: ubuntu-latest
           - name: linux-aarch64
@@ -40,8 +39,8 @@ jobs:
         run: '"$SPIN" build'
 
       - name: Smoke-run the executable
-        # Through a flag rather than the empty-argument default: both reach the
-        # CLI, but a run that takes an argument shows the parser ran.
+        # Through a flag rather than the empty-argument default: both reach
+        # the CLI, but an argument shows the parser ran.
         run: ./build/bin/sumi -v
 
       - name: Record artifact shape
@@ -54,8 +53,8 @@ jobs:
             echo '```'
             file "$bin"
             ls -lh "$bin" | awk '{print "size: " $5}'
-            # What the executable still needs from the host is the property
-            # that decides whether it is usable outside this runner.
+            # What the executable still needs from the host is what
+            # decides whether it is usable outside this runner.
             if [ "$RUNNER_OS" = "macOS" ]; then otool -L "$bin"; else ldd "$bin" || true; fi
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"

@@ -20,10 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # The same three targets CD ships, so a platform-specific assumption
-          # (a .dylib path, a shared-library suffix) fails a test rather than
-          # reaching a release. Warming each target's toolchain cache on main
-          # is a side effect, not the reason.
+          # The three targets CD ships, so a platform-specific
+          # assumption fails a test rather than reaching a release.
           - name: linux-x86_64
             runner: ubuntu-latest
           - name: linux-aarch64
@@ -39,11 +37,9 @@ jobs:
       - name: Run tests
         run: '"$SPIN" test'
 
-      # `spin test` compiles test/*.rb at -O1 and never touches bin/, so the
-      # configuration that ships — bin/sumi.rb, at the compiler's default
-      # optimization — is exercised nowhere else. Running it, rather than only
-      # building it, is what makes -O2 a checked assumption instead of one
-      # first tested by a release.
+      # `spin test` compiles test/*.rb at -O1 and never bin/, so the
+      # configuration that ships is exercised only here. Running it, not
+      # only building it, is what puts that configuration under test.
       - name: Build and run the executable
         run: |
           "$SPIN" build
