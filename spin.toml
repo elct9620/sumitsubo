@@ -1,0 +1,4 @@
+# spin manifest — an application needs no [package] identity.
+# Add dependencies like:
+#   [dependencies]
+#   ansi = { path = "../spinel-ansi" }
