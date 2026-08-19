@@ -1,4 +1,7 @@
 # spin manifest — an application needs no [package] identity.
-# Add dependencies like:
-#   [dependencies]
-#   ansi = { path = "../spinel-ansi" }
+#
+# The tree-sitter binding lives in this tree for now, under a dot directory:
+# spin scans a package for the .c it carries, and the dot is what keeps it from
+# compiling the binding a second time as part of this application.
+[dependencies]
+treesitter = { path = ".packages/tree-sitter" }

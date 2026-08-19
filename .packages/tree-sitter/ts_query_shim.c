@@ -1,0 +1,205 @@
+// Parse one source with a grammar linked into this binary, run one query over
+// it, and hand the captures back as one string.
+//
+// One call does everything because the boundary is where the cost is: every
+// crossing has to marshal, so parse-query-collect stays on this side.
+//
+// A capture comes back as `line\ttext\n` with the text escaped — a comment is
+// the thing being collected, and one routinely contains the newline that would
+// otherwise end the record. Predicates (`#eq?` and friends) are not evaluated:
+// the queries are the tool's own, and none carries one.
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
+#include "spinel/runtime.h"
+// Reached by path rather than -I: spin puts only the package root on the
+// include path, so the header the declarations are written against travels
+// with them.
+#include "include/tree_sitter/api.h"
+
+static char *tsq_out = NULL;
+static size_t tsq_out_len = 0;
+static size_t tsq_out_cap = 0;
+static char tsq_err[512] = {0};
+// Failure needs its own channel: the result arrives as bytes and an empty
+// result is a legitimate answer, so it cannot double as an error signal.
+static int tsq_ok = 1;
+static int tsq_parsed_clean = 1;
+
+static void tsq_reset(void) {
+  tsq_out_len = 0;
+  tsq_ok = 1;
+  if (tsq_out) tsq_out[0] = '\0';
+  tsq_err[0] = '\0';
+}
+
+static int tsq_reserve(size_t extra) {
+  if (tsq_out_len + extra + 1 <= tsq_out_cap) return 1;
+  size_t cap = tsq_out_cap ? tsq_out_cap : 4096;
+  while (cap < tsq_out_len + extra + 1) cap *= 2;
+  char *grown = (char *)realloc(tsq_out, cap);
+  if (!grown) return 0;
+  tsq_out = grown;
+  tsq_out_cap = cap;
+  return 1;
+}
+
+static int tsq_put(const char *bytes, size_t len) {
+  if (!tsq_reserve(len)) return 0;
+  memcpy(tsq_out + tsq_out_len, bytes, len);
+  tsq_out_len += len;
+  tsq_out[tsq_out_len] = '\0';
+  return 1;
+}
+
+// Escapes so one capture stays one line: backslash, newline, carriage return
+// and tab are the only bytes that could break the record apart.
+static int tsq_put_escaped(const char *bytes, size_t len) {
+  for (size_t i = 0; i < len; i++) {
+    char c = bytes[i];
+    const char *rep = NULL;
+    switch (c) {
+      case '\\': rep = "\\\\"; break;
+      case '\n': rep = "\\n"; break;
+      case '\r': rep = "\\r"; break;
+      case '\t': rep = "\\t"; break;
+      default: break;
+    }
+    if (rep) {
+      if (!tsq_put(rep, 2)) return 0;
+    } else if (!tsq_put(&c, 1)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+// Grammars linked into the binary announce themselves rather than being listed
+// here. Which languages a build carries is the application's decision, and a
+// binding naming them would make every one of those symbols a requirement.
+#define TSQ_MAX_GRAMMARS 8
+
+static struct {
+  char *name;
+  const TSLanguage *language;
+} tsq_grammars[TSQ_MAX_GRAMMARS];
+static int tsq_grammar_count = 0;
+
+void tsq_register(const char *name, const TSLanguage *language) {
+  if (tsq_grammar_count >= TSQ_MAX_GRAMMARS) return;
+  tsq_grammars[tsq_grammar_count].name = strdup(name);
+  tsq_grammars[tsq_grammar_count].language = language;
+  tsq_grammar_count++;
+}
+
+static const TSLanguage *tsq_language(const char *name) {
+  for (int i = 0; i < tsq_grammar_count; i++) {
+    if (strcmp(tsq_grammars[i].name, name) == 0) return tsq_grammars[i].language;
+  }
+  snprintf(tsq_err, sizeof(tsq_err), "no grammar registered for %s", name);
+  return NULL;
+}
+
+// A run scans hundreds of files with one grammar and one query, so compiling
+// the query per call would be the whole cost. One slot is enough for that
+// shape, and a second query simply replaces it.
+static const TSLanguage *tsq_query_lang = NULL;
+static char *tsq_query_src = NULL;
+static TSQuery *tsq_query_cached = NULL;
+
+static TSQuery *tsq_query_for(const TSLanguage *language, const char *src) {
+  if (tsq_query_cached && tsq_query_lang == language && strcmp(tsq_query_src, src) == 0) {
+    return tsq_query_cached;
+  }
+
+  uint32_t error_offset = 0;
+  TSQueryError error_type = TSQueryErrorNone;
+  TSQuery *query = ts_query_new(language, src, (uint32_t)strlen(src), &error_offset, &error_type);
+  if (!query) {
+    snprintf(tsq_err, sizeof(tsq_err), "query error type %d at byte %u", (int)error_type, error_offset);
+    return NULL;
+  }
+
+  if (tsq_query_cached) ts_query_delete(tsq_query_cached);
+  free(tsq_query_src);
+  tsq_query_cached = query;
+  tsq_query_src = strdup(src);
+  tsq_query_lang = language;
+  return query;
+}
+
+static TSParser *tsq_parser = NULL;
+
+const char *tsq_error(void) { return tsq_err; }
+
+// Whether the last query failed. Kept apart from the result because the result
+// cannot carry the distinction: no captures and no answer look the same once
+// the bytes arrive.
+int tsq_failed(void) { return !tsq_ok; }
+
+// Whether the last parse produced a clean tree. A file the grammar could not
+// read yields few or no captures, which is indistinguishable from a file that
+// genuinely says nothing — and the caller has to tell those apart or it will
+// report the specification as wrong when the source is what broke.
+int tsq_parse_ok(void) { return tsq_parsed_clean; }
+
+const char *tsq_query(const char *grammar, const char *source, const char *query_src) {
+  tsq_reset();
+
+  const TSLanguage *language = tsq_language(grammar);
+  if (!language) { tsq_ok = 0; return NULL; }
+
+  if (!tsq_parser) tsq_parser = ts_parser_new();
+  if (!ts_parser_set_language(tsq_parser, language)) {
+    snprintf(tsq_err, sizeof(tsq_err), "grammar %s is not ABI-compatible with this tree-sitter", grammar);
+    tsq_ok = 0;
+    return NULL;
+  }
+
+  TSQuery *query = tsq_query_for(language, query_src);
+  if (!query) { tsq_ok = 0; return NULL; }
+
+  uint32_t source_len = (uint32_t)strlen(source);
+  TSTree *tree = ts_parser_parse_string(tsq_parser, NULL, source, source_len);
+  tsq_parsed_clean = !ts_node_has_error(ts_tree_root_node(tree));
+
+  TSQueryCursor *cursor = ts_query_cursor_new();
+  ts_query_cursor_exec(cursor, query, ts_tree_root_node(tree));
+
+  TSQueryMatch match;
+  int ok = 1;
+  while (ok && ts_query_cursor_next_match(cursor, &match)) {
+    for (uint16_t i = 0; i < match.capture_count; i++) {
+      TSNode node = match.captures[i].node;
+      uint32_t start = ts_node_start_byte(node);
+      uint32_t end = ts_node_end_byte(node);
+      if (end > source_len) end = source_len;
+
+      // Rows count from zero inside tree-sitter and from one for anyone
+      // reading a file, so the conversion happens here rather than in every
+      // caller that wants to print a location.
+      char line[24];
+      int line_len = snprintf(line, sizeof(line), "%u\t", ts_node_start_point(node).row + 1);
+
+      if (!tsq_put(line, (size_t)line_len) ||
+          !tsq_put_escaped(source + start, end - start) || !tsq_put("\n", 1)) {
+        snprintf(tsq_err, sizeof(tsq_err), "out of memory collecting captures");
+        ok = 0;
+        break;
+      }
+    }
+  }
+
+  ts_query_cursor_delete(cursor);
+  ts_tree_delete(tree);
+
+  if (!ok) { tsq_ok = 0; return NULL; }
+
+  // Handed back as bytes with the length alongside: a capture's text carries
+  // newlines and the caller reads records by count rather than by terminator.
+  // Spinel copies out of this buffer before returning, so the scratch space
+  // stays ours.
+  sp_ffi_bin_len = (int)tsq_out_len;
+  return tsq_out ? tsq_out : "";
+}

@@ -1,0 +1,6 @@
+# The tree-sitter binding: declarations, the shim, and the header they are
+# written against. The runtime itself is the application's to supply — see
+# treesitter.rb.
+[package]
+name = "treesitter"
+version = "0.1.0"

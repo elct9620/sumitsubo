@@ -1,0 +1,25 @@
+require "treesitter"
+
+# The grammar this build carries, announced to the binding so the rest of the
+# code can ask for it by name.
+#
+# Ruby is the only language Sumitsubo targets, and its parse tables are linked
+# in rather than loaded, so the announcement happens once as this file is
+# required. A build that carried several would announce only the ones a run
+# asks for — waking a grammar means paging its tables in.
+module RubyGrammar
+  ffi_func :tree_sitter_ruby, [], :ptr
+end
+
+module Sumitsubo
+  module Grammar
+    RUBY = "ruby"
+
+    # Comments are the part of a source file a person wrote for another person,
+    # which is where a concept is called by name rather than spelled as an
+    # identifier.
+    COMMENTS = "(comment) @text"
+  end
+end
+
+TreeSitter.register(Sumitsubo::Grammar::RUBY, RubyGrammar.tree_sitter_ruby)

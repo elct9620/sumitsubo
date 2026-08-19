@@ -1,0 +1,5 @@
+["1:# A Customer is billed here.", "3:# Not an Invoice."]
+["1:=begin\nA Customer.\n=end"]
+[]
+broken.rb: cannot be parsed by the ruby grammar
+tree-sitter: no grammar registered for cobol
