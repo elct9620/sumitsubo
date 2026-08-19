@@ -57,9 +57,16 @@ change.
 The command is `sumi`, shipped as a single native executable.
 
 - `spin build` compiles `bin/sumi.rb` to `build/bin/sumi`.
-- `spin test` runs the snapshot tests: each file under `test/` is a program
-  whose stdout is compared against a committed `.expected` file, regenerated
-  with `spin test --regen`.
+- `spin test` compiles each `test/*.rb` against the library sources — never
+  against `bin/`, which is why `bin/sumi.rb` holds nothing but a delegation —
+  and compares the program's stdout and stderr, merged, against a committed
+  `test/<name>.rb.expected`.
+- `spin test --regen` writes that snapshot by running the same file under
+  CRuby, so whatever a test reaches has to behave identically on both. Where
+  no snapshot is committed the run is compared against CRuby rather than
+  failing, and a test that asserts nothing passes.
+- Tests compile at `-O1` and the shipped executable at the compiler's default,
+  so CI builds and runs `sumi` in addition to running the tests.
 - Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows has no
   entry — the Spinel runtime depends on POSIX structurally.
 
@@ -80,3 +87,7 @@ AOT compiler for Ruby. Its constraints shape the design:
   provide: json, csv, erb, set, strscan, stringio, pathname, optparse, digest,
   base64, forwardable, prelude. Structured specifications are JSON for that
   reason; YAML is a direction, not a capability.
+- Those packages are Spinel's own implementations, and some are subsets:
+  optparse drops option descriptions from `to_s` and lets an unknown flag
+  through instead of raising. A snapshot taken from CRuby can therefore record
+  behaviour the executable does not have.
