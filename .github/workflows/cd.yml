@@ -35,6 +35,17 @@ jobs:
 
       - uses: ./.github/actions/setup-spinel
 
+      # The pins live in scripts/vendor.sh, so the script is the cache key: a
+      # re-pin misses the cache and fetches, and nothing else does.
+      - name: Restore vendored sources
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: vendor
+          key: vendor-${{ hashFiles('scripts/vendor.sh') }}
+
+      - name: Fetch the tree-sitter runtime and grammar
+        run: ./scripts/vendor.sh
+
       - name: Build executable
         run: '"$SPIN" build'
 
