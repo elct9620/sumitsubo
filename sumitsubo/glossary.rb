@@ -1,4 +1,5 @@
 require "json"
+require "sumitsubo/grammar"
 
 module Sumitsubo
   # The structured specification the Glossary mechanism verifies against.
@@ -23,7 +24,9 @@ module Sumitsubo
     Disallowed = Struct.new(:term, :reason)
     Term = Struct.new(:term, :definition, :disallowed)
     Section = Struct.new(:name, :includes, :terms)
-    Finding = Struct.new(:path, :line, :column, :term, :used, :reason)
+    # A stretch of a file the vocabulary is checked against, and where it starts.
+    Region = Struct.new(:line, :text)
+    Finding = Struct.new(:path, :line, :term, :used, :reason)
 
     def self.load(path = PATH)
       raise Error, "no glossary at #{path}" unless File.exist?(path)
@@ -58,57 +61,69 @@ module Sumitsubo
       effective
     end
 
-    # Whole words, case sensitive, over the file as written — comments and
-    # string bodies included. Narrowing that to identifiers needs an AST, and
-    # what the wider read costs is a report the reader judges, which is the
-    # side Sumitsubo is meant to err on.
+    # Whole words, case sensitive, over the regions the vocabulary reaches.
     def self.check(scope)
       findings = []
       scope.keys.sort.each do |path|
-        lines = File.readlines(path)
+        regions = regions_in(path)
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].disallowed.each do |entry|
-            findings.concat(findings_for(path, lines, name, entry))
+            findings.concat(findings_for(path, regions, name, entry))
           end
         end
       end
-      # A key that leaves no ties: sorting on part of one would let Spinel and
-      # CRuby order the rest differently, and the snapshot compares the two.
-      findings.sort_by { |f| [f.path, f.line, f.column, f.term, f.used] }
+      # A key that leaves no ties, so two runs report the same order.
+      findings.sort_by { |f| [f.path, f.line, f.term, f.used] }
     end
 
-    # The pattern stays a local of this method and is never captured by a
-    # block: Spinel builds no closure cell for a runtime Regexp.
-    def self.findings_for(path, lines, name, entry)
-      found = []
-      pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")
+    # Source code contributes its comments and nothing else: an identifier is a
+    # spelling of a concept rather than the concept's name, and counting it
+    # would flag every legitimate class in the tree. Anything else is prose,
+    # which is a comment for its whole length.
+    def self.regions_in(path)
+      return prose_in(path) unless path.end_with?(".rb")
+
+      comments_in(path)
+    end
+
+    def self.comments_in(path)
+      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::COMMENTS, path)
+                .map { |capture| Region.new(capture.line, capture.text) }
+    rescue TreeSitter::ParseError => e
+      # Source the grammar cannot read is not a difference between the two
+      # sides either: half a file yields captures the rest of it never made.
+      raise Error, e.message
+    end
+
+    def self.prose_in(path)
+      regions = []
+      lines = File.readlines(path)
       index = 0
       while index < lines.length
-        columns_in(lines[index], pattern).each do |column|
-          found.push(Finding.new(path, index + 1, column + 1, name, entry.term, entry.reason))
-        end
+        regions.push(Region.new(index + 1, lines[index]))
         index += 1
       end
-      found
+      regions
     end
 
-    # Walked with Regexp#match rather than String#index, which under Spinel
-    # takes no Regexp argument.
-    def self.columns_in(text, pattern)
-      columns = []
-      base = 0
-      rest = text
-      while true
-        found = pattern.match(rest)
-        break if found.nil?
-        at = found.begin(0)
-        columns.push(base + at)
-        base = base + at + 1
-        rest = rest[(at + 1), rest.length]
-        break if rest.nil?
+    # One finding per line, however often the word appears on it: the line is
+    # what a reader goes to, and what an exclusion would one day be written
+    # against.
+    #
+    # The pattern stays a local of this method and is never captured by a
+    # block: Spinel builds no closure cell for a runtime Regexp.
+    def self.findings_for(path, regions, name, entry)
+      found = []
+      pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")
+      regions.each do |region|
+        line = region.line
+        region.text.split("\n").each do |text|
+          found.push(Finding.new(path, line, name, entry.term, entry.reason)) unless pattern.match(text).nil?
+          line += 1
+        end
       end
-      columns
+      found
     end
 
     def self.paths_for(section)

@@ -6,3 +6,7 @@ class Order
   # sensitive matching has to leave both alone.
   def repurchase = nil
 end
+
+# An identifier is a spelling of the concept, not its name, so the scan walks
+# past the constant below.
+Purchase = Struct.new(:lines)

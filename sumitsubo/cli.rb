@@ -46,13 +46,14 @@ module Sumitsubo
     def verify
       findings = Glossary.check(Glossary.scope(Glossary.load))
       findings.each do |f|
-        puts "#{f.path}:#{f.line}:#{f.column} #{f.term} rejects #{f.used}: #{f.reason}"
+        puts "#{f.path}:#{f.line} #{f.term} rejects #{f.used}: #{f.reason}"
       end
       puts "#{findings.length} differences"
       findings.empty? ? 0 : 1
     rescue Glossary::Error => e
-      # A specification that cannot be read is not a difference between the
-      # two sides, so it answers differently from having found one.
+      # A comparison that cannot be made — no specification, or source the
+      # grammar cannot read — is not a difference between the two sides, so it
+      # answers differently from having found one.
       puts e.message
       2
     end

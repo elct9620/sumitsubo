@@ -1,7 +1,7 @@
 {
   "glossary": [
     {
-      "include": ["app/**/*.rb"],
+      "include": ["app/**/*.rb", "docs/*.md"],
       "terms": [
         {
           "term": "Order",
