@@ -12,7 +12,7 @@ Several mechanisms establish alignment. Known so far:
 
 | Mechanism | The specification declares                                             | Verified against                |
 |-----------|------------------------------------------------------------------------|---------------------------------|
-| Glossary  | The domain vocabulary.                                                 | Identifiers in the source code. |
+| Glossary  | The domain vocabulary, and the words rejected in its place.            | Words in the source code.       |
 | Contract  | Public interfaces, and the interface an internal caller must go through.| Structure of the source code.   |
 | Behavior  | Behaviors in a BDD style.                                              | Test code declaring which behavior it implements. |
 
@@ -38,19 +38,42 @@ it, the absence of a specification here is deliberate.
 
 ## How it works
 
-Sumitsubo reads the structured specification from `.spec/` and uses tree-sitter
-to query the source code, checking it against the verifiable specification.
-Ruby is the only language it targets.
+Sumitsubo reads the structured specification from `.spec/` and checks the
+source code against the verifiable part of it. Ruby is the only language it
+targets.
 
 `.spec/` is provisional — chosen to stay clear of RSpec's `spec/`, and open to
 change.
+
+`glossary.json` holds sections, each scoped by `include` globs. A file takes
+every section covering it, applied in the order the file lists them; a later
+term replaces an earlier one of the same name outright, its rejected words
+included, because a term meaning something else there rejects different words.
+
+Only the rejected words are checked — a term declaring none is vocabulary the
+tool carries but cannot verify. Matching is whole-word and case sensitive over
+the file as written, so comments and string bodies are read along with the
+code. Restricting that to identifiers is what an AST would buy.
 
 ## Features
 
 | Feature | Description                                                          |
 |---------|----------------------------------------------------------------------|
+| Init    | Write an empty `.spec/glossary.json` to start a reference line from.  |
 | Render  | Render the structured specification to the markdown specification.   |
 | Verify  | Verify the source code is aligned with the verifiable specification. |
+
+## Output
+
+The reader is an agent working in the codebase, with a person reading over its
+shoulder. Findings answer as `path:line:column`, relative to where the run
+started, one per line and sorted on a key that leaves no ties.
+
+The run answers 0 where the two sides agree, 1 where they differ, and 2 where
+there is no specification to verify from: a difference is a finding about the
+code, a missing reference line is not, and an operator branches on which it
+got. Findings and failures share stdout, the test harness comparing the two
+streams merged.
 
 ## Comments
 
