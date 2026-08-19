@@ -12,7 +12,7 @@ Several mechanisms establish alignment. Known so far:
 
 | Mechanism | The specification declares                                             | Verified against                |
 |-----------|------------------------------------------------------------------------|---------------------------------|
-| Glossary  | The domain vocabulary, and the words rejected in its place.            | Words in the source code.       |
+| Glossary  | The domain vocabulary, and the words rejected in its place.            | Words a person wrote: comments, and prose.       |
 | Contract  | Public interfaces, and the interface an internal caller must go through.| Structure of the source code.   |
 | Behavior  | Behaviors in a BDD style.                                              | Test code declaring which behavior it implements. |
 
@@ -51,9 +51,11 @@ term replaces an earlier one of the same name outright, its rejected words
 included, because a term meaning something else there rejects different words.
 
 Only the rejected words are checked — a term declaring none is vocabulary the
-tool carries but cannot verify. Matching is whole-word and case sensitive over
-the file as written, so comments and string bodies are read along with the
-code. Restricting that to identifiers is what an AST would buy.
+tool carries but cannot verify. Matching is whole-word and case sensitive, over
+what a person wrote for another person: the comments of a Ruby file, found
+through its syntax tree, and any other file entire, since prose is a comment
+for its whole length. An identifier is a spelling of a concept rather than the
+concept's name, so counting one would flag every legitimate class in the tree.
 
 ## Features
 
@@ -66,14 +68,16 @@ code. Restricting that to identifiers is what an AST would buy.
 ## Output
 
 The reader is an agent working in the codebase, with a person reading over its
-shoulder. Findings answer as `path:line:column`, relative to where the run
-started, one per line and sorted on a key that leaves no ties.
+shoulder. Findings answer as `path:line`, relative to where the run started,
+one per line and sorted on a key that leaves no ties. One finding per line
+however often the word appears on it: the line is what a reader goes to, and
+what an exclusion would one day be written against.
 
 The run answers 0 where the two sides agree, 1 where they differ, and 2 where
-there is no specification to verify from: a difference is a finding about the
-code, a missing reference line is not, and an operator branches on which it
-got. Findings and failures share stdout, the test harness comparing the two
-streams merged.
+the comparison could not be made — no specification to verify from, or source
+the grammar could not read. A difference is a finding about the code; being
+unable to compare is not, and an operator branches on which it got. Findings
+and failures share stdout, the test harness comparing the two streams merged.
 
 ## Comments
 
@@ -96,15 +100,20 @@ Three things earn more room:
 
 The command is `sumi`, shipped as a single native executable.
 
+- `scripts/vendor.sh` fetches the pinned tree-sitter runtime and Ruby grammar
+  into `vendor/`, which is not committed. Nothing compiles before it has run,
+  and that script is the only place either version is written down.
 - `spin build` compiles `bin/sumi.rb` to `build/bin/sumi`.
 - `spin test` compiles each `test/*.rb` against the library sources — never
   against `bin/`, which is why `bin/sumi.rb` holds nothing but a delegation —
   and compares the program's stdout and stderr, merged, against a committed
   `test/<name>.rb.expected`.
 - `spin test --regen` writes that snapshot by running the same file under
-  CRuby, so whatever a test reaches has to behave identically on both. Where
-  no snapshot is committed the run is compared against CRuby rather than
-  failing, and a test that asserts nothing passes.
+  CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
+  CRuby has no `ffi_func` — so those snapshots are written by hand and stay
+  that way; today that is every test which requires the library. Where no
+  snapshot is committed the run is compared against CRuby rather than failing,
+  and a test that asserts nothing passes.
 - Tests compile at `-O1` and the shipped executable at the compiler's default,
   so CI builds and runs `sumi` in addition to running the tests.
 - Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows has no
@@ -120,6 +129,12 @@ AOT compiler for Ruby. Its constraints shape the design:
   statically, not through a dynamic DSL.
 - Dependencies are source trees compiled into the executable. Nothing loads at
   runtime, so what the executable supports is decided when it is built.
+- C is reached through FFI declarations in a package. The tree-sitter binding
+  is one, in `.packages/tree-sitter`: the dot is what keeps spin from
+  compiling its C a second time as part of this application, since a package
+  is scanned for the `.c` it carries. The runtime and the grammar are the
+  application's to link in, which is why a grammar it does not carry fails at
+  link time rather than at run time.
 - `Exception#backtrace` and `Kernel#caller` return empty arrays, so an error
   carries whatever context it needs by itself.
 - String literals are frozen by default.
