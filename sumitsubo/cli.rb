@@ -1,11 +1,9 @@
 require "optparse"
 require "sumitsubo/version"
+require "sumitsubo/glossary"
 
 module Sumitsubo
   class CLI
-    SPEC_DIR = ".spec"
-    GLOSSARY_PATH = ".spec/glossary.json"
-
     # Literal rather than rendered by the parser: this text has to read
     # the same under Spinel and under the CRuby run that produces the
     # snapshot.
@@ -20,14 +18,6 @@ module Sumitsubo
           -h, --help       Show this help
     TEXT
 
-    # An empty glossary declares nothing, so verify reads it and reports
-    # nothing. That is the reference line a project starts from.
-    SKELETON = <<~JSON
-      {
-        "glossary": []
-      }
-    JSON
-
     def run(argv)
       case argv.first
       when "init" then init
@@ -38,12 +28,12 @@ module Sumitsubo
     private
 
     def init
-      Dir.mkdir(SPEC_DIR) unless Dir.exist?(SPEC_DIR)
-      if File.exist?(GLOSSARY_PATH)
-        puts "exists #{GLOSSARY_PATH}"
+      Dir.mkdir(Glossary::DIR) unless Dir.exist?(Glossary::DIR)
+      if File.exist?(Glossary::PATH)
+        puts "exists #{Glossary::PATH}"
       else
-        File.write(GLOSSARY_PATH, SKELETON)
-        puts "created #{GLOSSARY_PATH}"
+        File.write(Glossary::PATH, Glossary::EMPTY)
+        puts "created #{Glossary::PATH}"
       end
       0
     end
