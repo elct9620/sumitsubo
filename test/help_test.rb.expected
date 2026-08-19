@@ -1,26 +1,38 @@
 --- no arguments ---
-Usage: sumi [options]
+Usage: sumi <command> [options]
+
+Commands:
+    init             Write an empty .spec/glossary.json
 
 Options:
     -v, --version    Show version
     -h, --help       Show this help
 exit=0
 --- -h ---
-Usage: sumi [options]
+Usage: sumi <command> [options]
+
+Commands:
+    init             Write an empty .spec/glossary.json
 
 Options:
     -v, --version    Show version
     -h, --help       Show this help
 exit=0
 --- unknown flag ---
-Usage: sumi [options]
+Usage: sumi <command> [options]
+
+Commands:
+    init             Write an empty .spec/glossary.json
 
 Options:
     -v, --version    Show version
     -h, --help       Show this help
 exit=0
 --- known flag followed by an unknown one ---
-Usage: sumi [options]
+Usage: sumi <command> [options]
+
+Commands:
+    init             Write an empty .spec/glossary.json
 
 Options:
     -v, --version    Show version

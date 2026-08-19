@@ -1,0 +1,9 @@
+--- first run ---
+created .spec/glossary.json
+exit=0
+{
+  "glossary": []
+}
+--- second run leaves it alone ---
+exists .spec/glossary.json
+exit=0
