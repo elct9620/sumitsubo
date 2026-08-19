@@ -103,6 +103,10 @@ The command is `sumi`, shipped as a single native executable.
 - `scripts/vendor.sh` fetches the pinned tree-sitter runtime and Ruby grammar
   into `vendor/`, which is not committed. Nothing compiles before it has run,
   and that script is the only place either version is written down.
+- Carried C is one translation unit for the runtime and one per grammar
+  (`ts_lib.c`, `ts_ruby.c`), and cannot be fewer: the runtime and a grammar
+  each carry a `tree_sitter/parser.h` under the same include guard. Grammars
+  move into a directory of their own once there are enough to read as a group.
 - `spin build` compiles `bin/sumi.rb` to `build/bin/sumi`.
 - `spin test` compiles each `test/*.rb` against the library sources — never
   against `bin/`, which is why `bin/sumi.rb` holds nothing but a delegation —
