@@ -29,6 +29,9 @@ module Sumitsubo
     # the concept rather than its name, so the members take the safe spelling.
     Scenario = Struct.new(:id, :title, :given, :action, :outcome, :path, :line)
     Feature = Struct.new(:name, :description, :includes, :scenarios)
+    # A scenario nothing claims. The scope is carried so the finding can say
+    # where it looked rather than claiming no test exists anywhere.
+    Finding = Struct.new(:path, :line, :id, :scope)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -54,6 +57,53 @@ module Sumitsubo
       found = []
       path.glob("*.json").each { |file| found.push("#{file}") }
       found.sort
+    end
+
+    # Every file any feature reaches. Globs are answered against the base,
+    # which is where the configuration was found, so a run from a subdirectory
+    # reaches the same files. The union is what gets scanned: `include` narrows
+    # the search rather than tying a scenario to one place.
+    def self.scope(features, base)
+      found = []
+      features.each do |feature|
+        feature.includes.each do |pattern|
+          base.glob(pattern).each { |path| found.push(shown(path)) }
+        end
+      end
+      found.uniq.sort
+    end
+
+    # A scenario nothing claims: the specification says a behaviour should be
+    # implemented and no source in scope claims it, which is a difference
+    # between the two sides.
+    def self.uncovered(features, claims)
+      claimed = {}
+      claims.each { |claim| claimed[claim.id] = true }
+
+      found = []
+      features.each do |feature|
+        feature.scenarios.each do |scenario|
+          next unless claimed[scenario.id].nil?
+
+          found.push(Finding.new(shown(scenario.path), scenario.line, scenario.id, feature.includes))
+        end
+      end
+      found
+    end
+
+    # A claim resolving to no scenario. Nothing on the specification side can
+    # confirm it — either the specification is not there to confirm against, or
+    # the behaviour was removed and this claim should have gone with it. Both
+    # are comparisons that could not be made rather than differences.
+    def self.unresolved(features, claims)
+      declared = {}
+      features.each do |feature|
+        feature.scenarios.each { |scenario| declared[scenario.id] = true }
+      end
+
+      found = []
+      claims.each { |claim| found.push(claim) if declared[claim.id].nil? }
+      found
     end
 
     def self.feature_from(path)

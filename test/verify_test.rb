@@ -19,6 +19,21 @@ Dir.chdir("test/fixtures/disabled")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+puts "--- every scenario claimed, so the two sides agree ---"
+Dir.chdir("test/fixtures/aligned")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+puts "--- a scenario nothing claims answers at the specification ---"
+Dir.chdir("test/fixtures/uncovered")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+puts "--- a claim resolving to no scenario is not a difference but a failure to compare ---"
+Dir.chdir("test/fixtures/behavior")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 puts "--- source the grammar cannot read is not a difference either ---"
 Dir.chdir("test/fixtures/unparseable")
 puts "exit=#{cli.run(["verify"])}"

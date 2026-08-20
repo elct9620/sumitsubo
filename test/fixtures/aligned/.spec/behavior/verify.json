@@ -1,0 +1,7 @@
+{
+  "name": "Verify",
+  "include": ["test/*_test.rb"],
+  "scenarios": [
+    { "id": "V-001", "title": "Every scenario is claimed", "given": [], "when": "`sumi verify` runs", "then": "the two sides agree" }
+  ]
+}

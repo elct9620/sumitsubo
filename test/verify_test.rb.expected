@@ -13,6 +13,17 @@ exit=1
 --- a specification switched off is not read, however far the code drifted ---
 0 differences
 exit=0
+--- every scenario claimed, so the two sides agree ---
+0 differences
+exit=0
+--- a scenario nothing claims answers at the specification ---
+.spec/behavior/verify.json:6 V-002 is claimed nowhere in test/*_test.rb
+1 difference
+exit=1
+--- a claim resolving to no scenario is not a difference but a failure to compare ---
+test/verify_test.rb:13 G-404 resolves to no scenario
+0 differences
+exit=2
 --- source the grammar cannot read is not a difference either ---
 app/broken.rb: cannot be parsed by the ruby grammar
 exit=2

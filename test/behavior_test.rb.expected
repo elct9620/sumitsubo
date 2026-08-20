@@ -4,6 +4,14 @@ Init ["test/init_test.rb"]
     given a directory with no specification
     when  `sumi init` runs
     then  an empty glossary specification is written at the configured root
+  test/fixtures/behavior/.spec/behavior/init.json:14 I-002 A second run leaves what is there alone
+    given a directory init has already run in
+    when  `sumi init` runs
+    then  the existing specification is reported as already there
+  test/fixtures/behavior/.spec/behavior/init.json:21 I-003 A configured root is created however deep it is
+    given a .sumi.json naming a root two levels down
+    when  `sumi init` runs
+    then  every directory on the way to that root is created
 Glossary Verification ["test/*_test.rb"]
   test/fixtures/behavior/.spec/behavior/verify.json:7 G-001 Code that drifted from its glossary
     given a glossary declaring a word its term rejects

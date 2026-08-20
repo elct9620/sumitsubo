@@ -4,6 +4,8 @@ require "sumitsubo/version"
 require "sumitsubo/error"
 require "sumitsubo/config"
 require "sumitsubo/glossary"
+require "sumitsubo/behavior"
+require "sumitsubo/marker"
 
 module Sumitsubo
   class CLI
@@ -29,9 +31,10 @@ module Sumitsubo
       else flags(argv)
       end
     rescue Sumitsubo::Error => e
-      # A comparison that cannot be made — an unreadable configuration, no
-      # specification, or source the grammar cannot read — is not a difference
-      # between the two sides, so it answers differently from having found one.
+      # A comparison that could not be made — whatever had to be read first was
+      # absent, unreadable, or ambiguous — is not a difference between the two
+      # sides, so it answers differently from having found one. The three words
+      # stand in for a list that grows with every mechanism.
       puts e.message
       2
     end
@@ -62,12 +65,36 @@ module Sumitsubo
         return 2
       end
 
-      findings = glossary_findings(config)
-      findings.each do |f|
-        puts "#{f.path}:#{f.line} #{f.term} rejects #{f.used}: #{f.reason}"
+      differences = []
+      glossary_findings(config).each do |f|
+        differences.push([f.path, f.line, "#{f.term} rejects #{f.used}: #{f.reason}"])
       end
-      puts "#{findings.length} differences"
-      findings.empty? ? 0 : 1
+
+      features = behavior_features(config)
+      claims = behavior_claims(features, config)
+      Behavior.uncovered(features, claims).each do |f|
+        differences.push([f.path, f.line, "#{f.id} is claimed nowhere in #{f.scope.join(", ")}"])
+      end
+
+      # A claim resolving to no scenario is not a difference: there is nothing
+      # on the specification side to compare it against.
+      failures = []
+      Behavior.unresolved(features, claims).each do |claim|
+        failures.push([claim.path, claim.line, "#{claim.id} resolves to no scenario"])
+      end
+
+      report(differences + failures)
+      puts "#{differences.length} #{differences.length == 1 ? "difference" : "differences"}"
+      return 2 unless failures.empty?
+
+      differences.empty? ? 0 : 1
+    end
+
+    # One stream, sorted on a key that leaves no ties. Two mechanisms can now
+    # answer about the same line, and the rendered message is what separates
+    # them — see the Output section of CLAUDE.md.
+    def report(rows)
+      rows.sort_by { |row| row }.each { |row| puts "#{row[0]}:#{row[1]} #{row[2]}" }
     end
 
     # A specification the configuration switched off is never read, so the code
@@ -77,6 +104,23 @@ module Sumitsubo
 
       sections = Glossary.load(Glossary.path_in(config.root))
       Glossary.check(Glossary.scope(sections, config.base), config.base)
+    end
+
+    def behavior_features(config)
+      return [] unless config.verify?("behavior")
+
+      Behavior.load(Behavior.path_in(config.root))
+    end
+
+    # Reading source is the mechanism's other half, and it is the half that
+    # needs the grammar — which is why it lives apart from the specification
+    # this compares against, and why the two meet here.
+    def behavior_claims(features, config)
+      claims = []
+      Behavior.scope(features, config.base).each do |path|
+        claims.concat(Marker.claims_in(path, Behavior::MARKER))
+      end
+      claims
     end
 
     def flags(argv)
