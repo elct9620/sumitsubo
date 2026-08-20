@@ -29,6 +29,7 @@ Not published yet — build from source, see [Development](#development).
 ```console
 $ sumi init
 created .spec/glossary.json
+created .spec/contract
 created .spec/behavior
 ```
 
@@ -52,6 +53,7 @@ nothing, so it answers `0` or `2`:
 ```console
 $ sumi render
 rendered docs/glossary.md
+rendered docs/contract/cli.md
 rendered docs/behavior/verify.md
 ```
 

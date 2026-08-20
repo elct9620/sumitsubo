@@ -33,3 +33,11 @@ Laying down an empty specification to start a reference line from.
 | Given | a directory with no specification |
 | When | `sumi init` runs |
 | Then | a behavior directory is created at the configured root |
+
+## I-005 — The first run lays down somewhere for contracts to go
+
+| Step | Statement |
+| --- | --- |
+| Given | a directory with no specification |
+| When | `sumi init` runs |
+| Then | a contract directory is created at the configured root |

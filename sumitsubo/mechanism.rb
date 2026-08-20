@@ -1,4 +1,5 @@
 require "sumitsubo/glossary"
+require "sumitsubo/contract"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
 
@@ -54,6 +55,68 @@ module Sumitsubo
         Sumitsubo::Glossary.check(scope, config.base).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Glossary.describe(finding))
         end
+      end
+    end
+
+    class Contract
+      def specification
+        "contract"
+      end
+
+      # A seed with no content is a directory: a project registers one kind of
+      # contract per file, so there is a place rather than a file to create.
+      def seed(root)
+        Seed.new(Sumitsubo::Contract.path_in(root), nil)
+      end
+
+      # The documents mirror the specification: one file per kind there, one
+      # here, named the same.
+      def documents(config)
+        found = []
+        Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root)).each do |definition|
+          name = Sumitsubo::Contract.document_name(definition)
+          found.push(Document.new(
+            (config.docs / Sumitsubo::Contract::DIRECTORY / "#{name}.md").to_s,
+            Sumitsubo::Contract.render(definition)
+          ))
+        end
+        found
+      end
+
+      def verify(config, report)
+        definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root))
+        claims = claims_in(definitions, config)
+
+        Sumitsubo::Contract.unclaimed(definitions, claims).each do |finding|
+          report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_unclaimed(finding))
+        end
+        # A contract is the way in, so a second way in is a difference about
+        # the code rather than a specification that could not be read.
+        Sumitsubo::Contract.duplicated(definitions, claims).each do |pair|
+          report.difference(pair[0].path, pair[0].line, Sumitsubo::Contract.describe_duplicated(pair))
+        end
+        # A claim resolving to no contract is not a difference: there is
+        # nothing on the specification side to compare it against.
+        Sumitsubo::Contract.unresolved(definitions, claims).each do |claim|
+          report.failure(claim.path, claim.line, Sumitsubo::Contract.describe_unresolved(claim))
+        end
+      end
+
+      private
+
+      # Every word every definition claims, read in one pass: parsing is the
+      # cost, so a project registering several kinds still reads each file once.
+      def claims_in(definitions, config)
+        claims = []
+        keywords = Sumitsubo::Contract.keywords(definitions)
+        Sumitsubo::Contract.scope(definitions, config.base).each do |path|
+          Marker.claims_in(path, keywords).each do |claim|
+            claims.push(Sumitsubo::Contract::Claim.new(
+              claim.path, claim.line, claim.keyword, claim.text
+            ))
+          end
+        end
+        claims
       end
     end
 
@@ -113,7 +176,8 @@ module Sumitsubo
       end
     end
 
-    # The order a run reaches them in, which is the order init lays them down.
-    ALL = [Glossary.new, Behavior.new]
+    # The order a run reaches them in, which is the order init lays them down,
+    # and the order the mechanisms are set out in CLAUDE.md and the README.
+    ALL = [Glossary.new, Contract.new, Behavior.new]
   end
 end

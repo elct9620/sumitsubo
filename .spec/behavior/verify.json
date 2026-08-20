@@ -88,6 +88,27 @@
       ],
       "when": "`sumi verify` runs",
       "then": "the unclaimed scenario is reported alongside the file that could not be read"
+    },
+    {
+      "id": "V-012",
+      "title": "An interface nothing claims",
+      "given": ["a contract specification registering an interface no source in scope claims"],
+      "when": "`sumi verify` runs",
+      "then": "the interface is reported at the line registering it, naming the scope that was searched"
+    },
+    {
+      "id": "V-013",
+      "title": "One interface claimed in two places",
+      "given": ["two places in scope claiming one registered interface"],
+      "when": "`sumi verify` runs",
+      "then": "each place is reported naming the other"
+    },
+    {
+      "id": "V-014",
+      "title": "A claim resolving to no contract",
+      "given": ["source claiming a name no contract specification registers under that marker"],
+      "when": "`sumi verify` runs",
+      "then": "the claim is reported at the line it sits on as resolving to no contract"
     }
   ]
 }

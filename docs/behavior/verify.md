@@ -92,3 +92,27 @@ Checking the source against the verifiable part of the specification, and answer
 | Given | a scenario in the same project that no source in scope claims |
 | When | `sumi verify` runs |
 | Then | the unclaimed scenario is reported alongside the file that could not be read |
+
+## V-012 — An interface nothing claims
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract specification registering an interface no source in scope claims |
+| When | `sumi verify` runs |
+| Then | the interface is reported at the line registering it, naming the scope that was searched |
+
+## V-013 — One interface claimed in two places
+
+| Step | Statement |
+| --- | --- |
+| Given | two places in scope claiming one registered interface |
+| When | `sumi verify` runs |
+| Then | each place is reported naming the other |
+
+## V-014 — A claim resolving to no contract
+
+| Step | Statement |
+| --- | --- |
+| Given | source claiming a name no contract specification registers under that marker |
+| When | `sumi verify` runs |
+| Then | the claim is reported at the line it sits on as resolving to no contract |

@@ -2,6 +2,7 @@
 exit=0
 --- the structured specification becomes documents ---
 rendered docs/glossary.md
+rendered docs/contract/cli.md
 rendered docs/behavior/checkout.md
 rendered docs/behavior/refund.md
 exit=0
@@ -25,8 +26,17 @@ Taking payment for an order.
 | Given | a card the bank will decline |
 | When | checkout runs |
 | Then | the order is left awaiting payment |
+--- docs/contract/cli.md ---
+# CLI
+
+The commands the executable answers.
+
+| Contract | Description |
+| --- | --- |
+| verify | Check the source against the specification. |
 --- a second run brings the document up to date ---
 rendered docs/glossary.md
+rendered docs/contract/cli.md
 rendered docs/behavior/checkout.md
 rendered docs/behavior/refund.md
 exit=0
@@ -37,11 +47,13 @@ exit=0
 | Order | What a customer asks us to fulfil. |
 | Refund | Money returned after an order is settled. |
 --- a specification the configuration switched off is not rendered ---
+rendered docs/contract/cli.md
 rendered docs/behavior/checkout.md
 rendered docs/behavior/refund.md
 exit=0
 stale
 --- a specification that could not be read stops that mechanism and no other ---
 rendered docs/glossary.md
+rendered docs/contract/cli.md
 .spec/behavior/broken.json is not readable JSON
 exit=2

@@ -58,6 +58,13 @@
       ],
       "when": "`sumi render` runs",
       "then": "the file is named as one that could not be read"
+    },
+    {
+      "id": "R-007",
+      "title": "One document per kind of contract",
+      "given": ["a contract specification registering interfaces"],
+      "when": "`sumi render` runs",
+      "then": "each definition is written to a document named after the file registering it"
     }
   ]
 }

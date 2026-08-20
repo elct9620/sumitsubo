@@ -40,6 +40,13 @@
       ],
       "when": "`sumi init` runs",
       "then": "a behavior directory is created at the configured root"
+    },
+    {
+      "id": "I-005",
+      "title": "The first run lays down somewhere for contracts to go",
+      "given": ["a directory with no specification"],
+      "when": "`sumi init` runs",
+      "then": "a contract directory is created at the configured root"
     }
   ]
 }

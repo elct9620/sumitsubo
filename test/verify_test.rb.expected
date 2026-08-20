@@ -29,6 +29,13 @@ exit=2
 app/broken.rb: cannot be parsed by the ruby grammar
 1 difference
 exit=2
+--- an interface nothing claims, one claimed twice, and a claim registered nowhere ---
+.spec/contract/cli.json:8 verify is claimed nowhere in src/*.rb
+src/commands.rb:3 @command init is claimed at src/commands.rb:7 as well
+src/commands.rb:7 @command init is claimed at src/commands.rb:3 as well
+src/commands.rb:12 @command render resolves to no contract
+3 differences
+exit=2
 --- no specification at all ---
 no specification at .spec
 exit=2
@@ -37,6 +44,7 @@ no specification at nope
 exit=2
 --- what init lays down verifies clean ---
 created .spec/glossary.json
+created .spec/contract
 created .spec/behavior
 exit=0
 0 differences

@@ -46,6 +46,14 @@ Dir.chdir("test/fixtures/unparseable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# One run answers all three: `verify` is registered and claimed nowhere, `init`
+# is claimed twice, and `render` is claimed but registered nowhere.
+# @behavior V-012 V-013 V-014
+puts "--- an interface nothing claims, one claimed twice, and a claim registered nowhere ---"
+Dir.chdir("test/fixtures/contracted")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

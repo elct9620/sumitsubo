@@ -73,13 +73,28 @@ File.write(".spec/behavior/refund.json", <<~JSON)
   }
 JSON
 
-# @behavior R-001 R-002
+(Pathname.pwd / ".spec" / "contract").mkpath
+File.write(".spec/contract/cli.json", <<~JSON)
+  {
+    "name": "CLI",
+    "description": "The commands the executable answers.",
+    "marker": "@command",
+    "include": ["src/*.rb"],
+    "contracts": [
+      { "name": "verify", "description": "Check the source against the specification." }
+    ]
+  }
+JSON
+
+# @behavior R-001 R-002 R-007
 puts "--- the structured specification becomes documents ---"
 puts "exit=#{cli.run(["render"])}"
 puts "--- docs/glossary.md ---"
 print File.read("docs/glossary.md")
 puts "--- docs/behavior/checkout.md ---"
 print File.read("docs/behavior/checkout.md")
+puts "--- docs/contract/cli.md ---"
+print File.read("docs/contract/cli.md")
 
 # @behavior R-005
 puts "--- a second run brings the document up to date ---"

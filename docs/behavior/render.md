@@ -49,3 +49,11 @@ Rendering the structured specification into documents a person reads.
 | Given | a behavior specification that is not readable JSON |
 | When | `sumi render` runs |
 | Then | the file is named as one that could not be read |
+
+## R-007 — One document per kind of contract
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract specification registering interfaces |
+| When | `sumi render` runs |
+| Then | each definition is written to a document named after the file registering it |
