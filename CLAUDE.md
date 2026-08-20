@@ -40,9 +40,18 @@ comment the project holds.
 ## Glossary
 
 The vocabulary lives in `.spec/glossary.json`, checked against this file, the
-behavior specifications, and the comments under `sumitsubo/`. A term earns a
-rejected word when the project has actually drifted on it; the rest name what
-the project means and reject nothing, which the tool carries without checking.
+behavior specifications, the comments under `sumitsubo/`, and `docs/glossary.md`.
+A term earns a rejected word when the project has actually drifted on it; the
+rest name what the project means and reject nothing, which the tool carries
+without checking.
+
+That last file is the vocabulary checking its own definitions, which cannot be
+done at the source: `.spec/glossary.json` holds the words it rejects, so a file
+naming itself would report every one of them. The rendered document leaves them
+out, and that is what makes it checkable. A finding there answers at a derived
+file and the fix belongs in the specification it came from. The rendered
+behavior documents stay out of scope, since their source is already in it and
+two findings for one drift are noise.
 
 A rejected word carries the reason it is rejected, and that reason says why
 that word is wrong rather than why the term is right. What the term means

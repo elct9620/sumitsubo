@@ -1,7 +1,7 @@
 {
   "glossary": [
     {
-      "include": ["CLAUDE.md", "README.md", ".spec/behavior/*.json", "sumitsubo/**/*.rb"],
+      "include": ["CLAUDE.md", "README.md", ".spec/behavior/*.json", "sumitsubo/**/*.rb", "docs/glossary.md"],
       "terms": [
         {
           "term": "Specification",
