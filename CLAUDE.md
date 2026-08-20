@@ -71,6 +71,14 @@ records it still needs. A project that has said nothing is not misconfigured,
 so an absent `.sumi.json` answers the defaults; only an unreadable one stops
 the run.
 
+A specification that is not there is a different question, and not every
+mechanism answers it the same way. `init` lays down what each starts from, so
+a root without `glossary.json` is one something removed, and the run stops
+rather than pass an absent reference line off as agreement. `behavior/` cannot
+say the same: git carries no empty directory, so a fresh clone of a project
+that committed what `init` laid down arrives without one, and declaring no
+scenarios is what keeps every such clone from failing.
+
 `.spec` is the default for two reasons, both about what else claims the name:
 `spec/` is RSpec's, and Spinel scans directories that do not start with a dot,
 so a specification directory without one would be swept in as source.
