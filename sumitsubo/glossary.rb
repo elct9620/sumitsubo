@@ -32,7 +32,7 @@ module Sumitsubo
     # The mechanism names its own file; where the root sits is the tool's to
     # say, so it arrives as an argument.
     def self.path_in(root)
-      Pathname.new(root).join(FILE).to_s
+      (Pathname.new(root) / FILE).to_s
     end
 
     def self.load(path)
