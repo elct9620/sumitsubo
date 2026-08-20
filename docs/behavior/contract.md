@@ -18,13 +18,13 @@ The interfaces a project registers, and what source claims to implement them.
 | When | the directory is loaded |
 | Then | no contracts are registered |
 
-## T-003 — The words to look for, and the files to look in
+## T-003 — The words to look for
 
 | Step | Statement |
 | --- | --- |
-| Given | definitions naming their markers and the files they cover |
-| When | the words and the scope are asked for |
-| Then | each answers the union across every definition, without repeats |
+| Given | definitions naming their markers, two of them sharing one |
+| When | the words are asked for |
+| Then | each word answers once, however many definitions claim it |
 
 ## T-004 — The same name under two markers
 
@@ -105,3 +105,11 @@ The interfaces a project registers, and what source claims to implement them.
 | Given | a definition registering interfaces with descriptions |
 | When | it is rendered |
 | Then | the page carries the names and what each is for, and neither the marker nor the globs |
+
+## T-014 — The files to look in
+
+| Step | Statement |
+| --- | --- |
+| Given | definitions whose includes cover different directories |
+| When | the scope is asked for |
+| Then | the union of every include answers, without repeats |

@@ -19,10 +19,10 @@
     },
     {
       "id": "T-003",
-      "title": "The words to look for, and the files to look in",
-      "given": ["definitions naming their markers and the files they cover"],
-      "when": "the words and the scope are asked for",
-      "then": "each answers the union across every definition, without repeats"
+      "title": "The words to look for",
+      "given": ["definitions naming their markers, two of them sharing one"],
+      "when": "the words are asked for",
+      "then": "each word answers once, however many definitions claim it"
     },
     {
       "id": "T-004",
@@ -93,6 +93,13 @@
       "given": ["a definition registering interfaces with descriptions"],
       "when": "it is rendered",
       "then": "the page carries the names and what each is for, and neither the marker nor the globs"
+    },
+    {
+      "id": "T-014",
+      "title": "The files to look in",
+      "given": ["definitions whose includes cover different directories"],
+      "when": "the scope is asked for",
+      "then": "the union of every include answers, without repeats"
     }
   ]
 }

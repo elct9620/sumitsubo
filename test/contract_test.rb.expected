@@ -6,8 +6,10 @@ CLI @command ["src/*.rb"]
   test/fixtures/contract/.spec/contract/cli.json:8 verify — Check the source against the specification.
 Routes @route ["app/*.rb"]
   test/fixtures/contract/.spec/contract/routes.json:7 GET /users/:id — One user.
-keywords ["@command", "@route"]
-scope ["test/fixtures/contract/app/controller.rb", "test/fixtures/contract/src/commands.rb"]
+--- the words to look for ---
+["@command", "@route"]
+--- the files to look in ---
+["test/fixtures/contract/app/controller.rb", "test/fixtures/contract/src/commands.rb"]
 --- a directory nobody wrote registers no contracts ---
 []
 --- the same name under two markers is two contracts ---

@@ -20,7 +20,7 @@ rescue Sumitsubo::Contract::Error => e
   puts e.message
 end
 
-# @behavior T-001 T-003
+# @behavior T-001
 puts "--- what the directory registers, and where ---"
 definitions = Sumitsubo::Contract.load("#{FIXTURE}/.spec/contract")
 definitions.each do |definition|
@@ -29,8 +29,14 @@ definitions.each do |definition|
     puts "  #{interface.path}:#{interface.line} #{interface.name} — #{interface.description}"
   end
 end
-puts "keywords #{Sumitsubo::Contract.keywords(definitions).inspect}"
-puts "scope #{Sumitsubo::Contract.scope(definitions, Pathname.new(FIXTURE)).inspect}"
+# Two definitions share `@route`, and the word answers once.
+# @behavior T-003
+puts "--- the words to look for ---"
+puts Sumitsubo::Contract.keywords(definitions).inspect
+
+# @behavior T-014
+puts "--- the files to look in ---"
+puts Sumitsubo::Contract.scope(definitions, Pathname.new(FIXTURE)).inspect
 
 # @behavior T-002
 puts "--- a directory nobody wrote registers no contracts ---"
