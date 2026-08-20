@@ -26,6 +26,11 @@ verification catches up to it, never ahead of it: a specification the tool
 cannot verify is a document, not a reference line. Until a mechanism can check
 it, the absence of a specification here is deliberate.
 
+`.spec/behavior/` therefore arrived with the Behavior mechanism and not before,
+and `.spec/glossary.json` is empty because the Glossary round has not been
+taken: an empty vocabulary is what the tool itself lays down, and it says
+nothing rather than saying something unverified.
+
 ## Glossary
 
 | Term                       | Description                                                                                                          |
@@ -79,11 +84,48 @@ through its syntax tree, and any other file entire, since prose is a comment
 for its whole length. An identifier is a spelling of a concept rather than the
 concept's name, so counting one would flag every legitimate class in the tree.
 
+## Behavior
+
+What this establishes is that a behavior was **read and implemented**, never
+that the implementation is right. Nothing mechanical can judge whether the code
+under a claim does what the claim says, so that one sentence licenses
+everything the mechanism cannot check.
+
+`behavior/` under the root holds one file per feature; a behavior file plays
+the role a glossary section plays, carrying its own `include`, and the union of
+those is what gets searched. `.spec/behavior/` is the worked example. Source
+claims a scenario in the comment in front of the code implementing it —
+`# @behavior V-008 V-009`.
+
+The model is Gherkin's, not its file format: these scenarios are read rather
+than executed, so `.feature` would buy nothing the other mechanisms could
+share. `given` is a list with no limit. `when` and `then` are one sentence
+each, which three disciplines make reachable rather than a cap that turns work
+away:
+
+- The operation under test is the last one; everything before it is `given`.
+- An outcome is what one observation settles — two observations are two
+  scenarios, repeating their `given` and `when`.
+- `then` names the observable difference and stops. Not the exit code, which
+  Output governs and which follows from which of the three a `then` names; not
+  the reason, which belongs to the title. The reason is the one that creeps
+  back in.
+
+An id is unique across the whole directory, since a claim carries only the id
+and a referent that is not unique resolves to nothing.
+
+A scenario nothing claims is a difference, answered at the line of the
+specification declaring it, because that is where a reader chooses between
+writing the test and dropping the scenario. A claim resolving to no scenario is
+not one: there is nothing on the specification side to compare it against.
+Both collect before reporting, the way a linter does, so a renamed id is fixed
+in one pass.
+
 ## Features
 
 | Feature | Description                                                          |
 |---------|----------------------------------------------------------------------|
-| Init    | Write an empty glossary specification to start a reference line from. |
+| Init    | Lay down an empty specification to start a reference line from.      |
 | Render  | Render the structured specification to the markdown specification.   |
 | Verify  | Verify the source code is aligned with the verifiable specification. |
 
@@ -96,11 +138,13 @@ however often the word appears on it: the line is what a reader goes to, and
 what an exclusion would one day be written against.
 
 The run answers 0 where the two sides agree, 1 where they differ, and 2 where
-the comparison could not be made — no root to verify from, a specification
-missing from one that is there, an unreadable `.sumi.json`, or source the
-grammar could not read. A difference is a finding about the code; being
-unable to compare is not, and an operator branches on which it got. Findings
-and failures share stdout, the test harness comparing the two streams merged.
+the comparison could not be made — whatever had to be read first was absent,
+unreadable, or ambiguous — three words standing in for a list that grows with
+every mechanism. A difference is a finding about the code; being unable to
+compare is not, and an operator branches on which it got. A run with both
+answers 2, having nothing yet to say about differences it cannot trust.
+Findings and failures share stdout, the test harness comparing the two streams
+merged.
 
 ## Comments
 
@@ -138,8 +182,10 @@ The command is `sumi`, shipped as a single native executable.
 - `spin test --regen` writes that snapshot by running the same file under
   CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
-  that way; today that is every test except `config_test.rb`, which is why
-  nothing in `sumitsubo/config.rb` names a mechanism. Where no snapshot is
+  that way. A file reaching it through its requires counts, which is why
+  `sumitsubo/config.rb` names no mechanism and `sumitsubo/behavior.rb` names no
+  grammar: keeping the specification side apart from the side that reads source
+  is what leaves `config_test.rb` and `behavior_test.rb` able to regenerate. Where no snapshot is
   committed the run is compared against CRuby rather than failing, and a test
   that asserts nothing passes.
 - `--regen` takes no file, so it rewrites every snapshot including the
