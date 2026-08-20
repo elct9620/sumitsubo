@@ -1,3 +1,48 @@
 {
-  "glossary": []
+  "glossary": [
+    {
+      "include": ["CLAUDE.md", ".spec/behavior/*.json", "sumitsubo/**/*.rb"],
+      "terms": [
+        {
+          "term": "Specification",
+          "definition": "What a project declares its source should stay aligned with. Structured today; the .md is what Render will produce from it.",
+          "not": []
+        },
+        {
+          "term": "Structured Specification",
+          "definition": "The machine-readable file a mechanism reads: .spec/glossary.json, and one file per feature under .spec/behavior/.",
+          "not": []
+        },
+        {
+          "term": "Verifiable Specification",
+          "definition": "The part of the structured specification a mechanism can check against source code.",
+          "not": []
+        },
+        {
+          "term": "Source Code",
+          "definition": "The code verified against the specification. Glossary and Contract verify the implementation, Behavior the tests.",
+          "not": []
+        },
+        {
+          "term": "Syntax Tree",
+          "definition": "What tree-sitter answers for a source file: every token kept, comments included.",
+          "not": [
+            {
+              "term": "AST",
+              "reason": "An abstract tree drops the comments, which are the only thing Glossary reads."
+            }
+          ]
+        },
+        {
+          "term": "Behavior",
+          "definition": "A scenario the specification declares in a BDD style, claimed by the test that implements it.",
+          "not": [
+            { "term": "behaviour", "reason": "Behavior is the spelling every identifier here uses." },
+            { "term": "Behaviour", "reason": "Behavior is the spelling every identifier here uses." },
+            { "term": "behaviours", "reason": "Behaviors is the spelling every identifier here uses." }
+          ]
+        }
+      ]
+    }
+  ]
 }

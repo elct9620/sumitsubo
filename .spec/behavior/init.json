@@ -34,12 +34,12 @@
     },
     {
       "id": "I-004",
-      "title": "The first run lays down somewhere for behaviours to go",
+      "title": "The first run lays down somewhere for behaviors to go",
       "given": [
         "a directory with no specification"
       ],
       "when": "`sumi init` runs",
-      "then": "a behaviour directory is created at the configured root"
+      "then": "a behavior directory is created at the configured root"
     }
   ]
 }

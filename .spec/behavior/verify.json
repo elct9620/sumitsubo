@@ -32,22 +32,22 @@
     },
     {
       "id": "V-004",
-      "title": "Every declared behaviour is claimed",
-      "given": ["a behaviour specification whose every scenario is claimed by source in scope"],
+      "title": "Every declared behavior is claimed",
+      "given": ["a behavior specification whose every scenario is claimed by source in scope"],
       "when": "`sumi verify` runs",
       "then": "no difference is reported between the two sides"
     },
     {
       "id": "V-005",
       "title": "A scenario nothing claims",
-      "given": ["a behaviour specification with a scenario no source in scope claims"],
+      "given": ["a behavior specification with a scenario no source in scope claims"],
       "when": "`sumi verify` runs",
       "then": "the scenario is reported at the line of the specification that declares it, naming the scope that was searched"
     },
     {
       "id": "V-006",
       "title": "A claim resolving to no scenario",
-      "given": ["source claiming an id no behaviour specification declares"],
+      "given": ["source claiming an id no behavior specification declares"],
       "when": "`sumi verify` runs",
       "then": "the claim is reported at the line it sits on as resolving to no scenario"
     },
@@ -74,8 +74,8 @@
     },
     {
       "id": "V-010",
-      "title": "A clone that arrived without the empty behaviour directory",
-      "given": ["a project whose behaviour directory git did not carry"],
+      "title": "A clone that arrived without the empty behavior directory",
+      "given": ["a project whose behavior directory git did not carry"],
       "when": "`sumi verify` runs",
       "then": "no difference is reported"
     },

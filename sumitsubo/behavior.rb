@@ -73,7 +73,7 @@ module Sumitsubo
       found.uniq.sort
     end
 
-    # A scenario nothing claims: the specification says a behaviour should be
+    # A scenario nothing claims: the specification says a behavior should be
     # implemented and no source in scope claims it, which is a difference
     # between the two sides.
     def self.uncovered(features, claims)
@@ -93,7 +93,7 @@ module Sumitsubo
 
     # A claim resolving to no scenario. Nothing on the specification side can
     # confirm it — either the specification is not there to confirm against, or
-    # the behaviour was removed and this claim should have gone with it. Both
+    # the behavior was removed and this claim should have gone with it. Both
     # are comparisons that could not be made rather than differences.
     def self.unresolved(features, claims)
       declared = {}

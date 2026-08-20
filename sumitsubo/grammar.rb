@@ -20,7 +20,7 @@ module Sumitsubo
     # identifier.
     COMMENTS = "(comment) @text"
 
-    # A comment with something after it. A behaviour is claimed in front of the
+    # A comment with something after it. A behavior is claimed in front of the
     # code that implements it, so a comment nothing follows claims nothing.
     # The anchor only excludes that orphan: a comment followed by another
     # comment is still a match, which is as far as this needs to reach.

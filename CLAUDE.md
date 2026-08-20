@@ -26,20 +26,23 @@ verification catches up to it, never ahead of it: a specification the tool
 cannot verify is a document, not a reference line. Until a mechanism can check
 it, the absence of a specification here is deliberate.
 
+What the rule governs is a claim. A scenario asserts that a behavior was
+implemented, so writing one no mechanism can check is a promise nobody holds.
+A term that rejects nothing asserts nothing about the code — it names what the
+project means — and there is no unchecked promise in naming.
+
 `.spec/behavior/` therefore arrived with the Behavior mechanism and not before,
-and `.spec/glossary.json` is empty because the Glossary round has not been
-taken: an empty vocabulary is what the tool itself lays down, and it says
-nothing rather than saying something unverified.
+and `.spec/glossary.json` stayed empty until this project had words worth
+rejecting. The vocabulary moved out of this file to sit beside them: a term
+written here is prose, and the same term written there is checked against every
+comment the project holds.
 
 ## Glossary
 
-| Term                       | Description                                                                                                          |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------|
-| Specification              | The .md file(s) which describes the behavior of the application.                                                     |
-| Structured Specification   | The machine-readable file(s) which can generate the .md specification or render as the part of the specification.    |
-| Verifiable Specification   | The part of the structured specification a mechanism can check against source code.                                  |
-| Source Code                | The code which is verified by the specification. Glossary and Contract verify the implementation, Behavior the tests. |
-| AST (Abstract Syntax Tree) | The tree structure which represents the source code.                                                                 |
+The vocabulary lives in `.spec/glossary.json`, checked against this file, the
+behavior specifications, and the comments under `sumitsubo/`. A term earns a
+rejected word when the project has actually drifted on it; the rest name what
+the project means and reject nothing, which the tool carries without checking.
 
 ## How it works
 
@@ -161,7 +164,7 @@ the reason, the comment points at it rather than repeating it.
 
 Three things earn more room:
 
-- Behaviour a reader would otherwise take for a mistake and remove.
+- Behavior a reader would otherwise take for a mistake and remove.
 - An intent that needs an example to be readable.
 - A piece of specification, such as a binary layout.
 
@@ -224,7 +227,7 @@ AOT compiler for Ruby. Its constraints shape the design:
 - Those packages are Spinel's own implementations, and some are subsets:
   optparse drops option descriptions from `to_s` and lets an unknown flag
   through instead of raising. A snapshot taken from CRuby can therefore record
-  behaviour the executable does not have.
+  behavior the executable does not have.
 - `Pathname#join` reduces with `acc + part`, and once the accumulator loses
   its type that `+` dispatches to String, so it answers a String. `#/` and
   `#+` answer a Pathname on every branch, which is what the next call in a

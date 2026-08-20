@@ -1,26 +1,26 @@
 {
-  "name": "Behaviour",
+  "name": "Behavior",
   "description": "The scenarios a project declares, and where each one sits.",
   "include": ["test/behavior_test.rb"],
   "scenarios": [
     {
       "id": "B-001",
       "title": "What the directory declares, and where",
-      "given": ["a behaviour directory holding more than one specification"],
+      "given": ["a behavior directory holding more than one specification"],
       "when": "the directory is loaded",
       "then": "every scenario answers with the line of the file that declares it"
     },
     {
       "id": "B-002",
       "title": "A directory nobody wrote",
-      "given": ["a behaviour directory that is not there"],
+      "given": ["a behavior directory that is not there"],
       "when": "the directory is loaded",
       "then": "no scenario is declared"
     },
     {
       "id": "B-003",
       "title": "The root arrives absolute",
-      "given": ["a behaviour directory named by an absolute path"],
+      "given": ["a behavior directory named by an absolute path"],
       "when": "a message about one of its scenarios is composed",
       "then": "the path answers relative to where the run started"
     },
@@ -41,7 +41,7 @@
     {
       "id": "B-006",
       "title": "A specification that will not parse",
-      "given": ["a behaviour specification that is not readable JSON"],
+      "given": ["a behavior specification that is not readable JSON"],
       "when": "the directory is loaded",
       "then": "the file is named as unreadable"
     }

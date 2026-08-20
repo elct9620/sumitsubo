@@ -4,7 +4,7 @@ require "sumitsubo/grammar"
 module Sumitsubo
   # What a piece of source claims to implement. The claim sits in the comment
   # in front of the code, which is as far as a mechanical check reaches: it
-  # establishes that a behaviour was read and implemented, never that the
+  # establishes that a behavior was read and implemented, never that the
   # implementation is right.
   #
   # The keyword arrives as an argument because the mechanism names its own —
