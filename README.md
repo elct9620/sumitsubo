@@ -46,20 +46,34 @@ where the comparison could not be made — whatever had to be read first was
 absent, unreadable, or ambiguous. Findings answer as `path:line`, relative to
 where the run started.
 
+`sumi render` writes the specification out as something to read. It compares
+nothing, so it answers `0` or `2`:
+
+```console
+$ sumi render
+rendered docs/glossary.md
+rendered docs/behavior/verify.md
+```
+
 ### Configuration
 
-`.sumi.json` says where the specifications live and which of them a run
-verifies. A project that has said nothing gets the defaults.
+`.sumi.json` says where the specifications live, where the documents go, and
+which of them a run verifies or renders. A project that has said nothing gets
+the defaults.
 
 ```json
 {
   "root": ".spec",
+  "docs": "docs",
   "specifications": { "glossary": { "verify": false } }
 }
 ```
 
-`specifications` lists only the exceptions: one nobody mentions is verified,
-and `verify: false` keeps a specification without checking it. A run reads the
+`root` is where the specifications live and `docs` is where `sumi render`
+writes, both answered against the directory holding the `.sumi.json`.
+`specifications` lists only the exceptions: one nobody mentions is both
+verified and rendered, `verify: false` keeps a specification without checking
+it, and `render: false` keeps it out of the documents. A run reads the
 configuration from the nearest `.sumi.json` at or above where it started,
 failing that the repository it sits in.
 
@@ -124,6 +138,16 @@ there is nothing on the specification side to compare it against.
 What this establishes is that a behavior was read and implemented, never that
 the implementation is right.
 
+### Render
+
+`sumi render` writes `glossary.md` and one file per feature under `behavior/`,
+named after the file declaring it. A document carries what the specification
+means — terms and their definitions, scenarios as tables — and not what the
+tool needs in order to find things, so the words a glossary rejects and the
+`include` globs stay out. Documents are derived, so a run replaces what the
+last one wrote, and a specification that is not there is passed over rather
+than reported.
+
 ## Development
 
 Sumitsubo is compiled by [Spinel](https://github.com/matz/spinel), an AOT
@@ -139,7 +163,8 @@ $ ./build/bin/sumi verify
 ```
 
 That last line is the project verifying its own specification, which CI runs on
-every push.
+every push. `docs/` is this project rendering its own, and is committed, so a
+change to `.spec/` is followed by `./build/bin/sumi render`.
 
 ## License
 

@@ -1,6 +1,6 @@
 {
   "name": "Render",
-  "description": "Rendering the structured specification to the markdown specification.",
+  "description": "Rendering the structured specification into documents a person reads.",
   "include": [
     "test/render_test.rb"
   ],

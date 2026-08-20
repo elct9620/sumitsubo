@@ -4,7 +4,7 @@ require "sumitsubo/mechanism"
 
 module Sumitsubo
   module Command
-    # Render the structured specification to the markdown specification.
+    # Render the structured specification into documents a person reads.
     #
     # A document is derived, so a run replaces what the last one wrote. What
     # Init refuses to overwrite is a reference line; this is not one.

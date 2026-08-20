@@ -5,12 +5,17 @@
       "terms": [
         {
           "term": "Specification",
-          "definition": "What a project declares its source should stay aligned with. Structured today; the .md is what Render will produce from it.",
+          "definition": "What a project declares its source should stay aligned with. It is the structured files; what Render writes from them is a Document.",
           "not": []
         },
         {
           "term": "Structured Specification",
           "definition": "The machine-readable file a mechanism reads: .spec/glossary.json, and one file per feature under .spec/behavior/.",
+          "not": []
+        },
+        {
+          "term": "Document",
+          "definition": "What Render writes for a person to read: the half of the specification that says what it means, without what the tool needs in order to find things.",
           "not": []
         },
         {

@@ -44,6 +44,10 @@ behavior specifications, and the comments under `sumitsubo/`. A term earns a
 rejected word when the project has actually drifted on it; the rest name what
 the project means and reject nothing, which the tool carries without checking.
 
+A rejected word carries the reason it is rejected, and that reason says why
+that word is wrong rather than why the term is right. What the term means
+belongs in its definition, which is the half a document carries.
+
 ## How it works
 
 Sumitsubo reads the structured specification and checks the source code
@@ -60,16 +64,21 @@ This is the convention tsc and RuboCop both follow.
 ```json
 {
   "root": ".spec",
+  "docs": "docs",
   "specifications": { "glossary": { "verify": false } }
 }
 ```
 
-`root` is where the specifications live, `.spec` by default. `specifications`
-lists only the exceptions: one nobody mentions is verified, and `verify:
-false` keeps a specification without checking it — which a Render that only
-records it still needs. A project that has said nothing is not misconfigured,
-so an absent `.sumi.json` answers the defaults; only an unreadable one stops
-the run.
+`root` is where the specifications live, `.spec` by default, and `docs` is
+where Render writes, `docs` by default.
+
+`specifications` lists only the exceptions: one nobody mentions is both
+verified and rendered. The two switches sit in the same entry and are
+independent — `verify: false` keeps a specification without checking it, which
+a Render that only records it still needs, and `render: false` keeps one out of
+the documents without stopping the check. A project that has said nothing is
+not misconfigured, so an absent `.sumi.json` answers the defaults; only an
+unreadable one stops the run.
 
 A specification that is not there is a different question, and not every
 mechanism answers it the same way. `init` lays down what each starts from, so
@@ -132,12 +141,39 @@ not one: there is nothing on the specification side to compare it against.
 Both collect before reporting, the way a linter does, so a renamed id is fixed
 in one pass.
 
+## Render
+
+Render writes the structured specification out as something a person reads:
+`glossary.md` under the documents path, and one file per feature under
+`behavior/` named after the file declaring it.
+
+A document carries what the specification means, not what the tool needs in
+order to find things. A glossary renders its terms and their definitions; the
+words it rejects stay out, because they record where this project drifted
+rather than what the vocabulary is, and a reader is handed one at the line it
+was tripped on instead. The `include` globs stay out for the same reason: they
+say where to look. Structured fields become tables, and a scenario is sentences
+rather than fields, so its table carries one step per row.
+
+A document is derived, so a run replaces what the last one wrote. What `init`
+refuses to overwrite is a reference line, and this is not one.
+
+An absent specification is nothing to render rather than a comparison that
+could not be made, so it is passed over in silence. Render records where Verify
+certifies, and the run that would otherwise pass an absent reference line off
+as agreement is `verify`, which still stops.
+
+Templates are the obvious way to word these pages, and would let a project word
+its own. Spinel's `erb` is a placeholder that answers the template unchanged,
+so the wording is built in the mechanism and stays there until there is an
+engine to move it to.
+
 ## Features
 
 | Feature | Description                                                          |
 |---------|----------------------------------------------------------------------|
 | Init    | Lay down an empty specification to start a reference line from.      |
-| Render  | Render the structured specification to the markdown specification.   |
+| Render  | Render the structured specification into documents a person reads.   |
 | Verify  | Verify the source code is aligned with the verifiable specification. |
 
 ## Output
@@ -158,6 +194,10 @@ refuses to certify it. A mechanism that could not be read stops that mechanism
 and no other, the way a linter reports every file it managed to parse.
 Findings and failures share stdout, the test harness comparing the two streams
 merged.
+
+Render reads the same ladder one rung short. It compares nothing, so it never
+answers 1, and its 0 says every document it had to write is written. What it
+could not read answers 2 as everywhere else.
 
 ## Comments
 
