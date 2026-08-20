@@ -1,4 +1,4 @@
-require "pathname"
+require "sumitsubo/where"
 require "sumitsubo/report"
 require "sumitsubo/mechanism"
 
@@ -14,7 +14,7 @@ module Sumitsubo
         # With no root there is no reference line at all to verify from, which
         # is not a difference between the two sides either.
         unless config.root.directory?
-          puts "no specification at #{config.root.relative_path_from(Pathname.pwd)}"
+          puts "no specification at #{Where.of(config.root)}"
           return 2
         end
 

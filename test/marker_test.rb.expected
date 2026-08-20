@@ -11,3 +11,7 @@ test/fixtures/behavior/test/init_test.rb:10 I-003
 []
 --- source the grammar cannot read is not a claim of anything ---
 test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
+--- a path that arrives absolute still answers where the run started ---
+test/fixtures/behavior/test/init_test.rb:2 I-001
+test/fixtures/behavior/test/init_test.rb:4 I-002
+test/fixtures/behavior/test/init_test.rb:10 I-003

@@ -1,4 +1,5 @@
 require "sumitsubo/error"
+require "sumitsubo/where"
 require "sumitsubo/grammar"
 
 module Sumitsubo
@@ -20,21 +21,24 @@ module Sumitsubo
     def self.claims_in(path, keyword)
       return [] unless path.end_with?(".rb")
 
+      # A caller reaching a mechanism other than Behavior has no reason to have
+      # rendered the path first, so the reading owns how it answers.
+      where = Where.of(path)
       claims = []
-      comments_in(path).each do |comment|
+      comments_in(path, where).each do |comment|
         line = comment.line
         # A comment spanning lines arrives whole, so the claim answers at the
         # line the keyword is on rather than where the comment began.
         comment.text.split("\n").each do |text|
-          ids_in(text, keyword).each { |id| claims.push(Claim.new(path, line, id)) }
+          ids_in(text, keyword).each { |id| claims.push(Claim.new(where, line, id)) }
           line += 1
         end
       end
       claims
     end
 
-    def self.comments_in(path)
-      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::ATTACHED, path)
+    def self.comments_in(path, where)
+      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::ATTACHED, where)
     rescue TreeSitter::ParseError => e
       # Source the grammar cannot read is not a difference between the two
       # sides: half a file yields claims the rest of it never made.

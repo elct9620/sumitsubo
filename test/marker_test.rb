@@ -1,3 +1,4 @@
+require "pathname"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
 
@@ -36,3 +37,10 @@ begin
 rescue Sumitsubo::Marker::Error => e
   puts e.message
 end
+
+# A caller reaching a mechanism other than Behavior has no reason to have
+# rendered the path first, so the reading answers for itself.
+# @behavior M-008
+puts "--- a path that arrives absolute still answers where the run started ---"
+claims(Pathname.new("test/fixtures/behavior/test/init_test.rb").expand_path.to_s)
+  .each { |line| puts line }

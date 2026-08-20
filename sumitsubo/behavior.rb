@@ -1,6 +1,7 @@
 require "json"
 require "pathname"
 require "sumitsubo/error"
+require "sumitsubo/where"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -67,7 +68,7 @@ module Sumitsubo
       found = []
       features.each do |feature|
         feature.includes.each do |pattern|
-          base.glob(pattern).each { |path| found.push(shown(path)) }
+          base.glob(pattern).each { |path| found.push(Where.of(path)) }
         end
       end
       found.uniq.sort
@@ -85,7 +86,7 @@ module Sumitsubo
         feature.scenarios.each do |scenario|
           next unless claimed[scenario.id].nil?
 
-          found.push(Finding.new(shown(scenario.path), scenario.line, scenario.id, feature.includes))
+          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id, feature.includes))
         end
       end
       found
@@ -126,7 +127,7 @@ module Sumitsubo
         id = raw["id"]
         # A scenario nothing can name is unreferenceable, which is the same
         # ambiguity a duplicate is rather than a difference to report.
-        raise Error, "#{shown(path)} declares a scenario with no \"id\"" if id.nil?
+        raise Error, "#{Where.of(path)} declares a scenario with no \"id\"" if id.nil?
 
         scenarios.push(scenario_from(path, raw, lines[id]))
       end
@@ -189,18 +190,11 @@ module Sumitsubo
     rescue JSON::ParserError
       # The parser's own wording is Spinel's rather than CRuby's, so it stays
       # out of a message a snapshot has to match on both.
-      raise Error, "#{shown(path)} is not readable JSON"
+      raise Error, "#{Where.of(path)} is not readable JSON"
     end
 
     def self.at(scenario)
-      "#{shown(scenario.path)}:#{scenario.line}"
-    end
-
-    # Answered the way a finding is, relative to where the run started, so a
-    # reader can go straight to it — see the Output section of CLAUDE.md. The
-    # root arrives absolute, which is why expanding comes first.
-    def self.shown(path)
-      "#{Pathname.new(path).expand_path.relative_path_from(Pathname.pwd)}"
+      "#{Where.of(scenario.path)}:#{scenario.line}"
     end
   end
 end

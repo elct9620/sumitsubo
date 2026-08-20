@@ -1,6 +1,7 @@
 require "json"
 require "pathname"
 require "sumitsubo/error"
+require "sumitsubo/where"
 
 module Sumitsubo
   # What the project says about where its specifications live and which of them
@@ -43,7 +44,7 @@ module Sumitsubo
       # The parser's own wording is Spinel's rather than CRuby's, so it stays
       # out of a message a snapshot has to match on both. The path is answered
       # the way a finding is, relative to where the run started.
-      raise Error, "#{path.relative_path_from(Pathname.pwd)} is not readable JSON"
+      raise Error, "#{Where.of(path)} is not readable JSON"
     end
 
     def initialize(base, document)

@@ -1,6 +1,7 @@
 require "json"
 require "pathname"
 require "sumitsubo/error"
+require "sumitsubo/where"
 require "sumitsubo/grammar"
 
 module Sumitsubo
@@ -36,9 +37,7 @@ module Sumitsubo
     end
 
     def self.load(path)
-      # The root arrives absolute, so every message about it is composed from
-      # the shown form rather than the path itself.
-      where = shown(path)
+      where = Where.of(path)
       raise Error, "no glossary at #{where}" unless File.exist?(path)
 
       begin
@@ -76,14 +75,12 @@ module Sumitsubo
       findings = []
       scope.keys.sort.each do |path|
         file = base / path
-        # Answered the way the Output section of CLAUDE.md asks for: relative
-        # to where the run started, so a reader can go straight to it.
-        shown = "#{file.relative_path_from(Pathname.pwd)}"
-        regions = regions_in(file.to_s, shown)
+        where = Where.of(file.to_s)
+        regions = regions_in(file.to_s, where)
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].disallowed.each do |entry|
-            findings.concat(findings_for(shown, regions, name, entry))
+            findings.concat(findings_for(where, regions, name, entry))
           end
         end
       end
@@ -101,14 +98,14 @@ module Sumitsubo
     # spelling of a concept rather than the concept's name, and counting it
     # would flag every legitimate class in the tree. Anything else is prose,
     # which is a comment for its whole length.
-    def self.regions_in(path, shown)
+    def self.regions_in(path, where)
       return prose_in(path) unless path.end_with?(".rb")
 
-      comments_in(path, shown)
+      comments_in(path, where)
     end
 
-    def self.comments_in(path, shown)
-      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::COMMENTS, shown)
+    def self.comments_in(path, where)
+      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::COMMENTS, where)
                 .map { |capture| Region.new(capture.line, capture.text) }
     rescue TreeSitter::ParseError => e
       # Source the grammar cannot read is not a difference between the two
@@ -163,12 +160,6 @@ module Sumitsubo
         raw["include"] || [],
         (raw["terms"] || []).map { |term| term_from(term) }
       )
-    end
-
-    # Answered the way a finding is, relative to where the run started, so a
-    # reader can go straight to it — see the Output section of CLAUDE.md.
-    def self.shown(path)
-      "#{Pathname.new(path).expand_path.relative_path_from(Pathname.pwd)}"
     end
 
     def self.term_from(raw)
