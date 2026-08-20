@@ -19,9 +19,10 @@ module Sumitsubo
     # What a mechanism has to say on a page. The command writes it, the way
     # Init writes a seed: where a document goes is the tool's to decide.
     #
-    # The path is a String, as a seed's is. A Pathname held in a Struct member
-    # does not survive the loop that built it under Spinel: it answers a later
-    # iteration's value instead, which is why the path is settled here.
+    # A Pathname belongs in the path and does not survive in one: held in a
+    # Struct member under Spinel it answers a later iteration's value. The
+    # String is what that costs, and goes back to a Pathname once the compiler
+    # keeps one.
     Document = Struct.new(:path, :content)
 
     class Glossary
