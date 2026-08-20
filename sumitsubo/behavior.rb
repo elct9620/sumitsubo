@@ -106,6 +106,16 @@ module Sumitsubo
       found
     end
 
+    # The mechanism words its own findings; where each points is the tool's to
+    # shape. See the Output section of CLAUDE.md.
+    def self.describe_uncovered(finding)
+      "#{finding.id} is claimed nowhere in #{finding.scope.join(", ")}"
+    end
+
+    def self.describe_unresolved(claim)
+      "#{claim.id} resolves to no scenario"
+    end
+
     def self.feature_from(path)
       text = File.read(path)
       document = parse(path, text)

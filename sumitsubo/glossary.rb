@@ -88,6 +88,12 @@ module Sumitsubo
       findings.sort_by { |f| [f.path, f.line, f.term, f.used] }
     end
 
+    # The mechanism words its own finding; where it points is the tool's to
+    # shape. See the Output section of CLAUDE.md.
+    def self.describe(finding)
+      "#{finding.term} rejects #{finding.used}: #{finding.reason}"
+    end
+
     # Source code contributes its comments and nothing else: an identifier is a
     # spelling of a concept rather than the concept's name, and counting it
     # would flag every legitimate class in the tree. Anything else is prose,

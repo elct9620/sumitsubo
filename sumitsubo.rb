@@ -1,6 +1,7 @@
 require "sumitsubo/version"
 require "sumitsubo/error"
 require "sumitsubo/config"
+require "sumitsubo/report"
 require "sumitsubo/glossary"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"

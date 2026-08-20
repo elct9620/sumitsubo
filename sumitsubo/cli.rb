@@ -3,6 +3,7 @@ require "pathname"
 require "sumitsubo/version"
 require "sumitsubo/error"
 require "sumitsubo/config"
+require "sumitsubo/report"
 require "sumitsubo/glossary"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
@@ -75,36 +76,23 @@ module Sumitsubo
         return 2
       end
 
-      differences = []
-      glossary_findings(config).each do |f|
-        differences.push([f.path, f.line, "#{f.term} rejects #{f.used}: #{f.reason}"])
+      report = Report.new
+      glossary_findings(config).each do |finding|
+        report.difference(finding.path, finding.line, Glossary.describe(finding))
       end
 
       features = behavior_features(config)
       claims = behavior_claims(features, config)
-      Behavior.uncovered(features, claims).each do |f|
-        differences.push([f.path, f.line, "#{f.id} is claimed nowhere in #{f.scope.join(", ")}"])
+      Behavior.uncovered(features, claims).each do |finding|
+        report.difference(finding.path, finding.line, Behavior.describe_uncovered(finding))
       end
-
       # A claim resolving to no scenario is not a difference: there is nothing
       # on the specification side to compare it against.
-      failures = []
       Behavior.unresolved(features, claims).each do |claim|
-        failures.push([claim.path, claim.line, "#{claim.id} resolves to no scenario"])
+        report.failure(claim.path, claim.line, Behavior.describe_unresolved(claim))
       end
 
-      report(differences + failures)
-      puts "#{differences.length} #{differences.length == 1 ? "difference" : "differences"}"
-      return 2 unless failures.empty?
-
-      differences.empty? ? 0 : 1
-    end
-
-    # One stream, sorted on a key that leaves no ties. Two mechanisms can now
-    # answer about the same line, and the rendered message is what separates
-    # them — see the Output section of CLAUDE.md.
-    def report(rows)
-      rows.sort_by { |row| row }.each { |row| puts "#{row[0]}:#{row[1]} #{row[2]}" }
+      report.answer
     end
 
     # A specification the configuration switched off is never read, so the code
