@@ -24,7 +24,14 @@ module Sumitsubo
           # code it covers answers nothing rather than answering clean.
           next unless config.verify?(mechanism.specification)
 
-          mechanism.verify(config, report)
+          # One mechanism that cannot be read leaves the others still able to
+          # answer, the way a linter reports every file it managed to parse.
+          # What it compares is its own, so what it could not compare is too.
+          begin
+            mechanism.verify(config, report)
+          rescue Sumitsubo::Error => e
+            report.unreadable(e.message)
+          end
         end
         report.answer
       end

@@ -1,0 +1,7 @@
+{
+  "name": "Verify",
+  "include": ["test/*_test.rb"],
+  "scenarios": [
+    { "id": "U-001", "title": "This one nothing claims", "given": [], "when": "`sumi verify` runs", "then": "the difference is reported though the glossary could not be read" }
+  ]
+}

@@ -7,6 +7,7 @@ module Sumitsubo
     def initialize
       @differences = []
       @failures = []
+      @unreadable = []
     end
 
     # The two sides disagree, and the disagreement is about the code.
@@ -20,11 +21,18 @@ module Sumitsubo
       @failures.push([path, line, message])
     end
 
+    # A mechanism nothing could be read from. It answers at no line: what was
+    # absent, unreadable, or ambiguous is named in the message itself.
+    def unreadable(message)
+      @unreadable.push(message)
+    end
+
     def answer
       rows = @differences + @failures
       rows.sort_by { |row| row }.each { |row| puts "#{row[0]}:#{row[1]} #{row[2]}" }
+      @unreadable.sort.each { |message| puts message }
       puts "#{@differences.length} #{@differences.length == 1 ? "difference" : "differences"}"
-      return 2 unless @failures.empty?
+      return 2 unless @failures.empty? && @unreadable.empty?
 
       @differences.empty? ? 0 : 1
     end

@@ -78,6 +78,16 @@
       "given": ["a project whose behaviour directory git did not carry"],
       "when": "`sumi verify` runs",
       "then": "no difference is reported"
+    },
+    {
+      "id": "V-011",
+      "title": "A mechanism that could not be read does not silence the others",
+      "given": [
+        "a project whose glossary names a file the grammar cannot parse",
+        "a scenario in the same project that no source in scope claims"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "the unclaimed scenario is reported alongside the file that could not be read"
     }
   ]
 }

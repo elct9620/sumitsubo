@@ -40,8 +40,8 @@ Dir.chdir("test/fixtures/behavior")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
-# @behavior V-007
-puts "--- source the grammar cannot read is not a difference either ---"
+# @behavior V-007 V-011
+puts "--- a mechanism that cannot be read leaves the others still answering ---"
 Dir.chdir("test/fixtures/unparseable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)

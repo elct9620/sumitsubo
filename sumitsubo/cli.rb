@@ -29,10 +29,10 @@ module Sumitsubo
       else flags(argv)
       end
     rescue Sumitsubo::Error => e
-      # A comparison that could not be made — whatever had to be read first was
-      # absent, unreadable, or ambiguous — is not a difference between the two
-      # sides, so it answers differently from having found one. The three words
-      # stand in for a list that grows with every mechanism.
+      # What a mechanism could not read is its own to report, so what reaches
+      # here is the configuration itself: with nothing to say where the
+      # specifications live, no comparison was ever started — see the Output
+      # section of CLAUDE.md for what that answers.
       puts e.message
       2
     end

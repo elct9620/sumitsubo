@@ -24,8 +24,10 @@ exit=1
 test/verify_test.rb:13 G-404 resolves to no scenario
 0 differences
 exit=2
---- source the grammar cannot read is not a difference either ---
+--- a mechanism that cannot be read leaves the others still answering ---
+.spec/behavior/verify.json:5 U-001 is claimed nowhere in test/*_test.rb
 app/broken.rb: cannot be parsed by the ruby grammar
+1 difference
 exit=2
 --- no specification at all ---
 no specification at .spec

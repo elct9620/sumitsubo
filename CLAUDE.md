@@ -142,7 +142,9 @@ the comparison could not be made — whatever had to be read first was absent,
 unreadable, or ambiguous — three words standing in for a list that grows with
 every mechanism. A difference is a finding about the code; being unable to
 compare is not, and an operator branches on which it got. A run with both
-answers 2, having nothing yet to say about differences it cannot trust.
+answers 2: it says everything it found either way, and the answer is what
+refuses to certify it. A mechanism that could not be read stops that mechanism
+and no other, the way a linter reports every file it managed to parse.
 Findings and failures share stdout, the test harness comparing the two streams
 merged.
 
