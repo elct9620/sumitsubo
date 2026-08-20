@@ -16,6 +16,7 @@ targets.
 | Mechanism | The specification declares | Verified against |
 |-----------|----------------------------|------------------|
 | Glossary  | The domain vocabulary, and the words rejected in its place. | Words a person wrote: comments, and prose. |
+| Contract  | The interfaces it means to keep. | Source code declaring which interface it implements. |
 | Behavior  | Behaviors in a BDD style. | Test code declaring which behavior it implements. |
 
 ## Installation

@@ -13,7 +13,7 @@ Several mechanisms establish alignment. Known so far:
 | Mechanism | The specification declares                                             | Verified against                |
 |-----------|------------------------------------------------------------------------|---------------------------------|
 | Glossary  | The domain vocabulary, and the words rejected in its place.            | Words a person wrote: comments, and prose.       |
-| Contract  | Public interfaces, and the interface an internal caller must go through.| Structure of the source code.   |
+| Contract  | The interfaces it means to keep.                                        | Source code declaring which interface it implements. |
 | Behavior  | Behaviors in a BDD style.                                              | Test code declaring which behavior it implements. |
 
 The set is not closed, and each mechanism takes its shape from what can
@@ -32,15 +32,16 @@ A term that rejects nothing asserts nothing about the code — it names what the
 project means — and there is no unchecked promise in naming.
 
 `.spec/behavior/` therefore arrived with the Behavior mechanism and not before,
-and `.spec/glossary.json` stayed empty until this project had words worth
-rejecting. The vocabulary moved out of this file to sit beside them: a term
+`.spec/contract/` with Contract, and `.spec/glossary.json` stayed empty until
+this project had words worth rejecting. The vocabulary moved out of this file to sit beside them: a term
 written here is prose, and the same term written there is checked against every
 comment the project holds.
 
 ## Glossary
 
 The vocabulary lives in `.spec/glossary.json`, checked against this file, the
-behavior specifications, the comments under `sumitsubo/`, and `docs/glossary.md`.
+contract and behavior specifications, the comments under `sumitsubo/`, and
+`docs/glossary.md`.
 A term earns a rejected word when the project has actually drifted on it; the
 rest name what the project means and reject nothing, which the tool carries
 without checking.
@@ -50,8 +51,8 @@ done at the source: `.spec/glossary.json` holds the words it rejects, so a file
 naming itself would report every one of them. The rendered document leaves them
 out, and that is what makes it checkable. A finding there answers at a derived
 file and the fix belongs in the specification it came from. The rendered
-behavior documents stay out of scope, since their source is already in it and
-two findings for one drift are noise.
+contract and behavior documents stay out of scope, since their source is
+already in it and two findings for one drift are noise.
 
 A rejected word carries the reason it is rejected, and that reason says why
 that word is wrong rather than why the term is right. What the term means
@@ -113,6 +114,53 @@ through its syntax tree, and any other file entire, since prose is a comment
 for its whole length. An identifier is a spelling of a concept rather than the
 concept's name, so counting one would flag every legitimate class in the tree.
 
+## Contract
+
+What this establishes is that a registered interface is **implemented
+somewhere in scope**, never that the implementation is right. It is the same
+sentence Behavior turns on, and it licenses everything this mechanism cannot
+check.
+
+`contract/` under the root holds one file per kind — the commands an
+executable answers, the routes an application serves, the methods a package
+exposes. A contract file plays the role a behavior file plays, carrying its
+own `include`, and naming the word source claims it with. Source claims one in
+the comment in front of the code implementing it — `# @command verify`.
+
+The marker is the namespace rather than the file. A project whose routes
+outgrow one file is registering more of one kind, not a second kind, so two
+files may share a word and their names resolve against the union of both.
+What cannot happen is one name twice under one word: a claim carries only
+those two, and a referent that is not unique resolves to nothing.
+
+A contract is named by the interface itself — `GET /users/:id` — rather than
+by a handle standing in for it, which is why what follows the marker is read
+whole. Behavior's ids are handles and read as a list. Marker hands back the
+line either way; how it is read belongs to the mechanism that named the word.
+
+Verification runs one way. An interface nothing claims is a difference,
+answered at the line registering it, because that is where a reader chooses
+between writing the code and dropping the contract. An interface nobody
+registered is not one: only the contracts that matter are written down, so an
+absent registration says nothing about the code.
+
+One interface claimed in two places is a difference, and it is what Contract
+establishes that Behavior does not. A behavior may be claimed by as many tests
+as exercise it; a contract is the way in, so a second way in is an entrance
+the specification does not describe. Both places are answered, each naming the
+other, since deciding which to keep means comparing them.
+
+`include` narrows the search rather than tying an interface to one place, as
+it does for Behavior: the union is what gets scanned. That is what lets a
+claim written somewhere unexpected be seen at all, and a claim that cannot be
+seen cannot be reported as the second one.
+
+Marker is the only reading. Confirming from the syntax tree that a class
+really declares the method a contract names is the obvious next one, and the
+binding answers captures as a flat list carrying neither capture names nor
+match boundaries, so a method cannot yet be tied to the class holding it. The
+mechanism is written to the reading that exists.
+
 ## Behavior
 
 What this establishes is that a behavior was **read and implemented**, never
@@ -153,16 +201,18 @@ in one pass.
 ## Render
 
 Render writes the structured specification out as something a person reads:
-`glossary.md` under the documents path, and one file per feature under
-`behavior/` named after the file declaring it.
+`glossary.md` under the documents path, one file per kind of contract under
+`contract/`, and one file per feature under `behavior/`, each named after the
+file declaring it.
 
 A document carries what the specification means, not what the tool needs in
 order to find things. A glossary renders its terms and their definitions; the
 words it rejects stay out, because they record where this project drifted
 rather than what the vocabulary is, and a reader is handed one at the line it
-was tripped on instead. The `include` globs stay out for the same reason: they
-say where to look. Structured fields become tables, and a scenario is sentences
-rather than fields, so its table carries one step per row.
+was tripped on instead. The `include` globs stay out for the same reason, and a
+contract's marker with them: they say where to look and what to look for.
+Structured fields become tables, and a scenario is sentences rather than
+fields, so its table carries one step per row.
 
 A document is derived, so a run replaces what the last one wrote. What `init`
 refuses to overwrite is a reference line, and this is not one.
