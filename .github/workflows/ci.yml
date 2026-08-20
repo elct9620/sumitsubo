@@ -60,3 +60,9 @@ jobs:
         run: |
           "$SPIN" build
           ./build/bin/sumi -v
+
+      # Dogfooding is a promise this repository makes about itself, and a
+      # promise nobody executes is one that rots quietly. This is also the only
+      # step that runs a mechanism over a real project rather than a fixture.
+      - name: Verify this repository against its own specification
+        run: ./build/bin/sumi verify
