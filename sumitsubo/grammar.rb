@@ -19,6 +19,12 @@ module Sumitsubo
     # which is where a concept is called by name rather than spelled as an
     # identifier.
     COMMENTS = "(comment) @text"
+
+    # A comment with something after it. A behaviour is claimed in front of the
+    # code that implements it, so a comment nothing follows claims nothing.
+    # The anchor only excludes that orphan: a comment followed by another
+    # comment is still a match, which is as far as this needs to reach.
+    ATTACHED = "((comment) @text . (_))"
   end
 end
 

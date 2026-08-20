@@ -14,6 +14,10 @@ module Sumitsubo
   module Behavior
     DIRECTORY = "behavior"
 
+    # The mechanism names its own marker, as it names its own directory. A
+    # later mechanism claims its own word rather than sharing this one.
+    MARKER = "@behavior"
+
     # A scenario's id as it sits in the raw text. JSON carries no line numbers,
     # and a scenario nothing declares has no source line to answer with.
     ID = /"id"\s*:\s*"([^"]*)"/
