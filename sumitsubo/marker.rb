@@ -8,17 +8,23 @@ module Sumitsubo
   # establishes that a behavior was read and implemented, never that the
   # implementation is right.
   #
-  # The keyword arrives as an argument because the mechanism names its own —
-  # see Behavior::MARKER.
+  # The keywords arrive as an argument, and what follows one is handed back
+  # unread: the mechanism that names a word owns how the word is read. Behavior
+  # reads a list of ids where Contract reads one name, and a name like
+  # `GET /users/:id` carries the space a list would have split on.
   module Marker
     class Error < Sumitsubo::Error; end
 
-    Claim = Struct.new(:path, :line, :id)
+    Claim = Struct.new(:path, :line, :keyword, :text)
 
     # Only Ruby has "the comment in front of the code". Anything else in scope
     # claims nothing rather than failing: the scope is a filter, and a claim is
     # either there or not.
-    def self.claims_in(path, keyword)
+    #
+    # A whole set of keywords is read in one pass because parsing is the cost:
+    # a project declaring several kinds of contract would otherwise read every
+    # file once per kind.
+    def self.claims_in(path, keywords)
       return [] unless path.end_with?(".rb")
 
       # A caller reaching a mechanism other than Behavior has no reason to have
@@ -30,7 +36,10 @@ module Sumitsubo
         # A comment spanning lines arrives whole, so the claim answers at the
         # line the keyword is on rather than where the comment began.
         comment.text.split("\n").each do |text|
-          ids_in(text, keyword).each { |id| claims.push(Claim.new(where, line, id)) }
+          keywords.each do |keyword|
+            claimed = text_after(text, keyword)
+            claims.push(Claim.new(where, line, keyword, claimed)) unless claimed.nil?
+          end
           line += 1
         end
       end
@@ -45,20 +54,19 @@ module Sumitsubo
       raise Error, e.message
     end
 
-    # Everything after the keyword, to the end of the line. Splitting on
-    # whitespace is what makes the keyword match whole rather than inside a
-    # longer word. The marker is data rather than prose, so a trailing remark
-    # becomes an id resolving to nothing, which the run reports rather than
-    # quietly accepting.
-    def self.ids_in(text, keyword)
+    # Everything after the keyword to the end of the line, or nil where the
+    # line carries no such keyword. Splitting on whitespace is what makes the
+    # keyword match whole rather than inside a longer word; joining the rest
+    # back is what leaves the mechanism free to read it as one thing or many.
+    def self.text_after(text, keyword)
       words = text.split(" ")
       found = []
-      after = false
+      seen = false
       words.each do |word|
-        found.push(word) if after
-        after = true if word == keyword
+        found.push(word) if seen
+        seen = true if word == keyword
       end
-      found
+      seen ? found.join(" ") : nil
     end
   end
 end

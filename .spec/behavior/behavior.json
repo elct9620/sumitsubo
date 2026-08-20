@@ -44,6 +44,13 @@
       "given": ["a behavior specification that is not readable JSON"],
       "when": "the directory is loaded",
       "then": "the file is named as unreadable"
+    },
+    {
+      "id": "B-007",
+      "title": "Several ids on one marker line",
+      "given": ["the text a marker line carries after its keyword, naming more than one id"],
+      "when": "the mechanism reads it",
+      "then": "each id is answered on its own"
     }
   ]
 }

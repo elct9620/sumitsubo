@@ -96,10 +96,18 @@ module Sumitsubo
 
       private
 
+      # Marker finds the word and hands back the rest of the line; splitting
+      # that into ids is Behavior's, which is what lets Contract read the same
+      # line as one name instead.
       def claims_in(features, config)
         claims = []
+        keywords = [Sumitsubo::Behavior::MARKER]
         Sumitsubo::Behavior.scope(features, config.base).each do |path|
-          claims.concat(Marker.claims_in(path, Sumitsubo::Behavior::MARKER))
+          Marker.claims_in(path, keywords).each do |claim|
+            Sumitsubo::Behavior.ids_in(claim.text).each do |id|
+              claims.push(Sumitsubo::Behavior::Claim.new(claim.path, claim.line, id))
+            end
+          end
         end
         claims
       end

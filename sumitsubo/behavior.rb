@@ -35,6 +35,9 @@ module Sumitsubo
     # A scenario nothing claims. The scope is carried so the finding can say
     # where it looked rather than claiming no test exists anywhere.
     Finding = Struct.new(:path, :line, :id, :scope)
+    # A claim as this mechanism reads it. Marker hands back what follows the
+    # keyword unread, so what counts as an id is this mechanism's to say.
+    Claim = Struct.new(:path, :line, :id)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -74,6 +77,13 @@ module Sumitsubo
         end
       end
       found.uniq.sort
+    end
+
+    # The ids one marker line carries. A claim is data rather than prose, so a
+    # trailing remark becomes an id resolving to nothing, which the run reports
+    # rather than quietly accepting.
+    def self.ids_in(text)
+      text.split(" ")
     end
 
     # A scenario nothing claims: the specification says a behavior should be

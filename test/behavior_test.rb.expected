@@ -32,3 +32,5 @@ G-001 is declared twice, at test/fixtures/behavior/duplicate/one.json:5 and test
 test/fixtures/behavior/anonymous/verify.json declares a scenario with no "id"
 --- and neither is a specification that will not parse ---
 test/fixtures/behavior/broken/verify.json is not readable JSON
+--- several ids on one marker line ---
+["V-008", "V-009"]

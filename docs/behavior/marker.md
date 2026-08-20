@@ -34,13 +34,13 @@ What a piece of source claims to implement, read from the comment in front of it
 | When | the file is scanned for claims |
 | Then | nothing is claimed |
 
-## M-005 — Several ids on one line
+## M-005 — What follows the keyword is handed back unread
 
 | Step | Statement |
 | --- | --- |
-| Given | a comment naming more than one id after the keyword |
+| Given | a comment naming more than one word after the keyword |
 | When | the file is scanned for claims |
-| Then | each id is read as its own claim |
+| Then | the whole of the line after the keyword arrives as one claim |
 
 ## M-006 — A file that is not Ruby
 
@@ -65,3 +65,19 @@ What a piece of source claims to implement, read from the comment in front of it
 | Given | a Ruby file named by an absolute path |
 | When | the file is scanned for claims |
 | Then | each claim answers relative to where the run started |
+
+## M-009 — Two keywords in one pass
+
+| Step | Statement |
+| --- | --- |
+| Given | a file carrying claims under two different keywords |
+| When | the file is scanned for both keywords at once |
+| Then | each claim names the keyword it was found under |
+
+## M-010 — A keyword with nothing after it
+
+| Step | Statement |
+| --- | --- |
+| Given | a comment carrying the keyword and nothing else |
+| When | the file is scanned for claims |
+| Then | the claim arrives carrying no text rather than being dropped |

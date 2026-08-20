@@ -33,10 +33,10 @@
     },
     {
       "id": "M-005",
-      "title": "Several ids on one line",
-      "given": ["a comment naming more than one id after the keyword"],
+      "title": "What follows the keyword is handed back unread",
+      "given": ["a comment naming more than one word after the keyword"],
       "when": "the file is scanned for claims",
-      "then": "each id is read as its own claim"
+      "then": "the whole of the line after the keyword arrives as one claim"
     },
     {
       "id": "M-006",
@@ -58,6 +58,20 @@
       "given": ["a Ruby file named by an absolute path"],
       "when": "the file is scanned for claims",
       "then": "each claim answers relative to where the run started"
+    },
+    {
+      "id": "M-009",
+      "title": "Two keywords in one pass",
+      "given": ["a file carrying claims under two different keywords"],
+      "when": "the file is scanned for both keywords at once",
+      "then": "each claim names the keyword it was found under"
+    },
+    {
+      "id": "M-010",
+      "title": "A keyword with nothing after it",
+      "given": ["a comment carrying the keyword and nothing else"],
+      "when": "the file is scanned for claims",
+      "then": "the claim arrives carrying no text rather than being dropped"
     }
   ]
 }

@@ -56,3 +56,9 @@ begin
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
+
+# Marker hands back the whole of the line after the keyword; what counts as an
+# id is this mechanism's to say.
+# @behavior B-007
+puts "--- several ids on one marker line ---"
+p Sumitsubo::Behavior.ids_in("V-008 V-009")

@@ -49,3 +49,11 @@ The scenarios a project declares, and where each one sits.
 | Given | a behavior specification that is not readable JSON |
 | When | the directory is loaded |
 | Then | the file is named as unreadable |
+
+## B-007 — Several ids on one marker line
+
+| Step | Statement |
+| --- | --- |
+| Given | the text a marker line carries after its keyword, naming more than one id |
+| When | the mechanism reads it |
+| Then | each id is answered on its own |
