@@ -1,0 +1,42 @@
+{
+  "name": "Glossary",
+  "description": "The domain vocabulary a project declares, and the words it rejects in their place.",
+  "include": ["test/glossary_test.rb"],
+  "scenarios": [
+    {
+      "id": "G-001",
+      "title": "A section reaches the files its includes cover",
+      "given": ["a glossary whose sections carry include globs"],
+      "when": "the sections are resolved against the base",
+      "then": "each section answers the files its globs cover"
+    },
+    {
+      "id": "G-002",
+      "title": "A later term replaces an earlier one of the same name",
+      "given": ["two sections covering one file and declaring the same term"],
+      "when": "the effective vocabulary for that file is worked out",
+      "then": "the later term replaces the earlier one outright, its rejected words included"
+    },
+    {
+      "id": "G-003",
+      "title": "A missing glossary is a broken reference line",
+      "given": ["a path where no glossary was written"],
+      "when": "the glossary is loaded",
+      "then": "the path is named as one holding no glossary"
+    },
+    {
+      "id": "G-004",
+      "title": "A glossary that will not parse",
+      "given": ["a glossary file that is not readable JSON"],
+      "when": "the glossary is loaded",
+      "then": "the file is named as unreadable"
+    },
+    {
+      "id": "G-005",
+      "title": "A file declaring no glossary at all",
+      "given": ["readable JSON with no glossary in it"],
+      "when": "the glossary is loaded",
+      "then": "the file is named as declaring no glossary"
+    }
+  ]
+}

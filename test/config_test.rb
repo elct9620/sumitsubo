@@ -28,6 +28,7 @@ JSON
 (here / "broken").mkpath
 (here / "broken" / ".sumi.json").write("{ not json\n")
 
+# @behavior C-005 C-006
 def show(where)
   config = Sumitsubo::Config.load
   from = Pathname.pwd
@@ -36,21 +37,25 @@ def show(where)
        "glossary=#{config.verify?("glossary")} contract=#{config.verify?("contract")}"
 end
 
+# @behavior C-001
 puts "--- the nearest .sumi.json decides the base, however deep the run starts ---"
 Dir.chdir((here / "project" / "app" / "billing").to_s)
 show("app/billing")
 Dir.chdir((here / "project").to_s)
 show("project")
 
+# @behavior C-002
 puts "--- with no .sumi.json, the repository it sits in ---"
 # A .git written as a gitfile, which is what a worktree and a submodule leave.
 Dir.chdir((here / "repo" / "lib").to_s)
 show("repo/lib")
 
+# @behavior C-003
 puts "--- with neither, where the run started ---"
 Dir.chdir((here / "loose").to_s)
 show("loose")
 
+# @behavior C-004
 puts "--- a .sumi.json that will not parse is not a difference ---"
 Dir.chdir((here / "broken").to_s)
 begin

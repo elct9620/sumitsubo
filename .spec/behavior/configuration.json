@@ -1,0 +1,64 @@
+{
+  "name": "Configuration",
+  "description": "Where a run is configured from, and what the configuration decides.",
+  "include": [
+    "test/config_test.rb"
+  ],
+  "scenarios": [
+    {
+      "id": "C-001",
+      "title": "The nearest .sumi.json decides the base",
+      "given": [
+        "a .sumi.json at the top of a project",
+        "a run starting several directories below it"
+      ],
+      "when": "the configuration is loaded",
+      "then": "the base is the directory holding that .sumi.json, however deep the run started"
+    },
+    {
+      "id": "C-002",
+      "title": "With no .sumi.json, the repository it sits in",
+      "given": [
+        "a project with a .git but no .sumi.json"
+      ],
+      "when": "the configuration is loaded",
+      "then": "the base is the repository root, whether .git is a directory or a gitfile"
+    },
+    {
+      "id": "C-003",
+      "title": "With neither, where the run started",
+      "given": [
+        "a directory with no .sumi.json and no .git above it"
+      ],
+      "when": "the configuration is loaded",
+      "then": "the base is where the run started"
+    },
+    {
+      "id": "C-004",
+      "title": "A .sumi.json that will not parse",
+      "given": [
+        "a .sumi.json that is not readable JSON"
+      ],
+      "when": "the configuration is loaded",
+      "then": "the file is named as unreadable"
+    },
+    {
+      "id": "C-005",
+      "title": "Only the exceptions are listed",
+      "given": [
+        "a .sumi.json naming one specification as not to be verified"
+      ],
+      "when": "the configuration is asked about each specification",
+      "then": "the specification it named is not verified"
+    },
+    {
+      "id": "C-006",
+      "title": "A specification nobody mentioned is verified",
+      "given": [
+        "a .sumi.json naming one specification as not to be verified"
+      ],
+      "when": "the configuration is asked about each specification",
+      "then": "a specification the file does not mention is verified"
+    }
+  ]
+}

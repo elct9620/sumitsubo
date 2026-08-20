@@ -1,0 +1,28 @@
+{
+  "name": "Command",
+  "description": "How the executable answers what it is asked to do.",
+  "include": ["test/help_test.rb", "test/version_test.rb"],
+  "scenarios": [
+    {
+      "id": "S-001",
+      "title": "The version is asked for",
+      "given": ["the executable"],
+      "when": "it is run with -v or --version",
+      "then": "the version is answered"
+    },
+    {
+      "id": "S-002",
+      "title": "Nothing is asked for",
+      "given": ["the executable"],
+      "when": "it is run with no arguments",
+      "then": "the help is answered"
+    },
+    {
+      "id": "S-003",
+      "title": "Something unrecognised is asked for",
+      "given": ["the executable"],
+      "when": "it is run with a flag it does not know",
+      "then": "the help is answered rather than the version"
+    }
+  ]
+}

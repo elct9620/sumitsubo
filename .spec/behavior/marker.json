@@ -1,0 +1,56 @@
+{
+  "name": "Marker",
+  "description": "What a piece of source claims to implement, read from the comment in front of it.",
+  "include": ["test/marker_test.rb"],
+  "scenarios": [
+    {
+      "id": "M-001",
+      "title": "A claim attaches to whatever statement follows it",
+      "given": ["a linear script whose claims sit in front of statements rather than methods"],
+      "when": "the file is scanned for claims",
+      "then": "each claim answers at the line its comment sits on"
+    },
+    {
+      "id": "M-002",
+      "title": "Depth is not a barrier",
+      "given": ["claims inside a class body and inside a method body"],
+      "when": "the file is scanned for claims",
+      "then": "both are read, at whatever depth they sit"
+    },
+    {
+      "id": "M-003",
+      "title": "A claim in a block comment",
+      "given": ["a claim on the second line of a =begin block"],
+      "when": "the file is scanned for claims",
+      "then": "the claim answers at the line its keyword is on rather than where the block began"
+    },
+    {
+      "id": "M-004",
+      "title": "A comment nothing follows",
+      "given": ["a claim at the end of a file with no code after it"],
+      "when": "the file is scanned for claims",
+      "then": "nothing is claimed"
+    },
+    {
+      "id": "M-005",
+      "title": "Several ids on one line",
+      "given": ["a comment naming more than one id after the keyword"],
+      "when": "the file is scanned for claims",
+      "then": "each id is read as its own claim"
+    },
+    {
+      "id": "M-006",
+      "title": "A file that is not Ruby",
+      "given": ["a prose file in scope carrying the keyword"],
+      "when": "the file is scanned for claims",
+      "then": "nothing is claimed"
+    },
+    {
+      "id": "M-007",
+      "title": "Source the grammar cannot read",
+      "given": ["a Ruby file the grammar cannot parse"],
+      "when": "the file is scanned for claims",
+      "then": "the file is named as unreadable rather than answering with the claims it recovered"
+    }
+  ]
+}

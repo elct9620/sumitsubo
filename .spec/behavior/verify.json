@@ -1,0 +1,83 @@
+{
+  "name": "Verify",
+  "description": "Checking the source against the verifiable part of the specification, and answering what was found.",
+  "include": ["test/verify_test.rb"],
+  "scenarios": [
+    {
+      "id": "V-001",
+      "title": "Code that drifted from its glossary",
+      "given": [
+        "a glossary declaring a word one of its terms rejects",
+        "a comment in scope using that word"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "one finding is reported for the line the word appears on"
+    },
+    {
+      "id": "V-002",
+      "title": "The same run from a subdirectory",
+      "given": ["a project whose source has drifted from its glossary"],
+      "when": "`sumi verify` runs from a subdirectory of that project",
+      "then": "the same findings answer with paths relative to where the run started"
+    },
+    {
+      "id": "V-003",
+      "title": "A specification the configuration switched off",
+      "given": [
+        "a .sumi.json declaring the glossary is not to be verified",
+        "source that has drifted from that glossary"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "the switched-off specification contributes no findings"
+    },
+    {
+      "id": "V-004",
+      "title": "Every declared behaviour is claimed",
+      "given": ["a behaviour specification whose every scenario is claimed by source in scope"],
+      "when": "`sumi verify` runs",
+      "then": "no difference is reported between the two sides"
+    },
+    {
+      "id": "V-005",
+      "title": "A scenario nothing claims",
+      "given": ["a behaviour specification with a scenario no source in scope claims"],
+      "when": "`sumi verify` runs",
+      "then": "the scenario is reported at the line of the specification that declares it, naming the scope that was searched"
+    },
+    {
+      "id": "V-006",
+      "title": "A claim resolving to no scenario",
+      "given": ["source claiming an id no behaviour specification declares"],
+      "when": "`sumi verify` runs",
+      "then": "the claim is reported at the line it sits on as resolving to no scenario"
+    },
+    {
+      "id": "V-007",
+      "title": "Source the grammar cannot read",
+      "given": ["a Ruby file in scope the grammar cannot parse"],
+      "when": "`sumi verify` runs",
+      "then": "the file is named as one the grammar could not read rather than reported as agreeing"
+    },
+    {
+      "id": "V-008",
+      "title": "No specification to verify from",
+      "given": ["a directory with no specification root"],
+      "when": "`sumi verify` runs",
+      "then": "the missing root is named"
+    },
+    {
+      "id": "V-009",
+      "title": "A root the configuration points at but nothing wrote",
+      "given": ["a .sumi.json naming a root no one created"],
+      "when": "`sumi verify` runs",
+      "then": "that root is named as the specification that is not there"
+    },
+    {
+      "id": "V-010",
+      "title": "A clone that arrived without the empty behaviour directory",
+      "given": ["a project whose behaviour directory git did not carry"],
+      "when": "`sumi verify` runs",
+      "then": "no difference is reported"
+    }
+  ]
+}
