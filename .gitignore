@@ -1,3 +1,6 @@
 /build/
 /vendor/
 /.packages/*/build/
+# ruby-lsp writes an index wherever it is run, fixtures included. It excludes
+# itself with a generated .gitignore; saying so here does not depend on that.
+.ruby-lsp/
