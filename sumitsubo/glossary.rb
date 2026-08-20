@@ -1,4 +1,5 @@
 require "json"
+require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/grammar"
 
@@ -8,8 +9,7 @@ module Sumitsubo
   # specification and the code: with no file, or an unreadable one, there is
   # no reference line to verify from at all.
   module Glossary
-    DIR = ".spec"
-    PATH = ".spec/glossary.json"
+    FILE = "glossary.json"
     GLOBAL = "Global"
 
     EMPTY = <<~JSON
@@ -29,7 +29,13 @@ module Sumitsubo
     Region = Struct.new(:line, :text)
     Finding = Struct.new(:path, :line, :term, :used, :reason)
 
-    def self.load(path = PATH)
+    # The mechanism names its own file; where the root sits is the tool's to
+    # say, so it arrives as an argument.
+    def self.path_in(root)
+      Pathname.new(root).join(FILE).to_s
+    end
+
+    def self.load(path)
       raise Error, "no glossary at #{path}" unless File.exist?(path)
 
       begin

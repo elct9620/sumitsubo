@@ -3,7 +3,7 @@ require "sumitsubo"
 back = Dir.pwd
 Dir.chdir("test/fixtures/glossary")
 
-sections = Sumitsubo::Glossary.load
+sections = Sumitsubo::Glossary.load(".spec/glossary.json")
 
 # Which files a section reaches is half of what the merge rule means, so the
 # scope is printed rather than inferred from the merged result.

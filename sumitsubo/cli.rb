@@ -1,4 +1,5 @@
 require "optparse"
+require "pathname"
 require "sumitsubo/version"
 require "sumitsubo/error"
 require "sumitsubo/glossary"
@@ -20,23 +21,29 @@ module Sumitsubo
           -h, --help       Show this help
     TEXT
 
+    # Where specifications live is the tool's answer rather than a
+    # mechanism's: a mechanism knows the name of its own file and nothing
+    # about the layout around it. Until .sumi.json is read, this is it.
+    ROOT = ".spec"
+
     def run(argv)
       case argv.first
-      when "init" then init
-      when "verify" then verify
+      when "init" then init(ROOT)
+      when "verify" then verify(ROOT)
       else flags(argv)
       end
     end
 
     private
 
-    def init
-      Dir.mkdir(Glossary::DIR) unless Dir.exist?(Glossary::DIR)
-      if File.exist?(Glossary::PATH)
-        puts "exists #{Glossary::PATH}"
+    def init(root)
+      Pathname.new(root).mkpath
+      path = Glossary.path_in(root)
+      if File.exist?(path)
+        puts "exists #{path}"
       else
-        File.write(Glossary::PATH, Glossary::EMPTY)
-        puts "created #{Glossary::PATH}"
+        File.write(path, Glossary::EMPTY)
+        puts "created #{path}"
       end
       0
     end
@@ -44,8 +51,9 @@ module Sumitsubo
     # Everything goes to stdout, findings and failures alike: the test
     # harness compares the two streams merged, and they are buffered
     # differently, so splitting them would leave their order unstable.
-    def verify
-      findings = Glossary.check(Glossary.scope(Glossary.load))
+    def verify(root)
+      path = Glossary.path_in(root)
+      findings = Glossary.check(Glossary.scope(Glossary.load(path)))
       findings.each do |f|
         puts "#{f.path}:#{f.line} #{f.term} rejects #{f.used}: #{f.reason}"
       end
