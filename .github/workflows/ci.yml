@@ -66,3 +66,14 @@ jobs:
       # step that runs a mechanism over a real project rather than a fixture.
       - name: Verify this repository against its own specification
         run: ./build/bin/sumi verify
+
+      # The documents are derived and committed, so nothing else would notice a
+      # specification that moved without them: `verify` answers 0 either way.
+      - name: Check the documents against the specification they came from
+        run: |
+          ./build/bin/sumi render
+          if [ -n "$(git status --porcelain -- docs)" ]; then
+            echo "docs/ is out of date — run ./build/bin/sumi render and commit the result." >&2
+            git status --porcelain -- docs
+            exit 1
+          fi
