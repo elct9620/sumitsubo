@@ -1,4 +1,5 @@
 require "json"
+require "sumitsubo/error"
 require "sumitsubo/grammar"
 
 module Sumitsubo
@@ -17,7 +18,7 @@ module Sumitsubo
       }
     JSON
 
-    class Error < StandardError; end
+    class Error < Sumitsubo::Error; end
 
     # A designation the section rejects for the term it sits under. The
     # reason is what stops the same word being proposed again.

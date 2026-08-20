@@ -1,5 +1,6 @@
 require "optparse"
 require "sumitsubo/version"
+require "sumitsubo/error"
 require "sumitsubo/glossary"
 
 module Sumitsubo
@@ -50,7 +51,7 @@ module Sumitsubo
       end
       puts "#{findings.length} differences"
       findings.empty? ? 0 : 1
-    rescue Glossary::Error => e
+    rescue Sumitsubo::Error => e
       # A comparison that cannot be made — no specification, or source the
       # grammar cannot read — is not a difference between the two sides, so it
       # answers differently from having found one.
