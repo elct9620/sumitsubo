@@ -18,6 +18,14 @@ module Sumitsubo
 
     # What a mechanism has to say on a page. The command writes it, the way
     # Init writes a seed: where a document goes is the tool's to decide.
+    #
+    # A Pathname belongs in the path and does not survive in one: held in a
+    # Struct member under Spinel it answers whichever Pathname was allocated
+    # most recently, so a document is written wherever the last one pointed —
+    # once over the reference line it was derived from. Whether it trips at all
+    # turns on the build and the working directory, which is what lets it read
+    # as fixed. The String is what that costs, and goes back to a Pathname once
+    # the compiler keeps one.
     Document = Struct.new(:path, :content)
 
     class Glossary
@@ -37,7 +45,7 @@ module Sumitsubo
         return [] unless File.exist?(path)
 
         content = Sumitsubo::Glossary.render(Sumitsubo::Glossary.load(path))
-        [Document.new(config.docs / "glossary.md", content)]
+        [Document.new((config.docs / "glossary.md").to_s, content)]
       end
 
       def verify(config, report)
@@ -65,7 +73,7 @@ module Sumitsubo
         Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root)).each do |feature|
           name = Sumitsubo::Behavior.document_name(feature)
           found.push(Document.new(
-            config.docs / Sumitsubo::Behavior::DIRECTORY / "#{name}.md",
+            (config.docs / Sumitsubo::Behavior::DIRECTORY / "#{name}.md").to_s,
             Sumitsubo::Behavior.render(feature)
           ))
         end

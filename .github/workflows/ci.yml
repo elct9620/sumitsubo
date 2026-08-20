@@ -69,11 +69,16 @@ jobs:
 
       # The documents are derived and committed, so nothing else would notice a
       # specification that moved without them: `verify` answers 0 either way.
-      - name: Check the documents against the specification they came from
+      #
+      # The whole tree is checked rather than `docs`, because a render that
+      # writes anywhere else is the more serious failure and scoping the check
+      # to where the documents belong is what once let one through. Everything
+      # a build or a render legitimately produces is already ignored.
+      - name: Check that a render moves the documents and nothing else
         run: |
           ./build/bin/sumi render
-          if [ -n "$(git status --porcelain -- docs)" ]; then
-            echo "docs/ is out of date — run ./build/bin/sumi render and commit the result." >&2
-            git status --porcelain -- docs
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "a render left the tree changed — the documents are stale, or it wrote somewhere it should not." >&2
+            git status --porcelain
             exit 1
           fi
