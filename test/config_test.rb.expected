@@ -1,0 +1,9 @@
+--- the nearest .sumi.json decides the base, however deep the run starts ---
+app/billing: base=../.. root=../../.spec glossary=false contract=true
+project: base=. root=.spec glossary=false contract=true
+--- with no .sumi.json, the repository it sits in ---
+repo/lib: base=.. root=../.spec glossary=true contract=true
+--- with neither, where the run started ---
+loose: base=. root=.spec glossary=true contract=true
+--- a .sumi.json that will not parse is not a difference ---
+.sumi.json is not readable JSON
