@@ -164,7 +164,8 @@ $ ./build/bin/sumi verify
 
 That last line is the project verifying its own specification, which CI runs on
 every push. `docs/` is this project rendering its own, and is committed, so a
-change to `.spec/` is followed by `./build/bin/sumi render`.
+change to `.spec/` is followed by `./build/bin/sumi render` — which
+`.claude/hooks/edit.sh` does for you inside a Claude Code session.
 
 ## License
 

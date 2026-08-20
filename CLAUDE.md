@@ -246,6 +246,9 @@ The command is `sumi`, shipped as a single native executable.
   Restore the rest afterwards.
 - Tests compile at `-O1` and the shipped executable at the compiler's default,
   so CI builds and runs `sumi` in addition to running the tests.
+- `.claude/hooks/` holds this repository to the same promises inside a
+  session: one renders the documents after any tool call that could have moved
+  the specification, the other runs the suite before a turn is allowed to end.
 - Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows has no
   entry — the Spinel runtime depends on POSIX structurally.
 
