@@ -1,12 +1,15 @@
 --- first run ---
 created .spec/glossary.json
+created .spec/behavior
 exit=0
 {
   "glossary": []
 }
 --- second run leaves it alone ---
 exists .spec/glossary.json
+exists .spec/behavior
 exit=0
 --- a configured root is created however deep it is ---
 created spec/nested/glossary.json
+created spec/nested/behavior
 exit=0

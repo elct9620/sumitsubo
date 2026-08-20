@@ -16,7 +16,7 @@ module Sumitsubo
       Usage: sumi <command> [options]
 
       Commands:
-          init             Write an empty glossary specification
+          init             Lay down an empty specification to start from
           verify           Check the source against the specification
 
       Options:
@@ -43,15 +43,25 @@ module Sumitsubo
 
     def init(config)
       config.root.mkpath
-      path = Glossary.path_in(config.root)
+      lay_down(Glossary.path_in(config.root)) { |path| File.write(path, Glossary::EMPTY) }
+      # A directory rather than a file, because a project keeps one behaviour
+      # specification per feature. Git will not carry an empty one, which is
+      # why a behaviour directory that is not there declares no scenarios
+      # instead of failing the run.
+      lay_down(Behavior.path_in(config.root)) { |path| Pathname.new(path).mkpath }
+      0
+    end
+
+    # Laying down what is already there would overwrite a reference line, so
+    # what exists is reported rather than replaced.
+    def lay_down(path)
       shown = "#{Pathname.new(path).relative_path_from(Pathname.pwd)}"
       if File.exist?(path)
         puts "exists #{shown}"
       else
-        File.write(path, Glossary::EMPTY)
+        yield path
         puts "created #{shown}"
       end
-      0
     end
 
     # Everything goes to stdout, findings and failures alike: the test

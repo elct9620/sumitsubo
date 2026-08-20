@@ -56,5 +56,11 @@ puts "--- what init lays down verifies clean ---"
 puts "exit=#{cli.run(["init"])}"
 puts "exit=#{cli.run(["verify"])}"
 
+# Git carries no empty directory, so a clone of a project that committed what
+# init laid down arrives without one. Declaring no scenarios is an answer.
+puts "--- and so does a clone that arrived without the empty directory ---"
+Pathname.new(".spec/behavior").rmtree
+puts "exit=#{cli.run(["verify"])}"
+
 Dir.chdir(back)
 root.rmtree

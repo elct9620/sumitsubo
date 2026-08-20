@@ -35,6 +35,10 @@ no specification at nope
 exit=2
 --- what init lays down verifies clean ---
 created .spec/glossary.json
+created .spec/behavior
 exit=0
+0 differences
+exit=0
+--- and so does a clone that arrived without the empty directory ---
 0 differences
 exit=0

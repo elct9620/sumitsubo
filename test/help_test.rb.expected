@@ -2,7 +2,7 @@
 Usage: sumi <command> [options]
 
 Commands:
-    init             Write an empty glossary specification
+    init             Lay down an empty specification to start from
     verify           Check the source against the specification
 
 Options:
@@ -13,7 +13,7 @@ exit=0
 Usage: sumi <command> [options]
 
 Commands:
-    init             Write an empty glossary specification
+    init             Lay down an empty specification to start from
     verify           Check the source against the specification
 
 Options:
@@ -24,7 +24,7 @@ exit=0
 Usage: sumi <command> [options]
 
 Commands:
-    init             Write an empty glossary specification
+    init             Lay down an empty specification to start from
     verify           Check the source against the specification
 
 Options:
@@ -35,7 +35,7 @@ exit=0
 Usage: sumi <command> [options]
 
 Commands:
-    init             Write an empty glossary specification
+    init             Lay down an empty specification to start from
     verify           Check the source against the specification
 
 Options:
