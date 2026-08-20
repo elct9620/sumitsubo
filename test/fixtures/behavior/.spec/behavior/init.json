@@ -1,0 +1,14 @@
+{
+  "name": "Init",
+  "description": "What init lays down to start a reference line from.",
+  "include": ["test/init_test.rb"],
+  "scenarios": [
+    {
+      "id": "I-001",
+      "title": "The first run lays down an empty glossary",
+      "given": ["a directory with no specification"],
+      "when": "`sumi init` runs",
+      "then": "an empty glossary specification is written at the configured root"
+    }
+  ]
+}

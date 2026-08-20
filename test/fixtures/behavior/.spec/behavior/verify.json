@@ -1,0 +1,24 @@
+{
+  "name": "Glossary Verification",
+  "description": "How a run answers when the source and the glossary disagree.",
+  "include": ["test/*_test.rb"],
+  "scenarios": [
+    {
+      "id": "G-001",
+      "title": "Code that drifted from its glossary",
+      "given": [
+        "a glossary declaring a word its term rejects",
+        "a comment using that word"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "one finding is reported for the line the word appears on"
+    },
+    {
+      "id": "G-002",
+      "title": "A specification the configuration switched off",
+      "given": ["a .sumi.json declaring glossary verify false"],
+      "when": "`sumi verify` runs",
+      "then": "the glossary contributes no findings"
+    }
+  ]
+}

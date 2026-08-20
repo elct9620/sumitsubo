@@ -1,0 +1,26 @@
+--- what the directory declares, and where ---
+Init ["test/init_test.rb"]
+  test/fixtures/behavior/.spec/behavior/init.json:7 I-001 The first run lays down an empty glossary
+    given a directory with no specification
+    when  `sumi init` runs
+    then  an empty glossary specification is written at the configured root
+Glossary Verification ["test/*_test.rb"]
+  test/fixtures/behavior/.spec/behavior/verify.json:7 G-001 Code that drifted from its glossary
+    given a glossary declaring a word its term rejects
+    given a comment using that word
+    when  `sumi verify` runs
+    then  one finding is reported for the line the word appears on
+  test/fixtures/behavior/.spec/behavior/verify.json:17 G-002 A specification the configuration switched off
+    given a .sumi.json declaring glossary verify false
+    when  `sumi verify` runs
+    then  the glossary contributes no findings
+--- a directory nobody wrote declares no scenarios ---
+[]
+--- one id under two scenarios leaves a marker nothing to resolve to ---
+G-001 is declared twice, at test/fixtures/behavior/duplicate/one.json:5 and test/fixtures/behavior/duplicate/two.json:5
+--- the root arrives absolute, but a message answers where the run started ---
+G-001 is declared twice, at test/fixtures/behavior/duplicate/one.json:5 and test/fixtures/behavior/duplicate/two.json:5
+--- a scenario with no id cannot be referenced at all ---
+test/fixtures/behavior/anonymous/verify.json declares a scenario with no "id"
+--- and neither is a specification that will not parse ---
+test/fixtures/behavior/broken/verify.json is not readable JSON

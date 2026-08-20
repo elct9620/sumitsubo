@@ -1,0 +1,7 @@
+{
+  "name": "Anonymous",
+  "include": ["test/*_test.rb"],
+  "scenarios": [
+    { "title": "Nothing can point at this", "given": [], "when": "a run", "then": "an answer" }
+  ]
+}
