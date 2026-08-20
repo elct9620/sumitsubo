@@ -13,8 +13,9 @@ module Sumitsubo
   class Config
     FILE = ".sumi.json"
     DEFAULT_ROOT = ".spec"
+    DEFAULT_DOCS = "docs"
 
-    attr_reader :base, :root
+    attr_reader :base, :root, :docs
 
     # The directory a run is configured from: the nearest one at or above the
     # starting point holding a .sumi.json, else the repository it sits in, else
@@ -50,14 +51,30 @@ module Sumitsubo
     def initialize(base, document)
       @base = base
       @root = (base / (document["root"] || DEFAULT_ROOT)).cleanpath
+      # Where Render writes, answered against the base as the root is, so a run
+      # from a subdirectory writes to the same place it would from the top.
+      @docs = (base / (document["docs"] || DEFAULT_DOCS)).cleanpath
       @specifications = document["specifications"] || {}
     end
 
-    # Only the exceptions are listed, so a specification nobody mentioned is
-    # verified once its file is there.
+    # One entry carries both answers, and they are independent — see the How it
+    # works section of CLAUDE.md for what verify: false keeps a specification
+    # for.
     def verify?(name)
+      switched_on?(name, "verify")
+    end
+
+    def render?(name)
+      switched_on?(name, "render")
+    end
+
+    private
+
+    # Only the exceptions are listed, so a specification nobody mentioned is
+    # both verified and rendered once its file is there.
+    def switched_on?(name, command)
       entry = @specifications[name]
-      entry.nil? || entry["verify"] != false
+      entry.nil? || entry[command] != false
     end
   end
 end

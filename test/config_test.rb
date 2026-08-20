@@ -17,8 +17,10 @@ here = Pathname.pwd
 (here / "project" / ".sumi.json").write(<<~JSON)
   {
     "root": ".spec/",
+    "docs": "docs/spec",
     "specifications": {
-      "glossary": { "verify": false }
+      "glossary": { "verify": false, "render": false },
+      "behavior": { "render": false }
     }
   }
 JSON
@@ -28,16 +30,20 @@ JSON
 (here / "broken").mkpath
 (here / "broken" / ".sumi.json").write("{ not json\n")
 
-# @behavior C-005 C-006
+# @behavior C-005 C-006 C-009 C-010
 def show(where)
   config = Sumitsubo::Config.load
   from = Pathname.pwd
   puts "#{where}: base=#{config.base.relative_path_from(from)} " \
        "root=#{config.root.relative_path_from(from)} " \
-       "glossary=#{config.verify?("glossary")} contract=#{config.verify?("contract")}"
+       "docs=#{config.docs.relative_path_from(from)}"
+  puts "  verify: glossary=#{config.verify?("glossary")} " \
+       "behavior=#{config.verify?("behavior")} contract=#{config.verify?("contract")}"
+  puts "  render: glossary=#{config.render?("glossary")} " \
+       "behavior=#{config.render?("behavior")} contract=#{config.render?("contract")}"
 end
 
-# @behavior C-001
+# @behavior C-001 C-007
 puts "--- the nearest .sumi.json decides the base, however deep the run starts ---"
 Dir.chdir((here / "project" / "app" / "billing").to_s)
 show("app/billing")
@@ -50,7 +56,7 @@ puts "--- with no .sumi.json, the repository it sits in ---"
 Dir.chdir((here / "repo" / "lib").to_s)
 show("repo/lib")
 
-# @behavior C-003
+# @behavior C-003 C-008
 puts "--- with neither, where the run started ---"
 Dir.chdir((here / "loose").to_s)
 show("loose")
