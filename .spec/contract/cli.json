@@ -1,0 +1,20 @@
+{
+  "name": "CLI",
+  "description": "The commands `sumi` answers, and what each one is for.",
+  "marker": "@command",
+  "include": ["sumitsubo/command/*.rb"],
+  "contracts": [
+    {
+      "name": "init",
+      "description": "Lay down an empty specification to start a reference line from."
+    },
+    {
+      "name": "render",
+      "description": "Render the structured specification into documents a person reads."
+    },
+    {
+      "name": "verify",
+      "description": "Verify the source code is aligned with the verifiable specification."
+    }
+  ]
+}

@@ -9,6 +9,7 @@ module Sumitsubo
     # Everything goes to stdout, findings and failures alike: the test harness
     # compares the two streams merged, and they are buffered differently, so
     # splitting them would leave their order unstable.
+    # @command verify
     class Verify
       def run(config)
         # With no root there is no reference line at all to verify from, which

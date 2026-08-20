@@ -5,6 +5,7 @@ require "sumitsubo/mechanism"
 module Sumitsubo
   module Command
     # Lay down an empty specification to start a reference line from.
+    # @command init
     class Init
       def run(config)
         config.root.mkpath

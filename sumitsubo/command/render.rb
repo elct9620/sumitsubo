@@ -8,6 +8,7 @@ module Sumitsubo
     #
     # A document is derived, so a run replaces what the last one wrote. What
     # Init refuses to overwrite is a reference line; this is not one.
+    # @command render
     class Render
       def run(config)
         failures = []
