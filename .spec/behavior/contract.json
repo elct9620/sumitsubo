@@ -1,0 +1,98 @@
+{
+  "name": "Contract",
+  "description": "The interfaces a project registers, and what source claims to implement them.",
+  "include": ["test/contract_test.rb"],
+  "scenarios": [
+    {
+      "id": "T-001",
+      "title": "What the directory registers, and where",
+      "given": ["a contract directory holding several definitions"],
+      "when": "the directory is loaded",
+      "then": "each interface answers with its name, what it is for, and the line registering it"
+    },
+    {
+      "id": "T-002",
+      "title": "A directory nobody wrote",
+      "given": ["a root with no contract directory"],
+      "when": "the directory is loaded",
+      "then": "no contracts are registered"
+    },
+    {
+      "id": "T-003",
+      "title": "The words to look for, and the files to look in",
+      "given": ["definitions naming their markers and the files they cover"],
+      "when": "the words and the scope are asked for",
+      "then": "each answers the union across every definition, without repeats"
+    },
+    {
+      "id": "T-004",
+      "title": "The same name under two markers",
+      "given": ["two definitions registering one name under different markers"],
+      "when": "the directory is loaded",
+      "then": "both are registered, because the marker is the namespace"
+    },
+    {
+      "id": "T-005",
+      "title": "One name twice under one marker",
+      "given": ["two definitions registering the same name under the same marker"],
+      "when": "the directory is loaded",
+      "then": "the message names both places, relative to where the run started"
+    },
+    {
+      "id": "T-006",
+      "title": "A contract with no name",
+      "given": ["a definition registering a contract that names nothing"],
+      "when": "the directory is loaded",
+      "then": "the file is named as registering a contract nothing can claim"
+    },
+    {
+      "id": "T-007",
+      "title": "A definition with no marker",
+      "given": ["a definition that does not say what word claims it"],
+      "when": "the directory is loaded",
+      "then": "the file is named as saying nothing to look for"
+    },
+    {
+      "id": "T-008",
+      "title": "A specification that will not parse",
+      "given": ["a contract definition that is not readable JSON"],
+      "when": "the directory is loaded",
+      "then": "the file is named as unreadable"
+    },
+    {
+      "id": "T-009",
+      "title": "An interface nothing claims",
+      "given": ["a registered interface no claim in scope names"],
+      "when": "the two sides are compared",
+      "then": "it is answered at the line registering it, naming the scope that was searched"
+    },
+    {
+      "id": "T-010",
+      "title": "A claim resolving to no contract",
+      "given": ["a claim naming something no definition registers under that marker"],
+      "when": "the two sides are compared",
+      "then": "the claim is answered at the line it sits on as resolving to no contract"
+    },
+    {
+      "id": "T-011",
+      "title": "A claim naming no contract at all",
+      "given": ["a claim carrying its marker and nothing after it"],
+      "when": "the two sides are compared",
+      "then": "the claim is answered as naming no contract rather than being passed over"
+    },
+    {
+      "id": "T-012",
+      "title": "One contract claimed in two places",
+      "given": ["two places claiming one registered interface"],
+      "when": "the two sides are compared",
+      "then": "each place is answered naming the other"
+    },
+    {
+      "id": "T-013",
+      "title": "The document a definition becomes",
+      "given": ["a definition registering interfaces with descriptions"],
+      "when": "it is rendered",
+      "then": "the page carries the names and what each is for, and neither the marker nor the globs"
+    }
+  ]
+}

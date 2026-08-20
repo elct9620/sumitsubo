@@ -1,0 +1,40 @@
+--- what the directory registers, and where ---
+Admin routes @route ["app/*.rb"]
+  test/fixtures/contract/.spec/contract/admin.json:6 GET /admin — The console.
+CLI @command ["src/*.rb"]
+  test/fixtures/contract/.spec/contract/cli.json:7 init — Lay down an empty specification.
+  test/fixtures/contract/.spec/contract/cli.json:8 verify — Check the source against the specification.
+Routes @route ["app/*.rb"]
+  test/fixtures/contract/.spec/contract/routes.json:7 GET /users/:id — One user.
+keywords ["@command", "@route"]
+scope ["test/fixtures/contract/app/controller.rb", "test/fixtures/contract/src/commands.rb"]
+--- a directory nobody wrote registers no contracts ---
+[]
+--- the same name under two markers is two contracts ---
+2
+--- one name twice under one marker leaves a claim nothing to resolve to ---
+@command verify is declared twice, at test/fixtures/contract/duplicate/one.json:1 and test/fixtures/contract/duplicate/two.json:1
+--- a contract with no name cannot be claimed at all ---
+test/fixtures/contract/nameless/cli.json declares a contract with no "name"
+--- a definition with no marker says nothing to look for ---
+test/fixtures/contract/nomarker/cli.json declares no "marker"
+--- and neither is a specification that will not parse ---
+test/fixtures/contract/broken/cli.json is not readable JSON
+--- an interface nothing claims ---
+test/fixtures/contract/.spec/contract/admin.json:6 GET /admin is claimed nowhere in app/*.rb
+test/fixtures/contract/.spec/contract/cli.json:7 init is claimed nowhere in src/*.rb
+--- a claim resolving to no contract, and one naming none at all ---
+src/commands.rb:20 @command render resolves to no contract
+src/commands.rb:24 @command names no contract
+--- one contract claimed in two places ---
+app/controller.rb:5 @route GET /users/:id is claimed at app/legacy.rb:9 as well
+app/legacy.rb:9 @route GET /users/:id is claimed at app/controller.rb:5 as well
+--- the document a definition becomes ---
+# CLI
+
+The commands the executable answers.
+
+| Contract | Description |
+| --- | --- |
+| init | Lay down an empty specification. |
+| verify | Check the source against the specification. |

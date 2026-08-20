@@ -1,0 +1,8 @@
+{
+  "name": "Admin routes",
+  "marker": "@route",
+  "include": ["app/*.rb"],
+  "contracts": [
+    { "name": "GET /admin", "description": "The console." }
+  ]
+}
