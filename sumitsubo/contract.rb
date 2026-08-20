@@ -2,6 +2,7 @@ require "json"
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
+require "sumitsubo/locations"
 
 module Sumitsubo
   # The structured specification the Contract mechanism verifies against. What
@@ -205,7 +206,7 @@ module Sumitsubo
     def self.definition_from(path)
       text = File.read(path)
       document = parse(path, text)
-      lines = locations_in(text)
+      lines = Locations.of(text, NAME)
 
       marker = document["marker"]
       # Without a word to look for there is nothing to compare the contracts
@@ -229,29 +230,6 @@ module Sumitsubo
         interfaces,
         path
       )
-    end
-
-    # Where each name sits, so a finding about an interface nothing claims can
-    # answer at the specification — which is where a reader chooses between
-    # writing the code and dropping the contract.
-    def self.locations_in(text)
-      found = {}
-      line = 0
-      text.split("\n").each do |content|
-        line += 1
-        # Every name on the line, not just the first: a definition written on
-        # one line carries its own name ahead of the contracts it registers,
-        # and stopping at that one leaves them with nowhere to answer.
-        rest = content
-        match = NAME.match(rest)
-        until match.nil?
-          found[match[1]] = line if found[match[1]].nil?
-          at = rest.index(match[0])
-          rest = "#{rest[(at + match[0].length)..-1]}"
-          match = NAME.match(rest)
-        end
-      end
-      found
     end
 
     # The marker is the namespace, so two files may share one word and one

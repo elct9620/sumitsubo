@@ -62,3 +62,11 @@ end
 # @behavior B-007
 puts "--- several ids on one marker line ---"
 p Sumitsubo::Behavior.ids_in("V-008 V-009")
+
+# A scenario written on the same line as the one before it still has a line to
+# answer at, which is what a finding about it needs.
+# @behavior B-008
+puts "--- two scenarios on one line ---"
+Sumitsubo::Behavior.load("test/fixtures/behavior/oneline").each do |feature|
+  feature.scenarios.each { |scenario| puts "  #{scenario.line} #{scenario.id}" }
+end

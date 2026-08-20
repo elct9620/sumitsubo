@@ -51,6 +51,13 @@
       "given": ["the text a marker line carries after its keyword, naming more than one id"],
       "when": "the mechanism reads it",
       "then": "each id is answered on its own"
+    },
+    {
+      "id": "B-008",
+      "title": "Two scenarios on one line",
+      "given": ["a specification declaring two scenarios on the same line"],
+      "when": "the directory is loaded",
+      "then": "both answer at that line rather than the second answering at none"
     }
   ]
 }

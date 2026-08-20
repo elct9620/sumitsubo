@@ -1,0 +1,1 @@
+{ "name": "One line", "include": ["test/*.rb"], "scenarios": [{ "id": "L-001", "title": "First", "when": "it runs", "then": "something is observed" }, { "id": "L-002", "title": "Second", "when": "it runs", "then": "something else is observed" }] }

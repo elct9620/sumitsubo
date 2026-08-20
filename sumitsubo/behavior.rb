@@ -2,6 +2,7 @@ require "json"
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
+require "sumitsubo/locations"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -163,7 +164,7 @@ module Sumitsubo
     def self.feature_from(path)
       text = File.read(path)
       document = parse(path, text)
-      lines = locations_in(text)
+      lines = Locations.of(text, ID)
 
       scenarios = []
       (document["scenarios"] || []).each do |raw|
@@ -194,22 +195,6 @@ module Sumitsubo
         path,
         line
       )
-    end
-
-    # Where each id sits, so a finding about a scenario nothing declares can
-    # answer at the specification — which is where a reader goes to choose
-    # between writing the test and dropping the scenario.
-    def self.locations_in(text)
-      found = {}
-      line = 0
-      text.split("\n").each do |content|
-        line += 1
-        match = ID.match(content)
-        next if match.nil?
-
-        found[match[1]] = line if found[match[1]].nil?
-      end
-      found
     end
 
     # Two scenarios under one id leave a marker with nothing to resolve to,

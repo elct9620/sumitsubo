@@ -57,3 +57,11 @@ The scenarios a project declares, and where each one sits.
 | Given | the text a marker line carries after its keyword, naming more than one id |
 | When | the mechanism reads it |
 | Then | each id is answered on its own |
+
+## B-008 — Two scenarios on one line
+
+| Step | Statement |
+| --- | --- |
+| Given | a specification declaring two scenarios on the same line |
+| When | the directory is loaded |
+| Then | both answer at that line rather than the second answering at none |

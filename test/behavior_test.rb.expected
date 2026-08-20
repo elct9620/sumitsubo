@@ -34,3 +34,6 @@ test/fixtures/behavior/anonymous/verify.json declares a scenario with no "id"
 test/fixtures/behavior/broken/verify.json is not readable JSON
 --- several ids on one marker line ---
 ["V-008", "V-009"]
+--- two scenarios on one line ---
+  1 L-001
+  1 L-002
