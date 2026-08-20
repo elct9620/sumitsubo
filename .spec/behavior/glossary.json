@@ -37,6 +37,13 @@
       "given": ["readable JSON with no glossary in it"],
       "when": "the glossary is loaded",
       "then": "the file is named as declaring no glossary"
+    },
+    {
+      "id": "G-006",
+      "title": "The root arrives absolute",
+      "given": ["a glossary named by an absolute path that is not there"],
+      "when": "the glossary is loaded",
+      "then": "the path answers relative to where the run started"
     }
   ]
 }

@@ -20,3 +20,5 @@ no glossary at test/fixtures/glossary/absent.json
 test/fixtures/glossary/broken.json is not readable JSON
 --- and so is one with no glossary in it ---
 test/fixtures/glossary/shapeless.json declares no "glossary"
+--- and one named absolutely still answers where the run started ---
+no glossary at test/fixtures/glossary/absent.json

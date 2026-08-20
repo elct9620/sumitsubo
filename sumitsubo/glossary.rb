@@ -36,18 +36,21 @@ module Sumitsubo
     end
 
     def self.load(path)
-      raise Error, "no glossary at #{path}" unless File.exist?(path)
+      # The root arrives absolute, so every message about it is composed from
+      # the shown form rather than the path itself.
+      where = shown(path)
+      raise Error, "no glossary at #{where}" unless File.exist?(path)
 
       begin
         document = JSON.parse(File.read(path))
       rescue JSON::ParserError
         # The parser's own wording is Spinel's, not CRuby's, so it stays out
         # of the message the snapshot has to match on both.
-        raise Error, "#{path} is not readable JSON"
+        raise Error, "#{where} is not readable JSON"
       end
 
       sections = document["glossary"]
-      raise Error, "#{path} declares no \"glossary\"" if sections.nil?
+      raise Error, "#{where} declares no \"glossary\"" if sections.nil?
 
       sections.map { |raw| section_from(raw) }
     end
@@ -160,6 +163,12 @@ module Sumitsubo
         raw["include"] || [],
         (raw["terms"] || []).map { |term| term_from(term) }
       )
+    end
+
+    # Answered the way a finding is, relative to where the run started, so a
+    # reader can go straight to it — see the Output section of CLAUDE.md.
+    def self.shown(path)
+      "#{Pathname.new(path).expand_path.relative_path_from(Pathname.pwd)}"
     end
 
     def self.term_from(raw)

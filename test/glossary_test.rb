@@ -53,3 +53,13 @@ begin
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
+
+# The root arrives absolute at runtime, so a message composed from the path
+# itself would answer somewhere no reader can go.
+# @behavior G-006
+puts "--- and one named absolutely still answers where the run started ---"
+begin
+  Sumitsubo::Glossary.load(Pathname.new("test/fixtures/glossary/absent.json").expand_path.to_s)
+rescue Sumitsubo::Glossary::Error => e
+  puts e.message
+end
