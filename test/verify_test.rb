@@ -9,6 +9,16 @@ Dir.chdir("test/fixtures/glossary")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+puts "--- the same run from a subdirectory: same findings, paths from where it started ---"
+Dir.chdir("test/fixtures/glossary/app")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+puts "--- a specification switched off is not read, however far the code drifted ---"
+Dir.chdir("test/fixtures/disabled")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 puts "--- source the grammar cannot read is not a difference either ---"
 Dir.chdir("test/fixtures/unparseable")
 puts "exit=#{cli.run(["verify"])}"
@@ -21,6 +31,11 @@ Dir.chdir(root.to_s)
 
 puts "--- no specification at all ---"
 puts "exit=#{cli.run(["verify"])}"
+
+puts "--- a root the configuration points at but nothing wrote ---"
+File.write(".sumi.json", "{ \"root\": \"nope\" }\n")
+puts "exit=#{cli.run(["verify"])}"
+File.delete(".sumi.json")
 
 puts "--- what init lays down verifies clean ---"
 puts "exit=#{cli.run(["init"])}"

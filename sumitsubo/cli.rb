@@ -2,6 +2,7 @@ require "optparse"
 require "pathname"
 require "sumitsubo/version"
 require "sumitsubo/error"
+require "sumitsubo/config"
 require "sumitsubo/glossary"
 
 module Sumitsubo
@@ -21,29 +22,31 @@ module Sumitsubo
           -h, --help       Show this help
     TEXT
 
-    # Where specifications live is the tool's answer rather than a
-    # mechanism's: a mechanism knows the name of its own file and nothing
-    # about the layout around it. Until .sumi.json is read, this is it.
-    ROOT = ".spec"
-
     def run(argv)
       case argv.first
-      when "init" then init(ROOT)
-      when "verify" then verify(ROOT)
+      when "init" then init(Config.load)
+      when "verify" then verify(Config.load)
       else flags(argv)
       end
+    rescue Sumitsubo::Error => e
+      # A comparison that cannot be made — an unreadable configuration, no
+      # specification, or source the grammar cannot read — is not a difference
+      # between the two sides, so it answers differently from having found one.
+      puts e.message
+      2
     end
 
     private
 
-    def init(root)
-      Pathname.new(root).mkpath
-      path = Glossary.path_in(root)
+    def init(config)
+      config.root.mkpath
+      path = Glossary.path_in(config.root)
+      shown = "#{Pathname.new(path).relative_path_from(Pathname.pwd)}"
       if File.exist?(path)
-        puts "exists #{path}"
+        puts "exists #{shown}"
       else
         File.write(path, Glossary::EMPTY)
-        puts "created #{path}"
+        puts "created #{shown}"
       end
       0
     end
@@ -51,20 +54,29 @@ module Sumitsubo
     # Everything goes to stdout, findings and failures alike: the test
     # harness compares the two streams merged, and they are buffered
     # differently, so splitting them would leave their order unstable.
-    def verify(root)
-      path = Glossary.path_in(root)
-      findings = Glossary.check(Glossary.scope(Glossary.load(path)))
+    def verify(config)
+      # With no root there is no reference line at all to verify from, which
+      # is not a difference between the two sides either.
+      unless config.root.directory?
+        puts "no specification at #{config.root.relative_path_from(Pathname.pwd)}"
+        return 2
+      end
+
+      findings = glossary_findings(config)
       findings.each do |f|
         puts "#{f.path}:#{f.line} #{f.term} rejects #{f.used}: #{f.reason}"
       end
       puts "#{findings.length} differences"
       findings.empty? ? 0 : 1
-    rescue Sumitsubo::Error => e
-      # A comparison that cannot be made — no specification, or source the
-      # grammar cannot read — is not a difference between the two sides, so it
-      # answers differently from having found one.
-      puts e.message
-      2
+    end
+
+    # A specification the configuration switched off is never read, so the code
+    # it covers answers nothing rather than answering clean.
+    def glossary_findings(config)
+      return [] unless config.verify?("glossary")
+
+      sections = Glossary.load(Glossary.path_in(config.root))
+      Glossary.check(Glossary.scope(sections, config.base), config.base)
     end
 
     def flags(argv)

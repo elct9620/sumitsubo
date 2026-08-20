@@ -4,11 +4,23 @@ app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 docs/overview.md:5 Order rejects Purchase: Order is what the domain calls it.
 3 differences
 exit=1
+--- the same run from a subdirectory: same findings, paths from where it started ---
+../docs/overview.md:5 Order rejects Purchase: Order is what the domain calls it.
+billing/charge.rb:2 Order rejects Invoice: An invoice is issued later, from an order.
+order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+3 differences
+exit=1
+--- a specification switched off is not read, however far the code drifted ---
+0 differences
+exit=0
 --- source the grammar cannot read is not a difference either ---
 app/broken.rb: cannot be parsed by the ruby grammar
 exit=2
 --- no specification at all ---
-no glossary at .spec/glossary.json
+no specification at .spec
+exit=2
+--- a root the configuration points at but nothing wrote ---
+no specification at nope
 exit=2
 --- what init lays down verifies clean ---
 created .spec/glossary.json

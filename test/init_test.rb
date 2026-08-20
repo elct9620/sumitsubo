@@ -17,5 +17,9 @@ print File.read(".spec/glossary.json")
 puts "--- second run leaves it alone ---"
 puts "exit=#{cli.run(["init"])}"
 
+puts "--- a configured root is created however deep it is ---"
+File.write(".sumi.json", "{ \"root\": \"spec/nested\" }\n")
+puts "exit=#{cli.run(["init"])}"
+
 Dir.chdir(back)
 root.rmtree

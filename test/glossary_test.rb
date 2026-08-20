@@ -1,3 +1,4 @@
+require "pathname"
 require "sumitsubo"
 
 back = Dir.pwd
@@ -9,11 +10,11 @@ sections = Sumitsubo::Glossary.load(".spec/glossary.json")
 # scope is printed rather than inferred from the merged result.
 puts "--- what each section covers ---"
 sections.each do |section|
-  puts "#{section.name} #{section.includes.inspect} -> #{Sumitsubo::Glossary.paths_for(section).inspect}"
+  puts "#{section.name} #{section.includes.inspect} -> #{Sumitsubo::Glossary.paths_for(section, Pathname.pwd).inspect}"
 end
 
 puts "--- effective vocabulary per file ---"
-scope = Sumitsubo::Glossary.scope(sections)
+scope = Sumitsubo::Glossary.scope(sections, Pathname.pwd)
 scope.keys.sort.each do |path|
   terms = scope[path]
   terms.keys.sort.each do |name|

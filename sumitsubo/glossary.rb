@@ -56,10 +56,10 @@ module Sumitsubo
     # order the specification lists them, a later term replacing an earlier
     # one of the same name outright — its disallowed list included, since a
     # term meaning something else here rejects different words.
-    def self.scope(sections)
+    def self.scope(sections, base)
       effective = {}
       sections.each do |section|
-        paths_for(section).each do |path|
+        paths_for(section, base).each do |path|
           terms = effective[path] || {}
           section.terms.each { |term| terms[term.term] = term }
           effective[path] = terms
@@ -69,14 +69,18 @@ module Sumitsubo
     end
 
     # Whole words, case sensitive, over the regions the vocabulary reaches.
-    def self.check(scope)
+    def self.check(scope, base)
       findings = []
       scope.keys.sort.each do |path|
-        regions = regions_in(path)
+        file = base / path
+        # Answered the way the Output section of CLAUDE.md asks for: relative
+        # to where the run started, so a reader can go straight to it.
+        shown = "#{file.relative_path_from(Pathname.pwd)}"
+        regions = regions_in(file.to_s, shown)
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].disallowed.each do |entry|
-            findings.concat(findings_for(path, regions, name, entry))
+            findings.concat(findings_for(shown, regions, name, entry))
           end
         end
       end
@@ -88,14 +92,14 @@ module Sumitsubo
     # spelling of a concept rather than the concept's name, and counting it
     # would flag every legitimate class in the tree. Anything else is prose,
     # which is a comment for its whole length.
-    def self.regions_in(path)
+    def self.regions_in(path, shown)
       return prose_in(path) unless path.end_with?(".rb")
 
-      comments_in(path)
+      comments_in(path, shown)
     end
 
-    def self.comments_in(path)
-      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::COMMENTS, path)
+    def self.comments_in(path, shown)
+      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::COMMENTS, shown)
                 .map { |capture| Region.new(capture.line, capture.text) }
     rescue TreeSitter::ParseError => e
       # Source the grammar cannot read is not a difference between the two
@@ -133,9 +137,14 @@ module Sumitsubo
       found
     end
 
-    def self.paths_for(section)
+    # Globs are answered against the base, which is where the configuration
+    # was found, so a run from a subdirectory reaches the same files.
+    def self.paths_for(section, base)
       found = []
-      section.includes.each { |pattern| found.concat(Dir.glob(pattern)) }
+      section.includes.each do |pattern|
+        # Interpolated to settle the element type, as the binding's decoder is.
+        base.glob(pattern).each { |path| found.push("#{path.relative_path_from(base)}") }
+      end
       found.uniq.sort
     end
 

@@ -1,0 +1,16 @@
+{
+  "glossary": [
+    {
+      "include": ["app/**/*.rb"],
+      "terms": [
+        {
+          "term": "Order",
+          "definition": "What a customer asks us to fulfil.",
+          "not": [
+            { "term": "Purchase", "reason": "Order is what the domain calls it." }
+          ]
+        }
+      ]
+    }
+  ]
+}
