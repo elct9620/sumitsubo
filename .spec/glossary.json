@@ -1,7 +1,7 @@
 {
   "glossary": [
     {
-      "include": ["CLAUDE.md", "README.md", ".spec/behavior/*.json", "sumitsubo/**/*.rb", "docs/glossary.md"],
+      "include": ["CLAUDE.md", "README.md", ".spec/contract/*.json", ".spec/behavior/*.json", "sumitsubo/**/*.rb", "docs/glossary.md"],
       "terms": [
         {
           "term": "Specification",
@@ -10,7 +10,7 @@
         },
         {
           "term": "Structured Specification",
-          "definition": "The machine-readable file a mechanism reads: .spec/glossary.json, and one file per feature under .spec/behavior/.",
+          "definition": "The machine-readable file a mechanism reads: .spec/glossary.json, one file per kind of contract under .spec/contract/, and one file per feature under .spec/behavior/.",
           "not": []
         },
         {
@@ -37,6 +37,11 @@
               "reason": "An abstract tree drops the comments, which are the only thing Glossary reads."
             }
           ]
+        },
+        {
+          "term": "Contract",
+          "definition": "An interface a project registers as one it means to keep, claimed by the source that implements it. The marker it is claimed with is its namespace.",
+          "not": []
         },
         {
           "term": "Behavior",
