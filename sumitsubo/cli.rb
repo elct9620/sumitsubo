@@ -3,6 +3,7 @@ require "sumitsubo/version"
 require "sumitsubo/error"
 require "sumitsubo/config"
 require "sumitsubo/command/init"
+require "sumitsubo/command/render"
 require "sumitsubo/command/verify"
 
 module Sumitsubo
@@ -15,6 +16,7 @@ module Sumitsubo
 
       Commands:
           init             Lay down an empty specification to start from
+          render           Render the specification to markdown
           verify           Check the source against the specification
 
       Options:
@@ -25,6 +27,7 @@ module Sumitsubo
     def run(argv)
       case argv.first
       when "init" then Command::Init.new.run(Config.load)
+      when "render" then Command::Render.new.run(Config.load)
       when "verify" then Command::Verify.new.run(Config.load)
       else flags(argv)
       end

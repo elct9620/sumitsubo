@@ -1,0 +1,63 @@
+{
+  "name": "Render",
+  "description": "Rendering the structured specification to the markdown specification.",
+  "include": [
+    "test/render_test.rb"
+  ],
+  "scenarios": [
+    {
+      "id": "R-001",
+      "title": "The vocabulary becomes a document",
+      "given": [
+        "a glossary declaring terms"
+      ],
+      "when": "`sumi render` runs",
+      "then": "a glossary document is written under the configured documents path"
+    },
+    {
+      "id": "R-002",
+      "title": "One document per feature",
+      "given": [
+        "a behavior specification holding one file per feature"
+      ],
+      "when": "`sumi render` runs",
+      "then": "each feature is written to a document named after the file declaring it"
+    },
+    {
+      "id": "R-003",
+      "title": "A specification the configuration switched off",
+      "given": [
+        "a .sumi.json declaring the glossary is not to be rendered"
+      ],
+      "when": "`sumi render` runs",
+      "then": "the switched-off specification leaves no document behind"
+    },
+    {
+      "id": "R-004",
+      "title": "Nothing to render is not a failure",
+      "given": [
+        "a directory with no specification"
+      ],
+      "when": "`sumi render` runs",
+      "then": "nothing is written"
+    },
+    {
+      "id": "R-005",
+      "title": "A second run brings the document up to date",
+      "given": [
+        "a project whose rendered document no longer matches the specification"
+      ],
+      "when": "`sumi render` runs again",
+      "then": "the document is replaced by what the specification now says"
+    },
+    {
+      "id": "R-006",
+      "title": "A specification that could not be read",
+      "given": [
+        "a behavior specification that is not readable JSON"
+      ],
+      "when": "`sumi render` runs",
+      "then": "the file is named as one that could not be read"
+    }
+  ]
+}

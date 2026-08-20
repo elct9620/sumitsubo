@@ -1,0 +1,47 @@
+--- a project with no specification renders nothing ---
+exit=0
+--- the structured specification becomes documents ---
+rendered docs/glossary.md
+rendered docs/behavior/checkout.md
+rendered docs/behavior/refund.md
+exit=0
+--- docs/glossary.md ---
+# Glossary
+
+| Term | Definition |
+| --- | --- |
+| Order | What a customer asks us to fulfil. |
+| Refund | Money returned after an order is settled. |
+--- docs/behavior/checkout.md ---
+# Checkout
+
+Taking payment for an order.
+
+## K-001 — A card the bank declines
+
+| Step | Statement |
+| --- | --- |
+| Given | an order awaiting payment |
+| Given | a card the bank will decline |
+| When | checkout runs |
+| Then | the order is left awaiting payment |
+--- a second run brings the document up to date ---
+rendered docs/glossary.md
+rendered docs/behavior/checkout.md
+rendered docs/behavior/refund.md
+exit=0
+# Glossary
+
+| Term | Definition |
+| --- | --- |
+| Order | What a customer asks us to fulfil. |
+| Refund | Money returned after an order is settled. |
+--- a specification the configuration switched off is not rendered ---
+rendered docs/behavior/checkout.md
+rendered docs/behavior/refund.md
+exit=0
+stale
+--- a specification that could not be read stops that mechanism and no other ---
+rendered docs/glossary.md
+.spec/behavior/broken.json is not readable JSON
+exit=2

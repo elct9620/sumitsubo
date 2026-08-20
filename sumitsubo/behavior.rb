@@ -29,7 +29,9 @@ module Sumitsubo
     # already Kernel's and `when` is a keyword. An identifier is a spelling of
     # the concept rather than its name, so the members take the safe spelling.
     Scenario = Struct.new(:id, :title, :given, :action, :outcome, :path, :line)
-    Feature = Struct.new(:name, :description, :includes, :scenarios)
+    # The path is what names the document Render writes: one file per feature
+    # on the specification side, one on the document side.
+    Feature = Struct.new(:name, :description, :includes, :scenarios, :path)
     # A scenario nothing claims. The scope is carried so the finding can say
     # where it looked rather than claiming no test exists anywhere.
     Finding = Struct.new(:path, :line, :id, :scope)
@@ -117,6 +119,37 @@ module Sumitsubo
       "#{claim.id} resolves to no scenario"
     end
 
+    # The mechanism words its own document, as it words its own findings. A
+    # scenario is sentences rather than fields, so the table carries one step
+    # per row instead of one scenario per row.
+    def self.render(feature)
+      lines = ["# #{feature.name || document_name(feature)}", ""]
+      lines.push(feature.description, "") unless feature.description.nil?
+
+      feature.scenarios.each do |scenario|
+        lines.push("## #{scenario.id} — #{scenario.title}", "")
+        lines.push("| Step | Statement |", "| --- | --- |")
+        scenario.given.each { |given| lines.push("| Given | #{cell(given)} |") }
+        lines.push("| When | #{cell(scenario.action)} |")
+        lines.push("| Then | #{cell(scenario.outcome)} |")
+        lines.push("")
+      end
+      lines.join("\n")
+    end
+
+    # What a feature is called on the document side: the file declaring it,
+    # since one file there is one document here. It stands in for a feature
+    # that named itself nothing.
+    def self.document_name(feature)
+      "#{Pathname.new(feature.path).basename(".json")}"
+    end
+
+    # A bar would end the cell it sits in, so it is spelled rather than left to
+    # split the table.
+    def self.cell(text)
+      "#{text}".split("|").join("\\|")
+    end
+
     def self.feature_from(path)
       text = File.read(path)
       document = parse(path, text)
@@ -136,7 +169,8 @@ module Sumitsubo
         document["name"],
         document["description"],
         document["include"] || [],
-        scenarios
+        scenarios,
+        path
       )
     end
 

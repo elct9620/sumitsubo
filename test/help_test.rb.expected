@@ -3,6 +3,7 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
+    render           Render the specification to markdown
     verify           Check the source against the specification
 
 Options:
@@ -14,6 +15,7 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
+    render           Render the specification to markdown
     verify           Check the source against the specification
 
 Options:
@@ -25,6 +27,7 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
+    render           Render the specification to markdown
     verify           Check the source against the specification
 
 Options:
@@ -36,6 +39,7 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
+    render           Render the specification to markdown
     verify           Check the source against the specification
 
 Options:
