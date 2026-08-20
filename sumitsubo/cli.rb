@@ -14,7 +14,7 @@ module Sumitsubo
       Usage: sumi <command> [options]
 
       Commands:
-          init             Write an empty .spec/glossary.json
+          init             Write an empty glossary specification
           verify           Check the source against the specification
 
       Options:

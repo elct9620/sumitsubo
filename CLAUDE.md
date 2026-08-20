@@ -38,12 +38,34 @@ it, the absence of a specification here is deliberate.
 
 ## How it works
 
-Sumitsubo reads the structured specification from `.spec/` and checks the
-source code against the verifiable part of it. Ruby is the only language it
-targets.
+Sumitsubo reads the structured specification and checks the source code
+against the verifiable part of it. Ruby is the only language it targets.
 
-`.spec/` is provisional — chosen to stay clear of RSpec's `spec/`, and open to
-change.
+`.sumi.json` says where. A run takes the nearest one at or above where it
+started; failing that the repository it sits in, failing that — with neither
+to go on — where it started. Two bases come out of this and they answer
+different questions: what the configuration says is read against that base,
+so wherever under it a run starts it reaches the same files, while findings
+answer relative to where the run started, so a reader can go straight to one.
+This is the convention tsc and RuboCop both follow.
+
+```json
+{
+  "root": ".spec",
+  "specifications": { "glossary": { "verify": false } }
+}
+```
+
+`root` is where the specifications live, `.spec` by default. `specifications`
+lists only the exceptions: one nobody mentions is verified, and `verify:
+false` keeps a specification without checking it — which a Render that only
+records it still needs. A project that has said nothing is not misconfigured,
+so an absent `.sumi.json` answers the defaults; only an unreadable one stops
+the run.
+
+`.spec` is the default for two reasons, both about what else claims the name:
+`spec/` is RSpec's, and Spinel scans directories that do not start with a dot,
+so a specification directory without one would be swept in as source.
 
 `glossary.json` holds sections, each scoped by `include` globs. A file takes
 every section covering it, applied in the order the file lists them; a later
@@ -61,7 +83,7 @@ concept's name, so counting one would flag every legitimate class in the tree.
 
 | Feature | Description                                                          |
 |---------|----------------------------------------------------------------------|
-| Init    | Write an empty `.spec/glossary.json` to start a reference line from.  |
+| Init    | Write an empty glossary specification to start a reference line from. |
 | Render  | Render the structured specification to the markdown specification.   |
 | Verify  | Verify the source code is aligned with the verifiable specification. |
 
@@ -74,8 +96,9 @@ however often the word appears on it: the line is what a reader goes to, and
 what an exclusion would one day be written against.
 
 The run answers 0 where the two sides agree, 1 where they differ, and 2 where
-the comparison could not be made — no specification to verify from, or source
-the grammar could not read. A difference is a finding about the code; being
+the comparison could not be made — no root to verify from, a specification
+missing from one that is there, an unreadable `.sumi.json`, or source the
+grammar could not read. A difference is a finding about the code; being
 unable to compare is not, and an operator branches on which it got. Findings
 and failures share stdout, the test harness comparing the two streams merged.
 
@@ -115,9 +138,13 @@ The command is `sumi`, shipped as a single native executable.
 - `spin test --regen` writes that snapshot by running the same file under
   CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
-  that way; today that is every test which requires the library. Where no
-  snapshot is committed the run is compared against CRuby rather than failing,
-  and a test that asserts nothing passes.
+  that way; today that is every test except `config_test.rb`, which is why
+  nothing in `sumitsubo/config.rb` names a mechanism. Where no snapshot is
+  committed the run is compared against CRuby rather than failing, and a test
+  that asserts nothing passes.
+- `--regen` takes no file, so it rewrites every snapshot including the
+  hand-written ones, leaving a CRuby backtrace where the expectation was.
+  Restore the rest afterwards.
 - Tests compile at `-O1` and the shipped executable at the compiler's default,
   so CI builds and runs `sumi` in addition to running the tests.
 - Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows has no
@@ -150,3 +177,7 @@ AOT compiler for Ruby. Its constraints shape the design:
   optparse drops option descriptions from `to_s` and lets an unknown flag
   through instead of raising. A snapshot taken from CRuby can therefore record
   behaviour the executable does not have.
+- `Pathname#join` reduces with `acc + part`, and once the accumulator loses
+  its type that `+` dispatches to String, so it answers a String. `#/` and
+  `#+` answer a Pathname on every branch, which is what the next call in a
+  chain needs.
