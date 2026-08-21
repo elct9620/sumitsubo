@@ -171,7 +171,10 @@ module Sumitsubo
         id = raw["id"]
         # A scenario nothing can name is unreferenceable, which is the same
         # ambiguity a duplicate is rather than a difference to report.
-        raise Error, "#{Where.of(path)} declares a scenario with no \"id\"" if id.nil?
+        if id.nil?
+          raise Error, "#{Where.of(path)} declares a scenario with no \"id\"; " \
+                       "sumi help behavior has the form"
+        end
 
         scenarios.push(scenario_from(path, raw, lines[id]))
       end

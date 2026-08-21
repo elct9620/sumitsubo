@@ -411,10 +411,14 @@ module Sumitsubo
       interfaces = []
       (document["contracts"] || []).each do |raw|
         name = raw["name"]
-        raise Error, "#{Where.of(path)} declares a contract with no \"name\"" if name.nil?
+        if name.nil?
+          raise Error, "#{Where.of(path)} declares a contract with no \"name\"; " \
+                       "sumi help contract has the form"
+        end
 
         if marker.nil? && !resolvable?(name)
-          raise Error, "#{Where.of(path)} names #{name}, which no Ruby definition can be"
+          raise Error, "#{Where.of(path)} names #{name}, which no Ruby definition can be; " \
+                       "sumi help contract has the two readings"
         end
 
         # Only the syntax tree answers what a definition takes. Parameters
@@ -422,7 +426,8 @@ module Sumitsubo
         # specification is refused rather than carried unchecked.
         if !marker.nil? && !raw["params"].nil?
           raise Error, "#{Where.of(path)} gives #{name} parameters, " \
-                       "which a marker leaves nothing to compare them against"
+                       "which a marker leaves nothing to compare them against; " \
+                       "sumi help contract has the form"
         end
 
         line = cursor.line_of(name)

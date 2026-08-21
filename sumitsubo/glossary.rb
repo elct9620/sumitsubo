@@ -36,7 +36,7 @@ module Sumitsubo
     def self.load(path)
       file = Pathname.new(path)
       where = Where.of(file)
-      raise Error, "no glossary at #{where}" unless file.exist?
+      raise Error, "no glossary at #{where}; sumi init lays one down" unless file.exist?
 
       begin
         document = JSON.parse(file.read)
@@ -47,7 +47,10 @@ module Sumitsubo
       end
 
       sections = document["glossary"]
-      raise Error, "#{where} declares no \"glossary\"" if sections.nil?
+      if sections.nil?
+        raise Error, "#{where} declares no \"glossary\"; " \
+                     "sumi help glossary has the form"
+      end
 
       sections.map { |raw| section_from(raw) }
     end

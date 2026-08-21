@@ -47,14 +47,14 @@ src/store.rb:16 Store#read takes (key, default) here and (key) at src/store.rb:6
 3 differences
 exit=1
 --- a contract naming no marker and nothing Ruby can define ---
-.spec/contract/routes.json names GET /users/:id, which no Ruby definition can be
+.spec/contract/routes.json names GET /users/:id, which no Ruby definition can be; sumi help contract has the two readings
 0 differences
 exit=2
 --- no specification at all ---
-no specification at .spec
+no specification at .spec; sumi init lays one down
 exit=2
 --- a root the configuration points at but nothing wrote ---
-no specification at nope
+no specification at nope; sumi init lays one down
 exit=2
 --- what init lays down verifies clean ---
 created .spec/glossary.json

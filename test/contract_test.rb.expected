@@ -17,13 +17,13 @@ Routes @route ["app/*.rb"]
 --- one name twice under one marker leaves a claim nothing to resolve to ---
 @command verify is declared twice, at test/fixtures/contract/duplicate/one.json:1 and test/fixtures/contract/duplicate/two.json:1
 --- a contract with no name cannot be claimed at all ---
-test/fixtures/contract/nameless/cli.json declares a contract with no "name"
+test/fixtures/contract/nameless/cli.json declares a contract with no "name"; sumi help contract has the form
 --- a definition with no marker is read from the syntax tree ---
 1
 --- one name twice with no marker ---
 Store.open is declared twice, at test/fixtures/contract/twice/one.json:1 and test/fixtures/contract/twice/two.json:1
 --- a contract no Ruby definition can be ---
-test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no Ruby definition can be
+test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no Ruby definition can be; sumi help contract has the two readings
 --- an interface the syntax tree does not define ---
 test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere in src/*.rb, and a method made by a call or mixed in never is
 test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/*.rb, and a method made by a call or mixed in never is
@@ -58,7 +58,7 @@ test/fixtures/contract/params/api.json:6 Store.open takes (path) where the speci
 src/store.rb:6 Store#read takes (key:keyword, -:block?) here and (key:keyword) at src/store.rb:24
 src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) at src/store.rb:6
 --- parameters registered under a marker ---
-test/fixtures/contract/marked/cli.json gives verify parameters, which a marker leaves nothing to compare them against
+test/fixtures/contract/marked/cli.json gives verify parameters, which a marker leaves nothing to compare them against; sumi help contract has the form
 --- a name the specification uses at more than one depth ---
   test/fixtures/contract/collide/store.json:6 Store.open
   test/fixtures/contract/collide/store.json:9 loose

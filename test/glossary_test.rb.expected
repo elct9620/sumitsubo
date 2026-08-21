@@ -15,10 +15,10 @@ docs/overview.md Customer rejects User: Nobody logs in to place an order.
 docs/overview.md Order: What a customer asks us to fulfil.
 docs/overview.md Order rejects Purchase: Order is what the domain calls it.
 --- a missing glossary is a broken reference line, not a difference ---
-no glossary at test/fixtures/glossary/absent.json
+no glossary at test/fixtures/glossary/absent.json; sumi init lays one down
 --- so is one that will not parse ---
 test/fixtures/glossary/broken.json is not readable JSON
 --- and so is one with no glossary in it ---
-test/fixtures/glossary/shapeless.json declares no "glossary"
+test/fixtures/glossary/shapeless.json declares no "glossary"; sumi help glossary has the form
 --- and one named absolutely still answers where the run started ---
-no glossary at test/fixtures/glossary/absent.json
+no glossary at test/fixtures/glossary/absent.json; sumi init lays one down
