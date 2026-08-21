@@ -2,7 +2,6 @@ require "json"
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/grammar"
 
 module Sumitsubo
   # The structured specification the Glossary mechanism verifies against.
@@ -26,8 +25,6 @@ module Sumitsubo
     Disallowed = Struct.new(:term, :reason)
     Term = Struct.new(:term, :definition, :disallowed)
     Section = Struct.new(:name, :includes, :terms)
-    # A stretch of a file the vocabulary is checked against, and where it starts.
-    Region = Struct.new(:line, :text)
     Finding = Struct.new(:path, :line, :term, :used, :reason)
 
     # The mechanism names its own file; where the root sits is the tool's to
@@ -72,12 +69,17 @@ module Sumitsubo
     end
 
     # Whole words, case sensitive, over the regions the vocabulary reaches.
-    def self.check(scope, base)
+    #
+    # What a person wrote is read by the language answering for the file, and
+    # that arrives from outside: this mechanism checks a vocabulary and names
+    # no language, which is what leaves a second one to be carried without it
+    # being touched.
+    def self.check(scope, base, languages)
       findings = []
       scope.keys.sort.each do |path|
         file = base / path
         where = Where.of(file)
-        regions = regions_in(file, where)
+        regions = languages.comments_in(file, where)
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].disallowed.each do |entry|
@@ -114,36 +116,6 @@ module Sumitsubo
     # split the table.
     def self.cell(text)
       "#{text}".split("|").join("\\|")
-    end
-
-    # Source code contributes its comments and nothing else: an identifier is a
-    # spelling of a concept rather than the concept's name, and counting it
-    # would flag every legitimate class in the tree. Anything else is prose,
-    # which is a comment for its whole length.
-    def self.regions_in(path, where)
-      return prose_in(path) unless path.extname == ".rb"
-
-      comments_in(path, where)
-    end
-
-    def self.comments_in(path, where)
-      TreeSitter.capture(Grammar::RUBY, path.read, Grammar::COMMENTS, where)
-                .map { |capture| Region.new(capture.line, capture.text) }
-    rescue TreeSitter::ParseError => e
-      # Source the grammar cannot read is not a difference between the two
-      # sides either: half a file yields captures the rest of it never made.
-      raise Error, e.message
-    end
-
-    def self.prose_in(path)
-      regions = []
-      lines = path.readlines
-      index = 0
-      while index < lines.length
-        regions.push(Region.new(index + 1, lines[index]))
-        index += 1
-      end
-      regions
     end
 
     # One finding per line, however often the word appears on it: the line is

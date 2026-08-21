@@ -1,3 +1,4 @@
+require "sumitsubo/language"
 require "sumitsubo/glossary"
 require "sumitsubo/contract"
 require "sumitsubo/behavior"
@@ -46,7 +47,7 @@ module Sumitsubo
       def verify(config, report)
         sections = Sumitsubo::Glossary.load(Sumitsubo::Glossary.path_in(config.root))
         scope = Sumitsubo::Glossary.scope(sections, config.base)
-        Sumitsubo::Glossary.check(scope, config.base).each do |finding|
+        Sumitsubo::Glossary.check(scope, config.base, Sumitsubo::Language).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Glossary.describe(finding))
         end
       end
