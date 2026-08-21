@@ -1,1 +1,1 @@
-{ "name": "CLI", "contracts": [{ "name": "verify" }] }
+{ "name": "CLI", "include": ["src/*.rb"], "contracts": [{ "name": "verify" }] }

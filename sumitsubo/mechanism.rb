@@ -2,6 +2,7 @@ require "sumitsubo/glossary"
 require "sumitsubo/contract"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
+require "sumitsubo/declaration"
 
 module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
@@ -93,6 +94,11 @@ module Sumitsubo
         Sumitsubo::Contract.unresolved(definitions, claims).each do |claim|
           report.failure(claim.path, claim.line, Sumitsubo::Contract.describe_unresolved(claim))
         end
+        # The other reading makes no claims, so an interface no source defines
+        # is the only difference it can find.
+        Sumitsubo::Contract.undefined(definitions, names_in(definitions, config)).each do |finding|
+          report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_undefined(finding))
+        end
       end
 
       private
@@ -101,8 +107,9 @@ module Sumitsubo
       # cost, so a project registering several kinds still reads each file once.
       def claims_in(definitions, config)
         claims = []
-        keywords = Sumitsubo::Contract.keywords(definitions)
-        Sumitsubo::Contract.scope(definitions, config.base).each do |path|
+        claimed = Sumitsubo::Contract.claimed(definitions)
+        keywords = Sumitsubo::Contract.keywords(claimed)
+        Sumitsubo::Contract.scope(claimed, config.base).each do |path|
           Marker.claims_in(path, keywords).each do |claim|
             claims.push(Sumitsubo::Contract::Claim.new(
               claim.path, claim.line, claim.keyword, claim.text
@@ -110,6 +117,17 @@ module Sumitsubo
           end
         end
         claims
+      end
+
+      # What the source in scope declares, for the definitions read that way.
+      def names_in(definitions, config)
+        names = []
+        Sumitsubo::Contract.scope(
+          Sumitsubo::Contract.declared(definitions), config.base
+        ).each do |path|
+          Declaration.names_in(path).each { |name| names.push(name) }
+        end
+        names
       end
     end
 

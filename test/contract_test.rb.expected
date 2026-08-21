@@ -18,8 +18,14 @@ Routes @route ["app/*.rb"]
 @command verify is declared twice, at test/fixtures/contract/duplicate/one.json:1 and test/fixtures/contract/duplicate/two.json:1
 --- a contract with no name cannot be claimed at all ---
 test/fixtures/contract/nameless/cli.json declares a contract with no "name"
---- a definition with no marker says nothing to look for ---
-test/fixtures/contract/nomarker/cli.json declares no "marker"
+--- a definition with no marker is read from the syntax tree ---
+1
+--- one name twice with no marker ---
+Store.open is declared twice, at test/fixtures/contract/twice/one.json:1 and test/fixtures/contract/twice/two.json:1
+--- a contract no Ruby declaration can be ---
+test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no Ruby declaration can be
+--- an interface the syntax tree does not declare ---
+test/fixtures/contract/nomarker/cli.json:1 verify is defined nowhere in src/*.rb
 --- and neither is a specification that will not parse ---
 test/fixtures/contract/broken/cli.json is not readable JSON
 --- an interface nothing claims ---

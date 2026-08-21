@@ -56,7 +56,7 @@ The interfaces a project registers, and what source claims to implement them.
 | --- | --- |
 | Given | a definition that does not say what word claims it |
 | When | the directory is loaded |
-| Then | the file is named as saying nothing to look for |
+| Then | it is registered as one the syntax tree answers rather than refused |
 
 ## T-008 — A specification that will not parse
 
@@ -113,3 +113,29 @@ The interfaces a project registers, and what source claims to implement them.
 | Given | definitions whose includes cover different directories |
 | When | the scope is asked for |
 | Then | the union of every include answers, without repeats |
+
+## T-015 — A contract no Ruby declaration can be
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition naming no marker |
+| Given | an interface named the way a route is named |
+| When | the directory is loaded |
+| Then | the file is named as registering something no Ruby declaration can be |
+
+## T-016 — An interface the syntax tree does not declare
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition naming no marker |
+| Given | names the source in scope declares, one of them missing |
+| When | the two sides are compared |
+| Then | the missing one is answered at the line registering it, naming the scope that was searched |
+
+## T-017 — One name twice with no marker
+
+| Step | Statement |
+| --- | --- |
+| Given | two definitions naming no marker and registering the same name |
+| When | the directory is loaded |
+| Then | the message names both places without a namespace in front of the name |

@@ -1,0 +1,10 @@
+{
+  "name": "API",
+  "description": "The methods this package exposes.",
+  "include": ["src/*.rb"],
+  "contracts": [
+    { "name": "Store.open", "description": "Open the store." },
+    { "name": "Store#read", "description": "Read one record." },
+    { "name": "Store#write", "description": "Write one record." }
+  ]
+}

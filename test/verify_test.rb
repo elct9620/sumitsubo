@@ -54,6 +54,22 @@ Dir.chdir("test/fixtures/contracted")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# `Store#write` is registered and the class does not declare it; the other two
+# are there, so only the one answers.
+# @behavior V-015
+puts "--- an interface the syntax tree does not declare ---"
+Dir.chdir("test/fixtures/declared")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+# Read as Ruby every name in the file would answer as undefined, so what the
+# run says is that the specification cannot be read.
+# @behavior V-016
+puts "--- a contract naming no marker and nothing Ruby can declare ---"
+Dir.chdir("test/fixtures/unresolvable")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

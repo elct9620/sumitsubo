@@ -54,9 +54,30 @@ fails { Sumitsubo::Contract.load("#{FIXTURE}/duplicate") }
 puts "--- a contract with no name cannot be claimed at all ---"
 fails { Sumitsubo::Contract.load("#{FIXTURE}/nameless") }
 
+# A marker is what a route needs because nothing in Ruby points at one. A
+# definition naming none is read from the syntax tree instead.
 # @behavior T-007
-puts "--- a definition with no marker says nothing to look for ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/nomarker") }
+puts "--- a definition with no marker is read from the syntax tree ---"
+p Sumitsubo::Contract.declared(Sumitsubo::Contract.load("#{FIXTURE}/nomarker")).length
+
+# The syntax tree reading shares one namespace, so a name twice in it is the
+# same ambiguity — said without a marker in front of it.
+# @behavior T-017
+puts "--- one name twice with no marker ---"
+fails { Sumitsubo::Contract.load("#{FIXTURE}/twice") }
+
+# @behavior T-015
+puts "--- a contract no Ruby declaration can be ---"
+fails { Sumitsubo::Contract.load("#{FIXTURE}/unresolvable") }
+
+# @behavior T-016
+puts "--- an interface the syntax tree does not declare ---"
+Declared = Struct.new(:name)
+Sumitsubo::Contract.undefined(
+  Sumitsubo::Contract.load("#{FIXTURE}/nomarker"), [Declared.new("init")]
+).each do |finding|
+  puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
+end
 
 # @behavior T-008
 puts "--- and neither is a specification that will not parse ---"

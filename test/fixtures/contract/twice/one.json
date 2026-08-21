@@ -1,0 +1,1 @@
+{ "name": "One", "include": ["src/*.rb"], "contracts": [{ "name": "Store.open" }] }

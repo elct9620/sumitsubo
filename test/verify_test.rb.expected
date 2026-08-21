@@ -36,6 +36,14 @@ src/commands.rb:7 @command init is claimed at src/commands.rb:3 as well
 src/commands.rb:12 @command render resolves to no contract
 3 differences
 exit=2
+--- an interface the syntax tree does not declare ---
+.spec/contract/api.json:8 Store#write is defined nowhere in src/*.rb
+1 difference
+exit=1
+--- a contract naming no marker and nothing Ruby can declare ---
+.spec/contract/routes.json names GET /users/:id, which no Ruby declaration can be
+0 differences
+exit=2
 --- no specification at all ---
 no specification at .spec
 exit=2

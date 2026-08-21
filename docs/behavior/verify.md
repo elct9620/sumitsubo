@@ -116,3 +116,21 @@ Checking the source against the verifiable part of the specification, and answer
 | Given | source claiming a name no contract specification registers under that marker |
 | When | `sumi verify` runs |
 | Then | the claim is reported at the line it sits on as resolving to no contract |
+
+## V-015 — An interface the syntax tree does not declare
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract naming no marker |
+| Given | a registered method no source in scope defines |
+| When | the two sides are compared |
+| Then | it is answered at the line registering it, naming the scope that was searched |
+
+## V-016 — A contract naming no marker and nothing Ruby can declare
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract naming no marker |
+| Given | an interface named the way a route is named |
+| When | the two sides are compared |
+| Then | the file is named as registering something no Ruby declaration can be |

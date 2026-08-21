@@ -13,6 +13,11 @@ module Sumitsubo
   # while an interface nobody declared is not. Only the contracts that matter
   # are registered, so the absence of a declaration says nothing.
   #
+  # A definition names the word source claims its interfaces with, or names
+  # none and is read from the syntax tree instead. The marker is what a route
+  # needs because no Ruby construct points at one; a method is a construct, so
+  # its absence is what says which reading applies.
+  #
   # Nothing here names the grammar, which is what keeps this file's test on the
   # side that --regen can still write a snapshot for.
   module Contract
@@ -22,6 +27,13 @@ module Sumitsubo
     # numbers, and the finding for an interface nothing claims answers at the
     # specification that declares it.
     NAME = /"name"\s*:\s*"([^"]*)"/
+
+    # A constant path, and a method name. What the check exists for is a file
+    # that meant to register routes and lost its marker: read as Ruby, every
+    # one of its names would answer as undefined, which is a finding about the
+    # code where the truth is a specification that cannot be read.
+    CONSTANT = /\A[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)*\z/
+    METHOD = /\A([A-Za-z_][A-Za-z0-9_]*[?!=]?|\[\]=?|[<>=!+\-*\/%&|^~]+)\z/
 
     class Error < Sumitsubo::Error; end
 
@@ -79,10 +91,26 @@ module Sumitsubo
       found.uniq.sort
     end
 
+    # The definitions whose interfaces source claims in a comment, and the ones
+    # read from the syntax tree. Each reading searches only its own files: a
+    # marker nobody wrote is not worth parsing for, and a definition nobody
+    # claims is not worth reading comments for.
+    def self.claimed(definitions)
+      found = []
+      definitions.each { |definition| found.push(definition) unless definition.marker.nil? }
+      found
+    end
+
+    def self.declared(definitions)
+      found = []
+      definitions.each { |definition| found.push(definition) if definition.marker.nil? }
+      found
+    end
+
     # The words source claims these contracts with, read in one pass.
     def self.keywords(definitions)
       found = []
-      definitions.each { |definition| found.push(definition.marker) }
+      claimed(definitions).each { |definition| found.push(definition.marker) }
       found.uniq.sort
     end
 
@@ -90,13 +118,33 @@ module Sumitsubo
     # in scope says it was implemented, which is a difference between the two
     # sides.
     def self.unclaimed(definitions, claims)
-      claimed = {}
-      claims.each { |claim| claimed[key(claim.keyword, claim.name)] = true }
+      made = {}
+      claims.each { |claim| made[key(claim.keyword, claim.name)] = true }
 
       found = []
-      definitions.each do |definition|
+      claimed(definitions).each do |definition|
         definition.interfaces.each do |interface|
-          next unless claimed[key(definition.marker, interface.name)].nil?
+          next unless made[key(definition.marker, interface.name)].nil?
+
+          found.push(Finding.new(
+            Where.of(interface.path), interface.line, interface.name, definition.includes
+          ))
+        end
+      end
+      found
+    end
+
+    # An interface the syntax tree does not declare. The specification
+    # registers it and no source in scope defines it, which is the same
+    # difference an unclaimed interface is — the other reading of it.
+    def self.undefined(definitions, names)
+      defined = {}
+      names.each { |name| defined[name.name] = true }
+
+      found = []
+      declared(definitions).each do |definition|
+        definition.interfaces.each do |interface|
+          next unless defined[interface.name].nil?
 
           found.push(Finding.new(
             Where.of(interface.path), interface.line, interface.name, definition.includes
@@ -163,6 +211,10 @@ module Sumitsubo
       "#{finding.name} is claimed nowhere in #{finding.scope.join(", ")}"
     end
 
+    def self.describe_undefined(finding)
+      "#{finding.name} is defined nowhere in #{finding.scope.join(", ")}"
+    end
+
     def self.describe_unresolved(claim)
       return "#{claim.keyword} names no contract" if claim.name.empty?
 
@@ -208,16 +260,18 @@ module Sumitsubo
       document = parse(path, text)
       lines = Locations.of(text, NAME)
 
+      # A definition naming no marker is read from the syntax tree, so there is
+      # no word to look for and none is needed.
       marker = document["marker"]
-      # Without a word to look for there is nothing to compare the contracts
-      # against, which is a reference line that cannot be read rather than a
-      # difference to report.
-      raise Error, "#{Where.of(path)} declares no \"marker\"" if marker.nil?
 
       interfaces = []
       (document["contracts"] || []).each do |raw|
         name = raw["name"]
         raise Error, "#{Where.of(path)} declares a contract with no \"name\"" if name.nil?
+
+        if marker.nil? && !resolvable?(name)
+          raise Error, "#{Where.of(path)} names #{name}, which no Ruby declaration can be"
+        end
 
         interfaces.push(Interface.new(name, raw["description"], path, lines[name]))
       end
@@ -243,7 +297,8 @@ module Sumitsubo
           name = key(definition.marker, interface.name)
           where = seen[name]
           unless where.nil?
-            raise Error, "#{name} is declared twice, at #{where} and #{at(interface)}"
+            raise Error, "#{spoken(definition.marker, interface.name)} is declared twice, " \
+                         "at #{where} and #{at(interface)}"
           end
 
           seen[name] = at(interface)
@@ -251,18 +306,43 @@ module Sumitsubo
       end
     end
 
+    # What a claim can resolve against. Only the marker reading makes claims,
+    # so only its definitions are here.
     def self.declared_in(definitions)
-      declared = {}
-      definitions.each do |definition|
-        definition.interfaces.each { |interface| declared[key(definition.marker, interface.name)] = true }
+      registered = {}
+      claimed(definitions).each do |definition|
+        definition.interfaces.each { |interface| registered[key(definition.marker, interface.name)] = true }
       end
-      declared
+      registered
+    end
+
+    # Whether the syntax tree reading could ever answer this name: a constant
+    # path, a method, or one qualified by the other.
+    def self.resolvable?(name)
+      at = name.index("#")
+      at = name.index(".") if at.nil?
+      return named?(CONSTANT, name) || named?(METHOD, name) if at.nil?
+
+      named?(CONSTANT, "#{name[0, at]}") && named?(METHOD, "#{name[(at + 1)..-1]}")
+    end
+
+    def self.named?(pattern, text)
+      !pattern.match(text).nil?
     end
 
     # What a claim resolves against. The marker is part of it because it is the
     # namespace: `@command verify` and `@route verify` name different things.
+    # The syntax tree reading has one namespace, Ruby's, which is what a
+    # definition naming no marker shares with every other one.
     def self.key(marker, name)
       "#{marker} #{name}"
+    end
+
+    # The same pair said to a reader. A key carries the empty namespace the
+    # syntax tree reading shares, and a message should not read as though a
+    # word were missing from it.
+    def self.spoken(marker, name)
+      marker.nil? ? name : key(marker, name)
     end
 
     def self.parse(path, text)
