@@ -150,8 +150,9 @@ module Sumitsubo
     # what a reader goes to, and what an exclusion would one day be written
     # against.
     #
-    # The pattern stays a local of this method and is never captured by a
-    # block: Spinel builds no closure cell for a runtime Regexp.
+    # The pattern is read from the blocks below and never escapes into a
+    # stored one — see the Compiler section of CLAUDE.md for what a Regexp
+    # reaching a closure cell costs.
     def self.findings_for(path, regions, name, entry)
       found = []
       pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")
