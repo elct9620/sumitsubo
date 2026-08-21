@@ -78,6 +78,19 @@
       ]
     },
     {
+      "name": "Sumitsubo::Language.declarations_in",
+      "description": "The reading of what a piece of source declares, for a file whose language has declarations to read.",
+      "internal": true,
+      "params": [
+        {
+          "name": "path"
+        },
+        {
+          "name": "where"
+        }
+      ]
+    },
+    {
       "name": "Sumitsubo::Marker.claims_in",
       "description": "The reading of what a piece of source claims, for an interface no Ruby construct points at.",
       "internal": true,

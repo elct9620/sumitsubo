@@ -1,0 +1,10 @@
+--- what a person wrote in a source file ---
+["2:# The customer's Purchase is settled here.", "5:# Purchases and repurchase are different words; whole-word, case", "6:# sensitive matching has to leave both alone.", "10:# An identifier is a spelling of the concept, not its name, so the scan walks", "11:# past the constant below."]
+--- a file no language claims answers entire ---
+2
+--- and offers nowhere for a claim to sit ---
+[]
+--- and declares nothing ---
+[]
+--- while source declares what it declares ---
+20

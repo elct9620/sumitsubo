@@ -42,15 +42,6 @@
       "then": "it answers by its bare name, because there is no path to put in front of it"
     },
     {
-      "id": "D-005",
-      "title": "A file that is not Ruby",
-      "given": [
-        "a prose file in scope"
-      ],
-      "when": "the file is read for what it declares",
-      "then": "nothing is declared"
-    },
-    {
       "id": "D-006",
       "title": "Source the grammar cannot read",
       "given": [

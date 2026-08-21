@@ -1,0 +1,45 @@
+{
+  "name": "Language",
+  "description": "How a file is read for what a person put in it.",
+  "include": [
+    "test/language_test.rb"
+  ],
+  "scenarios": [
+    {
+      "id": "L-001",
+      "title": "What a person wrote in a source file",
+      "given": [
+        "a Ruby file carrying comments and identifiers"
+      ],
+      "when": "the file is read for what a person wrote",
+      "then": "the comments answer and nothing else does"
+    },
+    {
+      "id": "L-002",
+      "title": "A file no language claims",
+      "given": [
+        "a prose file"
+      ],
+      "when": "the file is read for what a person wrote",
+      "then": "every line of it answers"
+    },
+    {
+      "id": "L-003",
+      "title": "Nowhere for a claim to sit",
+      "given": [
+        "a prose file"
+      ],
+      "when": "the file is read for where a claim could sit",
+      "then": "nothing answers"
+    },
+    {
+      "id": "L-004",
+      "title": "A file that declares nothing",
+      "given": [
+        "a prose file"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "nothing answers"
+    }
+  ]
+}

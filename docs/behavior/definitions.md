@@ -34,14 +34,6 @@ What a piece of source declares, read from the syntax tree.
 | When | the file is read for what it declares |
 | Then | it answers by its bare name, because there is no path to put in front of it |
 
-## D-005 — A file that is not Ruby
-
-| Step | Statement |
-| --- | --- |
-| Given | a prose file in scope |
-| When | the file is read for what it declares |
-| Then | nothing is declared |
-
 ## D-006 — Source the grammar cannot read
 
 | Step | Statement |

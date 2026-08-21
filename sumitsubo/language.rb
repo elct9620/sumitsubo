@@ -1,5 +1,6 @@
 require "sumitsubo/error"
 require "sumitsubo/grammar"
+require "sumitsubo/definitions"
 
 module Sumitsubo
   # How a file is read for what a person put in it. A mechanism puts its
@@ -56,6 +57,13 @@ module Sumitsubo
       rescue TreeSitter::ParseError => e
         raise Error, e.message
       end
+
+      # The names this file declares and the shape each is reached by. Only
+      # Ruby answers one here, which is why the shapes stay with the reading
+      # that makes them rather than moving up to this file.
+      def declarations_in(path, where)
+        Definitions.names_in(path)
+      end
     end
 
     # Whatever no language before it claimed. Prose is a comment for its whole
@@ -76,8 +84,12 @@ module Sumitsubo
       end
 
       # Prose has no code for a comment to sit in front of, so nothing here
-      # claims anything.
+      # claims anything, and it declares nothing either.
       def attached_comments_in(path, where)
+        []
+      end
+
+      def declarations_in(path, where)
         []
       end
     end
@@ -93,30 +105,42 @@ module Sumitsubo
     # caller holding one would have to know what it is, and the whole of what
     # this is for is that nobody outside has to.
     def self.comments_in(path, where)
-      found = []
-      read = false
-      ALL.each do |language|
-        next if read || !language.reads?(path)
+      index = 0
+      while index < ALL.length
+        language = ALL[index]
+        return language.comments_in(path, where) if language.reads?(path)
 
-        found = language.comments_in(path, where)
-        read = true
+        index += 1
       end
-      found
+      []
     end
 
     # The comments a claim could sit in. Written out rather than folded in
     # with the reading above: what they share is a loop, and a way to hand one
     # question to the other is a mechanism where two of these are ten lines.
     def self.attached_comments_in(path, where)
-      found = []
-      read = false
-      ALL.each do |language|
-        next if read || !language.reads?(path)
+      index = 0
+      while index < ALL.length
+        language = ALL[index]
+        return language.attached_comments_in(path, where) if language.reads?(path)
 
-        found = language.attached_comments_in(path, where)
-        read = true
+        index += 1
       end
-      found
+      []
+    end
+
+    # The names this file declares. A language with no declarations to read
+    # says so by answering none, which is how anything but source is passed
+    # over without a caller having to ask what it was.
+    def self.declarations_in(path, where)
+      index = 0
+      while index < ALL.length
+        language = ALL[index]
+        return language.declarations_in(path, where) if language.reads?(path)
+
+        index += 1
+      end
+      []
     end
   end
 end

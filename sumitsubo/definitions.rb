@@ -85,12 +85,10 @@ module Sumitsubo
         parameters: (method_parameters #{PARAMETERS}))
     QUERY
 
-    # Every name the file declares. Only Ruby has declarations to read, so
-    # anything else in scope declares nothing rather than failing: the scope is
-    # a filter, and a declaration is either there or not.
+    # Every name the file declares. This is Ruby's reading, and being handed a
+    # file written in something else is a caller's mistake rather than a case
+    # to answer: which files reach here is the language's to decide.
     def self.names_in(path)
-      return [] unless path.end_with?(".rb")
-
       where = Where.of(path)
       matches = matches_in(path, where)
       nodes = nodes_in(matches)

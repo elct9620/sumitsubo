@@ -3,7 +3,6 @@ require "sumitsubo/glossary"
 require "sumitsubo/contract"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
-require "sumitsubo/definitions"
 
 module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
@@ -14,6 +13,11 @@ module Sumitsubo
   # A mechanism registers by being in the list: Spinel decides what an
   # executable carries when it is built, so there is no hook to register
   # through.
+  #
+  # `Language` is only ever passed from here, never called: with one call site
+  # holding it as a receiver, another handing it on answered with the wrong
+  # implementation — a Ruby file read as prose, and one the grammar cannot
+  # parse read as prose rather than refused. Both silently.
   module Mechanism
     # What a mechanism lays down to start a reference line from. A seed with no
     # content is a directory: a project keeps one specification per feature, so
@@ -99,7 +103,7 @@ module Sumitsubo
         end
         # The other reading makes no claims, so what it compares is what the
         # source defines and the shape a caller would have to call it with.
-        names = names_in(definitions, config)
+        names = names_in(definitions, config, Sumitsubo::Language)
         Sumitsubo::Contract.undefined(definitions, names).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_undefined(finding))
         end
@@ -132,12 +136,12 @@ module Sumitsubo
       end
 
       # What the source in scope defines, for the definitions read that way.
-      def names_in(definitions, config)
+      def names_in(definitions, config, languages)
         names = []
         Sumitsubo::Contract.scope(
           Sumitsubo::Contract.defined(definitions), config.base
         ).each do |path|
-          Definitions.names_in(path).each { |name| names.push(name) }
+          languages.declarations_in(path, Where.of(path)).each { |name| names.push(name) }
         end
         names
       end

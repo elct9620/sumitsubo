@@ -40,10 +40,6 @@ end
 puts "--- what a file declares ---"
 show("#{FIXTURE}/sample.rb")
 
-# @behavior D-005
-puts "--- a file that is not Ruby declares nothing ---"
-show("test/fixtures/behavior/test/overview.md")
-
 # @behavior D-006
 puts "--- source the grammar cannot read ---"
 begin
