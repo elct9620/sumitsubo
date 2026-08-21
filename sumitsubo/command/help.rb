@@ -83,7 +83,7 @@ module Sumitsubo
                 drop the rejected word from the specification - which side is
                 wrong is not the tool's to decide.
 
-            no glossary at .spec/glossary.json                          (exit 2)
+            no glossary at .spec/glossary.json; sumi init lays one down (exit 2)
                 `sumi init` lays this file down, so a root without one is a root
                 something removed. Nothing was compared.
       TEXT
@@ -213,7 +213,7 @@ module Sumitsubo
                 A claim nothing registers is a comparison that could not be made
                 rather than a difference. Usually a renamed name.
 
-            .spec/contract/routes.json names GET /users/:id, which no Ruby definition can be   (exit 2)
+            .spec/contract/routes.json names GET /users/:id, which no Ruby definition can be; sumi help contract has the two readings   (exit 2)
                 The file registers a name only the marker reading could resolve
                 and names no marker. Usually a marker that went missing.
 

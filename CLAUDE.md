@@ -290,6 +290,7 @@ so a specification directory without one would be swept in as source.
 | Init    | Lay down an empty specification to start a reference line from.      |
 | Render  | Render the structured specification into documents a person reads.   |
 | Verify  | Verify the source code is aligned with the verifiable specification. |
+| Help    | Explain how to write a specification, from the executable itself.    |
 
 ### Render
 
@@ -336,6 +337,8 @@ compare is not, and an operator branches on which it got. A run with both
 answers 2: it says everything it found either way, and the answer is what
 refuses to certify it. A mechanism that could not be read stops that mechanism
 and no other, the way a linter reports every file it managed to parse.
+Arguments the run cannot act on answer the same 2, since a run that compared
+nothing has nothing to certify.
 Findings and failures share stdout, the test harness comparing the two streams
 merged.
 
