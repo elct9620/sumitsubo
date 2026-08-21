@@ -62,6 +62,16 @@ Dir.chdir("test/fixtures/declared")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# `Store.open` takes a parameter the contract never registered, and `Store#read`
+# is defined twice with two shapes — the second of which the specification does
+# not describe. `Store#write` is defined as registered, and `Store` is a class
+# reopened without changing what it is: both say nothing.
+# @behavior V-017 V-018
+puts "--- source whose shape drifted from the contract ---"
+Dir.chdir("test/fixtures/shaped")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 # Read as Ruby every name in the file would answer as undefined, so what the
 # run says is that the specification cannot be read.
 # @behavior V-016

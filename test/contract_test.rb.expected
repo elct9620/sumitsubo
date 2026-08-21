@@ -47,3 +47,15 @@ The commands the executable answers.
 | --- | --- |
 | init | Lay down an empty specification. |
 | verify | Check the source against the specification. |
+--- the shape a contract registers ---
+  Store.open (path, mode?)
+  Store#read (key:keyword, -:block?)
+  Store#write ()
+  Store#touch registers no shape
+--- an interface defined with another shape ---
+test/fixtures/contract/params/api.json:6 Store.open takes (path) where the specification registers (path, mode?)
+--- one name defined with two shapes ---
+src/store.rb:6 Store#read takes (key:keyword, -:block?) here and (key:keyword) at src/store.rb:24
+src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) at src/store.rb:6
+--- parameters registered under a marker ---
+test/fixtures/contract/marked/cli.json gives verify parameters, which a marker leaves nothing to compare them against

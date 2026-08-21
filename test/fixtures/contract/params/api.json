@@ -1,0 +1,16 @@
+{
+  "name": "API",
+  "include": ["src/*.rb"],
+  "contracts": [
+    {
+      "name": "Store.open",
+      "params": [{ "name": "path" }, { "name": "mode", "optional": true }]
+    },
+    {
+      "name": "Store#read",
+      "params": [{ "name": "key", "kind": "keyword" }, { "kind": "block", "optional": true }]
+    },
+    { "name": "Store#write", "params": [] },
+    { "name": "Store#touch" }
+  ]
+}

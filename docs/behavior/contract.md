@@ -147,3 +147,53 @@ The interfaces a project registers, and what source claims to implement them.
 | Given | a definition registering an internal interface nothing declares |
 | When | the two sides are compared |
 | Then | it is answered the way a published one would be |
+
+## T-019 — The shape a contract registers
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract registering parameters, one of them naming no kind |
+| When | the directory is read |
+| Then | the parameter naming no kind answers the one a bare name says |
+
+## T-020 — An interface defined with another shape
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract registering a shape |
+| Given | source defining that interface with another |
+| When | the two are compared |
+| Then | the interface answers at the line registering it, naming both shapes |
+
+## T-021 — A contract registering no shape
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract naming an interface and no parameters |
+| Given | source defining it with parameters |
+| When | the two are compared |
+| Then | nothing answers |
+
+## T-022 — One name defined with two shapes
+
+| Step | Statement |
+| --- | --- |
+| Given | a registered interface defined twice, the two disagreeing on what a caller writes |
+| When | the two are compared |
+| Then | each definition answers, naming the other |
+
+## T-023 — Definitions agreeing on their shape
+
+| Step | Statement |
+| --- | --- |
+| Given | a registered interface defined twice with the same parameters |
+| When | the two are compared |
+| Then | nothing answers |
+
+## T-024 — Parameters registered under a marker
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract file naming a marker and giving an interface parameters |
+| When | the directory is read |
+| Then | the file is named as one that cannot be read |

@@ -153,6 +153,26 @@
       ],
       "when": "the two sides are compared",
       "then": "the file is named as registering something no Ruby definition can be"
+    },
+    {
+      "id": "V-017",
+      "title": "Source whose shape drifted from the contract",
+      "given": [
+        "a project registering the shape of two interfaces",
+        "one defined with another shape and one defined twice with two"
+      ],
+      "when": "the run verifies",
+      "then": "both answer as differences and the run answers 1"
+    },
+    {
+      "id": "V-018",
+      "title": "A registered class reopened without changing it",
+      "given": [
+        "a project registering a class",
+        "source reopening that class"
+      ],
+      "when": "the run verifies",
+      "then": "nothing answers for it"
     }
   ]
 }

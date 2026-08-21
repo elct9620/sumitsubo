@@ -1,0 +1,8 @@
+{
+  "name": "CLI",
+  "marker": "@command",
+  "include": ["src/*.rb"],
+  "contracts": [
+    { "name": "verify", "params": [{ "name": "path" }] }
+  ]
+}

@@ -96,10 +96,19 @@ module Sumitsubo
         Sumitsubo::Contract.unresolved(definitions, claims).each do |claim|
           report.failure(claim.path, claim.line, Sumitsubo::Contract.describe_unresolved(claim))
         end
-        # The other reading makes no claims, so an interface no source defines
-        # is the only difference it can find.
-        Sumitsubo::Contract.undefined(definitions, names_in(definitions, config)).each do |finding|
+        # The other reading makes no claims, so what it compares is what the
+        # source defines and the shape a caller would have to call it with.
+        names = names_in(definitions, config)
+        Sumitsubo::Contract.undefined(definitions, names).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_undefined(finding))
+        end
+        # Two shapes under one name are two ways in, answered where they sit
+        # rather than at the specification: what a reader compares is them.
+        Sumitsubo::Contract.conflicting(definitions, names).each do |pair|
+          report.difference(pair[0].path, pair[0].line, Sumitsubo::Contract.describe_conflicting(pair))
+        end
+        Sumitsubo::Contract.mismatched(definitions, names).each do |mismatch|
+          report.difference(mismatch.path, mismatch.line, Sumitsubo::Contract.describe_mismatched(mismatch))
         end
       end
 

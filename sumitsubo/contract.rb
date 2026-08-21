@@ -37,11 +37,27 @@ module Sumitsubo
 
     class Error < Sumitsubo::Error; end
 
+    # The kind a parameter carries when the specification names none. It is
+    # the only one of these words this file knows, and it knows it as the
+    # value to fill in rather than as anything about Ruby.
+    POSITIONAL = "positional"
+
+    # One parameter a contract registers. The kind is carried as text and
+    # never read: what these words mean belongs to the reading that answers
+    # them, which is what lets a specification stay silent about the language
+    # it is about — it speaks whatever the reading of its included files
+    # speaks.
+    Param = Struct.new(:name, :kind, :optional)
+
     # An interface is internal when the project means to keep it but not to
     # say so publicly. That is a fact about the interface, and the document it
     # stays out of follows from it — which is what makes it different from the
     # configuration switching a whole specification off.
-    Interface = Struct.new(:name, :description, :path, :line, :internal)
+    #
+    # Parameters are absent where the contract registers none, which is not
+    # the same as registering that it takes none: only a shape written down
+    # asks to be compared.
+    Interface = Struct.new(:name, :description, :path, :line, :internal, :params)
     # A file's worth of contracts. The marker is the word source claims them
     # with, and two files may name the same one: a project splitting its routes
     # across files is registering more of one kind, not a second kind.
@@ -49,6 +65,9 @@ module Sumitsubo
     # An interface nothing claims. The scope is carried so the finding can say
     # where it looked rather than claiming no implementation exists anywhere.
     Finding = Struct.new(:path, :line, :name, :scope)
+    # An interface defined with a shape other than the one registered. Both
+    # are carried, because what a reader chooses between is the two of them.
+    Mismatch = Struct.new(:path, :line, :name, :registered, :taken)
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, and a contract is named by the interface itself, so the
     # whole of it is the name.
@@ -142,16 +161,66 @@ module Sumitsubo
     # registers it and no source in scope defines it, which is the same
     # difference an unclaimed interface is — the other reading of it.
     def self.undefined(definitions, names)
-      seen = {}
-      names.each { |name| seen[name.name] = true }
+      declared = declared_in(names)
 
       found = []
       defined(definitions).each do |definition|
         definition.interfaces.each do |interface|
-          next unless seen[interface.name].nil?
+          next unless declared[interface.name].nil?
 
           found.push(Finding.new(
             Where.of(interface.path), interface.line, interface.name, definition.includes
+          ))
+        end
+      end
+      found
+    end
+
+    # A registered interface defined twice with two shapes. Ruby lets a class
+    # be reopened, and while only the name was compared that said nothing: the
+    # name is the way in, and there was one of them. A shape is part of the
+    # way in, so two shapes are an entrance the specification does not
+    # describe — the same difference a contract claimed in two places is.
+    #
+    # Definitions agreeing on their shape are one way in, which is what leaves
+    # ordinary reopening saying nothing still.
+    def self.conflicting(definitions, names)
+      declared = declared_in(names)
+
+      found = []
+      registered_names(definitions).each do |name|
+        group = declared[name]
+        next if group.nil? || group.length < 2 || agreed?(group)
+
+        # Each definition answers once, naming the next one round, so two
+        # shapes read as two lines pointing at each other.
+        index = 0
+        while index < group.length
+          found.push([group[index], group[(index + 1) % group.length]])
+          index += 1
+        end
+      end
+      found
+    end
+
+    # An interface defined with a shape other than the one registered. Where
+    # the definitions disagree among themselves that is already answered, and
+    # comparing the contract against one of them would add nothing.
+    def self.mismatched(definitions, names)
+      declared = declared_in(names)
+
+      found = []
+      defined(definitions).each do |definition|
+        definition.interfaces.each do |interface|
+          next if interface.params.nil?
+
+          group = declared[interface.name]
+          next if group.nil? || !agreed?(group)
+          next if agree?(interface.params, group[0].params)
+
+          found.push(Mismatch.new(
+            Where.of(interface.path), interface.line, interface.name,
+            interface.params, group[0].params
           ))
         end
       end
@@ -217,6 +286,36 @@ module Sumitsubo
 
     def self.describe_undefined(finding)
       "#{finding.name} is defined nowhere in #{finding.scope.join(", ")}"
+    end
+
+    def self.describe_conflicting(pair)
+      one = pair[0]
+      other = pair[1]
+      "#{one.name} takes #{spell(one.params)} here and " \
+        "#{spell(other.params)} at #{other.path}:#{other.line}"
+    end
+
+    def self.describe_mismatched(mismatch)
+      "#{mismatch.name} takes #{spell(mismatch.taken)} " \
+        "where the specification registers #{spell(mismatch.registered)}"
+    end
+
+    # What a caller would have to write. The kind is left out where a bare
+    # name already says it, and a dash stands where the parameter has none of
+    # its own. A scope has no call to describe at all, which is not the same
+    # as a method taking nothing.
+    def self.spell(params)
+      return "nothing" if params.nil?
+
+      spelled = []
+      params.each { |param| spelled.push(spelled_as(param)) }
+      "(#{spelled.join(", ")})"
+    end
+
+    def self.spelled_as(param)
+      name = param.name.nil? ? "-" : param.name
+      kind = param.kind == POSITIONAL ? "" : ":#{param.kind}"
+      "#{name}#{kind}#{param.optional ? "?" : ""}"
     end
 
     def self.describe_unresolved(claim)
@@ -290,8 +389,17 @@ module Sumitsubo
           raise Error, "#{Where.of(path)} names #{name}, which no Ruby definition can be"
         end
 
+        # Only the syntax tree answers what a definition takes. Parameters
+        # registered under a marker would be a promise nobody holds, so the
+        # specification is refused rather than carried unchecked.
+        if !marker.nil? && !raw["params"].nil?
+          raise Error, "#{Where.of(path)} gives #{name} parameters, " \
+                       "which a marker leaves nothing to compare them against"
+        end
+
         interfaces.push(Interface.new(
-          name, raw["description"], path, lines[name], raw["internal"] == true
+          name, raw["description"], path, lines[name], raw["internal"] == true,
+          params_from(raw["params"])
         ))
       end
 
@@ -323,6 +431,78 @@ module Sumitsubo
           seen[name] = at(interface)
         end
       end
+    end
+
+    # The shape a contract registers. A kind nobody named is the one a bare
+    # name says, which keeps the common parameter down to what it is called.
+    def self.params_from(raw)
+      return nil if raw.nil?
+
+      found = []
+      raw.each do |param|
+        kind = param["kind"]
+        found.push(Param.new(param["name"], kind.nil? ? POSITIONAL : kind, param["optional"] == true))
+      end
+      found
+    end
+
+    # Every definition of each name, kept in the order source declared them. A
+    # name may be defined more than once, and which of those a contract
+    # describes is not this reading's to decide.
+    def self.declared_in(names)
+      found = {}
+      names.each do |name|
+        holding = found[name.name]
+        if holding.nil?
+          holding = []
+          found[name.name] = holding
+        end
+        holding.push(name)
+      end
+      found
+    end
+
+    # The names the syntax tree reading registers, in an order that leaves no
+    # ties.
+    def self.registered_names(definitions)
+      found = []
+      defined(definitions).each do |definition|
+        definition.interfaces.each { |interface| found.push(interface.name) }
+      end
+      found.uniq.sort
+    end
+
+    # Whether every definition of one name describes the same call.
+    def self.agreed?(group)
+      index = 1
+      while index < group.length
+        return false unless agree?(group[0].params, group[index].params)
+
+        index += 1
+      end
+      true
+    end
+
+    # Whether two shapes ask a caller for the same thing. A scope carries no
+    # parameters at all, so a class reopened agrees with itself.
+    def self.agree?(one, other)
+      return true if one.nil? && other.nil?
+      return false if one.nil? || other.nil? || one.length != other.length
+
+      index = 0
+      while index < one.length
+        return false unless same?(one[index], other[index])
+
+        index += 1
+      end
+      true
+    end
+
+    # The kind is compared as text. This file never learns what any of those
+    # words means, which is what keeps the specification free of the language
+    # its included files happen to be written in.
+    def self.same?(one, other)
+      one.name == other.name && one.kind == other.kind && one.optional == other.optional
     end
 
     # What a claim can resolve against. Only the marker reading makes claims,

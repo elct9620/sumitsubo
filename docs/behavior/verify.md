@@ -134,3 +134,21 @@ Checking the source against the verifiable part of the specification, and answer
 | Given | an interface named the way a route is named |
 | When | the two sides are compared |
 | Then | the file is named as registering something no Ruby definition can be |
+
+## V-017 — Source whose shape drifted from the contract
+
+| Step | Statement |
+| --- | --- |
+| Given | a project registering the shape of two interfaces |
+| Given | one defined with another shape and one defined twice with two |
+| When | the run verifies |
+| Then | both answer as differences and the run answers 1 |
+
+## V-018 — A registered class reopened without changing it
+
+| Step | Statement |
+| --- | --- |
+| Given | a project registering a class |
+| Given | source reopening that class |
+| When | the run verifies |
+| Then | nothing answers for it |
