@@ -1,0 +1,13 @@
+--- what a file declares ---
+  test/fixtures/declaration/sample.rb:1 Outer
+  test/fixtures/declaration/sample.rb:2 Outer::Inner
+  test/fixtures/declaration/sample.rb:3 Outer::Inner.load
+  test/fixtures/declaration/sample.rb:7 Outer::Inner#check
+  test/fixtures/declaration/sample.rb:13 Flat::Scoped
+  test/fixtures/declaration/sample.rb:14 Flat::Scoped.of
+  test/fixtures/declaration/sample.rb:19 Alone
+  test/fixtures/declaration/sample.rb:20 Alone#solo
+  test/fixtures/declaration/sample.rb:24 loose
+--- a file that is not Ruby declares nothing ---
+--- source the grammar cannot read ---
+  test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
