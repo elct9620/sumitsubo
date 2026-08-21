@@ -231,6 +231,15 @@ module Sumitsubo
       "#{claim.keyword} #{claim.name} is claimed at #{other.path}:#{other.line} as well"
     end
 
+    # Whether a definition has anything to say on a page. A kind whose every
+    # interface is internal is nothing to render rather than a heading over an
+    # empty table, the way an absent specification is nothing to render at all.
+    def self.published?(definition)
+      found = false
+      definition.interfaces.each { |interface| found = true unless interface.internal }
+      found
+    end
+
     # The mechanism words its own document, as it words its own findings. An
     # interface is a name and what it is for, which is a table; the marker and
     # the include globs stay out, because they say how to find things rather

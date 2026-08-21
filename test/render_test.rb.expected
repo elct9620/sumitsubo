@@ -34,6 +34,8 @@ The commands the executable answers.
 | Contract | Description |
 | --- | --- |
 | verify | Check the source against the specification. |
+--- what docs/contract holds ---
+["docs/contract/cli.md"]
 --- a second run brings the document up to date ---
 rendered docs/glossary.md
 rendered docs/contract/cli.md

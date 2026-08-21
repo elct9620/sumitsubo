@@ -68,6 +68,8 @@ module Sumitsubo
       def documents(config)
         found = []
         Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root)).each do |definition|
+          next unless Sumitsubo::Contract.published?(definition)
+
           name = Sumitsubo::Contract.document_name(definition)
           found.push(Document.new(
             config.docs / Sumitsubo::Contract::DIRECTORY / "#{name}.md",

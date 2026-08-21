@@ -65,3 +65,11 @@ Rendering the structured specification into documents a person reads.
 | Given | a definition registering one internal interface and one that is not |
 | When | it is rendered |
 | Then | the page carries only the one that is not internal |
+
+## R-009 — A kind with nothing to publish
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition whose every interface is internal |
+| When | it is rendered |
+| Then | no page is written for it |

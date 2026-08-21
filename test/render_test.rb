@@ -87,8 +87,20 @@ File.write(".spec/contract/cli.json", <<~JSON)
   }
 JSON
 
-# `dump` is registered as internal, so the page below carries `verify` alone.
-# @behavior R-001 R-002 R-007 R-008
+File.write(".spec/contract/hidden.json", <<~JSON)
+  {
+    "name": "Hidden",
+    "description": "A kind this project keeps entirely to itself.",
+    "include": ["src/*.rb"],
+    "contracts": [
+      { "name": "Store.open", "description": "Open the store.", "internal": true }
+    ]
+  }
+JSON
+
+# `dump` is registered as internal, so the page below carries `verify` alone,
+# and `hidden.json` has nothing but internal interfaces, so it becomes no page.
+# @behavior R-001 R-002 R-007 R-008 R-009
 puts "--- the structured specification becomes documents ---"
 puts "exit=#{cli.run(["render"])}"
 puts "--- docs/glossary.md ---"
@@ -97,6 +109,8 @@ puts "--- docs/behavior/checkout.md ---"
 print File.read("docs/behavior/checkout.md")
 puts "--- docs/contract/cli.md ---"
 print File.read("docs/contract/cli.md")
+puts "--- what docs/contract holds ---"
+p Pathname.glob("docs/contract/*").map { |page| "#{page}" }.sort
 
 # @behavior R-005
 puts "--- a second run brings the document up to date ---"

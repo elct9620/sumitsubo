@@ -1,0 +1,27 @@
+{
+  "name": "Internal seams",
+  "description": "The places this project keeps to one implementation, and means to go on keeping.",
+  "include": ["sumitsubo/**/*.rb"],
+  "contracts": [
+    {
+      "name": "Sumitsubo::Where.of",
+      "description": "The one place a path a reader is handed is made.",
+      "internal": true
+    },
+    {
+      "name": "Sumitsubo::Locations.of",
+      "description": "The one reading of where a name sits in a structured specification.",
+      "internal": true
+    },
+    {
+      "name": "Sumitsubo::Marker.claims_in",
+      "description": "The reading of what a piece of source claims, for an interface no Ruby construct points at.",
+      "internal": true
+    },
+    {
+      "name": "Sumitsubo::Declaration.names_in",
+      "description": "The reading of what a piece of source declares, for an interface that is a Ruby construct.",
+      "internal": true
+    }
+  ]
+}

@@ -76,6 +76,15 @@
       ],
       "when": "it is rendered",
       "then": "the page carries only the one that is not internal"
+    },
+    {
+      "id": "R-009",
+      "title": "A kind with nothing to publish",
+      "given": [
+        "a definition whose every interface is internal"
+      ],
+      "when": "it is rendered",
+      "then": "no page is written for it"
     }
   ]
 }
