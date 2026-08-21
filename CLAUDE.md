@@ -359,10 +359,3 @@ AOT compiler for Ruby. Its constraints shape the design:
   its type that `+` dispatches to String, so it answers a String. `#/` and
   `#+` answer a Pathname on every branch, which is what the next call in a
   chain needs.
-- `File` takes a String only: it never asks an argument for `to_path`, so
-  `File.read(pathname)` fails to compile where CRuby would read the file.
-  Pathname carries the same surface itself — `#read`, `#write`, `#readlines`,
-  `#exist?` — which is the route the Paths section takes.
-- A runtime Regexp is not rooted once it reaches a closure cell, so a
-  collection landing between the capture and the call takes the process down.
-  A block reading one in place is not a cell and is safe; a stored Proc is.
