@@ -171,7 +171,8 @@ module Sumitsubo
     def self.paths_for(section, base)
       found = []
       section.includes.each do |pattern|
-        # Interpolated to settle the element type, as the binding's decoder is.
+        # A found path is a String: these are the keys a file's vocabulary is
+        # held under, and check composes each back onto the base to read it.
         base.glob(pattern).each { |path| found.push("#{path.relative_path_from(base)}") }
       end
       found.uniq.sort

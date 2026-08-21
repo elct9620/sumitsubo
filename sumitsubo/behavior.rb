@@ -58,7 +58,8 @@ module Sumitsubo
       features
     end
 
-    # Interpolated to settle the element type, as Glossary's globbing is.
+    # A found path is a String: it is what a feature answers with, and what a
+    # finding about one of its scenarios points at.
     def self.files_in(path)
       found = []
       path.glob("*.json").each { |file| found.push("#{file}") }
