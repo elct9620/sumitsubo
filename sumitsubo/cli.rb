@@ -24,6 +24,13 @@ module Sumitsubo
           -h, --help       Show this help
     TEXT
 
+    # The revision is handed in rather than read, because the stamped value
+    # lives on the executable side and `spin test` never compiles bin/. The
+    # default is what every tree that reached here without a stamp answers.
+    def initialize(build_rev = Sumitsubo::BUILD_REV)
+      @build_rev = build_rev
+    end
+
     def run(argv)
       case argv.first
       when "init" then Command::Init.new.run(Config.load)
@@ -59,7 +66,7 @@ module Sumitsubo
       show_version = false unless rest.empty?
 
       if show_version
-        puts Sumitsubo::VERSION
+        puts "#{Sumitsubo::VERSION} (#{@build_rev})"
       else
         puts HELP
       end
