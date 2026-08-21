@@ -57,3 +57,51 @@ What a piece of source declares, read from the syntax tree.
 | Given | a class whose `class << self` declares a method |
 | When | the file is read for what it declares |
 | Then | the name is spelled as belonging to the class rather than to an instance of it |
+
+## D-008 — The kind of each parameter
+
+| Step | Statement |
+| --- | --- |
+| Given | a method declaring a positional, a keyword, a splat and a block parameter |
+| When | the file is read for what it declares |
+| Then | each parameter answers with the kind Ruby's spelling gives it, in the order the source wrote them |
+
+## D-009 — A parameter a caller may leave out
+
+| Step | Statement |
+| --- | --- |
+| Given | a method declaring a parameter with a default, and one gathering the rest |
+| When | the file is read for what it declares |
+| Then | each of them answers as optional |
+
+## D-010 — A parameter with no name
+
+| Step | Statement |
+| --- | --- |
+| Given | a method declaring an anonymous splat |
+| When | the file is read for what it declares |
+| Then | it answers with its kind and no name |
+
+## D-011 — A method declaring no parameters
+
+| Step | Statement |
+| --- | --- |
+| Given | a method written with an empty parameter list |
+| When | the file is read for what it declares |
+| Then | it answers an empty list of parameters |
+
+## D-012 — A scope takes no parameters at all
+
+| Step | Statement |
+| --- | --- |
+| Given | a class in the file |
+| When | the file is read for what it declares |
+| Then | it answers no parameters, rather than an empty list of them |
+
+## D-013 — A declaration that names no parameter
+
+| Step | Statement |
+| --- | --- |
+| Given | a method written with `**nil` |
+| When | the file is read for what it declares |
+| Then | the method answers only the parameters it takes |

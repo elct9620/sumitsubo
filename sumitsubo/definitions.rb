@@ -13,7 +13,19 @@ module Sumitsubo
   module Definitions
     class Error < Sumitsubo::Error; end
 
-    Name = Struct.new(:path, :line, :name)
+    # One parameter of a method: what it is called, how a caller has to pass
+    # it, and whether it may be left out. A name is absent where Ruby lets the
+    # parameter go unnamed.
+    #
+    # The kind words are Ruby's own and they stay on this side. A contract
+    # compares them as text without knowing what any of them means, so a
+    # second language brings its own vocabulary in its own reading rather than
+    # negotiating a shared one with the specification.
+    Param = Struct.new(:name, :kind, :optional)
+
+    # A declaration and, where it is a method, the parameters it takes. A scope
+    # carries none at all, which is not the same as a method that takes none.
+    Name = Struct.new(:path, :line, :name, :params)
 
     # One match of the query below: what kind of node it was, what it is
     # called, and the lines it spans.
@@ -27,16 +39,50 @@ module Sumitsubo
     # how the methods inside it are spelled.
     REOPENED = "reopened"
 
+    # The method a parameter belongs to, and the two captures that qualify one:
+    # the name where Ruby gave it one, and the default that makes it optional.
+    OF = "of"
+    NAMED = "named"
+    DEFAULT = "default"
+    POSITIONAL = "positional"
+
+    # Kinds a caller may always leave out: a splat gathers whatever is there,
+    # a block is passed or not, and forwarding says nothing about what has to
+    # arrive. Optionality is a fact about the call rather than about how Ruby
+    # spells the definition, which is why these carry it without a default.
+    OMISSIBLE = ["splat", "hash_splat", "block", "forward"]
+
+    # `**nil` declares that no keyword argument is accepted rather than naming
+    # a parameter, so nothing below reaches it and a method carrying one
+    # answers only the parameters it takes.
+    PARAMETERS = <<~PARAMETERS
+      [(identifier) @positional
+       (optional_parameter name: (_) @named value: (_) @default) @positional
+       (keyword_parameter name: (_) @named value: (_)? @default) @keyword
+       (splat_parameter name: (_)? @named) @splat
+       (hash_splat_parameter name: (_)? @named) @hash_splat
+       (block_parameter name: (_)? @named) @block
+       (destructured_parameter) @destructured
+       (forward_parameter) @forward]*
+    PARAMETERS
+
     # A pattern reaches only its direct children and there is no operator for a
     # deeper one, so nesting is recovered from where the nodes sit rather than
     # from the query. That is what the whole node is captured for: its text is
     # the source slice, so its last line is the newlines in it.
+    #
+    # The quantifier below sits on the alternation while its branches carry
+    # none, so tree-sitter answers one match per parameter rather than one
+    # match whose captures vary in number. Each names the method it belongs to.
     QUERY = <<~QUERY
       (module name: (_) @name) @scope
       (class name: (_) @name) @scope
       (method name: (_) @name) @instance
       (singleton_method object: (self) name: (_) @name) @singleton
       (singleton_class value: (self) @name) @reopened
+      (method name: (_) @of parameters: (method_parameters #{PARAMETERS}))
+      (singleton_method object: (self) name: (_) @of
+        parameters: (method_parameters #{PARAMETERS}))
     QUERY
 
     # Every name the file declares. Only Ruby has declarations to read, so
@@ -46,7 +92,9 @@ module Sumitsubo
       return [] unless path.end_with?(".rb")
 
       where = Where.of(path)
-      nodes = nodes_in(path, where)
+      matches = matches_in(path, where)
+      nodes = nodes_in(matches)
+      taken = params_in(matches)
 
       scopes = []
       reopened = []
@@ -59,7 +107,9 @@ module Sumitsubo
       nodes.each do |node|
         next if node.kind == REOPENED
 
-        found.push(Name.new(where, node.first, qualified(scopes, reopened, node)))
+        found.push(Name.new(
+          where, node.first, qualified(scopes, reopened, node), params_for(taken, node)
+        ))
       end
       found
     end
@@ -105,10 +155,10 @@ module Sumitsubo
       holding.sort_by { |scope| scope.first }.map { |scope| scope.text }
     end
 
-    # The captures of one match describe one node, so they are read together:
-    # they arrive in node position rather than pattern order, which is why the
-    # name each carries is what tells them apart.
-    def self.nodes_in(path, where)
+    # The captures of one match, grouped and left in the order the parser met
+    # them: they arrive in node position rather than pattern order, which is
+    # why the name each carries is what tells them apart.
+    def self.matches_in(path, where)
       grouped = {}
       order = []
       captures_in(path, where).each do |capture|
@@ -122,13 +172,22 @@ module Sumitsubo
       end
 
       found = []
-      order.each do |key|
-        node = node_from(grouped[key])
+      order.each { |key| found.push(grouped[key]) }
+      found
+    end
+
+    def self.nodes_in(matches)
+      found = []
+      matches.each do |captures|
+        node = node_from(captures)
         found.push(node) unless node.nil?
       end
       found
     end
 
+    # A match that declares nothing answers nothing: a parameter names the
+    # method it belongs to rather than a name of its own, so it is passed over
+    # here and read below.
     def self.node_from(captures)
       kind = nil
       text = nil
@@ -146,6 +205,77 @@ module Sumitsubo
       return nil if kind.nil? || text.nil?
 
       Node.new(kind, text, first, last)
+    end
+
+    # The parameters each method takes, in the order the source wrote them,
+    # kept under the method they belong to.
+    def self.params_in(matches)
+      found = {}
+      matches.each do |captures|
+        of = named(captures, OF)
+        next if of.nil?
+
+        key = owner(of.line, of.text)
+        holding = found[key]
+        if holding.nil?
+          holding = []
+          found[key] = holding
+        end
+        param = param_from(captures)
+        holding.push(param) unless param.nil?
+      end
+      found
+    end
+
+    # What a caller has to write for this parameter. A plain one is its own
+    # name; every other kind carries the name in a capture of its own, or goes
+    # unnamed where Ruby allows it.
+    #
+    # The guard on that fallback is what makes it hold either way round: a
+    # parameter with a default is captured both as a kind and by name, and the
+    # two arrive in node position rather than in the order they are written
+    # above.
+    def self.param_from(captures)
+      kind = nil
+      name = nil
+      defaulted = false
+      captures.each do |capture|
+        next if capture.name == OF
+
+        if capture.name == NAMED
+          name = capture.text
+        elsif capture.name == DEFAULT
+          defaulted = true
+        else
+          kind = capture.name
+          name = capture.text if capture.name == POSITIONAL && name.nil?
+        end
+      end
+      return nil if kind.nil?
+
+      Param.new(name, kind, defaulted || OMISSIBLE.include?(kind))
+    end
+
+    # What a declaration answers for its parameters: none at all for a scope,
+    # and the list for a method, which is empty where it takes nothing.
+    def self.params_for(taken, node)
+      return nil if node.kind == SCOPE
+
+      found = taken[owner(node.first, node.text)]
+      found.nil? ? [] : found
+    end
+
+    # A method's name sits on the same line as `def`, so the line and the name
+    # together are what tell two methods apart at the resolution the captures
+    # carry.
+    def self.owner(line, name)
+      "#{line}\t#{name}"
+    end
+
+    def self.named(captures, name)
+      found = nil
+      captures.each { |capture| found = capture if capture.name == name }
+      found
     end
 
     def self.captures_in(path, where)

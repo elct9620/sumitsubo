@@ -30,3 +30,29 @@ class Reopened
     end
   end
 end
+
+class Signed
+  def positional(one, two = 2)
+  end
+
+  def keyworded(three:, four: 4)
+  end
+
+  def gathered(*rest, **opts, &block)
+  end
+
+  def anonymous(*, **, &)
+  end
+
+  def unusual((first, second), ...)
+  end
+
+  def strict(one, **nil)
+  end
+
+  def bare()
+  end
+
+  def self.singular(one, two: 2)
+  end
+end

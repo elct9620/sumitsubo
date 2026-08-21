@@ -67,6 +67,60 @@
       ],
       "when": "the file is read for what it declares",
       "then": "the name is spelled as belonging to the class rather than to an instance of it"
+    },
+    {
+      "id": "D-008",
+      "title": "The kind of each parameter",
+      "given": [
+        "a method declaring a positional, a keyword, a splat and a block parameter"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "each parameter answers with the kind Ruby's spelling gives it, in the order the source wrote them"
+    },
+    {
+      "id": "D-009",
+      "title": "A parameter a caller may leave out",
+      "given": [
+        "a method declaring a parameter with a default, and one gathering the rest"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "each of them answers as optional"
+    },
+    {
+      "id": "D-010",
+      "title": "A parameter with no name",
+      "given": [
+        "a method declaring an anonymous splat"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "it answers with its kind and no name"
+    },
+    {
+      "id": "D-011",
+      "title": "A method declaring no parameters",
+      "given": [
+        "a method written with an empty parameter list"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "it answers an empty list of parameters"
+    },
+    {
+      "id": "D-012",
+      "title": "A scope takes no parameters at all",
+      "given": [
+        "a class in the file"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "it answers no parameters, rather than an empty list of them"
+    },
+    {
+      "id": "D-013",
+      "title": "A declaration that names no parameter",
+      "given": [
+        "a method written with `**nil`"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "the method answers only the parameters it takes"
     }
   ]
 }
