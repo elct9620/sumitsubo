@@ -112,6 +112,25 @@
       ],
       "when": "the file is read for what it declares",
       "then": "the method answers only the parameters it takes"
+    },
+    {
+      "id": "D-014",
+      "title": "A method a call brings into being",
+      "given": [
+        "a class whose method is written as `attr_reader`"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "the method is not among what the file declares"
+    },
+    {
+      "id": "D-015",
+      "title": "A method a class mixes in",
+      "given": [
+        "a module declaring a method",
+        "a class including that module"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "the class does not declare the method"
     }
   ]
 }

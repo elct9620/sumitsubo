@@ -56,3 +56,17 @@ class Signed
   def self.singular(one, two: 2)
   end
 end
+
+class Called
+  attr_reader :size
+  define_method(:computed) {}
+end
+
+module Helper
+  def helped
+  end
+end
+
+class Widget
+  include Helper
+end

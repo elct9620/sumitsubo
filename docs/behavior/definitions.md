@@ -97,3 +97,20 @@ What a piece of source declares, read from the syntax tree.
 | Given | a method written with `**nil` |
 | When | the file is read for what it declares |
 | Then | the method answers only the parameters it takes |
+
+## D-014 — A method a call brings into being
+
+| Step | Statement |
+| --- | --- |
+| Given | a class whose method is written as `attr_reader` |
+| When | the file is read for what it declares |
+| Then | the method is not among what the file declares |
+
+## D-015 — A method a class mixes in
+
+| Step | Statement |
+| --- | --- |
+| Given | a module declaring a method |
+| Given | a class including that module |
+| When | the file is read for what it declares |
+| Then | the class does not declare the method |

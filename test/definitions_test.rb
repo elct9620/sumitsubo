@@ -36,7 +36,12 @@ end
 # each parameter, which of them a caller may leave out, the ones Ruby let go
 # unnamed, and the difference between a method taking none and a scope taking
 # no parameters at all. `**nil` names no parameter, so `#strict` answers one.
+#
+# What the reading does not carry is declared here too: `Called` answers itself
+# and neither of the methods its calls bring into being, and `Widget` answers
+# itself without the method it mixes in.
 # @behavior D-001 D-002 D-003 D-004 D-007 D-008 D-009 D-010 D-011 D-012 D-013
+# @behavior D-014 D-015
 puts "--- what a file declares ---"
 show("#{FIXTURE}/sample.rb")
 

@@ -19,5 +19,9 @@
   test/fixtures/definitions/sample.rb:50 Signed#strict (one:positional)
   test/fixtures/definitions/sample.rb:53 Signed#bare ()
   test/fixtures/definitions/sample.rb:56 Signed.singular (one:positional, two:keyword?)
+  test/fixtures/definitions/sample.rb:60 Called
+  test/fixtures/definitions/sample.rb:65 Helper
+  test/fixtures/definitions/sample.rb:66 Helper#helped ()
+  test/fixtures/definitions/sample.rb:70 Widget
 --- source the grammar cannot read ---
   test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
