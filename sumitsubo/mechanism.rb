@@ -122,7 +122,7 @@ module Sumitsubo
         claimed = Sumitsubo::Contract.claimed(definitions)
         keywords = Sumitsubo::Contract.keywords(claimed)
         Sumitsubo::Contract.scope(claimed, config.base).each do |path|
-          Marker.claims_in(path, keywords).each do |claim|
+          Marker.claims_in(path, keywords, Sumitsubo::Language).each do |claim|
             claims.push(Sumitsubo::Contract::Claim.new(
               claim.path, claim.line, claim.keyword, claim.text
             ))
@@ -189,7 +189,7 @@ module Sumitsubo
         claims = []
         keywords = [Sumitsubo::Behavior::MARKER]
         Sumitsubo::Behavior.scope(features, config.base).each do |path|
-          Marker.claims_in(path, keywords).each do |claim|
+          Marker.claims_in(path, keywords, Sumitsubo::Language).each do |claim|
             Sumitsubo::Behavior.ids_in(claim.text).each do |id|
               claims.push(Sumitsubo::Behavior::Claim.new(claim.path, claim.line, id))
             end

@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo/behavior"
+require "sumitsubo/language"
 require "sumitsubo/marker"
 
 # What a piece of source claims to implement, read through the grammar.
@@ -13,7 +14,7 @@ BEHAVIOR = [Sumitsubo::Behavior::MARKER]
 # The text is bracketed because a keyword with nothing after it carries an
 # empty one, and a snapshot cannot hold the trailing space that would leave.
 def claims(path, keywords)
-  Sumitsubo::Marker.claims_in(path, keywords)
+  Sumitsubo::Marker.claims_in(path, keywords, Sumitsubo::Language)
     .map { |claim| "#{claim.path}:#{claim.line} #{claim.keyword} [#{claim.text}]" }
 end
 
@@ -30,6 +31,8 @@ claims("test/fixtures/behavior/test/verify_test.rb", BEHAVIOR).each { |line| put
 puts "--- methods, nesting, and a block comment ---"
 claims("test/fixtures/behavior/test/init_test.rb", BEHAVIOR).each { |line| puts line }
 
+# Prose offers no comment for code to follow, which is how a file that is not
+# source is passed over without this reading knowing what it was.
 # @behavior M-006
 puts "--- prose is not code, so it claims nothing ---"
 p claims("test/fixtures/behavior/test/overview.md", BEHAVIOR)
@@ -38,7 +41,7 @@ p claims("test/fixtures/behavior/test/overview.md", BEHAVIOR)
 puts "--- source the grammar cannot read is not a claim of anything ---"
 begin
   claims("test/fixtures/behavior/test/broken.rb", BEHAVIOR)
-rescue Sumitsubo::Marker::Error => e
+rescue Sumitsubo::Language::Error => e
   puts e.message
 end
 

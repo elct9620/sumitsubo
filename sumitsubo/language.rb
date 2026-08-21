@@ -43,6 +43,19 @@ module Sumitsubo
         # sides either: half a file yields regions the rest of it never made.
         raise Error, e.message
       end
+
+      # The comments with code after them. A claim sits in front of what
+      # implements it, so a comment nothing follows claims nothing.
+      def attached_comments_in(path, where)
+        found = []
+        captures = TreeSitter.capture(
+          Grammar::RUBY, File.read("#{path}"), Grammar::ATTACHED, where
+        )
+        captures.each { |capture| found.push(Region.new(capture.line, capture.text)) }
+        found
+      rescue TreeSitter::ParseError => e
+        raise Error, e.message
+      end
     end
 
     # Whatever no language before it claimed. Prose is a comment for its whole
@@ -60,6 +73,12 @@ module Sumitsubo
           found.push(Region.new(line, text))
         end
         found
+      end
+
+      # Prose has no code for a comment to sit in front of, so nothing here
+      # claims anything.
+      def attached_comments_in(path, where)
+        []
       end
     end
 
@@ -80,6 +99,21 @@ module Sumitsubo
         next if read || !language.reads?(path)
 
         found = language.comments_in(path, where)
+        read = true
+      end
+      found
+    end
+
+    # The comments a claim could sit in. Written out rather than folded in
+    # with the reading above: what they share is a loop, and a way to hand one
+    # question to the other is a mechanism where two of these are ten lines.
+    def self.attached_comments_in(path, where)
+      found = []
+      read = false
+      ALL.each do |language|
+        next if read || !language.reads?(path)
+
+        found = language.attached_comments_in(path, where)
         read = true
       end
       found

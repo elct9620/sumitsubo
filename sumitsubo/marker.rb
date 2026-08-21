@@ -1,6 +1,5 @@
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/grammar"
 
 module Sumitsubo
   # What a piece of source claims to implement. The claim sits in the comment
@@ -13,25 +12,22 @@ module Sumitsubo
   # reads a list of ids where Contract reads one name, and a name like
   # `GET /users/:id` carries the space a list would have split on.
   module Marker
-    class Error < Sumitsubo::Error; end
-
     Claim = Struct.new(:path, :line, :keyword, :text)
 
-    # Only Ruby has "the comment in front of the code". Anything else in scope
-    # claims nothing rather than failing: the scope is a filter, and a claim is
-    # either there or not.
+    # Where a claim could sit arrives from outside, so nothing here knows what
+    # the file is written in: a language with no comment for code to follow
+    # says so by offering none, which is how anything but source is passed
+    # over.
     #
     # A whole set of keywords is read in one pass because parsing is the cost:
     # a project declaring several kinds of contract would otherwise read every
     # file once per kind.
-    def self.claims_in(path, keywords)
-      return [] unless path.end_with?(".rb")
-
+    def self.claims_in(path, keywords, languages)
       # A caller reaching a mechanism other than Behavior has no reason to have
       # rendered the path first, so the reading owns how it answers.
       where = Where.of(path)
       claims = []
-      comments_in(path, where).each do |comment|
+      languages.attached_comments_in(path, where).each do |comment|
         line = comment.line
         # A comment spanning lines arrives whole, so the claim answers at the
         # line the keyword is on rather than where the comment began.
@@ -44,14 +40,6 @@ module Sumitsubo
         end
       end
       claims
-    end
-
-    def self.comments_in(path, where)
-      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::ATTACHED, where)
-    rescue TreeSitter::ParseError => e
-      # Source the grammar cannot read is not a difference between the two
-      # sides: half a file yields claims the rest of it never made.
-      raise Error, e.message
     end
 
     # Everything after the keyword to the end of the line, or nil where the

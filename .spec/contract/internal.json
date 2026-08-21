@@ -65,6 +65,19 @@
       ]
     },
     {
+      "name": "Sumitsubo::Language.attached_comments_in",
+      "description": "The reading of where a claim could sit, for a file whose language has code for a comment to sit in front of.",
+      "internal": true,
+      "params": [
+        {
+          "name": "path"
+        },
+        {
+          "name": "where"
+        }
+      ]
+    },
+    {
       "name": "Sumitsubo::Marker.claims_in",
       "description": "The reading of what a piece of source claims, for an interface no Ruby construct points at.",
       "internal": true,
@@ -74,6 +87,9 @@
         },
         {
           "name": "keywords"
+        },
+        {
+          "name": "languages"
         }
       ]
     },
