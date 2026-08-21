@@ -51,8 +51,14 @@ jobs:
 
       - name: Smoke-run the executable
         # Through a flag rather than the empty-argument default: both reach
-        # the CLI, but an argument shows the parser ran.
-        run: ./build/bin/sumi -v
+        # the CLI, but an argument shows the parser ran. An unstamped
+        # revision means the artifact cannot say which commit it came from,
+        # which is the whole reason a release build carries one.
+        run: |
+          got=$(./build/bin/sumi -v)
+          echo "$got"
+          echo "$got" | grep -Eq '\([0-9a-f]{7}\)$' \
+            || { echo "::error::the executable was not stamped: $got"; exit 1; }
 
       - name: Record artifact shape
         run: |

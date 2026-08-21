@@ -56,10 +56,16 @@ jobs:
       # `spin test` compiles test/*.rb at -O1 and never bin/, so the
       # configuration that ships is exercised only here. Running it, not
       # only building it, is what puts that configuration under test.
+      #
+      # The revision is the only cover bin/ has: a test never sees a stamped
+      # one, so nothing but this notices the wiring coming loose.
       - name: Build and run the executable
         run: |
           "$SPIN" build
-          ./build/bin/sumi -v
+          got=$(./build/bin/sumi -v)
+          echo "$got"
+          echo "$got" | grep -Eq '\([0-9a-f]{7}\)$' \
+            || { echo "::error::the executable was not stamped: $got"; exit 1; }
 
       # Dogfooding is a promise this repository makes about itself, and a
       # promise nobody executes is one that rots quietly. This is also the only

@@ -352,18 +352,24 @@ not made to say so twice.
 
 The command is `sumi`, shipped as a single native executable.
 
-- `scripts/vendor.sh` fetches the pinned tree-sitter runtime and Ruby grammar
-  into `vendor/`, which is not committed. Nothing compiles before it has run,
-  and that script is the only place either version is written down.
+- `scripts/vendor.sh` lays down what nothing compiles without, none of it
+  committed: the pinned tree-sitter runtime and Ruby grammar into `vendor/`,
+  and the revision a build answers for into `build_rev.rb`. That script is the
+  only place either version is written down, so the CI cache keyed on it now
+  misses whenever anything else in it moves too.
+- The revision sits at the root, which no specification's include globs reach,
+  and only `bin/sumi.rb` requires it. `spin test` never compiles `bin/`, so a
+  test always sees the unstamped default and a snapshot can hold the version
+  line. The stamped one is covered by CI running the executable instead.
 - Carried C is one translation unit for the runtime and one per grammar
   (`ts_lib.c`, `ts_ruby.c`), and cannot be fewer: the runtime and a grammar
   each carry a `tree_sitter/parser.h` under the same include guard. Grammars
   move into a directory of their own once there are enough to read as a group.
 - `spin build` compiles `bin/sumi.rb` to `build/bin/sumi`.
 - `spin test` compiles each `test/*.rb` against the library sources — never
-  against `bin/`, which is why `bin/sumi.rb` holds nothing but a delegation —
-  and compares the program's stdout and stderr, merged, against a committed
-  `test/<name>.rb.expected`.
+  against `bin/`, which is why `bin/sumi.rb` holds nothing but the delegation
+  and the one require no test can see — and compares the program's stdout and
+  stderr, merged, against a committed `test/<name>.rb.expected`.
 - `spin test --regen` writes that snapshot by running the same file under
   CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
