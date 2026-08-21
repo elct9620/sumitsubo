@@ -87,6 +87,23 @@ File.write(".spec/contract/cli.json", <<~JSON)
   }
 JSON
 
+File.write(".spec/contract/api.json", <<~JSON)
+  {
+    "name": "API",
+    "description": "The methods this package exposes.",
+    "include": ["src/*.rb"],
+    "contracts": [
+      {
+        "name": "Cache.open",
+        "description": "Open the cache.",
+        "params": [{ "name": "path" }, { "name": "mode", "optional": true }]
+      },
+      { "name": "Cache#close", "description": "Close it.", "params": [] },
+      { "name": "Cache", "description": "The cache itself." }
+    ]
+  }
+JSON
+
 File.write(".spec/contract/hidden.json", <<~JSON)
   {
     "name": "Hidden",
@@ -100,7 +117,9 @@ JSON
 
 # `dump` is registered as internal, so the page below carries `verify` alone,
 # and `hidden.json` has nothing but internal interfaces, so it becomes no page.
-# @behavior R-001 R-002 R-007 R-008 R-009
+# The API page shows the shape each interface is reached by, and `Cache`
+# registers none, so it is named alone.
+# @behavior R-001 R-002 R-007 R-008 R-009 R-010
 puts "--- the structured specification becomes documents ---"
 puts "exit=#{cli.run(["render"])}"
 puts "--- docs/glossary.md ---"
@@ -109,6 +128,8 @@ puts "--- docs/behavior/checkout.md ---"
 print File.read("docs/behavior/checkout.md")
 puts "--- docs/contract/cli.md ---"
 print File.read("docs/contract/cli.md")
+puts "--- docs/contract/api.md ---"
+print File.read("docs/contract/api.md")
 puts "--- what docs/contract holds ---"
 p Pathname.glob("docs/contract/*").map { |page| "#{page}" }.sort
 

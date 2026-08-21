@@ -229,7 +229,8 @@ the implementation is right.
 `sumi render` writes `glossary.md`, one file per kind under `contract/`, and one
 per feature under `behavior/`, each named after the file declaring it. A
 document carries what the specification means — terms and their definitions,
-contracts and what each is for, scenarios as tables — and not what the tool
+contracts with the shape each is reached by and what each is for, scenarios as
+tables — and not what the tool
 needs in order to find things, so the words a glossary rejects, a contract's
 marker and the `include` globs stay out. An interface marked `internal` stays
 out too, and a kind with nothing left to publish becomes no page at all.

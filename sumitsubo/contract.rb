@@ -352,10 +352,20 @@ module Sumitsubo
       definition.interfaces.each do |interface|
         next if interface.internal
 
-        lines.push("| #{cell(interface.name)} | #{cell(interface.description)} |")
+        lines.push("| #{cell(signature(interface))} | #{cell(interface.description)} |")
       end
       lines.push("")
       lines.join("\n")
+    end
+
+    # How a reader reaches the interface: its name, and the shape to call it
+    # with where the contract registers one. A shape says what the interface
+    # is rather than where to find it, which is the line `include` and the
+    # marker fall on the other side of.
+    def self.signature(interface)
+      return interface.name if interface.params.nil?
+
+      "#{interface.name}#{spell(interface.params)}"
     end
 
     # What a definition is called on the document side: the file declaring it,

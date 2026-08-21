@@ -73,3 +73,11 @@ Rendering the structured specification into documents a person reads.
 | Given | a definition whose every interface is internal |
 | When | it is rendered |
 | Then | no page is written for it |
+
+## R-010 — The shape an interface is reached by
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract registering the parameters of one interface and none of another |
+| When | the documents are written |
+| Then | the one carries its shape beside its name and the other is named alone |

@@ -85,6 +85,15 @@
       ],
       "when": "it is rendered",
       "then": "no page is written for it"
+    },
+    {
+      "id": "R-010",
+      "title": "The shape an interface is reached by",
+      "given": [
+        "a contract registering the parameters of one interface and none of another"
+      ],
+      "when": "the documents are written",
+      "then": "the one carries its shape beside its name and the other is named alone"
     }
   ]
 }
