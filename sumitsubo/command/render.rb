@@ -1,4 +1,3 @@
-require "pathname"
 require "sumitsubo/where"
 require "sumitsubo/mechanism"
 
@@ -30,10 +29,10 @@ module Sumitsubo
       private
 
       def write(document)
-        path = Pathname.new(document.path)
+        path = document.path
         path.dirname.mkpath
-        File.write(path.to_s, document.content)
-        puts "rendered #{Where.of(path.to_s)}"
+        path.write(document.content)
+        puts "rendered #{Where.of(path)}"
       end
     end
   end
