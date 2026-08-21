@@ -58,27 +58,6 @@ rendered docs/contract/cli.md
 rendered docs/behavior/verify.md
 ```
 
-### Contracts
-
-A contract file registers one kind of interface. It names the marker source
-claims those interfaces with, or names none and is read from the syntax tree
-instead — a route needs a comment because nothing in Ruby points at one, while
-a method is found without anything written in front of it.
-
-```json
-{
-  "name": "Internal seams",
-  "include": ["lib/**/*.rb"],
-  "contracts": [
-    { "name": "Store.open", "description": "Open the store." },
-    { "name": "Store#read", "description": "Read one record.", "internal": true }
-  ]
-}
-```
-
-`internal` says the project means to keep an interface but not to publish it:
-it is verified like any other, and what it stays out of is the document.
-
 ### Configuration
 
 `.sumi.json` says where the specifications live, where the documents go, and
@@ -127,6 +106,41 @@ comments of a Ruby file and any other file entire.
 }
 ```
 
+### Contract
+
+A contract file registers one kind of interface. It names the marker source
+claims those interfaces with, or names none and is read from the syntax tree
+instead — a route needs a comment because nothing in Ruby points at one, while
+a method is found without anything written in front of it.
+
+```json
+{
+  "name": "Internal seams",
+  "include": ["lib/**/*.rb"],
+  "contracts": [
+    { "name": "Store.open", "description": "Open the store." },
+    { "name": "Store#read", "description": "Read one record.", "internal": true }
+  ]
+}
+```
+
+Where a file names a marker, source claims an interface in the comment in front
+of the code implementing it:
+
+```ruby
+# @command verify
+```
+
+An interface nothing claims — or, under the other reading, nothing defines — is
+a difference, answered at the line registering it. An interface nobody
+registered is not one: only the contracts that matter are written down.
+
+`internal` says the project means to keep an interface but not to publish it:
+it is verified like any other, and what it stays out of is the document.
+
+What this establishes is that an interface is implemented somewhere in scope,
+never that the implementation is right.
+
 ### Behavior
 
 `behavior/` under the root holds one file per feature, each carrying its own
@@ -164,13 +178,15 @@ the implementation is right.
 
 ### Render
 
-`sumi render` writes `glossary.md` and one file per feature under `behavior/`,
-named after the file declaring it. A document carries what the specification
-means — terms and their definitions, scenarios as tables — and not what the
-tool needs in order to find things, so the words a glossary rejects and the
-`include` globs stay out. Documents are derived, so a run replaces what the
-last one wrote, and a specification that is not there is passed over rather
-than reported.
+`sumi render` writes `glossary.md`, one file per kind under `contract/`, and one
+per feature under `behavior/`, each named after the file declaring it. A
+document carries what the specification means — terms and their definitions,
+contracts and what each is for, scenarios as tables — and not what the tool
+needs in order to find things, so the words a glossary rejects, a contract's
+marker and the `include` globs stay out. An interface marked `internal` stays
+out too, and a kind with nothing left to publish becomes no page at all.
+Documents are derived, so a run replaces what the last one wrote, and a
+specification that is not there is passed over rather than reported.
 
 ## Development
 
