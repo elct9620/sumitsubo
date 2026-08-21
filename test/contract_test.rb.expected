@@ -30,8 +30,8 @@ test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/
 --- and neither is a specification that will not parse ---
 test/fixtures/contract/broken/cli.json is not readable JSON
 --- an interface nothing claims ---
-test/fixtures/contract/.spec/contract/admin.json:6 GET /admin is claimed nowhere in app/*.rb
-test/fixtures/contract/.spec/contract/cli.json:7 init is claimed nowhere in src/*.rb
+test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere in app/*.rb
+test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere in src/*.rb
 --- a claim resolving to no contract, and one naming none at all ---
 src/commands.rb:20 @command render resolves to no contract
 src/commands.rb:24 @command names no contract

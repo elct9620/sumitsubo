@@ -123,7 +123,7 @@ module Sumitsubo
     # The mechanism words its own findings; where each points is the tool's to
     # shape.
     def self.describe_uncovered(finding)
-      "#{finding.id} is claimed nowhere in #{finding.scope.join(", ")}"
+      "#{MARKER} #{finding.id} is claimed nowhere in #{finding.scope.join(", ")}"
     end
 
     def self.describe_unresolved(claim)

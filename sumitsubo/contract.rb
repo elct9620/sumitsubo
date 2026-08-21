@@ -62,9 +62,11 @@ module Sumitsubo
     # with, and two files may name the same one: a project splitting its routes
     # across files is registering more of one kind, not a second kind.
     Definition = Struct.new(:name, :description, :marker, :includes, :interfaces, :path)
-    # An interface nothing claims. The scope is carried so the finding can say
-    # where it looked rather than claiming no implementation exists anywhere.
-    Finding = Struct.new(:path, :line, :name, :scope)
+    # An interface its reading did not find. The scope is carried so the finding
+    # says where it looked rather than that nothing implements it anywhere, and
+    # the marker so it can say the word to claim it with. The syntax tree
+    # reading has none, so its wording carries the name alone.
+    Finding = Struct.new(:path, :line, :marker, :name, :scope)
     # An interface defined with a shape other than the one registered. Both
     # are carried, because what a reader chooses between is the two of them.
     Mismatch = Struct.new(:path, :line, :name, :registered, :taken)
@@ -150,7 +152,8 @@ module Sumitsubo
           next unless made[key(definition.marker, interface.name)].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line, interface.name, definition.includes
+            Where.of(interface.path), interface.line,
+            definition.marker, interface.name, definition.includes
           ))
         end
       end
@@ -169,7 +172,8 @@ module Sumitsubo
           next unless declared[interface.name].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line, interface.name, definition.includes
+            Where.of(interface.path), interface.line,
+            definition.marker, interface.name, definition.includes
           ))
         end
       end
@@ -281,11 +285,13 @@ module Sumitsubo
     # The mechanism words its own findings; where each points is the tool's to
     # shape.
     def self.describe_unclaimed(finding)
-      "#{finding.name} is claimed nowhere in #{finding.scope.join(", ")}"
+      "#{spoken(finding.marker, finding.name)} is claimed nowhere in " \
+        "#{finding.scope.join(", ")}"
     end
 
     def self.describe_undefined(finding)
-      "#{finding.name} is defined nowhere in #{finding.scope.join(", ")}"
+      "#{spoken(finding.marker, finding.name)} is defined nowhere in " \
+        "#{finding.scope.join(", ")}"
     end
 
     def self.describe_conflicting(pair)

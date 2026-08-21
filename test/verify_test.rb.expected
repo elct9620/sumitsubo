@@ -17,7 +17,7 @@ exit=0
 0 differences
 exit=0
 --- a scenario nothing claims answers at the specification ---
-.spec/behavior/verify.json:6 V-002 is claimed nowhere in test/*_test.rb
+.spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere in test/*_test.rb
 1 difference
 exit=1
 --- a claim resolving to no scenario is not a difference but a failure to compare ---
@@ -25,12 +25,12 @@ test/verify_test.rb:13 G-404 resolves to no scenario
 0 differences
 exit=2
 --- a mechanism that cannot be read leaves the others still answering ---
-.spec/behavior/verify.json:5 U-001 is claimed nowhere in test/*_test.rb
+.spec/behavior/verify.json:5 @behavior U-001 is claimed nowhere in test/*_test.rb
 app/broken.rb: cannot be parsed by the ruby grammar
 1 difference
 exit=2
 --- an interface nothing claims, one claimed twice, and a claim registered nowhere ---
-.spec/contract/cli.json:8 verify is claimed nowhere in src/*.rb
+.spec/contract/cli.json:8 @command verify is claimed nowhere in src/*.rb
 src/commands.rb:3 @command init is claimed at src/commands.rb:7 as well
 src/commands.rb:7 @command init is claimed at src/commands.rb:3 as well
 src/commands.rb:12 @command render resolves to no contract
