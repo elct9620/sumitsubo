@@ -1,20 +1,11 @@
---- a linear snapshot script ---
-test/fixtures/behavior/test/verify_test.rb:7 @behavior [G-001]
-test/fixtures/behavior/test/verify_test.rb:10 @behavior [G-002 I-001]
-test/fixtures/behavior/test/verify_test.rb:13 @behavior [G-404]
---- methods, nesting, and a block comment ---
-test/fixtures/behavior/test/init_test.rb:2 @behavior [I-001]
-test/fixtures/behavior/test/init_test.rb:4 @behavior [I-002]
-test/fixtures/behavior/test/init_test.rb:10 @behavior [I-003]
---- prose is not code, so it claims nothing ---
-[]
---- source the grammar cannot read is not a claim of anything ---
-test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
+--- a claim answers at the line its comment sits on ---
+src/verify.rb:7 @behavior [G-001]
+src/verify.rb:10 @behavior [G-002 I-001]
+--- a claim in a block comment ---
+src/init.rb:11 @behavior [I-003]
 --- a path that arrives absolute still answers where the run started ---
-test/fixtures/behavior/test/init_test.rb:2 @behavior [I-001]
-test/fixtures/behavior/test/init_test.rb:4 @behavior [I-002]
-test/fixtures/behavior/test/init_test.rb:10 @behavior [I-003]
+src/commands.rb:2 @behavior [I-001]
 --- two keywords in one pass, and one with nothing after it ---
-test/fixtures/marker/two_keywords.rb:4 @command [verify]
-test/fixtures/marker/two_keywords.rb:5 @route [GET /users/:id]
-test/fixtures/marker/two_keywords.rb:8 @command []
+src/commands.rb:4 @command [verify]
+src/commands.rb:5 @route [GET /users/:id]
+src/commands.rb:8 @command []

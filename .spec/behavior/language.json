@@ -40,6 +40,33 @@
       ],
       "when": "the file is read for what it declares",
       "then": "nothing answers"
+    },
+    {
+      "id": "L-005",
+      "title": "Depth is not a barrier",
+      "given": [
+        "a Ruby file whose claims sit in a class body, a method body and a block comment"
+      ],
+      "when": "the file is read for where a claim could sit",
+      "then": "all of them answer, at whatever depth they sit"
+    },
+    {
+      "id": "L-006",
+      "title": "A comment nothing follows",
+      "given": [
+        "a Ruby file whose last line is a comment"
+      ],
+      "when": "the file is read for where a claim could sit",
+      "then": "that comment does not answer"
+    },
+    {
+      "id": "L-007",
+      "title": "Source the grammar cannot read",
+      "given": [
+        "a Ruby file the grammar cannot parse"
+      ],
+      "when": "the file is read for where a claim could sit",
+      "then": "the file is named as unreadable rather than answering with what it recovered"
     }
   ]
 }

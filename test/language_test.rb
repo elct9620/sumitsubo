@@ -35,3 +35,23 @@ p Sumitsubo::Language.declarations_in(PROSE, "overview.md")
 
 puts "--- while source declares what it declares ---"
 p Sumitsubo::Language.declarations_in(RUBY, RUBY).length
+
+# The claims sit in a class body, a method body and a block comment, and all
+# three are offered — while the comment at the end of `verify_test.rb`, with
+# nothing after it, is not.
+# @behavior L-005 L-006
+puts "--- where a claim could sit ---"
+p spell(Sumitsubo::Language.attached_comments_in(
+  "test/fixtures/behavior/test/init_test.rb", "init_test.rb"
+)).length
+p spell(Sumitsubo::Language.attached_comments_in(
+  "test/fixtures/behavior/test/verify_test.rb", "verify_test.rb"
+))
+
+# @behavior L-007
+puts "--- source the grammar cannot read ---"
+begin
+  Sumitsubo::Language.attached_comments_in("test/fixtures/behavior/test/broken.rb", "broken.rb")
+rescue Sumitsubo::Language::Error => e
+  puts e.message
+end

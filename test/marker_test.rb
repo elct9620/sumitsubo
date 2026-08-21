@@ -1,60 +1,66 @@
 require "pathname"
 require "sumitsubo/behavior"
-require "sumitsubo/language"
 require "sumitsubo/marker"
 
-# What a piece of source claims to implement, read through the grammar.
+# What a piece of source claims to implement, read out of the comments a
+# language offers.
 #
-# This test crosses into the binding, so it can never be regenerated: `spin
-# test --regen` produces its snapshot by running the file under CRuby, which
-# has no ffi_func. The snapshot beside it is written by hand and stays that way.
+# The comments are written out rather than parsed for. Where they sit in a file
+# and which of them a claim could sit in are the language's to answer, and a
+# real grammar here would only be answering a question this reading never asks.
 
 BEHAVIOR = [Sumitsubo::Behavior::MARKER]
 
+Region = Struct.new(:line, :text)
+
+# A language's answer, said outright.
+class Offered
+  def initialize(regions)
+    @regions = regions
+  end
+
+  def attached_comments_in(path, where)
+    @regions
+  end
+end
+
 # The text is bracketed because a keyword with nothing after it carries an
 # empty one, and a snapshot cannot hold the trailing space that would leave.
-def claims(path, keywords)
-  Sumitsubo::Marker.claims_in(path, keywords, Sumitsubo::Language)
+def claims(path, keywords, regions)
+  Sumitsubo::Marker.claims_in(path, keywords, Offered.new(regions))
     .map { |claim| "#{claim.path}:#{claim.line} #{claim.keyword} [#{claim.text}]" }
 end
 
-# The claim attaches to whatever statement follows it, so a linear script needs
-# no method to hold one. G-999 sits at the end of the file with nothing after
-# it, and a comment nothing follows claims nothing.
-# @behavior M-001 M-004 M-005
-puts "--- a linear snapshot script ---"
-claims("test/fixtures/behavior/test/verify_test.rb", BEHAVIOR).each { |line| puts line }
+# @behavior M-001 M-005
+puts "--- a claim answers at the line its comment sits on ---"
+claims("src/verify.rb", BEHAVIOR, [
+  Region.new(7, "# @behavior G-001"),
+  Region.new(10, "# @behavior G-002 I-001")
+]).each { |line| puts line }
 
-# Depth is not a barrier: a class body, a method body and a block comment all
-# hold claims, and a block comment answers at the line its keyword is on.
-# @behavior M-002 M-003
-puts "--- methods, nesting, and a block comment ---"
-claims("test/fixtures/behavior/test/init_test.rb", BEHAVIOR).each { |line| puts line }
-
-# Prose offers no comment for code to follow, which is how a file that is not
-# source is passed over without this reading knowing what it was.
-# @behavior M-006
-puts "--- prose is not code, so it claims nothing ---"
-p claims("test/fixtures/behavior/test/overview.md", BEHAVIOR)
-
-# @behavior M-007
-puts "--- source the grammar cannot read is not a claim of anything ---"
-begin
-  claims("test/fixtures/behavior/test/broken.rb", BEHAVIOR)
-rescue Sumitsubo::Language::Error => e
-  puts e.message
-end
+# A comment spanning lines arrives whole, so the line is counted from where it
+# began rather than taken from it.
+# @behavior M-003
+puts "--- a claim in a block comment ---"
+claims("src/init.rb", BEHAVIOR, [
+  Region.new(9, "=begin\nWhat the next thing is for.\n@behavior I-003\n=end")
+]).each { |line| puts line }
 
 # A caller reaching a mechanism other than Behavior has no reason to have
 # rendered the path first, so the reading answers for itself.
 # @behavior M-008
 puts "--- a path that arrives absolute still answers where the run started ---"
-claims(Pathname.new("test/fixtures/behavior/test/init_test.rb").expand_path.to_s, BEHAVIOR)
-  .each { |line| puts line }
+claims(Pathname.new("src/commands.rb").expand_path.to_s, BEHAVIOR, [
+  Region.new(2, "# @behavior I-001")
+]).each { |line| puts line }
 
 # Parsing is the cost, so a whole set of keywords is read in one pass. The
 # route carries the space a list reading would have split on, which is why
 # what follows a keyword is handed back unread.
 # @behavior M-009 M-010
 puts "--- two keywords in one pass, and one with nothing after it ---"
-claims("test/fixtures/marker/two_keywords.rb", ["@command", "@route"]).each { |line| puts line }
+claims("src/commands.rb", ["@command", "@route"], [
+  Region.new(4, "# @command verify"),
+  Region.new(5, "# @route GET /users/:id"),
+  Region.new(8, "# @command")
+]).each { |line| puts line }

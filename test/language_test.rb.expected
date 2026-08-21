@@ -8,3 +8,8 @@
 []
 --- while source declares what it declares ---
 20
+--- where a claim could sit ---
+3
+["1:# A linear snapshot script, which is how this project writes its own tests.", "2:# There is no method for a claim to attach to, so it attaches to the statement.", "7:# @behavior G-001", "10:# @behavior G-002 I-001", "13:# @behavior G-404"]
+--- source the grammar cannot read ---
+broken.rb: cannot be parsed by the ruby grammar

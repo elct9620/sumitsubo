@@ -1,5 +1,5 @@
 require "pathname"
-require "sumitsubo"
+require "sumitsubo/glossary"
 
 back = Dir.pwd
 Dir.chdir("test/fixtures/glossary")

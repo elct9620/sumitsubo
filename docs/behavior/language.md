@@ -33,3 +33,27 @@ How a file is read for what a person put in it.
 | Given | a prose file |
 | When | the file is read for what it declares |
 | Then | nothing answers |
+
+## L-005 — Depth is not a barrier
+
+| Step | Statement |
+| --- | --- |
+| Given | a Ruby file whose claims sit in a class body, a method body and a block comment |
+| When | the file is read for where a claim could sit |
+| Then | all of them answer, at whatever depth they sit |
+
+## L-006 — A comment nothing follows
+
+| Step | Statement |
+| --- | --- |
+| Given | a Ruby file whose last line is a comment |
+| When | the file is read for where a claim could sit |
+| Then | that comment does not answer |
+
+## L-007 — Source the grammar cannot read
+
+| Step | Statement |
+| --- | --- |
+| Given | a Ruby file the grammar cannot parse |
+| When | the file is read for where a claim could sit |
+| Then | the file is named as unreadable rather than answering with what it recovered |

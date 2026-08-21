@@ -1,6 +1,6 @@
 # Marker
 
-What a piece of source claims to implement, read from the comment in front of it.
+What a piece of source claims to implement, read out of the comments a language offers.
 
 ## M-001 — A claim attaches to whatever statement follows it
 
@@ -10,14 +10,6 @@ What a piece of source claims to implement, read from the comment in front of it
 | When | the file is scanned for claims |
 | Then | each claim answers at the line its comment sits on |
 
-## M-002 — Depth is not a barrier
-
-| Step | Statement |
-| --- | --- |
-| Given | claims inside a class body and inside a method body |
-| When | the file is scanned for claims |
-| Then | both are read, at whatever depth they sit |
-
 ## M-003 — A claim in a block comment
 
 | Step | Statement |
@@ -26,14 +18,6 @@ What a piece of source claims to implement, read from the comment in front of it
 | When | the file is scanned for claims |
 | Then | the claim answers at the line its keyword is on rather than where the block began |
 
-## M-004 — A comment nothing follows
-
-| Step | Statement |
-| --- | --- |
-| Given | a claim at the end of a file with no code after it |
-| When | the file is scanned for claims |
-| Then | nothing is claimed |
-
 ## M-005 — What follows the keyword is handed back unread
 
 | Step | Statement |
@@ -41,22 +25,6 @@ What a piece of source claims to implement, read from the comment in front of it
 | Given | a comment naming more than one word after the keyword |
 | When | the file is scanned for claims |
 | Then | the whole of the line after the keyword arrives as one claim |
-
-## M-006 — A file that is not Ruby
-
-| Step | Statement |
-| --- | --- |
-| Given | a prose file in scope carrying the keyword |
-| When | the file is scanned for claims |
-| Then | nothing is claimed |
-
-## M-007 — Source the grammar cannot read
-
-| Step | Statement |
-| --- | --- |
-| Given | a Ruby file the grammar cannot parse |
-| When | the file is scanned for claims |
-| Then | the file is named as unreadable rather than answering with the claims it recovered |
 
 ## M-008 — The path arrives absolute
 
