@@ -4,10 +4,13 @@
 // One call does everything because the boundary is where the cost is: every
 // crossing has to marshal, so parse-query-collect stays on this side.
 //
-// A capture comes back as `line\ttext\n` with the text escaped — a comment is
-// the thing being collected, and one routinely contains the newline that would
-// otherwise end the record. Predicates (`#eq?` and friends) are not evaluated:
-// the queries are the tool's own, and none carries one.
+// A capture comes back as `match\tname\tline\ttext\n` with the text escaped — a
+// comment is the thing being collected, and one routinely contains the newline
+// that would otherwise end the record. Captures arrive in node position rather
+// than pattern order, so the name is what tells them apart and the match number
+// is what groups the ones describing the same thing. Predicates (`#eq?` and
+// friends) are not evaluated: the queries are the tool's own, and none carries
+// one.
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -169,6 +172,10 @@ const char *tsq_query(const char *grammar, const char *source, const char *query
 
   TSQueryMatch match;
   int ok = 1;
+  // Numbered here rather than taken from the match: tree-sitter recycles its
+  // own ids, and what a caller needs is only that two records made by one
+  // match carry the same number.
+  uint32_t matched = 0;
   while (ok && ts_query_cursor_next_match(cursor, &match)) {
     for (uint16_t i = 0; i < match.capture_count; i++) {
       TSNode node = match.captures[i].node;
@@ -176,19 +183,27 @@ const char *tsq_query(const char *grammar, const char *source, const char *query
       uint32_t end = ts_node_end_byte(node);
       if (end > source_len) end = source_len;
 
+      uint32_t name_len = 0;
+      const char *name = ts_query_capture_name_for_id(query, match.captures[i].index, &name_len);
+
+      char head[32];
+      int head_len = snprintf(head, sizeof(head), "%u\t", matched);
+
       // Rows count from zero inside tree-sitter and from one for anyone
       // reading a file, so the conversion happens here rather than in every
       // caller that wants to print a location.
       char line[24];
-      int line_len = snprintf(line, sizeof(line), "%u\t", ts_node_start_point(node).row + 1);
+      int line_len = snprintf(line, sizeof(line), "\t%u\t", ts_node_start_point(node).row + 1);
 
-      if (!tsq_put(line, (size_t)line_len) ||
+      if (!tsq_put(head, (size_t)head_len) || !tsq_put(name, (size_t)name_len) ||
+          !tsq_put(line, (size_t)line_len) ||
           !tsq_put_escaped(source + start, end - start) || !tsq_put("\n", 1)) {
         snprintf(tsq_err, sizeof(tsq_err), "out of memory collecting captures");
         ok = 0;
         break;
       }
     }
+    matched++;
   }
 
   ts_query_cursor_delete(cursor);

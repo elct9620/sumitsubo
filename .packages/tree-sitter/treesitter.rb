@@ -7,9 +7,13 @@
 # rather than at run time: what the executable can parse is decided when it is
 # built.
 #
-# A capture arrives as an escaped `line\ttext` record. The escaping is because a
-# comment routinely contains the newline that would otherwise end the record;
-# the line is what lets a finding be reported somewhere a reader can go and look.
+# A capture arrives as an escaped `match\tname\tline\ttext` record. The escaping
+# is because a comment routinely contains the newline that would otherwise end
+# the record; the line is what lets a finding be reported somewhere a reader can
+# go and look.
+#
+# Captures arrive in node position order rather than pattern order, so a caller
+# reading several of them tells them apart by name and groups them by match.
 
 # The C side, reached through FFI: these declarations are the whole of what the
 # compiler knows about it. A capture's text is binary-safe rather than
@@ -24,7 +28,10 @@ module TreeSitterNative
 end
 
 module TreeSitter
-  Capture = Struct.new(:line, :text)
+  # +match+ groups the captures one match made; +name+ is the capture's name in
+  # the query, without its `@`. A node's extent is not carried: the text is the
+  # source slice, so a caller wanting the last line counts the newlines in it.
+  Capture = Struct.new(:match, :name, :line, :text)
 
   # A source the grammar could not read, as opposed to one that says nothing.
   class ParseError < StandardError; end
@@ -56,14 +63,19 @@ module TreeSitter
     found = []
 
     raw.split("\n").each do |record|
-      at = record.index("\t")
-      # A record without its separator is skipped rather than half-read: half a
-      # capture reads like something the source never said.
-      next if at.nil?
+      # The escaping is what makes this safe: a tab in the captured text is
+      # written as a pair, so the only tabs left are the three separators.
+      fields = record.split("\t")
+      # A record short of its separators is skipped rather than half-read: half
+      # a capture reads like something the source never said. A capture of
+      # nothing loses its last field to the split, so three is enough.
+      next if fields.length < 3
 
       # Interpolated to settle the element type: an array built by a loop keeps
       # its members open, and unescape needs a string.
-      found << Capture.new(record[0, at].to_i, unescape("#{record[(at + 1)..-1]}"))
+      found << Capture.new(
+        fields[0].to_i, "#{fields[1]}", fields[2].to_i, unescape("#{fields[3]}")
+      )
     end
 
     found
