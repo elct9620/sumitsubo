@@ -37,7 +37,7 @@ this project had words worth rejecting. The vocabulary moved out of this file to
 written here is prose, and the same term written there is checked against every
 comment the project holds.
 
-## Glossary
+## Vocabulary
 
 The vocabulary lives in `.spec/glossary.json`, checked against this file, the
 contract and behavior specifications, the comments under `sumitsubo/`, and
@@ -58,37 +58,10 @@ A rejected word carries the reason it is rejected, and that reason says why
 that word is wrong rather than why the term is right. What the term means
 belongs in its definition, which is the half a document carries.
 
-## How it works
+## Specification
 
 Sumitsubo reads the structured specification and checks the source code
 against the verifiable part of it. Ruby is the only language it targets.
-
-`.sumi.json` says where. A run takes the nearest one at or above where it
-started; failing that the repository it sits in, failing that — with neither
-to go on — where it started. Two bases come out of this and they answer
-different questions: what the configuration says is read against that base,
-so wherever under it a run starts it reaches the same files, while findings
-answer relative to where the run started, so a reader can go straight to one.
-This is the convention tsc and RuboCop both follow.
-
-```json
-{
-  "root": ".spec",
-  "docs": "docs",
-  "specifications": { "glossary": { "verify": false } }
-}
-```
-
-`root` is where the specifications live, `.spec` by default, and `docs` is
-where Render writes, `docs` by default.
-
-`specifications` lists only the exceptions: one nobody mentions is both
-verified and rendered. The two switches sit in the same entry and are
-independent — `verify: false` keeps a specification without checking it, which
-a Render that only records it still needs, and `render: false` keeps one out of
-the documents without stopping the check. A project that has said nothing is
-not misconfigured, so an absent `.sumi.json` answers the defaults; only an
-unreadable one stops the run.
 
 A specification that is not there is a different question, and not every
 mechanism answers it the same way. `init` lays down what each starts from, so
@@ -98,9 +71,7 @@ say the same: git carries no empty directory, so a fresh clone of a project
 that committed what `init` laid down arrives without one, and declaring no
 scenarios is what keeps every such clone from failing.
 
-`.spec` is the default for two reasons, both about what else claims the name:
-`spec/` is RSpec's, and Spinel scans directories that do not start with a dot,
-so a specification directory without one would be swept in as source.
+### Glossary
 
 `glossary.json` holds sections, each scoped by `include` globs. A file takes
 every section covering it, applied in the order the file lists them; a later
@@ -114,7 +85,7 @@ through its syntax tree, and any other file entire, since prose is a comment
 for its whole length. An identifier is a spelling of a concept rather than the
 concept's name, so counting one would flag every legitimate class in the tree.
 
-## Contract
+### Contract
 
 What this establishes is that a registered interface is **implemented
 somewhere in scope**, never that the implementation is right. It is the same
@@ -211,7 +182,7 @@ code. A project leaning on these registers the contracts it can check and
 leaves the rest unregistered, since an interface nobody registered says
 nothing.
 
-## Behavior
+### Behavior
 
 What this establishes is that a behavior was **read and implemented**, never
 that the implementation is right. Nothing mechanical can judge whether the code
@@ -248,7 +219,50 @@ not one: there is nothing on the specification side to compare it against.
 Both collect before reporting, the way a linter does, so a renamed id is fixed
 in one pass.
 
-## Render
+## Command
+
+### Configuration
+
+`.sumi.json` says where. A run takes the nearest one at or above where it
+started; failing that the repository it sits in, failing that — with neither
+to go on — where it started. Two bases come out of this and they answer
+different questions: what the configuration says is read against that base,
+so wherever under it a run starts it reaches the same files, while findings
+answer relative to where the run started, so a reader can go straight to one.
+This is the convention tsc and RuboCop both follow.
+
+```json
+{
+  "root": ".spec",
+  "docs": "docs",
+  "specifications": { "glossary": { "verify": false } }
+}
+```
+
+`root` is where the specifications live, `.spec` by default, and `docs` is
+where Render writes, `docs` by default.
+
+`specifications` lists only the exceptions: one nobody mentions is both
+verified and rendered. The two switches sit in the same entry and are
+independent — `verify: false` keeps a specification without checking it, which
+a Render that only records it still needs, and `render: false` keeps one out of
+the documents without stopping the check. A project that has said nothing is
+not misconfigured, so an absent `.sumi.json` answers the defaults; only an
+unreadable one stops the run.
+
+`.spec` is the default for two reasons, both about what else claims the name:
+`spec/` is RSpec's, and Spinel scans directories that do not start with a dot,
+so a specification directory without one would be swept in as source.
+
+### Features
+
+| Feature | Description                                                          |
+|---------|----------------------------------------------------------------------|
+| Init    | Lay down an empty specification to start a reference line from.      |
+| Render  | Render the structured specification into documents a person reads.   |
+| Verify  | Verify the source code is aligned with the verifiable specification. |
+
+### Render
 
 Render writes the structured specification out as something a person reads:
 `glossary.md` under the documents path, one file per kind of contract under
@@ -277,15 +291,7 @@ its own. Spinel's `erb` is a placeholder that answers the template unchanged,
 so the wording is built in the mechanism and stays there until there is an
 engine to move it to.
 
-## Features
-
-| Feature | Description                                                          |
-|---------|----------------------------------------------------------------------|
-| Init    | Lay down an empty specification to start a reference line from.      |
-| Render  | Render the structured specification into documents a person reads.   |
-| Verify  | Verify the source code is aligned with the verifiable specification. |
-
-## Output
+### Output
 
 The reader is an agent working in the codebase, with a person reading over its
 shoulder. Findings answer as `path:line`, relative to where the run started,
