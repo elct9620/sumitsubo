@@ -36,7 +36,7 @@ module Sumitsubo
       when "init" then Command::Init.new.run(Config.load)
       when "render" then Command::Render.new.run(Config.load)
       when "verify" then Command::Verify.new.run(Config.load)
-      else flags(argv)
+      else unknown?(argv.first) ? refuse(argv.first) : flags(argv)
       end
     rescue Sumitsubo::Error => e
       # What a mechanism could not read is its own to report, so what reaches
@@ -48,8 +48,23 @@ module Sumitsubo
 
     private
 
+    # A first word that is neither a command nor a flag. Only this one is named
+    # back: optparse leaves it standing on both runtimes, while an unknown flag
+    # is raised on one and passed through on the other, and a message a
+    # snapshot has to match cannot depend on which.
+    def unknown?(word)
+      !word.nil? && !word.start_with?("-")
+    end
+
+    def refuse(word)
+      puts "#{word} is not something sumi answers"
+      puts HELP
+      2
+    end
+
     def flags(argv)
       show_version = false
+      understood = true
       parser = OptionParser.new
       parser.on("-v", "--version") { |_| show_version = true }
       parser.on("-h", "--help") { |_| show_version = false }
@@ -58,19 +73,22 @@ module Sumitsubo
       begin
         parser.parse!(rest)
       rescue OptionParser::ParseError
-        show_version = false
+        understood = false
       end
       # Unrecognised input means help. CRuby raises and is caught above,
       # Spinel leaves the argument in `rest`, so reaching one answer on
       # both runtimes takes both routes.
-      show_version = false unless rest.empty?
+      understood = false unless rest.empty?
 
-      if show_version
+      if show_version && understood
         puts "#{Sumitsubo::VERSION} (#{@build_rev})"
-      else
-        puts HELP
+        return 0
       end
-      0
+
+      # Help asked for is answered; help nobody asked for stands in for what
+      # the run could not make of what it was given.
+      puts HELP
+      understood ? 0 : 2
     end
   end
 end

@@ -33,7 +33,7 @@ Commands:
 Options:
     -v, --version    Show version
     -h, --help       Show this help
-exit=0
+exit=2
 --- known flag followed by an unknown one ---
 Usage: sumi <command> [options]
 
@@ -45,4 +45,17 @@ Commands:
 Options:
     -v, --version    Show version
     -h, --help       Show this help
-exit=0
+exit=2
+--- a word that is no command ---
+verfiy is not something sumi answers
+Usage: sumi <command> [options]
+
+Commands:
+    init             Lay down an empty specification to start from
+    render           Render the specification to markdown
+    verify           Check the source against the specification
+
+Options:
+    -v, --version    Show version
+    -h, --help       Show this help
+exit=2

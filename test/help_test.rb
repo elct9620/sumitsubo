@@ -11,3 +11,6 @@ puts "--- unknown flag ---"
 puts "exit=#{cli.run(["--nope"])}"
 puts "--- known flag followed by an unknown one ---"
 puts "exit=#{cli.run(["-v", "--nope"])}"
+# @behavior S-004
+puts "--- a word that is no command ---"
+puts "exit=#{cli.run(["verfiy"])}"

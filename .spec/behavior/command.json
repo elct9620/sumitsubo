@@ -23,6 +23,15 @@
       "given": ["the executable"],
       "when": "it is run with a flag it does not know",
       "then": "the help is answered rather than the version"
+    },
+    {
+      "id": "S-004",
+      "title": "A word that is no command",
+      "given": [
+        "the executable"
+      ],
+      "when": "it is run with a word it does not answer",
+      "then": "the word is named back and the help is answered"
     }
   ]
 }

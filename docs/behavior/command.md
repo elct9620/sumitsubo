@@ -25,3 +25,11 @@ How the executable answers what it is asked to do.
 | Given | the executable |
 | When | it is run with a flag it does not know |
 | Then | the help is answered rather than the version |
+
+## S-004 — A word that is no command
+
+| Step | Statement |
+| --- | --- |
+| Given | the executable |
+| When | it is run with a word it does not answer |
+| Then | the word is named back and the help is answered |
