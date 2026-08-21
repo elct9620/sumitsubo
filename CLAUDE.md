@@ -352,11 +352,13 @@ not made to say so twice.
 
 The command is `sumi`, shipped as a single native executable.
 
-- `scripts/vendor.sh` lays down what nothing compiles without, none of it
-  committed: the pinned tree-sitter runtime and Ruby grammar into `vendor/`,
-  and the revision a build answers for into `build_rev.rb`. That script is the
-  only place either version is written down, so the CI cache keyed on it now
-  misses whenever anything else in it moves too.
+- `scripts/vendor.sh` fetches the pinned tree-sitter runtime and Ruby grammar
+  into `vendor/`, which is not committed. Nothing compiles before it has run,
+  and that script is the only place either version is written down — which is
+  what lets CI key the cache on its contents alone.
+- `scripts/build_rev.sh` writes the revision a build answers for into
+  `build_rev.rb`, also not committed. It is a script of its own because a
+  revision moves with every commit and that cache key must not.
 - The revision sits at the root, which no specification's include globs reach,
   and only `bin/sumi.rb` requires it. `spin test` never compiles `bin/`, so a
   test always sees the unstamped default and a snapshot can hold the version

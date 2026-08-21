@@ -46,6 +46,11 @@ jobs:
       - name: Fetch the tree-sitter runtime and grammar
         run: ./scripts/vendor.sh
 
+      # Not folded into vendor.sh: that script's contents key the cache above,
+      # and a revision moving with every commit would invalidate it.
+      - name: Stamp the build revision
+        run: ./scripts/build_rev.sh
+
       - name: Build executable
         run: '"$SPIN" build'
 

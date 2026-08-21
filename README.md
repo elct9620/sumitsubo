@@ -211,13 +211,14 @@ specification that is not there is passed over rather than reported.
 
 Sumitsubo is compiled by [Spinel](https://github.com/matz/spinel), an AOT
 compiler for Ruby, which is built from source rather than installed from
-RubyGems. `scripts/vendor.sh` lays down what the tree needs before anything
-compiles, none of it committed: the pinned tree-sitter runtime and Ruby
-grammar, and the revision the executable answers for. Nothing compiles before
-it has run.
+RubyGems. Two scripts lay down what the tree needs and neither is committed:
+`scripts/vendor.sh` fetches the pinned tree-sitter runtime and Ruby grammar,
+and `scripts/build_rev.sh` writes the revision the executable answers for.
+Nothing compiles before both have run.
 
 ```console
 $ ./scripts/vendor.sh
+$ ./scripts/build_rev.sh
 $ spin test
 $ spin build
 $ ./build/bin/sumi verify
