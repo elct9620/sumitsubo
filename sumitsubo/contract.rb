@@ -384,7 +384,15 @@ module Sumitsubo
     def self.definition_from(path)
       text = File.read(path)
       document = parse(path, text)
-      lines = Locations.of(text, NAME)
+      # `"name"` is a key this specification uses at three depths — the kind's
+      # own, each contract's, and each parameter's — so a value is taken in
+      # the order it was written rather than looked up. A contract spelled the
+      # same as the kind, or as a parameter of a contract before it, would
+      # otherwise answer at that one's line.
+      cursor = Locations::Cursor.new(Locations.all_in(text, NAME))
+      # The kind names itself first, so passing over it is what leaves the
+      # contracts to be read from where they start.
+      cursor.line_of(document["name"])
 
       # A definition naming no marker is read from the syntax tree, so there is
       # no word to look for and none is needed.
@@ -407,9 +415,14 @@ module Sumitsubo
                        "which a marker leaves nothing to compare them against"
         end
 
+        line = cursor.line_of(name)
+        params = params_from(raw["params"])
+        # A parameter names itself too, and passing over those is what leaves
+        # a contract spelled the same as one of them answering at its own line.
+        params.each { |param| cursor.line_of(param.name) } unless params.nil?
+
         interfaces.push(Interface.new(
-          name, raw["description"], path, lines[name], raw["internal"] == true,
-          params_from(raw["params"])
+          name, raw["description"], path, line, raw["internal"] == true, params
         ))
       end
 

@@ -224,6 +224,15 @@
       ],
       "when": "the directory is read",
       "then": "the file is named as one that cannot be read"
+    },
+    {
+      "id": "T-025",
+      "title": "A name the specification uses at more than one depth",
+      "given": [
+        "a contract file whose kind, one contract and one parameter of another are spelled alike"
+      ],
+      "when": "the directory is read",
+      "then": "each contract answers at the line declaring it"
     }
   ]
 }

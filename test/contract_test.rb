@@ -169,3 +169,13 @@ end
 # @behavior T-024
 puts "--- parameters registered under a marker ---"
 fails { Sumitsubo::Contract.load("#{FIXTURE}/marked") }
+
+# `"name"` names three things here: the kind, each contract, and each
+# parameter. `loose` is spelled the same as a parameter of the contract before
+# it, and `Store` the same as the kind — both answer at their own line rather
+# than at the first one carrying the word.
+# @behavior T-025
+puts "--- a name the specification uses at more than one depth ---"
+Sumitsubo::Contract.load("#{FIXTURE}/collide")[0].interfaces.each do |interface|
+  puts "  #{interface.path}:#{interface.line} #{interface.name}"
+end

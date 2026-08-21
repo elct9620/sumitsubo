@@ -197,3 +197,11 @@ The interfaces a project registers, and what source claims to implement them.
 | Given | a contract file naming a marker and giving an interface parameters |
 | When | the directory is read |
 | Then | the file is named as one that cannot be read |
+
+## T-025 — A name the specification uses at more than one depth
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract file whose kind, one contract and one parameter of another are spelled alike |
+| When | the directory is read |
+| Then | each contract answers at the line declaring it |

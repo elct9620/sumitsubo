@@ -17,7 +17,7 @@
     },
     {
       "name": "Sumitsubo::Locations.of",
-      "description": "The one reading of where a name sits in a structured specification.",
+      "description": "Where a name first appears, for a key that names one kind of thing.",
       "internal": true,
       "params": [
         {
@@ -25,6 +25,29 @@
         },
         {
           "name": "pattern"
+        }
+      ]
+    },
+    {
+      "name": "Sumitsubo::Locations.all_in",
+      "description": "The one scan of a structured specification for where its names appear.",
+      "internal": true,
+      "params": [
+        {
+          "name": "text"
+        },
+        {
+          "name": "pattern"
+        }
+      ]
+    },
+    {
+      "name": "Sumitsubo::Locations::Cursor#line_of",
+      "description": "Taking each name in the order it was written, for a key that names more than one kind of thing.",
+      "internal": true,
+      "params": [
+        {
+          "name": "value"
         }
       ]
     },
