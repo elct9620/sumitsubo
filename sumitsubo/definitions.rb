@@ -22,6 +22,10 @@ module Sumitsubo
     NAME = "name"
     SCOPE = "scope"
     SINGLETON = "singleton"
+    # `class << self` holds methods that belong to the class rather than to an
+    # instance of it. It contributes no name of its own — what it changes is
+    # how the methods inside it are spelled.
+    REOPENED = "reopened"
 
     # A pattern reaches only its direct children and there is no operator for a
     # deeper one, so nesting is recovered from where the nodes sit rather than
@@ -32,6 +36,7 @@ module Sumitsubo
       (class name: (_) @name) @scope
       (method name: (_) @name) @instance
       (singleton_method object: (self) name: (_) @name) @singleton
+      (singleton_class value: (self) @name) @reopened
     QUERY
 
     # Every name the file declares. Only Ruby has declarations to read, so
@@ -44,23 +49,43 @@ module Sumitsubo
       nodes = nodes_in(path, where)
 
       scopes = []
-      nodes.each { |node| scopes.push(node) if node.kind == SCOPE }
+      reopened = []
+      nodes.each do |node|
+        scopes.push(node) if node.kind == SCOPE
+        reopened.push(node) if node.kind == REOPENED
+      end
 
       found = []
-      nodes.each { |node| found.push(Name.new(where, node.first, qualified(scopes, node))) }
+      nodes.each do |node|
+        next if node.kind == REOPENED
+
+        found.push(Name.new(where, node.first, qualified(scopes, reopened, node)))
+      end
       found
     end
 
     # The name a contract would have to use to reach this node, its enclosing
     # scopes included.
-    def self.qualified(scopes, node)
+    def self.qualified(scopes, reopened, node)
       holding = enclosing(scopes, node)
       return holding.push(node.text).join("::") if node.kind == SCOPE
       # A definition outside every scope is reached by its bare name: there is
       # no path to put in front of it.
       return node.text if holding.empty?
 
-      "#{holding.join("::")}#{node.kind == SINGLETON ? "." : "#"}#{node.text}"
+      "#{holding.join("::")}#{singleton?(reopened, node) ? "." : "#"}#{node.text}"
+    end
+
+    # Whether the method belongs to the class rather than to an instance of it,
+    # by how it was written or by sitting inside a `class << self`.
+    def self.singleton?(reopened, node)
+      return true if node.kind == SINGLETON
+
+      inside = false
+      reopened.each do |scope|
+        inside = true if scope.first <= node.first && node.last <= scope.last
+      end
+      inside
     end
 
     # The scopes holding this node, outermost first — which is also earliest

@@ -1,49 +1,72 @@
 {
   "name": "Definitions",
   "description": "What a piece of source declares, read from the syntax tree.",
-  "include": ["test/definitions_test.rb"],
+  "include": [
+    "test/definitions_test.rb"
+  ],
   "scenarios": [
     {
       "id": "D-001",
       "title": "A name carries the scopes holding it",
-      "given": ["a file nesting a module inside a module"],
+      "given": [
+        "a file nesting a module inside a module"
+      ],
       "when": "the file is read for what it declares",
       "then": "each name answers qualified by the scopes it sits in"
     },
     {
       "id": "D-002",
       "title": "A singleton method and an instance one",
-      "given": ["a class declaring one of each"],
+      "given": [
+        "a class declaring one of each"
+      ],
       "when": "the file is read for what it declares",
       "then": "the two are told apart by the way Ruby spells them"
     },
     {
       "id": "D-003",
       "title": "A scope written with its path",
-      "given": ["a module named the way a path is written rather than by nesting"],
+      "given": [
+        "a module named the way a path is written rather than by nesting"
+      ],
       "when": "the file is read for what it declares",
       "then": "the name answers whole, as the source spelled it"
     },
     {
       "id": "D-004",
       "title": "A definition outside every scope",
-      "given": ["a method declared at the top level of a file"],
+      "given": [
+        "a method declared at the top level of a file"
+      ],
       "when": "the file is read for what it declares",
       "then": "it answers by its bare name, because there is no path to put in front of it"
     },
     {
       "id": "D-005",
       "title": "A file that is not Ruby",
-      "given": ["a prose file in scope"],
+      "given": [
+        "a prose file in scope"
+      ],
       "when": "the file is read for what it declares",
       "then": "nothing is declared"
     },
     {
       "id": "D-006",
       "title": "Source the grammar cannot read",
-      "given": ["a Ruby file the grammar cannot parse"],
+      "given": [
+        "a Ruby file the grammar cannot parse"
+      ],
       "when": "the file is read for what it declares",
       "then": "the file is named as unreadable rather than answering with the names it recovered"
+    },
+    {
+      "id": "D-007",
+      "title": "A method written inside a reopened singleton class",
+      "given": [
+        "a class whose `class << self` declares a method"
+      ],
+      "when": "the file is read for what it declares",
+      "then": "the name is spelled as belonging to the class rather than to an instance of it"
     }
   ]
 }

@@ -23,3 +23,10 @@ end
 
 def loose
 end
+
+class Reopened
+  class << self
+    def built
+    end
+  end
+end

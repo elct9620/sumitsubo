@@ -49,3 +49,11 @@ What a piece of source declares, read from the syntax tree.
 | Given | a Ruby file the grammar cannot parse |
 | When | the file is read for what it declares |
 | Then | the file is named as unreadable rather than answering with the names it recovered |
+
+## D-007 — A method written inside a reopened singleton class
+
+| Step | Statement |
+| --- | --- |
+| Given | a class whose `class << self` declares a method |
+| When | the file is read for what it declares |
+| Then | the name is spelled as belonging to the class rather than to an instance of it |

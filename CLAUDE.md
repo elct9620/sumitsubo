@@ -195,6 +195,22 @@ pattern reaches only its direct children and tree-sitter has no operator for a
 deeper one. Two constructs spanning the same lines therefore answer with no
 scope, which loses a prefix rather than inventing one.
 
+What the tree cannot see, it cannot verify, and a contract naming one of these
+is answered as undefined however plainly the code works:
+
+| Written as | Why it is missed |
+|------------|------------------|
+| `attr_reader :size` | A call, not a definition — the method exists only once it runs. |
+| `define_method(:computed)` | The same, and the name need not be a literal at all. |
+| `def_delegator :@parts, :count` | The same, through `Forwardable`. |
+| `include Helper` | `Helper#helped` is declared; `Widget#helped` never is. |
+| `def Other.oddball` | Only a receiver of `self` is read, which is what a class calls itself from inside. |
+
+The list is what one reading of one grammar reaches, not a judgement about the
+code. A project leaning on these registers the contracts it can check and
+leaves the rest unregistered, since an interface nobody registered says
+nothing.
+
 ## Behavior
 
 What this establishes is that a behavior was **read and implemented**, never
