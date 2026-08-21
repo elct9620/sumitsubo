@@ -14,12 +14,18 @@ def show(path)
   end
 end
 
+# One file answers all four: `Outer::Inner` is qualified by its nesting,
+# `.load` and `#check` are told apart the way Ruby spells them, `Flat::Scoped`
+# is written as a path rather than nested, and `loose` sits outside every scope.
+# @behavior D-001 D-002 D-003 D-004
 puts "--- what a file declares ---"
 show("#{FIXTURE}/sample.rb")
 
+# @behavior D-005
 puts "--- a file that is not Ruby declares nothing ---"
 show("test/fixtures/behavior/test/overview.md")
 
+# @behavior D-006
 puts "--- source the grammar cannot read ---"
 begin
   show("test/fixtures/behavior/test/broken.rb")

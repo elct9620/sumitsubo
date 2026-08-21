@@ -8,5 +8,8 @@
 | Verifiable Specification | The part of the structured specification a mechanism can check against source code. |
 | Source Code | The code verified against the specification. Glossary and Contract verify the implementation, Behavior the tests. |
 | Syntax Tree | What tree-sitter answers for a source file: every token kept, comments included. |
-| Contract | An interface a project registers as one it means to keep, claimed by the source that implements it. The marker it is claimed with is its namespace. |
+| Contract | An interface a project registers as one it means to keep, found in the source that implements it. Source claims one in a comment where no construct of the language points at it, and declares it outright where one does. |
 | Behavior | A scenario the specification declares in a BDD style, claimed by the test that implements it. |
+| Declare | To say something exists. A specification declares the contracts and behaviors it registers; source declares the classes, modules and methods it defines. One relation, and the subject is what changes — which is why both sides use the word. |
+| Marker | The word source claims a contract or behavior with, written in the comment in front of the code. It is what an interface needs when no construct of the language points at it. |
+| Internal | An interface the project means to keep but not to publish. It is verified like any other, and what it stays out of is the Document. |

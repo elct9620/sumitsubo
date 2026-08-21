@@ -16,7 +16,7 @@ targets.
 | Mechanism | The specification declares | Verified against |
 |-----------|----------------------------|------------------|
 | Glossary  | The domain vocabulary, and the words rejected in its place. | Words a person wrote: comments, and prose. |
-| Contract  | The interfaces it means to keep. | Source code declaring which interface it implements. |
+| Contract  | The interfaces it means to keep. | Source code claiming an interface, or declaring one the language carries. |
 | Behavior  | Behaviors in a BDD style. | Test code declaring which behavior it implements. |
 
 ## Installation
@@ -57,6 +57,27 @@ rendered docs/glossary.md
 rendered docs/contract/cli.md
 rendered docs/behavior/verify.md
 ```
+
+### Contracts
+
+A contract file registers one kind of interface. It names the marker source
+claims those interfaces with, or names none and is read from the syntax tree
+instead — a route needs a comment because nothing in Ruby points at one, while
+a method is found without anything written in front of it.
+
+```json
+{
+  "name": "Internal seams",
+  "include": ["lib/**/*.rb"],
+  "contracts": [
+    { "name": "Store.open", "description": "Open the store." },
+    { "name": "Store#read", "description": "Read one record.", "internal": true }
+  ]
+}
+```
+
+`internal` says the project means to keep an interface but not to publish it:
+it is verified like any other, and what it stays out of is the document.
 
 ### Configuration
 

@@ -13,7 +13,7 @@ Several mechanisms establish alignment. Known so far:
 | Mechanism | The specification declares                                             | Verified against                |
 |-----------|------------------------------------------------------------------------|---------------------------------|
 | Glossary  | The domain vocabulary, and the words rejected in its place.            | Words a person wrote: comments, and prose.       |
-| Contract  | The interfaces it means to keep.                                        | Source code declaring which interface it implements. |
+| Contract  | The interfaces it means to keep.                                        | Source code claiming an interface, or declaring one the language carries. |
 | Behavior  | Behaviors in a BDD style.                                              | Test code declaring which behavior it implements. |
 
 The set is not closed, and each mechanism takes its shape from what can
@@ -124,8 +124,29 @@ check.
 `contract/` under the root holds one file per kind — the commands an
 executable answers, the routes an application serves, the methods a package
 exposes. A contract file plays the role a behavior file plays, carrying its
-own `include`, and naming the word source claims it with. Source claims one in
-the comment in front of the code implementing it — `# @command verify`.
+own `include`.
+
+There are two readings, and a file says which by naming a marker or not. A
+marker is the word source claims its interfaces with, written in the comment
+in front of the code — `# @command verify`. It is what an interface needs
+when no construct of the language points at it: nothing in a Ruby file is a
+route. A method is a construct, so a file naming no marker is read from the
+syntax tree instead, and nothing has to be written in front of the code for
+it to be found.
+
+The name says which construct. `Sumitsubo::Where.of` is a singleton method,
+`#` an instance one, and a bare path a class or module — which is the same
+rule as everywhere else here, that a contract is named by the interface
+itself. A name that could be none of those stops the mechanism rather than
+answering: read as Ruby, a route-shaped name is undefined everywhere, and
+reporting that would blame the code for a specification that lost its marker.
+
+An interface may be `internal`, which says the project means to keep it but
+not to publish it. It is verified like any other; what it stays out of is the
+document. That is a fact about the interface rather than a preference about
+pages, which is what separates it from `.sumi.json` switching a whole
+specification off — and a kind whose every interface is internal has nothing
+to render at all.
 
 The marker is the namespace rather than the file. A project whose routes
 outgrow one file is registering more of one kind, not a second kind, so two
@@ -144,22 +165,35 @@ between writing the code and dropping the contract. An interface nobody
 registered is not one: only the contracts that matter are written down, so an
 absent registration says nothing about the code.
 
-One interface claimed in two places is a difference, and it is what Contract
-establishes that Behavior does not. A behavior may be claimed by as many tests
-as exercise it; a contract is the way in, so a second way in is an entrance
-the specification does not describe. Both places are answered, each naming the
-other, since deciding which to keep means comparing them.
+Two of the three findings belong to the marker reading alone, because they
+are about claims and the syntax tree makes none. A claim resolving to no
+contract is a comparison that could not be made. One interface claimed in two
+places is a difference, and it is what Contract establishes that Behavior does
+not: a behavior may be claimed by as many tests as exercise it, but a contract
+is the way in, so a second way in is an entrance the specification does not
+describe. Both places are answered, each naming the other, since deciding
+which to keep means comparing them. Under the other reading a method defined
+twice is Ruby reopening a class, which says nothing.
 
-`include` narrows the search rather than tying an interface to one place, as
-it does for Behavior: the union is what gets scanned. That is what lets a
+`include` therefore means something different in each. Under the marker
+reading it narrows the search rather than tying an interface to one place, as
+it does for Behavior: the union is what gets scanned, which is what lets a
 claim written somewhere unexpected be seen at all, and a claim that cannot be
-seen cannot be reported as the second one.
+seen cannot be reported as the second one. Under the other reading there is
+no second claim to miss, so the union is simply where a definition has to be
+for the interface to count as implemented.
 
-Marker is the only reading. Confirming from the syntax tree that a class
-really declares the method a contract names is the obvious next one, and the
-binding answers captures as a flat list carrying neither capture names nor
-match boundaries, so a method cannot yet be tied to the class holding it. The
-mechanism is written to the reading that exists.
+The syntax tree is read for names and nothing else. Whether the method a
+contract names takes the arguments it should is the obvious next reading, and
+the parameters are in the tree — names and kinds, though never types, which
+Ruby does not carry. It waits because an interface that exists is the whole of
+what this establishes, and there is no use yet to say what a signature would
+have to match.
+
+Nesting is recovered from where the nodes sit rather than from the query: a
+pattern reaches only its direct children and tree-sitter has no operator for a
+deeper one. Two constructs spanning the same lines therefore answer with no
+scope, which loses a prefix rather than inventing one.
 
 ## Behavior
 
@@ -312,14 +346,15 @@ The command is `sumi`, shipped as a single native executable.
   CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
   that way. A file reaching it through its requires counts, which is why
-  `sumitsubo/config.rb` names no mechanism and `sumitsubo/behavior.rb` names no
-  grammar: keeping the specification side apart from the side that reads source
-  is what leaves `config_test.rb` and `behavior_test.rb` able to regenerate. Where no snapshot is
-  committed the run is compared against CRuby rather than failing, and a test
-  that asserts nothing passes.
-- `--regen` takes no file, so it rewrites every snapshot including the
-  hand-written ones, leaving a CRuby backtrace where the expectation was.
-  Restore the rest afterwards.
+  `sumitsubo/config.rb` names no mechanism and why neither `behavior.rb` nor
+  `contract.rb` names a grammar — each hands its reading of source to `marker.rb`
+  or `definitions.rb` instead. Keeping the specification side apart from the side
+  that reads source is what leaves those three tests able to regenerate. Where no
+  snapshot is committed the run is compared against CRuby rather than failing,
+  and a test that asserts nothing passes.
+- `--regen` takes the same file list, so name the test to rewrite. Given none
+  it rewrites every snapshot including the hand-written ones, leaving a CRuby
+  backtrace where the expectation was.
 - Tests compile at `-O1` and the shipped executable at the compiler's default,
   so CI builds and runs `sumi` in addition to running the tests.
 - `.claude/hooks/` holds this repository to the same promises inside a
