@@ -6,7 +6,8 @@ require "sumitsubo/marker"
 module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
   # checked against, which is why Behavior meets Marker here and not in its own
-  # file — see the Build section of CLAUDE.md for what that separation buys.
+  # file: keeping the specification side clear of the side that reads source is
+  # what leaves each of those tests able to keep a snapshot.
   #
   # A mechanism registers by being in the list: Spinel decides what an
   # executable carries when it is built, so there is no hook to register
@@ -169,7 +170,7 @@ module Sumitsubo
     end
 
     # The order a run reaches them in, which is the order init lays them down,
-    # and the order the mechanisms are set out in CLAUDE.md and the README.
+    # and the order the README sets them out in.
     ALL = [Glossary.new, Contract.new, Behavior.new]
   end
 end

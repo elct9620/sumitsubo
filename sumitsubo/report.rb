@@ -1,8 +1,8 @@
 module Sumitsubo
   # What a run has to say and the answer it leaves with, kept in one place
-  # rather than spread across the commands — see the Output section of
-  # CLAUDE.md. Two mechanisms can answer about the same line, so the message
-  # is part of the sort key: it is what separates them.
+  # rather than spread across the commands. Two mechanisms can answer about the
+  # same line, so the message is part of the sort key: it is what separates
+  # them.
   class Report
     def initialize
       @differences = []

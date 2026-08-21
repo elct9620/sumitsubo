@@ -165,6 +165,13 @@ $ spin build
 $ ./build/bin/sumi verify
 ```
 
+`spin test` compares each test's output against a committed snapshot, and
+`spin test --regen` writes those snapshots by running the file under CRuby.
+CRuby has no `ffi_func`, so a test reaching the tree-sitter binding cannot be
+regenerated and its snapshot is written by hand instead. That is why the files
+reading a specification name no grammar: it keeps their tests on the side that
+can still be regenerated.
+
 That last line is the project verifying its own specification, which CI runs on
 every push. `docs/` is this project rendering its own, and is committed, so a
 change to `.spec/` is followed by `./build/bin/sumi render` — which

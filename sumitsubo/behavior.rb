@@ -10,9 +10,8 @@ module Sumitsubo
   # implementation is right — that is what licenses everything this mechanism
   # cannot check.
   #
-  # Nothing here names the grammar. That is what lets this file's test run
-  # under CRuby — see the Build section of CLAUDE.md for what --regen cannot
-  # reach.
+  # Nothing here names the grammar, which is what keeps this file's test on the
+  # side that --regen can still write a snapshot for.
   module Behavior
     DIRECTORY = "behavior"
 
@@ -121,7 +120,7 @@ module Sumitsubo
     end
 
     # The mechanism words its own findings; where each points is the tool's to
-    # shape. See the Output section of CLAUDE.md.
+    # shape.
     def self.describe_uncovered(finding)
       "#{finding.id} is claimed nowhere in #{finding.scope.join(", ")}"
     end
@@ -198,8 +197,7 @@ module Sumitsubo
     end
 
     # Two scenarios under one id leave a marker with nothing to resolve to,
-    # which is a comparison that could not be made rather than a difference —
-    # see the Output section of CLAUDE.md.
+    # which is a comparison that could not be made rather than a difference.
     def self.refuse_ambiguity(features)
       seen = {}
       features.each do |feature|

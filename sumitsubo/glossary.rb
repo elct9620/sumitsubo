@@ -90,7 +90,7 @@ module Sumitsubo
     end
 
     # The mechanism words its own finding; where it points is the tool's to
-    # shape. See the Output section of CLAUDE.md.
+    # shape.
     def self.describe(finding)
       "#{finding.term} rejects #{finding.used}: #{finding.reason}"
     end
@@ -151,8 +151,8 @@ module Sumitsubo
     # against.
     #
     # The pattern is read from the blocks below and never escapes into a
-    # stored one — see the Compiler section of CLAUDE.md for what a Regexp
-    # reaching a closure cell costs.
+    # stored one: a runtime Regexp in a closure cell goes unrooted under
+    # Spinel, and a collection landing before the call takes the process down.
     def self.findings_for(path, regions, name, entry)
       found = []
       pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")

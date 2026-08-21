@@ -2,7 +2,7 @@ require "pathname"
 
 module Sumitsubo
   # Where a run sends a reader: relative to where it started, so they can go
-  # straight to it — see the Output section of CLAUDE.md.
+  # straight to it.
   #
   # A path is absolute as often as not, since the root is composed from the
   # base the configuration was found at, so every message about one is built

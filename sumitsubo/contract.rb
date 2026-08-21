@@ -13,9 +13,8 @@ module Sumitsubo
   # while an interface nobody declared is not. Only the contracts that matter
   # are registered, so the absence of a declaration says nothing.
   #
-  # Nothing here names the grammar. That is what lets this file's test run
-  # under CRuby — see the Build section of CLAUDE.md for what --regen cannot
-  # reach.
+  # Nothing here names the grammar, which is what keeps this file's test on the
+  # side that --regen can still write a snapshot for.
   module Contract
     DIRECTORY = "contract"
 
@@ -158,7 +157,7 @@ module Sumitsubo
     end
 
     # The mechanism words its own findings; where each points is the tool's to
-    # shape. See the Output section of CLAUDE.md.
+    # shape.
     def self.describe_unclaimed(finding)
       "#{finding.name} is claimed nowhere in #{finding.scope.join(", ")}"
     end

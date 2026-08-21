@@ -6,8 +6,7 @@ require "sumitsubo/behavior"
 # be able to go to the line that declares it — which is why the raw text is
 # read alongside the parsed document.
 #
-# Nothing here reaches the grammar, so this snapshot can be regenerated. See
-# the Build section of CLAUDE.md for what that buys.
+# Nothing here reaches the grammar, so --regen can still write this snapshot.
 
 # @behavior B-001
 puts "--- what the directory declares, and where ---"

@@ -266,8 +266,14 @@ what was tried, or defends the code against a misreading, is that story and
 belongs in the commit instead.
 
 Two or three lines, around fifty words. The limit is loose; it is there to
-keep an intent from turning into an account. Where this file already holds
-the reason, the comment points at it rather than repeating it.
+keep an intent from turning into an account.
+
+A comment never sends a reader to this file. What one would cite has become a
+fact about the project by being worth citing, and a fact about the project
+belongs in the project — in the comment saying it, or in the README where a
+reader outside the code needs it. This file carries the direction, the
+principles, and what the source cannot be read off, and none of that is a
+reference for the code to point at.
 
 Three things earn more room:
 

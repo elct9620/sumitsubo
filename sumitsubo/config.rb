@@ -8,8 +8,8 @@ module Sumitsubo
   # a run verifies. A project that has said nothing is not misconfigured, so an
   # absent file answers the defaults rather than failing.
   #
-  # Nothing here names a mechanism. That is what lets this file's test run under
-  # CRuby — see the Build section of CLAUDE.md for what --regen cannot reach.
+  # Nothing here names a mechanism, which is what keeps this file's test on the
+  # side that --regen can still write a snapshot for.
   class Config
     FILE = ".sumi.json"
     DEFAULT_ROOT = ".spec"
@@ -57,9 +57,9 @@ module Sumitsubo
       @specifications = document["specifications"] || {}
     end
 
-    # One entry carries both answers, and they are independent — see the How it
-    # works section of CLAUDE.md for what verify: false keeps a specification
-    # for.
+    # One entry carries both answers, and they are independent: verify: false
+    # keeps a specification without being checked against, which a run that only
+    # renders it still needs.
     def verify?(name)
       switched_on?(name, "verify")
     end

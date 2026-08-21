@@ -5,8 +5,7 @@ require "sumitsubo/contract"
 # interface nothing claims is a finding about the specification, so the reader
 # has to be able to go to the line that registers it.
 #
-# Nothing here reaches the grammar, so this snapshot can be regenerated. See
-# the Build section of CLAUDE.md for what that buys.
+# Nothing here reaches the grammar, so --regen can still write this snapshot.
 
 FIXTURE = "test/fixtures/contract"
 

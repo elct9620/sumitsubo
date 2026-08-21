@@ -34,8 +34,7 @@ module Sumitsubo
     rescue Sumitsubo::Error => e
       # What a mechanism could not read is its own to report, so what reaches
       # here is the configuration itself: with nothing to say where the
-      # specifications live, no comparison was ever started — see the Output
-      # section of CLAUDE.md for what that answers.
+      # specifications live, no comparison was ever started.
       puts e.message
       2
     end
