@@ -289,9 +289,13 @@ module Sumitsubo
         "#{finding.scope.join(", ")}"
     end
 
+    # The caveat rides every one of these because the tree cannot tell the two
+    # cases apart: a method made by a call or mixed in is missing from it
+    # exactly as an unwritten one is, and rewriting that one fixes nothing.
     def self.describe_undefined(finding)
       "#{spoken(finding.marker, finding.name)} is defined nowhere in " \
-        "#{finding.scope.join(", ")}"
+        "#{finding.scope.join(", ")}, and a method made by a call " \
+        "or mixed in never is"
     end
 
     def self.describe_conflicting(pair)
