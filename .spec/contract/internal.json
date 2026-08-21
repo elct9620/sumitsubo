@@ -19,7 +19,7 @@
       "internal": true
     },
     {
-      "name": "Sumitsubo::Declaration.names_in",
+      "name": "Sumitsubo::Definitions.names_in",
       "description": "The reading of what a piece of source declares, for an interface that is a Ruby construct.",
       "internal": true
     }

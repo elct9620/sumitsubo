@@ -114,16 +114,16 @@ The interfaces a project registers, and what source claims to implement them.
 | When | the scope is asked for |
 | Then | the union of every include answers, without repeats |
 
-## T-015 — A contract no Ruby declaration can be
+## T-015 — A contract no Ruby definition can be
 
 | Step | Statement |
 | --- | --- |
 | Given | a definition naming no marker |
 | Given | an interface named the way a route is named |
 | When | the directory is loaded |
-| Then | the file is named as registering something no Ruby declaration can be |
+| Then | the file is named as registering something no Ruby definition can be |
 
-## T-016 — An interface the syntax tree does not declare
+## T-016 — An interface the syntax tree does not define
 
 | Step | Statement |
 | --- | --- |

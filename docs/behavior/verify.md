@@ -126,11 +126,11 @@ Checking the source against the verifiable part of the specification, and answer
 | When | the two sides are compared |
 | Then | it is answered at the line registering it, naming the scope that was searched |
 
-## V-016 — A contract naming no marker and nothing Ruby can declare
+## V-016 — A contract naming no marker and nothing Ruby can define
 
 | Step | Statement |
 | --- | --- |
 | Given | a contract naming no marker |
 | Given | an interface named the way a route is named |
 | When | the two sides are compared |
-| Then | the file is named as registering something no Ruby declaration can be |
+| Then | the file is named as registering something no Ruby definition can be |

@@ -40,8 +40,8 @@ exit=2
 .spec/contract/api.json:8 Store#write is defined nowhere in src/*.rb
 1 difference
 exit=1
---- a contract naming no marker and nothing Ruby can declare ---
-.spec/contract/routes.json names GET /users/:id, which no Ruby declaration can be
+--- a contract naming no marker and nothing Ruby can define ---
+.spec/contract/routes.json names GET /users/:id, which no Ruby definition can be
 0 differences
 exit=2
 --- no specification at all ---

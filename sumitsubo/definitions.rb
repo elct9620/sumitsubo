@@ -10,7 +10,7 @@ module Sumitsubo
   # A name is spelled the way Ruby spells it — `Sumitsubo::Where.of` for a
   # singleton method, `#` for an instance one, the bare path for a class or
   # module — because that is what a contract is named by.
-  module Declaration
+  module Definitions
     class Error < Sumitsubo::Error; end
 
     Name = Struct.new(:path, :line, :name)

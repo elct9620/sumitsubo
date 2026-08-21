@@ -133,17 +133,17 @@
     },
     {
       "id": "T-015",
-      "title": "A contract no Ruby declaration can be",
+      "title": "A contract no Ruby definition can be",
       "given": [
         "a definition naming no marker",
         "an interface named the way a route is named"
       ],
       "when": "the directory is loaded",
-      "then": "the file is named as registering something no Ruby declaration can be"
+      "then": "the file is named as registering something no Ruby definition can be"
     },
     {
       "id": "T-016",
-      "title": "An interface the syntax tree does not declare",
+      "title": "An interface the syntax tree does not define",
       "given": [
         "a definition naming no marker",
         "names the source in scope declares, one of them missing"

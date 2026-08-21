@@ -105,7 +105,7 @@ module Sumitsubo
       found
     end
 
-    def self.declared(definitions)
+    def self.defined(definitions)
       found = []
       definitions.each { |definition| found.push(definition) if definition.marker.nil? }
       found
@@ -138,17 +138,17 @@ module Sumitsubo
       found
     end
 
-    # An interface the syntax tree does not declare. The specification
+    # An interface the syntax tree does not define. The specification
     # registers it and no source in scope defines it, which is the same
     # difference an unclaimed interface is — the other reading of it.
     def self.undefined(definitions, names)
-      defined = {}
-      names.each { |name| defined[name.name] = true }
+      seen = {}
+      names.each { |name| seen[name.name] = true }
 
       found = []
-      declared(definitions).each do |definition|
+      defined(definitions).each do |definition|
         definition.interfaces.each do |interface|
-          next unless defined[interface.name].nil?
+          next unless seen[interface.name].nil?
 
           found.push(Finding.new(
             Where.of(interface.path), interface.line, interface.name, definition.includes
@@ -162,10 +162,10 @@ module Sumitsubo
     # confirm it, which is a comparison that could not be made rather than a
     # difference.
     def self.unresolved(definitions, claims)
-      declared = declared_in(definitions)
+      registered = registered_in(definitions)
 
       found = []
-      claims.each { |claim| found.push(claim) if declared[key(claim.keyword, claim.name)].nil? }
+      claims.each { |claim| found.push(claim) if registered[key(claim.keyword, claim.name)].nil? }
       found
     end
 
@@ -177,12 +177,12 @@ module Sumitsubo
     # are already two findings, and saying they agree with each other adds
     # nothing.
     def self.duplicated(definitions, claims)
-      declared = declared_in(definitions)
+      registered = registered_in(definitions)
 
       seen = {}
       claims.each do |claim|
         name = key(claim.keyword, claim.name)
-        next if declared[name].nil?
+        next if registered[name].nil?
 
         group = seen[name]
         if group.nil?
@@ -287,7 +287,7 @@ module Sumitsubo
         raise Error, "#{Where.of(path)} declares a contract with no \"name\"" if name.nil?
 
         if marker.nil? && !resolvable?(name)
-          raise Error, "#{Where.of(path)} names #{name}, which no Ruby declaration can be"
+          raise Error, "#{Where.of(path)} names #{name}, which no Ruby definition can be"
         end
 
         interfaces.push(Interface.new(
@@ -327,7 +327,7 @@ module Sumitsubo
 
     # What a claim can resolve against. Only the marker reading makes claims,
     # so only its definitions are here.
-    def self.declared_in(definitions)
+    def self.registered_in(definitions)
       registered = {}
       claimed(definitions).each do |definition|
         definition.interfaces.each { |interface| registered[key(definition.marker, interface.name)] = true }

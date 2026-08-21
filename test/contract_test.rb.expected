@@ -22,9 +22,9 @@ test/fixtures/contract/nameless/cli.json declares a contract with no "name"
 1
 --- one name twice with no marker ---
 Store.open is declared twice, at test/fixtures/contract/twice/one.json:1 and test/fixtures/contract/twice/two.json:1
---- a contract no Ruby declaration can be ---
-test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no Ruby declaration can be
---- an interface the syntax tree does not declare ---
+--- a contract no Ruby definition can be ---
+test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no Ruby definition can be
+--- an interface the syntax tree does not define ---
 test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere in src/*.rb
 test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/*.rb
 --- and neither is a specification that will not parse ---

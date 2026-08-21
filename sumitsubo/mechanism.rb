@@ -2,7 +2,7 @@ require "sumitsubo/glossary"
 require "sumitsubo/contract"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
-require "sumitsubo/declaration"
+require "sumitsubo/definitions"
 
 module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
@@ -121,13 +121,13 @@ module Sumitsubo
         claims
       end
 
-      # What the source in scope declares, for the definitions read that way.
+      # What the source in scope defines, for the definitions read that way.
       def names_in(definitions, config)
         names = []
         Sumitsubo::Contract.scope(
-          Sumitsubo::Contract.declared(definitions), config.base
+          Sumitsubo::Contract.defined(definitions), config.base
         ).each do |path|
-          Declaration.names_in(path).each { |name| names.push(name) }
+          Definitions.names_in(path).each { |name| names.push(name) }
         end
         names
       end

@@ -58,7 +58,7 @@ fails { Sumitsubo::Contract.load("#{FIXTURE}/nameless") }
 # definition naming none is read from the syntax tree instead.
 # @behavior T-007
 puts "--- a definition with no marker is read from the syntax tree ---"
-p Sumitsubo::Contract.declared(Sumitsubo::Contract.load("#{FIXTURE}/nomarker")).length
+p Sumitsubo::Contract.defined(Sumitsubo::Contract.load("#{FIXTURE}/nomarker")).length
 
 # The syntax tree reading shares one namespace, so a name twice in it is the
 # same ambiguity — said without a marker in front of it.
@@ -67,16 +67,16 @@ puts "--- one name twice with no marker ---"
 fails { Sumitsubo::Contract.load("#{FIXTURE}/twice") }
 
 # @behavior T-015
-puts "--- a contract no Ruby declaration can be ---"
+puts "--- a contract no Ruby definition can be ---"
 fails { Sumitsubo::Contract.load("#{FIXTURE}/unresolvable") }
 
 # `Store.open` is registered as internal and answers here all the same: what
 # internal keeps it out of is the document, not the comparison.
 # @behavior T-016 T-018
-puts "--- an interface the syntax tree does not declare ---"
-Declared = Struct.new(:name)
+puts "--- an interface the syntax tree does not define ---"
+Defined = Struct.new(:name)
 Sumitsubo::Contract.undefined(
-  Sumitsubo::Contract.load("#{FIXTURE}/nomarker"), [Declared.new("init")]
+  Sumitsubo::Contract.load("#{FIXTURE}/nomarker"), [Defined.new("init")]
 ).each do |finding|
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
