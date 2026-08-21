@@ -88,9 +88,9 @@ concept's name, so counting one would flag every legitimate class in the tree.
 ### Contract
 
 What this establishes is that a registered interface is **implemented
-somewhere in scope**, never that the implementation is right. It is the same
-sentence Behavior turns on, and it licenses everything this mechanism cannot
-check.
+somewhere in scope, and reached the way the specification says**, never that
+what it does behind that is right. It is the same sentence Behavior turns on,
+and it licenses everything this mechanism cannot check.
 
 `contract/` under the root holds one file per kind — the commands an
 executable answers, the routes an application serves, the methods a package
@@ -136,15 +136,20 @@ between writing the code and dropping the contract. An interface nobody
 registered is not one: only the contracts that matter are written down, so an
 absent registration says nothing about the code.
 
-Two of the three findings belong to the marker reading alone, because they
-are about claims and the syntax tree makes none. A claim resolving to no
-contract is a comparison that could not be made. One interface claimed in two
-places is a difference, and it is what Contract establishes that Behavior does
-not: a behavior may be claimed by as many tests as exercise it, but a contract
-is the way in, so a second way in is an entrance the specification does not
-describe. Both places are answered, each naming the other, since deciding
-which to keep means comparing them. Under the other reading a method defined
-twice is Ruby reopening a class, which says nothing.
+A claim resolving to no contract belongs to the marker reading alone, since
+it is about a claim and the syntax tree makes none: it is a comparison that
+could not be made rather than a difference.
+
+A second way in is what both readings answer, and it is what Contract
+establishes where Behavior does not: a behavior may be claimed by as many
+tests as exercise it, but a contract is the way in, so a second one is an
+entrance the specification does not describe. Under the marker reading that
+is one interface claimed in two places. Under the other it is one name
+defined with two shapes — which is why a method defined twice said nothing
+while only names were compared: the name is the way in, and there was one of
+them. Definitions agreeing on their shape are one way in still, so ordinary
+reopening goes on saying nothing. Both places are answered, each naming the
+other, since deciding which to keep means comparing them.
 
 `include` therefore means something different in each. Under the marker
 reading it narrows the search rather than tying an interface to one place, as
@@ -154,12 +159,27 @@ seen cannot be reported as the second one. Under the other reading there is
 no second claim to miss, so the union is simply where a definition has to be
 for the interface to count as implemented.
 
-The syntax tree is read for names and nothing else. Whether the method a
-contract names takes the arguments it should is the obvious next reading, and
-the parameters are in the tree — names and kinds, though never types, which
-Ruby does not carry. It waits because an interface that exists is the whole of
-what this establishes, and there is no use yet to say what a signature would
-have to match.
+The syntax tree is read for names and for the shape a caller has to write.
+A contract registering parameters is compared against them entire, since a
+shape half-registered would let the rest drift; one registering none asks for
+none to be compared, which is the same one-way rule as everywhere else here.
+A shape that differs answers at the line registering it, as an undefined
+interface does. Where the definitions disagree among themselves the contract
+is not also compared against one of them: two entrances are already the
+answer.
+
+The kind words are the language's own and they live in the reading that
+answers them. Contract compares them as text without learning what any of
+them means, which is what lets a specification stay silent about the language
+it is about: it speaks whatever the reading of its included files speaks, and
+`include` already says which files those are. That is why nothing here names
+a language — the one job such a field could have had is already done, and a
+second language brings its vocabulary in its own reading rather than
+negotiating a shared one. Only the syntax tree says what a definition takes,
+so parameters registered under a marker are refused rather than carried
+unchecked.
+
+Types are what still waits, and Ruby does not carry them.
 
 Nesting is recovered from where the nodes sit rather than from the query: a
 pattern reaches only its direct children and tree-sitter has no operator for a
@@ -176,6 +196,7 @@ is answered as undefined however plainly the code works:
 | `def_delegator :@parts, :count` | The same, through `Forwardable`. |
 | `include Helper` | `Helper#helped` is declared; `Widget#helped` never is. |
 | `def Other.oddball` | Only a receiver of `self` is read, which is what a class calls itself from inside. |
+| `def m(a); end; def m(b); end` on one line | A definition is found by its name and the line it sits on, so one line holding two of a name merges their parameters — the one place here that invents rather than loses. |
 
 The list is what one reading of one grammar reaches, not a judgement about the
 code. A project leaning on these registers the contracts it can check and

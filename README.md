@@ -149,6 +149,34 @@ read as Ruby it would be undefined everywhere.
 }
 ```
 
+Under the second reading a contract may also register `params` — the shape a
+caller has to write. A parameter is what it is called, its `kind`, and whether
+a caller may leave it out; `kind` defaults to the one a bare name says, and a
+parameter the language lets go unnamed registers a kind alone.
+
+```json
+{
+  "name": "Store.open",
+  "params": [
+    { "name": "path" },
+    { "name": "mode", "optional": true },
+    { "kind": "block", "optional": true }
+  ]
+}
+```
+
+The kind words are the language's own. Sumitsubo compares them as text without
+knowing what any of them means, so a specification never has to say which
+language it is about — `include` already said which files, and those files are
+read by whatever reading answers for them.
+
+A contract registering `params` is compared against them entire; one
+registering none asks for none to be compared. A shape that differs answers at
+the line registering it. One name defined with two shapes is an entrance the
+specification does not describe, answered at each definition and naming the
+other — while definitions that agree are one way in, so reopening a class goes
+on saying nothing.
+
 Either way, an interface the source does not carry — unclaimed under the first
 reading, undefined under the second — is a difference, answered at the line
 registering it. An interface nobody registered is not one: only the contracts
@@ -157,8 +185,9 @@ that matter are written down.
 `internal` says the project means to keep an interface but not to publish it:
 it is verified like any other, and what it stays out of is the document.
 
-What this establishes is that an interface is implemented somewhere in scope,
-never that the implementation is right.
+What this establishes is that an interface is implemented somewhere in scope
+and reached the way the specification says, never that what it does behind
+that is right.
 
 ### Behavior
 
