@@ -25,7 +25,8 @@ Store.open is declared twice, at test/fixtures/contract/twice/one.json:1 and tes
 --- a contract no Ruby declaration can be ---
 test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no Ruby declaration can be
 --- an interface the syntax tree does not declare ---
-test/fixtures/contract/nomarker/cli.json:1 verify is defined nowhere in src/*.rb
+test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere in src/*.rb
+test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/*.rb
 --- and neither is a specification that will not parse ---
 test/fixtures/contract/broken/cli.json is not readable JSON
 --- an interface nothing claims ---

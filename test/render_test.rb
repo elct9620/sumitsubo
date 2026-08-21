@@ -81,12 +81,14 @@ File.write(".spec/contract/cli.json", <<~JSON)
     "marker": "@command",
     "include": ["src/*.rb"],
     "contracts": [
-      { "name": "verify", "description": "Check the source against the specification." }
+      { "name": "verify", "description": "Check the source against the specification." },
+      { "name": "dump", "description": "Say what was read.", "internal": true }
     ]
   }
 JSON
 
-# @behavior R-001 R-002 R-007
+# `dump` is registered as internal, so the page below carries `verify` alone.
+# @behavior R-001 R-002 R-007 R-008
 puts "--- the structured specification becomes documents ---"
 puts "exit=#{cli.run(["render"])}"
 puts "--- docs/glossary.md ---"

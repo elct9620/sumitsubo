@@ -139,3 +139,11 @@ The interfaces a project registers, and what source claims to implement them.
 | Given | two definitions naming no marker and registering the same name |
 | When | the directory is loaded |
 | Then | the message names both places without a namespace in front of the name |
+
+## T-018 — An internal interface is verified like any other
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition registering an internal interface nothing declares |
+| When | the two sides are compared |
+| Then | it is answered the way a published one would be |

@@ -1,1 +1,8 @@
-{ "name": "CLI", "include": ["src/*.rb"], "contracts": [{ "name": "verify" }] }
+{
+  "name": "CLI",
+  "include": ["src/*.rb"],
+  "contracts": [
+    { "name": "verify" },
+    { "name": "Store.open", "internal": true }
+  ]
+}

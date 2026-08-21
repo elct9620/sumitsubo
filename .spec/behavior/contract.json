@@ -159,6 +159,15 @@
       ],
       "when": "the directory is loaded",
       "then": "the message names both places without a namespace in front of the name"
+    },
+    {
+      "id": "T-018",
+      "title": "An internal interface is verified like any other",
+      "given": [
+        "a definition registering an internal interface nothing declares"
+      ],
+      "when": "the two sides are compared",
+      "then": "it is answered the way a published one would be"
     }
   ]
 }

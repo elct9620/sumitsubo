@@ -57,3 +57,11 @@ Rendering the structured specification into documents a person reads.
 | Given | a contract specification registering interfaces |
 | When | `sumi render` runs |
 | Then | each definition is written to a document named after the file registering it |
+
+## R-008 — An interface the project keeps but does not publish
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition registering one internal interface and one that is not |
+| When | it is rendered |
+| Then | the page carries only the one that is not internal |

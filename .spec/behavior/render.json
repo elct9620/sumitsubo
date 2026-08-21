@@ -62,9 +62,20 @@
     {
       "id": "R-007",
       "title": "One document per kind of contract",
-      "given": ["a contract specification registering interfaces"],
+      "given": [
+        "a contract specification registering interfaces"
+      ],
       "when": "`sumi render` runs",
       "then": "each definition is written to a document named after the file registering it"
+    },
+    {
+      "id": "R-008",
+      "title": "An interface the project keeps but does not publish",
+      "given": [
+        "a definition registering one internal interface and one that is not"
+      ],
+      "when": "it is rendered",
+      "then": "the page carries only the one that is not internal"
     }
   ]
 }

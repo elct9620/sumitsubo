@@ -37,7 +37,11 @@ module Sumitsubo
 
     class Error < Sumitsubo::Error; end
 
-    Interface = Struct.new(:name, :description, :path, :line)
+    # An interface is internal when the project means to keep it but not to
+    # say so publicly. That is a fact about the interface, and the document it
+    # stays out of follows from it — which is what makes it different from the
+    # configuration switching a whole specification off.
+    Interface = Struct.new(:name, :description, :path, :line, :internal)
     # A file's worth of contracts. The marker is the word source claims them
     # with, and two files may name the same one: a project splitting its routes
     # across files is registering more of one kind, not a second kind.
@@ -235,7 +239,11 @@ module Sumitsubo
       lines = ["# #{definition.name || document_name(definition)}", ""]
       lines.push(definition.description, "") unless definition.description.nil?
       lines.push("| Contract | Description |", "| --- | --- |")
+      # An internal interface is still verified; what it is kept out of is the
+      # half of the specification a reader outside the project is handed.
       definition.interfaces.each do |interface|
+        next if interface.internal
+
         lines.push("| #{cell(interface.name)} | #{cell(interface.description)} |")
       end
       lines.push("")
@@ -273,7 +281,9 @@ module Sumitsubo
           raise Error, "#{Where.of(path)} names #{name}, which no Ruby declaration can be"
         end
 
-        interfaces.push(Interface.new(name, raw["description"], path, lines[name]))
+        interfaces.push(Interface.new(
+          name, raw["description"], path, lines[name], raw["internal"] == true
+        ))
       end
 
       Definition.new(

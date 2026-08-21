@@ -70,7 +70,9 @@ fails { Sumitsubo::Contract.load("#{FIXTURE}/twice") }
 puts "--- a contract no Ruby declaration can be ---"
 fails { Sumitsubo::Contract.load("#{FIXTURE}/unresolvable") }
 
-# @behavior T-016
+# `Store.open` is registered as internal and answers here all the same: what
+# internal keeps it out of is the document, not the comparison.
+# @behavior T-016 T-018
 puts "--- an interface the syntax tree does not declare ---"
 Declared = Struct.new(:name)
 Sumitsubo::Contract.undefined(
