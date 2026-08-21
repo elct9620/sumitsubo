@@ -108,10 +108,35 @@ comments of a Ruby file and any other file entire.
 
 ### Contract
 
-A contract file registers one kind of interface. It names the marker source
-claims those interfaces with, or names none and is read from the syntax tree
-instead — a route needs a comment because nothing in Ruby points at one, while
-a method is found without anything written in front of it.
+A contract file registers one kind of interface. Whether it names a `marker`
+decides how the source is read.
+
+**With a marker**, source claims each interface in the comment in front of the
+code implementing it. That is what an interface needs when no Ruby construct
+points at one — nothing in a file *is* a route — and it is why the name is read
+whole rather than having to be a Ruby name at all.
+
+```json
+{
+  "name": "Routes",
+  "marker": "@route",
+  "include": ["app/**/*.rb"],
+  "contracts": [
+    { "name": "GET /users/:id", "description": "One user." }
+  ]
+}
+```
+
+```ruby
+# @route GET /users/:id
+def show
+```
+
+**Without one**, the interfaces are read from the syntax tree and nothing is
+written in front of the code. The name is how Ruby spells it: `.` for a
+singleton method, `#` for an instance one, a bare path for a class or module.
+A name that could be none of those stops the run rather than answering, since
+read as Ruby it would be undefined everywhere.
 
 ```json
 {
@@ -124,16 +149,10 @@ a method is found without anything written in front of it.
 }
 ```
 
-Where a file names a marker, source claims an interface in the comment in front
-of the code implementing it:
-
-```ruby
-# @command verify
-```
-
-An interface nothing claims — or, under the other reading, nothing defines — is
-a difference, answered at the line registering it. An interface nobody
-registered is not one: only the contracts that matter are written down.
+Either way, an interface the source does not carry — unclaimed under the first
+reading, undefined under the second — is a difference, answered at the line
+registering it. An interface nobody registered is not one: only the contracts
+that matter are written down.
 
 `internal` says the project means to keep an interface but not to publish it:
 it is verified like any other, and what it stays out of is the document.
