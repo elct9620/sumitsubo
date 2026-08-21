@@ -1,8 +1,11 @@
 #!/bin/sh
-# Fetch the tree-sitter runtime and the Ruby grammar into vendor/, which is not
-# committed. Both are pinned here: the grammar's node names are what the
-# queries are written against, and a parse table generated for another runtime
-# is refused at load time rather than misread.
+# Lay down what this tree needs before anything compiles: the vendored
+# tree-sitter sources, and the revision a build answers for.
+#
+# The runtime and the Ruby grammar go into vendor/, which is not committed.
+# Both are pinned here: the grammar's node names are what the queries are
+# written against, and a parse table generated for another runtime is refused
+# at load time rather than misread.
 #
 # Grammar repositories ship a pre-generated src/parser.c, so this needs a C
 # compiler and nothing else — no tree-sitter CLI, no node.
@@ -53,3 +56,16 @@ src="$vendor/tree-sitter/lib/src"
 touch "$root"/*.c 2>/dev/null || true
 
 echo "vendored into $vendor"
+
+# The revision a build answers for. Generated rather than committed, so no
+# commit carries its own hash, and written at the root, which no
+# specification's include globs reach.
+rev=$(git -C "$root" rev-parse --short=7 HEAD 2>/dev/null || echo unknown)
+rev_file="$root/build_rev.rb"
+new=$(printf 'module Sumitsubo\n  STAMPED_REV = "%s"\nend' "$rev")
+# spin decides what to recompile from mtimes, so an unchanged revision is left
+# alone rather than rewritten with the same bytes.
+if [ ! -f "$rev_file" ] || [ "$(cat "$rev_file")" != "$new" ]; then
+  printf '%s\n' "$new" > "$rev_file"
+  echo "build revision $rev"
+fi
