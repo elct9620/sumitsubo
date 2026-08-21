@@ -15,6 +15,26 @@
     {
       "name": "verify",
       "description": "Verify the source code is aligned with the verifiable specification."
+    },
+    {
+      "name": "help",
+      "description": "Explain how to write a specification, without a document beside the executable."
+    },
+    {
+      "name": "help glossary",
+      "description": "The vocabulary a project means to use, and the words it rejects."
+    },
+    {
+      "name": "help contract",
+      "description": "The interfaces a project means to keep, and the two readings of them."
+    },
+    {
+      "name": "help behavior",
+      "description": "The behaviors a project means its tests to implement."
+    },
+    {
+      "name": "help config",
+      "description": "Where the specifications live, what a run touches, and what it answers."
     }
   ]
 }

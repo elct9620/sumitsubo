@@ -5,6 +5,13 @@ Commands:
     init             Lay down an empty specification to start from
     render           Render the specification to markdown
     verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
 
 Options:
     -v, --version    Show version
@@ -17,6 +24,13 @@ Commands:
     init             Lay down an empty specification to start from
     render           Render the specification to markdown
     verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
 
 Options:
     -v, --version    Show version
@@ -29,6 +43,13 @@ Commands:
     init             Lay down an empty specification to start from
     render           Render the specification to markdown
     verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
 
 Options:
     -v, --version    Show version
@@ -41,6 +62,13 @@ Commands:
     init             Lay down an empty specification to start from
     render           Render the specification to markdown
     verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
 
 Options:
     -v, --version    Show version
@@ -54,8 +82,101 @@ Commands:
     init             Lay down an empty specification to start from
     render           Render the specification to markdown
     verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
 
 Options:
     -v, --version    Show version
     -h, --help       Show this help
 exit=2
+--- help with no topic ---
+Usage: sumi <command> [options]
+
+Commands:
+    init             Lay down an empty specification to start from
+    render           Render the specification to markdown
+    verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
+
+Options:
+    -v, --version    Show version
+    -h, --help       Show this help
+exit=0
+--- a topic ---
+.sumi.json says where. A run takes the nearest one at or above where it
+started; failing that the repository it sits in; failing that - with
+neither to go on - where it started. A project that has said nothing is
+not misconfigured, so an absent .sumi.json answers the defaults; only an
+unreadable one stops the run.
+
+Form
+    {
+      "root": ".spec",
+      "docs": "docs",
+      "specifications": { "glossary": { "verify": false } }
+    }
+
+    root    where the specifications live, `.spec` by default
+    docs    where `sumi render` writes, `docs` by default
+
+    Both are read against the directory holding the .sumi.json, so
+    wherever under it a run starts it reaches the same files. Findings
+    answer relative to where the run started, so a reader can go
+    straight to one.
+
+    `specifications` lists only the exceptions: one nobody mentions is
+    both verified and rendered. The names are `glossary`, `contract`,
+    and `behavior`. The two switches are independent - `verify: false`
+    keeps a specification without checking it, and `render: false` keeps
+    one out of the documents without stopping the check.
+
+Answers
+    0   the two sides agree
+    1   they differ
+    2   the comparison could not be made - whatever had to be read first
+        was absent, unreadable, or ambiguous
+
+    A difference is a finding about the code; being unable to compare is
+    not, and a run with both answers 2: it says everything it found
+    either way, and the answer is what refuses to certify it. A
+    mechanism that could not be read stops that mechanism and no other.
+
+    `sumi render` compares nothing, so it never answers 1: its 0 says
+    every document it had to write is written.
+exit=0
+--- a word that is no topic ---
+nope is no topic sumi explains
+Usage: sumi <command> [options]
+
+Commands:
+    init             Lay down an empty specification to start from
+    render           Render the specification to markdown
+    verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
+
+Options:
+    -v, --version    Show version
+    -h, --help       Show this help
+exit=2
+--- what each topic opens with ---
+  glossary: The vocabulary a project means to use, and the words it rejects in its
+  contract: The interfaces a project means to keep. What this establishes is that a
+  behavior: The behaviors a project means its tests to implement. What this
+  config: .sumi.json says where. A run takes the nearest one at or above where it

@@ -48,6 +48,11 @@ where the comparison could not be made — whatever had to be read first was
 absent, unreadable, or ambiguous. Findings answer as `path:line`, relative to
 where the run started.
 
+`sumi help <topic>` explains how to write each kind of specification —
+`glossary`, `contract`, `behavior`, and `config` — so a project has the forms
+and the findings without a document beside the executable. The sections below
+say the same for a reader who is here rather than at a terminal.
+
 `sumi render` writes the specification out as something to read. It compares
 nothing, so it answers `0` or `2`:
 

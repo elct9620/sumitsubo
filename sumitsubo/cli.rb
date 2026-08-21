@@ -2,28 +2,13 @@ require "optparse"
 require "sumitsubo/version"
 require "sumitsubo/error"
 require "sumitsubo/config"
+require "sumitsubo/command/help"
 require "sumitsubo/command/init"
 require "sumitsubo/command/render"
 require "sumitsubo/command/verify"
 
 module Sumitsubo
   class CLI
-    # Literal rather than rendered by the parser: this text has to read
-    # the same under Spinel and under the CRuby run that produces the
-    # snapshot.
-    HELP = <<~TEXT
-      Usage: sumi <command> [options]
-
-      Commands:
-          init             Lay down an empty specification to start from
-          render           Render the specification to markdown
-          verify           Check the source against the specification
-
-      Options:
-          -v, --version    Show version
-          -h, --help       Show this help
-    TEXT
-
     # The revision is handed in rather than read, because the stamped value
     # lives on the executable side and `spin test` never compiles bin/. The
     # default is what every tree that reached here without a stamp answers.
@@ -36,6 +21,7 @@ module Sumitsubo
       when "init" then Command::Init.new.run(Config.load)
       when "render" then Command::Render.new.run(Config.load)
       when "verify" then Command::Verify.new.run(Config.load)
+      when "help" then Command::Help.new.run(argv[1])
       else unknown?(argv.first) ? refuse(argv.first) : flags(argv)
       end
     rescue Sumitsubo::Error => e
@@ -58,7 +44,7 @@ module Sumitsubo
 
     def refuse(word)
       puts "#{word} is not something sumi answers"
-      puts HELP
+      puts Command::Help::USAGE
       2
     end
 
@@ -87,7 +73,7 @@ module Sumitsubo
 
       # Help asked for is answered; help nobody asked for stands in for what
       # the run could not make of what it was given.
-      puts HELP
+      puts Command::Help::USAGE
       understood ? 0 : 2
     end
   end

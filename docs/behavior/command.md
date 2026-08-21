@@ -33,3 +33,19 @@ How the executable answers what it is asked to do.
 | Given | the executable |
 | When | it is run with a word it does not answer |
 | Then | the word is named back and the help is answered |
+
+## S-005 — A topic is asked for
+
+| Step | Statement |
+| --- | --- |
+| Given | the executable |
+| When | it is run with `help` and a topic it explains |
+| Then | that topic is answered |
+
+## S-006 — A word that is no topic
+
+| Step | Statement |
+| --- | --- |
+| Given | the executable |
+| When | it is run with `help` and a word no topic is named by |
+| Then | the word is named back and the usage is answered |

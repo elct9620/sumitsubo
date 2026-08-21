@@ -32,6 +32,24 @@
       ],
       "when": "it is run with a word it does not answer",
       "then": "the word is named back and the help is answered"
+    },
+    {
+      "id": "S-005",
+      "title": "A topic is asked for",
+      "given": [
+        "the executable"
+      ],
+      "when": "it is run with `help` and a topic it explains",
+      "then": "that topic is answered"
+    },
+    {
+      "id": "S-006",
+      "title": "A word that is no topic",
+      "given": [
+        "the executable"
+      ],
+      "when": "it is run with `help` and a word no topic is named by",
+      "then": "the word is named back and the usage is answered"
     }
   ]
 }
