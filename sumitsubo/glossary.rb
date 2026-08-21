@@ -33,15 +33,16 @@ module Sumitsubo
     # The mechanism names its own file; where the root sits is the tool's to
     # say, so it arrives as an argument.
     def self.path_in(root)
-      (Pathname.new(root) / FILE).to_s
+      Pathname.new(root) / FILE
     end
 
     def self.load(path)
-      where = Where.of(path)
-      raise Error, "no glossary at #{where}" unless File.exist?(path)
+      file = Pathname.new(path)
+      where = Where.of(file)
+      raise Error, "no glossary at #{where}" unless file.exist?
 
       begin
-        document = JSON.parse(File.read(path))
+        document = JSON.parse(file.read)
       rescue JSON::ParserError
         # The parser's own wording is Spinel's, not CRuby's, so it stays out
         # of the message the snapshot has to match on both.
@@ -75,8 +76,8 @@ module Sumitsubo
       findings = []
       scope.keys.sort.each do |path|
         file = base / path
-        where = Where.of(file.to_s)
-        regions = regions_in(file.to_s, where)
+        where = Where.of(file)
+        regions = regions_in(file, where)
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].disallowed.each do |entry|
@@ -120,13 +121,13 @@ module Sumitsubo
     # would flag every legitimate class in the tree. Anything else is prose,
     # which is a comment for its whole length.
     def self.regions_in(path, where)
-      return prose_in(path) unless path.end_with?(".rb")
+      return prose_in(path) unless path.extname == ".rb"
 
       comments_in(path, where)
     end
 
     def self.comments_in(path, where)
-      TreeSitter.capture(Grammar::RUBY, File.read(path), Grammar::COMMENTS, where)
+      TreeSitter.capture(Grammar::RUBY, path.read, Grammar::COMMENTS, where)
                 .map { |capture| Region.new(capture.line, capture.text) }
     rescue TreeSitter::ParseError => e
       # Source the grammar cannot read is not a difference between the two
@@ -136,7 +137,7 @@ module Sumitsubo
 
     def self.prose_in(path)
       regions = []
-      lines = File.readlines(path)
+      lines = path.readlines
       index = 0
       while index < lines.length
         regions.push(Region.new(index + 1, lines[index]))

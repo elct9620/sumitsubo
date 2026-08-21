@@ -1,4 +1,3 @@
-require "pathname"
 require "sumitsubo/where"
 require "sumitsubo/mechanism"
 
@@ -19,7 +18,7 @@ module Sumitsubo
       # what exists is reported rather than replaced.
       def lay_down(seed)
         where = Where.of(seed.path)
-        if File.exist?(seed.path)
+        if seed.path.exist?
           puts "exists #{where}"
         else
           create(seed)
@@ -28,9 +27,9 @@ module Sumitsubo
       end
 
       def create(seed)
-        return Pathname.new(seed.path).mkpath if seed.content.nil?
+        return seed.path.mkpath if seed.content.nil?
 
-        File.write(seed.path, seed.content)
+        seed.path.write(seed.content)
       end
     end
   end

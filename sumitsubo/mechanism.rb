@@ -35,7 +35,7 @@ module Sumitsubo
       # that could not be made: Render records where Verify certifies.
       def documents(config)
         path = Sumitsubo::Glossary.path_in(config.root)
-        return [] unless File.exist?(path)
+        return [] unless path.exist?
 
         content = Sumitsubo::Glossary.render(Sumitsubo::Glossary.load(path))
         [Document.new(config.docs / "glossary.md", content)]

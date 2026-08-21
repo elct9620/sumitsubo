@@ -275,6 +275,17 @@ Three things earn more room:
 - An intent that needs an example to be readable.
 - A piece of specification, such as a binary layout.
 
+## Paths
+
+A path the tool composes is a `Pathname` and reaches the file through that
+same object; a path it read off the filesystem, or rendered for a reader, is a
+String. The rendered ones are what findings carry, and they answer relative to
+where the run started, so `Where.of` is the one place that makes one.
+
+A seam normalises rather than refusing: `load` takes what it is handed and
+wraps it, the way `Config.load` does, so a caller composing a path itself is
+not made to say so twice.
+
 ## Build
 
 The command is `sumi`, shipped as a single native executable.
@@ -342,3 +353,7 @@ AOT compiler for Ruby. Its constraints shape the design:
   its type that `+` dispatches to String, so it answers a String. `#/` and
   `#+` answer a Pathname on every branch, which is what the next call in a
   chain needs.
+- `File` takes a String only: it never asks an argument for `to_path`, so
+  `File.read(pathname)` fails to compile where CRuby would read the file.
+  Pathname carries the same surface itself — `#read`, `#write`, `#readlines`,
+  `#exist?` — which is the route the Paths section takes.

@@ -43,7 +43,7 @@ module Sumitsubo
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
     def self.path_in(root)
-      (Pathname.new(root) / DIRECTORY).to_s
+      Pathname.new(root) / DIRECTORY
     end
 
     # Every feature the directory holds. A directory nobody wrote declares no
