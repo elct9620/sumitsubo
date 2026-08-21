@@ -85,6 +85,14 @@ through its syntax tree, and any other file entire, since prose is a comment
 for its whole length. An identifier is a spelling of a concept rather than the
 concept's name, so counting one would flag every legitimate class in the tree.
 
+Which language answers for a file is the same question as which files a
+reading reaches, so it is asked once: a mechanism scans everything its globs
+cover and a language claiming nothing is how a file is passed over. No
+mechanism names a language, and the one answering owns the shapes it hands
+back — those more than one language would answer with, which is why a region
+of prose lives there and a name's parameters stay with the reading that makes
+them.
+
 ### Contract
 
 What this establishes is that a registered interface is **implemented
@@ -397,10 +405,9 @@ The command is `sumi`, shipped as a single native executable.
   CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
   that way. A file reaching it through its requires counts, which is why
-  `sumitsubo/config.rb` names no mechanism and why neither `behavior.rb` nor
-  `contract.rb` names a grammar — each hands its reading of source to `marker.rb`
-  or `definitions.rb` instead. Keeping the specification side apart from the side
-  that reads source is what leaves those three tests able to regenerate. Where no
+  `sumitsubo/config.rb` names no mechanism and why no mechanism names a
+  language — each puts its question to `language.rb`, which with the readings
+  it drives is the only place a grammar is named. Where no
   snapshot is committed the run is compared against CRuby rather than failing,
   and a test that asserts nothing passes.
 - `--regen` takes the same file list, so name the test to rewrite. Given none
