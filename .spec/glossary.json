@@ -82,6 +82,11 @@
           "term": "Internal",
           "definition": "An interface the project means to keep but not to publish. It is verified like any other, and what it stays out of is the Document.",
           "not": []
+        },
+        {
+          "term": "Note",
+          "definition": "A block of prose a specification carries for its document alone: a heading, a paragraph, or a fenced example. It says why a declaration is right, which no mechanism can check, so it is compared against nothing.",
+          "not": []
         }
       ]
     }

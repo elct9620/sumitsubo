@@ -13,3 +13,4 @@
 | Declare | To say something exists. A specification declares the contracts and behaviors it registers; source declares the classes, modules and methods it defines. One relation, and the subject is what changes — which is why both sides use the word. |
 | Marker | The word source claims a contract or behavior with, written in the comment in front of the code. It is what an interface needs when no construct of the language points at it. |
 | Internal | An interface the project means to keep but not to publish. It is verified like any other, and what it stays out of is the Document. |
+| Note | A block of prose a specification carries for its document alone: a heading, a paragraph, or a fenced example. It says why a declaration is right, which no mechanism can check, so it is compared against nothing. |

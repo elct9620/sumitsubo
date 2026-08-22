@@ -3,6 +3,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/locations"
+require "sumitsubo/note"
 
 module Sumitsubo
   # The structured specification the Contract mechanism verifies against. What
@@ -48,25 +49,6 @@ module Sumitsubo
     # it is about — it speaks whatever the reading of its included files
     # speaks.
     Param = Struct.new(:name, :kind, :optional)
-
-    # The kinds of block a note carries. A closed set, because each is a
-    # shape the mechanism has to word, and a word it does not know is a
-    # specification it cannot read rather than one to pass through.
-    HEADING = "heading"
-    PARAGRAPH = "paragraph"
-    CODE = "code"
-
-    # How deep a heading may sit under its anchor. Four reaches `######` from
-    # a contract, which is as far as the page goes.
-    DEEPEST = 4
-
-    # A block of prose the specification carries for the document alone. It
-    # says what no mechanism can check — why a rule is the way it is — so
-    # nothing here is compared against source.
-    #
-    # A note names none of its parts, which is what keeps it out of the walk
-    # over `"name"` that gives each contract its line.
-    Note = Struct.new(:type, :level, :language, :text)
 
     # An interface is internal when the project means to keep it but not to
     # say so publicly. That is a fact about the interface, and the document it
@@ -375,7 +357,7 @@ module Sumitsubo
     def self.render(definition)
       lines = ["# #{definition.name || document_name(definition)}", ""]
       lines.push(definition.description, "") unless definition.description.nil?
-      spell_notes(definition.notes, 1).each { |line| lines.push(line) }
+      Note.spell(definition.notes, 1).each { |line| lines.push(line) }
 
       # An internal interface is still verified; what it is kept out of is the
       # half of the specification a reader outside the project is handed.
@@ -387,28 +369,9 @@ module Sumitsubo
         # The shape sits under the name rather than in it: a reader looking up
         # the interface finds the name, and one about to call it finds this.
         lines.push("`#{signature(interface)}`", "") unless interface.params.nil?
-        spell_notes(interface.notes, 2).each { |line| lines.push(line) }
+        Note.spell(interface.notes, 2).each { |line| lines.push(line) }
       end
       lines.join("\n")
-    end
-
-    # A heading answers relative to where its notes hang, so a specification
-    # says how deep a block sits and the mechanism says under what. Absolute
-    # levels would have every author work out the anchor for themselves, and
-    # get it wrong wherever the page above them moved.
-    def self.spell_notes(notes, anchor)
-      lines = []
-      (notes || []).each do |note|
-        case note.type
-        when HEADING
-          lines.push("#{"#" * (anchor + note.level)} #{note.text}", "")
-        when CODE
-          lines.push("```#{note.language}", note.text, "```", "")
-        else
-          lines.push(note.text, "")
-        end
-      end
-      lines
     end
 
     # How a reader reaches the interface: its name, and the shape to call it
@@ -475,7 +438,7 @@ module Sumitsubo
 
         interfaces.push(Interface.new(
           name, raw["description"], path, line, raw["internal"] == true, params,
-          notes_from(path, raw["notes"])
+          Note.all_in(path, raw["notes"], "contract")
         ))
       end
 
@@ -486,55 +449,8 @@ module Sumitsubo
         document["include"] || [],
         interfaces,
         path,
-        notes_from(path, document["notes"])
+        Note.all_in(path, document["notes"], "contract")
       )
-    end
-
-    # The prose a specification carries so a reader learns what it meant, in
-    # the blocks it wrote them as. A block's text arrives as lines and is
-    # joined here, because how they close up is what tells the two apart:
-    # prose reflows and code does not.
-    def self.notes_from(path, raw)
-      return [] if raw.nil?
-
-      found = []
-      raw.each do |note|
-        type = note["type"]
-        text = note["text"]
-        # Lines rather than one string, so a paragraph reworded a word at a
-        # time shows which sentence moved.
-        unless text.is_a?(Array)
-          raise Error, "#{Where.of(path)} writes a note whose \"text\" is not lines; " \
-                       "sumi help contract has the form"
-        end
-
-        case type
-        when HEADING
-          found.push(Note.new(type, depth_of(path, note["level"]), nil, text.join(" ")))
-        when PARAGRAPH
-          found.push(Note.new(type, nil, nil, text.join(" ")))
-        when CODE
-          found.push(Note.new(type, nil, note["language"], text.join("\n")))
-        else
-          # A word this mechanism cannot word is a specification it could not
-          # read, not a block to pass through unrendered.
-          raise Error, "#{Where.of(path)} writes a note of type #{type}, " \
-                       "which is none this document has; " \
-                       "sumi help contract has the form"
-        end
-      end
-      found
-    end
-
-    # A heading deeper than the page reaches would answer as text where it
-    # stood, so the specification is refused rather than quietly flattened.
-    def self.depth_of(path, level)
-      return 1 if level.nil?
-      return level if level >= 1 && level <= DEEPEST
-
-      raise Error, "#{Where.of(path)} writes a heading at level #{level}, " \
-                   "which is deeper than a page carries; " \
-                   "sumi help contract has the form"
     end
 
     # The marker is the namespace, so two files may share one word and one

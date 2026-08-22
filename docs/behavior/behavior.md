@@ -65,3 +65,19 @@ The scenarios a project declares, and where each one sits.
 | Given | a specification declaring two scenarios on the same line |
 | When | the directory is loaded |
 | Then | both answer at that line rather than the second answering at none |
+
+## B-009 — The prose a feature carries for its document
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature file writing notes of its own |
+| When | the feature is rendered |
+| Then | the notes answer between the description and the first scenario |
+
+## B-010 — A note of a kind this document has no words for
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature file writing a note whose type is none the form has |
+| When | the directory is read |
+| Then | the file is named as one that cannot be read, and the help that has the form |

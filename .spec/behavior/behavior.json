@@ -1,63 +1,99 @@
 {
   "name": "Behavior",
   "description": "The scenarios a project declares, and where each one sits.",
-  "include": ["test/behavior_test.rb"],
+  "include": [
+    "test/behavior_test.rb"
+  ],
   "scenarios": [
     {
       "id": "B-001",
       "title": "What the directory declares, and where",
-      "given": ["a behavior directory holding more than one specification"],
+      "given": [
+        "a behavior directory holding more than one specification"
+      ],
       "when": "the directory is loaded",
       "then": "every scenario answers with the line of the file that declares it"
     },
     {
       "id": "B-002",
       "title": "A directory nobody wrote",
-      "given": ["a behavior directory that is not there"],
+      "given": [
+        "a behavior directory that is not there"
+      ],
       "when": "the directory is loaded",
       "then": "no scenario is declared"
     },
     {
       "id": "B-003",
       "title": "The root arrives absolute",
-      "given": ["a behavior directory named by an absolute path"],
+      "given": [
+        "a behavior directory named by an absolute path"
+      ],
       "when": "a message about one of its scenarios is composed",
       "then": "the path answers relative to where the run started"
     },
     {
       "id": "B-004",
       "title": "One id under two scenarios",
-      "given": ["two specifications declaring the same id"],
+      "given": [
+        "two specifications declaring the same id"
+      ],
       "when": "the directory is loaded",
       "then": "both places the id was declared are named"
     },
     {
       "id": "B-005",
       "title": "A scenario with no id",
-      "given": ["a specification declaring a scenario without an id"],
+      "given": [
+        "a specification declaring a scenario without an id"
+      ],
       "when": "the directory is loaded",
       "then": "the file is named as declaring a scenario nothing can reference"
     },
     {
       "id": "B-006",
       "title": "A specification that will not parse",
-      "given": ["a behavior specification that is not readable JSON"],
+      "given": [
+        "a behavior specification that is not readable JSON"
+      ],
       "when": "the directory is loaded",
       "then": "the file is named as unreadable"
     },
     {
       "id": "B-007",
       "title": "Several ids on one marker line",
-      "given": ["the text a marker line carries after its keyword, naming more than one id"],
+      "given": [
+        "the text a marker line carries after its keyword, naming more than one id"
+      ],
       "when": "the mechanism reads it",
       "then": "each id is answered on its own"
     },
     {
       "id": "B-008",
       "title": "Two scenarios on one line",
-      "given": ["a specification declaring two scenarios on the same line"],
+      "given": [
+        "a specification declaring two scenarios on the same line"
+      ],
       "when": "the directory is loaded",
       "then": "both answer at that line rather than the second answering at none"
+    },
+    {
+      "id": "B-009",
+      "title": "The prose a feature carries for its document",
+      "given": [
+        "a feature file writing notes of its own"
+      ],
+      "when": "the feature is rendered",
+      "then": "the notes answer between the description and the first scenario"
+    },
+    {
+      "id": "B-010",
+      "title": "A note of a kind this document has no words for",
+      "given": [
+        "a feature file writing a note whose type is none the form has"
+      ],
+      "when": "the directory is read",
+      "then": "the file is named as one that cannot be read, and the help that has the form"
     }
   ]
 }

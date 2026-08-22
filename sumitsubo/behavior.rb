@@ -3,6 +3,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/locations"
+require "sumitsubo/note"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -31,7 +32,12 @@ module Sumitsubo
     Scenario = Struct.new(:id, :title, :given, :action, :outcome, :path, :line)
     # The path is what names the document Render writes: one file per feature
     # on the specification side, one on the document side.
-    Feature = Struct.new(:name, :description, :includes, :scenarios, :path)
+    #
+    # Notes hang from the feature and not from a scenario. A scenario names
+    # the observable difference and stops, its reason carried by the title;
+    # somewhere legitimate to write that reason instead is what would let it
+    # stop being carried there.
+    Feature = Struct.new(:name, :description, :includes, :scenarios, :path, :notes)
     # A scenario nothing claims. The scope is carried so the finding can say
     # where it looked rather than claiming no test exists anywhere.
     Finding = Struct.new(:path, :line, :id, :scope)
@@ -136,6 +142,7 @@ module Sumitsubo
     def self.render(feature)
       lines = ["# #{feature.name || document_name(feature)}", ""]
       lines.push(feature.description, "") unless feature.description.nil?
+      Note.spell(feature.notes, 1).each { |line| lines.push(line) }
 
       feature.scenarios.each do |scenario|
         lines.push("## #{scenario.id} — #{scenario.title}", "")
@@ -184,7 +191,8 @@ module Sumitsubo
         document["description"],
         document["include"] || [],
         scenarios,
-        path
+        path,
+        Note.all_in(path, document["notes"], "behavior")
       )
     end
 

@@ -15,7 +15,7 @@ end
 
 def fails
   yield
-rescue Sumitsubo::Contract::Error => e
+rescue Sumitsubo::Error => e
   puts e.message
 end
 
