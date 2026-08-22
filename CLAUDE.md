@@ -71,28 +71,6 @@ say the same: git carries no empty directory, so a fresh clone of a project
 that committed what `init` laid down arrives without one, and declaring no
 scenarios is what keeps every such clone from failing.
 
-### Glossary
-
-`glossary.json` holds sections, each scoped by `include` globs. A file takes
-every section covering it, applied in the order the file lists them; a later
-term replaces an earlier one of the same name outright, its rejected words
-included, because a term meaning something else there rejects different words.
-
-Only the rejected words are checked — a term declaring none is vocabulary the
-tool carries but cannot verify. Matching is whole-word and case sensitive, over
-what a person wrote for another person: the comments of a Ruby file, found
-through its syntax tree, and any other file entire, since prose is a comment
-for its whole length. An identifier is a spelling of a concept rather than the
-concept's name, so counting one would flag every legitimate class in the tree.
-
-Which language answers for a file is the same question as which files a
-reading reaches, so it is asked once: a mechanism scans everything its globs
-cover and a language claiming nothing is how a file is passed over. No
-mechanism names a language, and the one answering owns the shapes it hands
-back — those more than one language would answer with, which is why a region
-of prose lives there and a name's parameters stay with the reading that makes
-them.
-
 ### Contract
 
 What this establishes is that a registered interface is **implemented

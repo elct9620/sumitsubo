@@ -2,6 +2,10 @@
 
 How a file is read for what a person put in it.
 
+Which language answers for a file is the same question as which files a reading reaches, so it is asked once: a mechanism scans everything its globs cover, and a language claiming nothing is how a file is passed over.
+
+No mechanism names a language. The one answering owns the shapes it hands back — those more than one language would answer with — which is why a region of prose lives here and a name's parameters stay with the reading that makes them.
+
 ## L-001 — What a person wrote in a source file
 
 | Step | Statement |
