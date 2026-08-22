@@ -1,3 +1,4 @@
+require "sumitsubo/language"
 require "sumitsubo/definitions"
 
 # The syntax tree reading: what a Ruby file declares, spelled the way a contract

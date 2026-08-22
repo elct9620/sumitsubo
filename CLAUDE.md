@@ -77,10 +77,10 @@ not made to say so twice.
 
 The command is `sumi`, shipped as a single native executable.
 
-- `scripts/vendor.sh` fetches the pinned tree-sitter runtime and Ruby grammar
+- `scripts/vendor.sh` fetches the pinned tree-sitter runtime and grammars
   into `vendor/`, which is not committed. Nothing compiles before it has run,
-  and that script is the only place either version is written down — which is
-  what lets CI key the cache on its contents alone.
+  and that script is the only place any of those versions is written down —
+  which is what lets CI key the cache on its contents alone.
 - `scripts/build_rev.sh` writes the revision a build answers for into
   `build_rev.rb`, also not committed. It is a script of its own because a
   revision moves with every commit and that cache key must not.
@@ -134,7 +134,7 @@ AOT compiler for Ruby. Its constraints shape the design:
 - C is reached through FFI declarations in a package. The tree-sitter binding
   is one, in `.packages/tree-sitter`: the dot is what keeps spin from
   compiling its C a second time as part of this application, since a package
-  is scanned for the `.c` it carries. The runtime and the grammar are the
+  is scanned for the `.c` it carries. The runtime and the grammars are the
   application's to link in, which is why a grammar it does not carry fails at
   link time rather than at run time.
 - `Exception#backtrace` and `Kernel#caller` return empty arrays, so an error

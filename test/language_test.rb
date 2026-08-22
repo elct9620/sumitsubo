@@ -68,3 +68,34 @@ begin
 rescue Sumitsubo::Language::Error => e
   puts e.message
 end
+
+
+RUST = "test/fixtures/definitions/sample.rs"
+
+# What Ruby spells with one node Rust splits into two, and a doc comment is a
+# line comment carrying a marker. The block comment at the end of the file has
+# nothing after it, so it is a comment and not somewhere a claim could sit.
+# @behavior L-010
+puts "--- a second language reads its own comments ---"
+p spell(Sumitsubo::Language.comments_in(RUST, "sample.rs")).length
+p spell(Sumitsubo::Language.attached_comments_in(RUST, "sample.rs")).length
+
+# A name is the path the file itself carries: an `impl` says how what is inside
+# it is reached without declaring the type, a `mod` and a `trait` do both.
+# @behavior L-011
+puts "--- and spells a name the way it writes a path ---"
+Sumitsubo::Language.declarations_in(RUST, "sample.rs", "rust").each do |name|
+  puts "  #{name.line} #{name.name}"
+end
+
+# The receiver is a parameter like any other, carrying the kind word Rust uses
+# for it — which is what tells a method from an associated function.
+# @behavior L-012
+puts "--- with the receiver among its parameters ---"
+Sumitsubo::Language.declarations_in(RUST, "sample.rs", "rust").each do |name|
+  next if name.params.nil? || name.params.empty?
+
+  spelled = []
+  name.params.each { |param| spelled.push("#{param.kind}#{param.name.nil? ? "" : " #{param.name}"}") }
+  puts "  #{name.name}(#{spelled.join(", ")})"
+end

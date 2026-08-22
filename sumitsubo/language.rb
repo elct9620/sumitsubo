@@ -1,11 +1,5 @@
 require "pathname"
 require "sumitsubo/error"
-# Each language is a file of its own, holding both the grammar it reads through
-# and the queries written against that grammar's node names. They are required
-# here rather than requiring their way back, so a caller reaches one through
-# this seam and never by name.
-require "sumitsubo/language/ruby"
-require "sumitsubo/language/prose"
 
 module Sumitsubo
   # How a file is read for what a person put in it. A mechanism puts its
@@ -31,8 +25,36 @@ module Sumitsubo
     # A stretch of a file a person wrote, and the line it starts on.
     Region = Struct.new(:line, :text)
 
+    # A declaration and, where it is one a caller writes arguments for, the
+    # parameters it takes. A scope carries none at all, which is not the same
+    # as one that takes none.
+    Name = Struct.new(:path, :line, :name, :params)
+
+    # One parameter: what it is called, how a caller has to pass it, and
+    # whether it may be left out. A name is absent where the language lets the
+    # parameter go unnamed.
+    #
+    # The kind words are each language's own and they stay on this side. A
+    # contract compares them as text without knowing what any of them means,
+    # so a second language brings its own vocabulary in its own reading rather
+    # than negotiating a shared one with the specification.
+    Param = Struct.new(:name, :kind, :optional)
+  end
+end
+
+# Each language is a file of its own, holding the grammar it reads through and
+# the queries written against that grammar's node names. They are required here
+# rather than requiring their way back, so a caller reaches one through this
+# seam and never by name — and they arrive between the shapes they answer with
+# and the roster they are listed in, which is the order those three need.
+require "sumitsubo/language/ruby"
+require "sumitsubo/language/rust"
+require "sumitsubo/language/prose"
+
+module Sumitsubo
+  module Language
     # The order a file is offered to them, which is what puts Prose last.
-    ALL = [Ruby.new, Prose.new]
+    ALL = [Ruby.new, Rust.new, Prose.new]
 
     # What a person wrote for another person in this file, read by the first
     # language answering for it. Prose answers for anything the rest did not,

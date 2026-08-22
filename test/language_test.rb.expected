@@ -17,3 +17,25 @@ false
 ["1:# A linear snapshot script, which is how this project writes its own tests.", "2:# There is no method for a claim to attach to, so it attaches to the statement.", "7:# @behavior G-001", "10:# @behavior G-002 I-001", "13:# @behavior G-404"]
 --- source the grammar cannot read ---
 broken.rb: cannot be parsed by the ruby grammar
+--- a second language reads its own comments ---
+5
+4
+--- and spells a name the way it writes a path ---
+  6 Charge
+  12 Charge::settle
+  16 Charge::open
+  21 Outcome
+  26 Ledger
+  27 Ledger::record
+  31 Charge::record
+  34 audit
+  35 audit::LIMIT
+  37 audit::trail
+  39 audit::Entry
+  42 audit::Entry::at
+--- with the receiver among its parameters ---
+  Charge::settle(self, positional at)
+  Charge::open(positional amount)
+  Ledger::record(self, positional charge)
+  Charge::record(self, positional charge)
+  audit::Entry::at(self)

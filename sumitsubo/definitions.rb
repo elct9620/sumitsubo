@@ -14,22 +14,14 @@ module Sumitsubo
   module Definitions
     class Error < Sumitsubo::Error; end
 
-    # One parameter of a method: what it is called, how a caller has to pass
-    # it, and whether it may be left out. A name is absent where Ruby lets the
-    # parameter go unnamed.
-    #
-    # The kind words are Ruby's own and they stay on this side. A contract
-    # compares them as text without knowing what any of them means, so a
-    # second language brings its own vocabulary in its own reading rather than
-    # negotiating a shared one with the specification.
-    Param = Struct.new(:name, :kind, :optional)
-
-    # A declaration and, where it is a method, the parameters it takes. A scope
-    # carries none at all, which is not the same as a method that takes none.
-    Name = Struct.new(:path, :line, :name, :params)
+    # What a reading answers with belongs to the seam every reading answers
+    # through, so these are reached from there rather than declared here. The
+    # kind words a parameter carries are Ruby's own and stay on this side.
+    Param = Language::Param
+    Name = Language::Name
 
     # One match of the query below: what kind of node it was, what it is
-    # called, and the lines it spans.
+    # called, and the lines it spans. Nothing outside this reading holds one.
     Node = Struct.new(:kind, :text, :first, :last)
 
     NAME = "name"

@@ -78,3 +78,28 @@ No mechanism names a language. The one answering owns the shapes it hands back �
 | Given | a name a language spells and one named the way a route is named |
 | When | each is put to that language |
 | Then | only the one it could spell answers, and neither says anything is defined |
+
+## L-010 — A second language reads its own comments
+
+| Step | Statement |
+| --- | --- |
+| Given | a Rust file carrying line comments, a doc comment and a block comment |
+| Given | a block comment with nothing after it |
+| When | the file is read for what a person wrote and for where a claim could sit |
+| Then | every comment answers the first, and the one nothing follows answers only there |
+
+## L-011 — A name is the path the file itself carries
+
+| Step | Statement |
+| --- | --- |
+| Given | a Rust file whose functions sit in an impl block, a trait and a module |
+| When | the file is read for what it declares |
+| Then | each name answers as the path a reader would write, the blocks holding it in front of it |
+
+## L-012 — The receiver is a parameter like any other
+
+| Step | Statement |
+| --- | --- |
+| Given | a Rust function taking a receiver and one taking none |
+| When | the file is read for what it declares |
+| Then | the receiver answers among the parameters, carrying the kind word that language uses |

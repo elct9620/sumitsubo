@@ -8,8 +8,8 @@ specification is the reference line; the source code is the material. It
 reports the difference and does not decide which side is wrong — correcting the
 specification is as valid an outcome as correcting the code.
 
-The command is `sumi`, a single native executable. Ruby is the only language it
-targets.
+The command is `sumi`, a single native executable. It reads Ruby and Rust, and
+whatever else is prose.
 
 ## Mechanisms
 
@@ -90,7 +90,7 @@ failing that the repository it sits in.
 `glossary.json` holds sections, each scoped by `include` globs. Only the
 rejected words are checked — a term declaring none is vocabulary the tool
 carries but cannot verify. Matching is whole-word and case sensitive, over the
-comments of a Ruby file and any other file entire.
+comments of a source file and any other file entire.
 
 ```json
 {
@@ -117,9 +117,9 @@ A contract file registers one kind of interface. Whether it names a `marker`
 decides how the source is read.
 
 **With a marker**, source claims each interface in the comment in front of the
-code implementing it. That is what an interface needs when no Ruby construct
-points at one — nothing in a file *is* a route — and it is why the name is read
-whole rather than having to be a Ruby name at all.
+code implementing it. That is what an interface needs when no construct of the
+language points at one — nothing in a file *is* a route — and it is why the name
+is read whole rather than having to be a name in any language at all.
 
 ```json
 {
@@ -141,8 +141,10 @@ def show
 written in front of the code. Such a file names its `language`: `include` says
 which files a reading reaches and never what they are written in, while a name
 is spelled the way one language spells it. In Ruby that is `.` for a singleton
-method, `#` for an instance one, a bare path for a class or module. A name that
-language could spell no definition of stops the run rather than answering.
+method, `#` for an instance one, a bare path for a class or module; in Rust it
+is the path the file itself carries, `Charge::settle` for a method in an `impl`.
+A name that language could spell no definition of stops the run rather than
+answering.
 
 ```json
 {
@@ -273,7 +275,7 @@ specification that is not there is passed over rather than reported.
 Sumitsubo is compiled by [Spinel](https://github.com/matz/spinel), an AOT
 compiler for Ruby, which is built from source rather than installed from
 RubyGems. Two scripts lay down what the tree needs and neither is committed:
-`scripts/vendor.sh` fetches the pinned tree-sitter runtime and Ruby grammar,
+`scripts/vendor.sh` fetches the pinned tree-sitter runtime and grammars,
 and `scripts/build_rev.sh` writes the revision the executable answers for.
 Nothing compiles before both have run.
 
