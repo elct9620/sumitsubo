@@ -10,7 +10,7 @@ What a run answers is one ladder throughout: `0` where it did what it was asked,
 
 Lay down an empty specification to start a reference line from.
 
-Writes the glossary file and a directory per mechanism under the root. What is already there is reported and left alone: a reference line is not a document to be replaced.
+Lays down what each mechanism starts from under the root: the glossary as a file, contract and behavior as directories. What is already there is reported and left alone: a reference line is not a document to be replaced.
 
 ```console
 $ sumi init
