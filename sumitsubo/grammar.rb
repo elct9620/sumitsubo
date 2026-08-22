@@ -12,19 +12,11 @@ module RubyGrammar
 end
 
 module Sumitsubo
+  # What a grammar is called here. The queries put to one live with the reading
+  # that writes them, since they are written against that grammar's node names
+  # and no two grammars spell a node alike.
   module Grammar
     RUBY = "ruby"
-
-    # Comments are the part of a source file a person wrote for another person,
-    # which is where a concept is called by name rather than spelled as an
-    # identifier.
-    COMMENTS = "(comment) @text"
-
-    # A comment with something after it. A behavior is claimed in front of the
-    # code that implements it, so a comment nothing follows claims nothing.
-    # The anchor only excludes that orphan: a comment followed by another
-    # comment is still a match, which is as far as this needs to reach.
-    ATTACHED = "((comment) @text . (_))"
   end
 end
 

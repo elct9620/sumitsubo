@@ -1,7 +1,11 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/grammar"
-require "sumitsubo/definitions"
+# Each language is a file of its own, holding both the grammar it reads through
+# and the queries written against that grammar's node names. They are required
+# here rather than requiring their way back, so a caller reaches one through
+# this seam and never by name.
+require "sumitsubo/language/ruby"
+require "sumitsubo/language/prose"
 
 module Sumitsubo
   # How a file is read for what a person put in it. A mechanism puts its
@@ -26,78 +30,6 @@ module Sumitsubo
 
     # A stretch of a file a person wrote, and the line it starts on.
     Region = Struct.new(:line, :text)
-
-    # Ruby, read through the grammar this build links in.
-    class Ruby
-      def reads?(path)
-        "#{path}".end_with?(".rb")
-      end
-
-      # What a person wrote for another person is the comments and nothing
-      # else. An identifier is a spelling of a concept rather than the
-      # concept's name, so counting one would answer for every legitimate
-      # class in the tree.
-      def comments_in(path, where)
-        found = []
-        captures = TreeSitter.capture(
-          Grammar::RUBY, path.read, Grammar::COMMENTS, where
-        )
-        captures.each { |capture| found.push(Region.new(capture.line, capture.text)) }
-        found
-      rescue TreeSitter::ParseError => e
-        # Source the grammar cannot read is not a difference between the two
-        # sides either: half a file yields regions the rest of it never made.
-        raise Error, e.message
-      end
-
-      # The comments with code after them. A claim sits in front of what
-      # implements it, so a comment nothing follows claims nothing.
-      def attached_comments_in(path, where)
-        found = []
-        captures = TreeSitter.capture(
-          Grammar::RUBY, path.read, Grammar::ATTACHED, where
-        )
-        captures.each { |capture| found.push(Region.new(capture.line, capture.text)) }
-        found
-      rescue TreeSitter::ParseError => e
-        raise Error, e.message
-      end
-
-      # The names this file declares and the shape each is reached by. Only
-      # Ruby answers one here, which is why the shapes stay with the reading
-      # that makes them rather than moving up to this file.
-      def declarations_in(path, where)
-        Definitions.names_in(path)
-      end
-    end
-
-    # Whatever no language before it claimed. Prose is a comment for its whole
-    # length, so the file answers entire and nothing has to be found in it.
-    class Prose
-      def reads?(path)
-        true
-      end
-
-      def comments_in(path, where)
-        found = []
-        line = 0
-        path.readlines.each do |text|
-          line += 1
-          found.push(Region.new(line, text))
-        end
-        found
-      end
-
-      # Prose has no code for a comment to sit in front of, so nothing here
-      # claims anything, and it declares nothing either.
-      def attached_comments_in(path, where)
-        []
-      end
-
-      def declarations_in(path, where)
-        []
-      end
-    end
 
     # The order a file is offered to them, which is what puts Prose last.
     ALL = [Ruby.new, Prose.new]

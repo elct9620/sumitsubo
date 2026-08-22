@@ -11,8 +11,11 @@ SOURCE = "# A Customer is billed here.\n" \
          "  def customer = nil\n" \
          "end\n"
 
+# The query is written out here rather than borrowed from the reading that
+# uses it: what this file pins is the binding, and a reading is free to ask a
+# different question of the same grammar.
 def comments(source, where = "source")
-  TreeSitter.capture(Sumitsubo::Grammar::RUBY, source, Sumitsubo::Grammar::COMMENTS, where)
+  TreeSitter.capture(Sumitsubo::Grammar::RUBY, source, "(comment) @text", where)
 end
 
 # Every capture carries the line it was found on, counted from one as a reader
