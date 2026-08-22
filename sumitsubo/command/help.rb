@@ -70,7 +70,7 @@ module Sumitsubo
             what a reader is handed at the line they tripped on.
 
         What is read
-            A Ruby file: its comments, found through the syntax tree. An
+            A source file: its comments, found through the syntax tree. An
             identifier is a spelling of a concept rather than the concept's
             name, so counting one would flag every legitimate class in the tree.
             Any other file: entire - prose is a comment for its whole length.

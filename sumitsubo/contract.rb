@@ -15,9 +15,10 @@ module Sumitsubo
   # are registered, so the absence of a declaration says nothing.
   #
   # A definition names the word source claims its interfaces with, or names
-  # none and is read from the syntax tree instead. The marker is what a route
-  # needs because no Ruby construct points at one; a method is a construct, so
-  # its absence is what says which reading applies.
+  # the language its names are spelled in and is read from the syntax tree
+  # instead. The marker is what a route needs because no construct of the
+  # language points at one; a method is a construct, so which of the two a
+  # definition names is what says which reading applies.
   #
   # Nothing here names the grammar, which is what keeps this file's test on the
   # side that --regen can still write a snapshot for.
@@ -32,8 +33,9 @@ module Sumitsubo
     class Error < Sumitsubo::Error; end
 
     # The kind a parameter carries when the specification names none. It is
-    # the only one of these words this file knows, and it knows it as the
-    # value to fill in rather than as anything about Ruby.
+    # the only one of these words this file knows, and it knows it as the value
+    # to fill in — so a reading answers `positional` for the parameter its
+    # language writes plainly, whatever that language calls the rest.
     POSITIONAL = "positional"
 
     # One parameter a contract registers. The kind is carried as text and
@@ -179,8 +181,9 @@ module Sumitsubo
       found
     end
 
-    # A registered interface defined twice with two shapes. Ruby lets a class
-    # be reopened, and while only the name was compared that said nothing: the
+    # A registered interface defined twice with two shapes. A language that
+    # lets a type be reopened or implemented in pieces says nothing while only
+    # the name is compared: the
     # name is the way in, and there was one of them. A shape is part of the
     # way in, so two shapes are an entrance the specification does not
     # describe — the same difference a contract claimed in two places is.
