@@ -66,7 +66,7 @@ module Sumitsubo
       end
 
       def reads?(path)
-        "#{path}".end_with?(".rs")
+        path.extname == ".rs"
       end
 
       # Every segment is an identifier and `::` is what joins them. A name a

@@ -85,7 +85,7 @@ module Sumitsubo
       end
 
       def reads?(path)
-        "#{path}".end_with?(".rb")
+        path.extname == ".rb"
       end
 
       # Whether a definition written here could carry this name. `.` spells a
