@@ -74,8 +74,12 @@ jobs:
   release:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
+    # A called workflow's permissions can be narrowed but never widened, so
+    # what the release needs is named here or its jobs never get it: the
+    # release to attach executables to, and the registry to push an image to.
     permissions:
       contents: write
+      packages: write
     uses: ./.github/workflows/release.yml
     with:
       tag: ${{ needs.release-please.outputs.tag_name }}
