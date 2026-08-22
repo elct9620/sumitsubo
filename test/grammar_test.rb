@@ -39,6 +39,15 @@ rescue TreeSitter::ParseError => e
   puts e.message
 end
 
+# A second grammar is carried the same way, and spells its nodes its own way:
+# what Ruby calls a `comment` Rust splits into two.
+p TreeSitter.capture(
+  Sumitsubo::Grammar::RUST,
+  "// A Customer is billed here.\nstruct Charge;\n",
+  "(line_comment) @text",
+  "charge.rs"
+).map { |capture| "#{capture.line}:#{capture.text}" }
+
 # A grammar this build does not carry fails where it is asked for.
 begin
   TreeSitter.capture("cobol", "IDENTIFICATION DIVISION.\n", "(comment) @text")

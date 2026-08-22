@@ -89,9 +89,11 @@ The command is `sumi`, shipped as a single native executable.
   test always sees the unstamped default and a snapshot can hold the version
   line. The stamped one is covered by CI running the executable instead.
 - Carried C is one translation unit for the runtime and one per grammar
-  (`ts_lib.c`, `ts_ruby.c`), and cannot be fewer: the runtime and a grammar
-  each carry a `tree_sitter/parser.h` under the same include guard. Grammars
-  move into a directory of their own once there are enough to read as a group.
+  (`ts_lib.c`, `ts_ruby.c`, `ts_rust.c`), and cannot be fewer: the runtime and
+  a grammar each carry a `tree_sitter/parser.h` under the same include guard,
+  and two grammars collide on the macros every generated parser defines.
+  Grammars move into a directory of their own once there are enough to read as
+  a group.
 - `spin build` compiles `bin/sumi.rb` to `build/bin/sumi`.
 - `spin test` compiles each `test/*.rb` against the library sources — never
   against `bin/`, which is why `bin/sumi.rb` holds nothing but the delegation

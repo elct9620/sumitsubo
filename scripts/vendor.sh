@@ -11,7 +11,8 @@ set -eu
 root=$(cd "$(dirname "$0")/.." && pwd)
 vendor="$root/vendor"
 RUNTIME=v0.26.12
-GRAMMAR=v0.23.1
+RUBY=v0.23.1
+RUST=v0.24.2
 
 mkdir -p "$vendor"
 
@@ -30,7 +31,8 @@ fetch() {
 }
 
 fetch tree-sitter tree-sitter/tree-sitter "$RUNTIME"
-fetch tree-sitter-ruby tree-sitter/tree-sitter-ruby "$GRAMMAR"
+fetch tree-sitter-ruby tree-sitter/tree-sitter-ruby "$RUBY"
+fetch tree-sitter-rust tree-sitter/tree-sitter-rust "$RUST"
 
 # The binding is compiled against the header it carries, so the pin has one
 # home: re-pointing RUNTIME above refreshes the committed copy, and the diff is
