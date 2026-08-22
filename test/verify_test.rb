@@ -1,7 +1,8 @@
 require "pathname"
 require "sumitsubo"
+require "sumitsubo/language"
 
-cli = Sumitsubo::CLI.new
+cli = Sumitsubo::CLI.new(Sumitsubo::BUILD_REV, Sumitsubo::Language)
 back = Dir.pwd
 
 # @behavior V-001

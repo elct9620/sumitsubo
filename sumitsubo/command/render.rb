@@ -9,7 +9,7 @@ module Sumitsubo
     # Init refuses to overwrite is a reference line; this is not one.
     # @command render
     class Render
-      def run(config)
+      def run(config, languages)
         failures = []
         Mechanism::ALL.each do |mechanism|
           next unless config.render?(mechanism.specification)
@@ -17,7 +17,7 @@ module Sumitsubo
           # One mechanism that cannot be read leaves the others still able to
           # write, the way a linter reports every file it managed to parse.
           begin
-            mechanism.documents(config).each { |document| write(document) }
+            mechanism.documents(config, languages).each { |document| write(document) }
           rescue Sumitsubo::Error => e
             failures.push(e.message)
           end

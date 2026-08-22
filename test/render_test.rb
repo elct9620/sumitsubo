@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo"
+require "sumitsubo/language"
 
 # render writes into the working directory, so the run has to happen somewhere
 # other than the repository it is testing.
@@ -10,7 +11,7 @@ root.mkpath
 back = Dir.pwd
 Dir.chdir(root.to_s)
 
-cli = Sumitsubo::CLI.new
+cli = Sumitsubo::CLI.new(Sumitsubo::BUILD_REV, Sumitsubo::Language)
 
 # @behavior R-004
 puts "--- a project with no specification renders nothing ---"

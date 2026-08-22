@@ -84,10 +84,12 @@ The command is `sumi`, shipped as a single native executable.
 - `scripts/build_rev.sh` writes the revision a build answers for into
   `build_rev.rb`, also not committed. It is a script of its own because a
   revision moves with every commit and that cache key must not.
-- The revision sits at the root, which no specification's include globs reach,
-  and only `bin/sumi.rb` requires it. `spin test` never compiles `bin/`, so a
-  test always sees the unstamped default and a snapshot can hold the version
-  line. The stamped one is covered by CI running the executable instead.
+- What a build says of itself is required by `bin/sumi.rb` and nowhere else:
+  the revision it answers for, and the languages it carries. `spin test` never
+  compiles `bin/`, so a test sees the unstamped default and hands in a reading
+  only where it needs one — which is what keeps a snapshot able to hold the
+  version line, and keeps a grammar out of every run that only prints or lays
+  down files. The stamped revision is covered by CI running the executable.
 - Carried C is one translation unit for the runtime and one per grammar
   (`ts_lib.c`, `ts_ruby.c`, `ts_rust.c`), and cannot be fewer: the runtime and
   a grammar each carry a `tree_sitter/parser.h` under the same include guard,
@@ -103,11 +105,12 @@ The command is `sumi`, shipped as a single native executable.
   CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
   that way. A file reaching it through its requires counts, which is why
-  `sumitsubo/config.rb` names no mechanism and why no mechanism names a
-  language — each puts its question to `language.rb`, which with the readings
-  it drives is the only place a grammar is named. Where no
-  snapshot is committed the run is compared against CRuby rather than failing,
-  and a test that asserts nothing passes.
+  `sumitsubo/config.rb` names no mechanism, why no mechanism names a language,
+  and why `sumitsubo/definitions.rb` requires nothing at all — a reading brings
+  it captures rather than a path. `require "sumitsubo"` reaches no grammar, so
+  what is written by hand is the four tests that read source or ask for a
+  binding. Where no snapshot is committed the run is compared against CRuby
+  rather than failing, and a test that asserts nothing passes.
 - `--regen` takes the same file list, so name the test to rewrite. Given none
   it rewrites every snapshot including the hand-written ones, leaving a CRuby
   backtrace where the expectation was.

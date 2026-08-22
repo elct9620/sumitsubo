@@ -1,4 +1,3 @@
-require "sumitsubo/language"
 require "sumitsubo/glossary"
 require "sumitsubo/contract"
 require "sumitsubo/behavior"
@@ -14,10 +13,10 @@ module Sumitsubo
   # executable carries when it is built, so there is no hook to register
   # through.
   #
-  # `Language` is handed to the mechanisms from here rather than named by
-  # them, which keeps the grammar out of their requires: their snapshots stay
-  # ones `--regen` can write, and a second language is carried without any of
-  # them being touched.
+  # The languages are handed in rather than named here, the way the revision
+  # is: which ones a build carries is decided when it is built, so the one file
+  # a build has of its own is where it says so. Nothing in this graph reaches a
+  # grammar, which is what leaves a snapshot of it one `--regen` can write.
   module Mechanism
     # What a mechanism lays down to start a reference line from. A seed with no
     # content is a directory: a project keeps one specification per feature, so
@@ -40,7 +39,7 @@ module Sumitsubo
 
       # An absent reference line is nothing to write rather than a comparison
       # that could not be made: Render records where Verify certifies.
-      def documents(config)
+      def documents(config, languages)
         path = Sumitsubo::Glossary.path_in(config.root)
         return [] unless path.exist?
 
@@ -48,10 +47,10 @@ module Sumitsubo
         [Document.new(config.docs / "glossary.md", content)]
       end
 
-      def verify(config, report)
+      def verify(config, report, languages)
         sections = Sumitsubo::Glossary.load(Sumitsubo::Glossary.path_in(config.root))
         scope = Sumitsubo::Glossary.scope(sections, config.base)
-        Sumitsubo::Glossary.check(scope, config.base, Sumitsubo::Language).each do |finding|
+        Sumitsubo::Glossary.check(scope, config.base, languages).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Glossary.describe(finding))
         end
       end
@@ -70,9 +69,9 @@ module Sumitsubo
 
       # The documents mirror the specification: one file per kind there, one
       # here, named the same.
-      def documents(config)
+      def documents(config, languages)
         found = []
-        Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), Sumitsubo::Language).each do |definition|
+        Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), languages).each do |definition|
           next unless Sumitsubo::Contract.published?(definition)
 
           name = Sumitsubo::Contract.document_name(definition)
@@ -84,9 +83,9 @@ module Sumitsubo
         found
       end
 
-      def verify(config, report)
-        definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), Sumitsubo::Language)
-        claims = claims_in(definitions, config)
+      def verify(config, report, languages)
+        definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), languages)
+        claims = claims_in(definitions, config, languages)
 
         Sumitsubo::Contract.unclaimed(definitions, claims).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_unclaimed(finding))
@@ -103,7 +102,7 @@ module Sumitsubo
         end
         # The other reading makes no claims, so what it compares is what the
         # source defines and the shape a caller would have to call it with.
-        names = names_in(definitions, config, Sumitsubo::Language)
+        names = names_in(definitions, config, languages)
         Sumitsubo::Contract.undefined(definitions, names).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_undefined(finding))
         end
@@ -121,12 +120,12 @@ module Sumitsubo
 
       # Every word every definition claims, read in one pass: parsing is the
       # cost, so a project registering several kinds still reads each file once.
-      def claims_in(definitions, config)
+      def claims_in(definitions, config, languages)
         claims = []
         claimed = Sumitsubo::Contract.claimed(definitions)
         keywords = Sumitsubo::Contract.keywords(claimed)
         Sumitsubo::Contract.scope(claimed, config.base).each do |path|
-          Marker.claims_in(path, keywords, Sumitsubo::Language).each do |claim|
+          Marker.claims_in(path, keywords, languages).each do |claim|
             claims.push(Sumitsubo::Contract::Claim.new(
               claim.path, claim.line, claim.keyword, claim.text
             ))
@@ -162,7 +161,7 @@ module Sumitsubo
 
       # The documents mirror the specification: one file per feature there,
       # one here, named the same.
-      def documents(config)
+      def documents(config, languages)
         found = []
         Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root)).each do |feature|
           name = Sumitsubo::Behavior.document_name(feature)
@@ -174,9 +173,9 @@ module Sumitsubo
         found
       end
 
-      def verify(config, report)
+      def verify(config, report, languages)
         features = Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root))
-        claims = claims_in(features, config)
+        claims = claims_in(features, config, languages)
 
         Sumitsubo::Behavior.uncovered(features, claims).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Behavior.describe_uncovered(finding))
@@ -193,11 +192,11 @@ module Sumitsubo
       # Marker finds the word and hands back the rest of the line; splitting
       # that into ids is Behavior's, which is what lets Contract read the same
       # line as one name instead.
-      def claims_in(features, config)
+      def claims_in(features, config, languages)
         claims = []
         keywords = [Sumitsubo::Behavior::MARKER]
         Sumitsubo::Behavior.scope(features, config.base).each do |path|
-          Marker.claims_in(path, keywords, Sumitsubo::Language).each do |claim|
+          Marker.claims_in(path, keywords, languages).each do |claim|
             Sumitsubo::Behavior.ids_in(claim.text).each do |id|
               claims.push(Sumitsubo::Behavior::Claim.new(claim.path, claim.line, id))
             end
