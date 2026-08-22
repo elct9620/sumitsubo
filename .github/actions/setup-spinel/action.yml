@@ -14,7 +14,7 @@ inputs:
       Commit SHA to build. A tag or branch would make both the cache key and
       the revision check lie about what is installed, so this is a full SHA.
     required: false
-    default: e4cce5b5f1d7fc23ca449c0777c91a4e94909959
+    default: 816336a1aec6b98d0b48c5b5155bbff53431d20c
   prefix:
     description: Install prefix. `<prefix>/bin` holds the executables.
     required: false
