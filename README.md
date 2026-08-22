@@ -34,7 +34,12 @@ created .spec/contract
 created .spec/behavior
 ```
 
-`sumi verify` checks the source against it:
+Those files are where the project writes what it means to keep. `sumi help
+glossary`, `sumi help contract` and `sumi help behavior` have the form of each,
+and `sumi help config` has `.sumi.json` — where the specifications live, where
+the documents go, and which of them a run touches.
+
+`sumi verify` checks the source against them:
 
 ```console
 $ sumi verify
@@ -48,13 +53,9 @@ where the comparison could not be made — whatever had to be read first was
 absent, unreadable, or ambiguous. Findings answer as `path:line`, relative to
 where the run started.
 
-`sumi help <topic>` explains how to write each kind of specification —
-`glossary`, `contract`, `behavior`, and `config` — so a project has the forms
-and the findings without a document beside the executable. The sections below
-say the same for a reader who is here rather than at a terminal.
-
-`sumi render` writes the specification out as something to read. It compares
-nothing, so it answers `0` or `2`:
+`sumi render` writes the specification out as something to read — terms and
+their definitions, contracts as sections, scenarios as tables — leaving out
+what the tool needs in order to find things:
 
 ```console
 $ sumi render
@@ -63,213 +64,18 @@ rendered docs/contract/cli.md
 rendered docs/behavior/verify.md
 ```
 
-### Configuration
+## Where the rest is
 
-`.sumi.json` says where the specifications live, where the documents go, and
-which of them a run verifies or renders. A project that has said nothing gets
-the defaults.
+The forms live in the executable, so a project has them wherever `sumi` is
+installed. `docs/` here is this project's own specification, rendered by the
+tool it is:
 
-```json
-{
-  "root": ".spec",
-  "docs": "docs",
-  "specifications": { "glossary": { "verify": false } }
-}
-```
-
-`root` is where the specifications live and `docs` is where `sumi render`
-writes, both answered against the directory holding the `.sumi.json`.
-`specifications` lists only the exceptions: one nobody mentions is both
-verified and rendered, `verify: false` keeps a specification without checking
-it, and `render: false` keeps it out of the documents. A run reads the
-configuration from the nearest `.sumi.json` at or above where it started,
-failing that the repository it sits in.
-
-### Glossary
-
-`glossary.json` holds sections, each scoped by `include` globs. Only the
-rejected words are checked — a term declaring none is vocabulary the tool
-carries but cannot verify. Matching is whole-word and case sensitive, over the
-comments of a source file and any other file entire.
-
-```json
-{
-  "glossary": [
-    {
-      "include": ["app/**/*.rb", "docs/*.md"],
-      "terms": [
-        {
-          "term": "Order",
-          "definition": "What a customer asks us to fulfil.",
-          "not": [
-            { "term": "Purchase", "reason": "Order is what the domain calls it." }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Contract
-
-A contract file registers one kind of interface. Whether it names a `marker`
-decides how the source is read.
-
-**With a marker**, source claims each interface in the comment in front of the
-code implementing it. That is what an interface needs when no construct of the
-language points at one — nothing in a file *is* a route — and it is why the name
-is read whole rather than having to be a name in any language at all.
-
-```json
-{
-  "name": "Routes",
-  "marker": "@route",
-  "include": ["app/**/*.rb"],
-  "contracts": [
-    { "name": "GET /users/:id", "description": "One user." }
-  ]
-}
-```
-
-```ruby
-# @route GET /users/:id
-def show
-```
-
-**Without one**, the interfaces are read from the syntax tree and nothing is
-written in front of the code. Such a file names its `language`: `include` says
-which files a reading reaches and never what they are written in, while a name
-is spelled the way one language spells it. In Ruby that is `.` for a singleton
-method, `#` for an instance one, a bare path for a class or module; in Rust it
-is the path the file itself carries, `Charge::settle` for a method in an `impl`.
-A name that language could spell no definition of stops the run rather than
-answering.
-
-```json
-{
-  "name": "Internal seams",
-  "language": "ruby",
-  "include": ["lib/**/*.rb"],
-  "contracts": [
-    { "name": "Store.open", "description": "Open the store." },
-    { "name": "Store#read", "description": "Read one record.", "internal": true }
-  ]
-}
-```
-
-Under the second reading a contract may also register `params` — the shape a
-caller has to write. A parameter is what it is called, its `kind`, and whether
-a caller may leave it out; `kind` defaults to the one a bare name says, and a
-parameter the language lets go unnamed registers a kind alone.
-
-```json
-{
-  "name": "Store.open",
-  "params": [
-    { "name": "path" },
-    { "name": "mode", "optional": true },
-    { "kind": "block", "optional": true }
-  ]
-}
-```
-
-`positional` is the one kind word Sumitsubo owns — the parameter a caller
-writes with no marking of any sort, which every language has one of, and what
-`kind` defaults to. Every other kind word is the language's own, compared as
-text without knowing what any of them means. A marker names no language: a claim is a claim in whatever the
-file is written in, and naming both — or neither — is a specification that
-cannot be read rather than a difference to report. So is a language this build
-was not given.
-
-A contract registering `params` is compared against them entire; one
-registering none asks for none to be compared. A shape that differs answers at
-the line registering it. One name defined with two shapes is an entrance the
-specification does not describe, answered at each definition and naming the
-other — while definitions that agree are one way in, so reopening a class goes
-on saying nothing.
-
-Either way, an interface the source does not carry — unclaimed under the first
-reading, undefined under the second — is a difference, answered at the line
-registering it. An interface nobody registered is not one: only the contracts
-that matter are written down.
-
-`internal` says the project means to keep an interface but not to publish it:
-it is verified like any other, and what it stays out of is the document.
-
-A contract file may also carry `notes` — under the kind, and under each
-contract. That is the prose a specification writes for its document alone: a
-structured field says what a project declares, and nothing in one says why the
-declaration is right. Nothing compares notes against source.
-
-```json
-{
-  "notes": [
-    { "type": "paragraph", "text": ["The store keeps one entry per key."] },
-    { "type": "heading", "level": 1, "text": ["Example"] },
-    { "type": "code", "language": "ruby", "text": ["Store.open(path)"] }
-  ]
-}
-```
-
-A block is a `heading`, a `paragraph`, or a `code` fence, and its text is
-written as lines, closing up with spaces for prose and newlines for code. A
-heading's `level` counts from what its notes hang under rather than from the
-top of the page. `sumi help contract` has the rest of the form.
-
-What this establishes is that an interface is implemented somewhere in scope
-and reached the way the specification says, never that what it does behind
-that is right.
-
-### Behavior
-
-`behavior/` under the root holds one file per feature, each carrying its own
-`include`, and may carry `notes` of its own — the prose above the scenarios,
-in the same blocks a contract writes. `given` is a list; `when` and `then` are
-one sentence each. An id is
-unique across the whole directory.
-
-```json
-{
-  "name": "Verify",
-  "include": ["test/verify_test.rb"],
-  "scenarios": [
-    {
-      "id": "V-001",
-      "title": "Code that drifted from its glossary",
-      "given": ["a glossary declaring a word one of its terms rejects"],
-      "when": "`sumi verify` runs",
-      "then": "one finding is reported for the line the word appears on"
-    }
-  ]
-}
-```
-
-Source claims a scenario in the comment in front of the code implementing it:
-
-```ruby
-# @behavior V-001
-```
-
-A scenario nothing claims is a difference, answered at the line of the
-specification declaring it. A claim resolving to no scenario is not one —
-there is nothing on the specification side to compare it against.
-
-What this establishes is that a behavior was read and implemented, never that
-the implementation is right.
-
-### Render
-
-`sumi render` writes `glossary.md`, one file per kind under `contract/`, and one
-per feature under `behavior/`, each named after the file declaring it. A
-document carries what the specification means — terms and their definitions,
-contracts as sections carrying the shape each is reached by and whatever notes
-the specification wrote, scenarios as tables — and not what the tool
-needs in order to find things, so the words a glossary rejects, a contract's
-marker and the `include` globs stay out. An interface marked `internal` stays
-out too, and a kind with nothing left to publish becomes no page at all.
-Documents are derived, so a run replaces what the last one wrote, and a
-specification that is not there is passed over rather than reported.
+| Looking for | Where |
+|-------------|-------|
+| How to write each specification | `sumi help glossary` \| `contract` \| `behavior` \| `config` |
+| What each command reads, writes and answers | [docs/contract/cli.md](docs/contract/cli.md) |
+| The vocabulary this project keeps | [docs/glossary.md](docs/glossary.md) |
+| The behaviors it holds itself to | [docs/behavior/](docs/behavior) |
 
 ## Development
 
@@ -296,9 +102,9 @@ reading a specification name no grammar: it keeps their tests on the side that
 can still be regenerated.
 
 That last line is the project verifying its own specification, which CI runs on
-every push. `docs/` is this project rendering its own, and is committed, so a
-change to `.spec/` is followed by `./build/bin/sumi render` — which
-`.claude/hooks/edit.sh` does for you inside a Claude Code session.
+every push. `docs/` is committed, so a change to `.spec/` is followed by
+`./build/bin/sumi render` — which `.claude/hooks/edit.sh` does for you inside a
+Claude Code session.
 
 ## License
 
