@@ -9,7 +9,7 @@ root = Pathname.new("/tmp/sumi_config_test_#{Process.pid}")
 root.rmtree if root.exist?
 back = Dir.pwd
 root.mkpath
-Dir.chdir(root.to_s)
+Dir.chdir(root)
 here = Pathname.pwd
 
 (here / "project" / "app" / "billing").mkpath
@@ -45,25 +45,25 @@ end
 
 # @behavior C-001 C-007
 puts "--- the nearest .sumi.json decides the base, however deep the run starts ---"
-Dir.chdir((here / "project" / "app" / "billing").to_s)
+Dir.chdir(here / "project" / "app" / "billing")
 show("app/billing")
-Dir.chdir((here / "project").to_s)
+Dir.chdir(here / "project")
 show("project")
 
 # @behavior C-002
 puts "--- with no .sumi.json, the repository it sits in ---"
 # A .git written as a gitfile, which is what a worktree and a submodule leave.
-Dir.chdir((here / "repo" / "lib").to_s)
+Dir.chdir(here / "repo" / "lib")
 show("repo/lib")
 
 # @behavior C-003 C-008
 puts "--- with neither, where the run started ---"
-Dir.chdir((here / "loose").to_s)
+Dir.chdir(here / "loose")
 show("loose")
 
 # @behavior C-004
 puts "--- a .sumi.json that will not parse is not a difference ---"
-Dir.chdir((here / "broken").to_s)
+Dir.chdir(here / "broken")
 begin
   Sumitsubo::Config.load
 rescue Sumitsubo::Error => e

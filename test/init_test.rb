@@ -8,7 +8,7 @@ root.rmtree if root.exist?
 root.mkpath
 
 back = Dir.pwd
-Dir.chdir(root.to_s)
+Dir.chdir(root)
 
 cli = Sumitsubo::CLI.new
 # @behavior I-001 I-004 I-005

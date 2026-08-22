@@ -84,7 +84,7 @@ Dir.chdir(back)
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath
-Dir.chdir(root.to_s)
+Dir.chdir(root)
 
 # @behavior V-008
 puts "--- no specification at all ---"

@@ -9,7 +9,7 @@ root.rmtree if root.exist?
 root.mkpath
 
 back = Dir.pwd
-Dir.chdir(root.to_s)
+Dir.chdir(root)
 
 cli = Sumitsubo::CLI.new(Sumitsubo::BUILD_REV, Sumitsubo::Language)
 
