@@ -105,7 +105,8 @@ module Sumitsubo
 
             WITH A MARKER, source claims each interface in the comment in front
             of the code implementing it. That is what an interface needs when no
-            Ruby construct points at one - nothing in a file *is* a route.
+            construct of the language points at one - nothing in a file *is* a
+            route.
 
             {
               "name": "Routes",
@@ -121,12 +122,16 @@ module Sumitsubo
                 def show
 
             Everything after the marker to the end of the line is the name, so
-            a name need not be a Ruby name at all.
+            a name need not be a name in any language at all.
 
             WITHOUT ONE, the interfaces are read from the syntax tree and
             nothing is written in front of the code. The name is how that
             language spells it - in Ruby, `.` for a singleton method, `#` for an
-            instance one, a bare path for a class or module.
+            instance one, a bare path for a class or module; in Rust, the path
+            the file itself carries, `Charge::settle` for a method in an `impl`
+            and `audit::Entry` for a struct in a `mod`. A crate name and the
+            module a file becomes live outside the file, so a name stops where
+            the file does.
 
             Such a file names its `language`. `include` says which files a
             reading reaches and never what they are written in, and a name is
@@ -160,21 +165,23 @@ module Sumitsubo
 
             A parameter is what it is called, its `kind`, and whether a caller
             may leave it out. `kind` defaults to `positional`, and a parameter
-            Ruby lets go unnamed registers a kind alone. The kind words are
-            Ruby's own:
+            the language lets go unnamed registers a kind alone. The kind words
+            are each language's own, compared as text:
 
-                positional  keyword  splat  hash_splat  block  destructured
-                forward
+                ruby  positional  keyword  splat  hash_splat  block
+                      destructured  forward
+                rust  positional  self
 
             A contract registering parameters is compared against them entire;
             one registering none asks for none to be compared. In a finding the
             shape is spelled as a call - the name, then `:kind` unless it is
             positional, then `?` where the caller may leave it out, and `-`
-            where Ruby gave the parameter no name:
+            where the language gave the parameter no name:
 
                 (path, mode?, encoding:keyword, rest:splat?, block:block?)
 
-            Types are not compared. Ruby does not carry them.
+            Types are not compared. A specification says the shape a caller
+            writes, and no further.
 
         internal
             `"internal": true` says the project means to keep the interface but
@@ -264,7 +271,7 @@ module Sumitsubo
         What the reading cannot see
             The syntax tree reading finds a definition by its name in the tree.
             A contract naming one of these is answered as undefined however
-            plainly the code works:
+            plainly the code works. In Ruby:
 
                 attr_reader :size              a call, not a definition - the
                                                method exists only once it runs
@@ -274,6 +281,15 @@ module Sumitsubo
                 include Helper                 Helper#helped is declared;
                                                Widget#helped never is
                 def Other.oddball              only a receiver of `self` is read
+
+            And in Rust:
+
+                #[derive(Clone)]               the impl exists only after the
+                                               macro has run
+                impl<T: Read> Parse for T      a blanket impl declares nothing
+                                               under any one type's name
+                pub use inner::Store           a re-export names it here and
+                                               defines it elsewhere
 
             A project leaning on these registers the contracts it can check and
             leaves the rest unregistered: an interface nobody registered is not

@@ -289,12 +289,13 @@ module Sumitsubo
     end
 
     # The caveat rides every one of these because the tree cannot tell the two
-    # cases apart: a method made by a call or mixed in is missing from it
-    # exactly as an unwritten one is, and rewriting that one fixes nothing.
+    # cases apart: a definition a macro or a mixin brings into being is missing
+    # from it exactly as an unwritten one is, and rewriting that one fixes
+    # nothing. Which constructs those are is each language's own, so the
+    # message names the shape and `sumi help contract` names them.
     def self.describe_undefined(finding)
       "#{spoken(finding.marker, finding.name)} is defined nowhere in " \
-        "#{finding.scope.join(", ")}, and a method made by a call " \
-        "or mixed in never is"
+        "#{finding.scope.join(", ")}, and one the reading cannot see never is"
     end
 
     def self.describe_conflicting(pair)

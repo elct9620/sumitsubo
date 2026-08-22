@@ -29,8 +29,8 @@ test/fixtures/contract/unsaid/seams.json names no marker and no language, so not
 test/fixtures/contract/unknown/seams.json names cobol, which this sumi does not carry
 test/fixtures/contract/both/routes.json names both a marker and a language, and a claim is a claim in whatever the file is written in; sumi help contract has the two readings
 --- an interface the syntax tree does not define ---
-test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere in src/*.rb, and a method made by a call or mixed in never is
-test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/*.rb, and a method made by a call or mixed in never is
+test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere in src/*.rb, and one the reading cannot see never is
+test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/*.rb, and one the reading cannot see never is
 --- and neither is a specification that will not parse ---
 test/fixtures/contract/broken/cli.json is not readable JSON
 --- an interface nothing claims ---
