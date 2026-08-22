@@ -1,3 +1,4 @@
+require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/grammar"
@@ -89,8 +90,9 @@ module Sumitsubo
     # file written in something else is a caller's mistake rather than a case
     # to answer: which files reach here is the language's to decide.
     def self.names_in(path)
-      where = Where.of(path)
-      matches = matches_in(path, where)
+      file = Pathname.new(path)
+      where = Where.of(file)
+      matches = matches_in(file, where)
       nodes = nodes_in(matches)
       taken = params_in(matches)
 
@@ -277,7 +279,7 @@ module Sumitsubo
     end
 
     def self.captures_in(path, where)
-      TreeSitter.capture(Grammar::RUBY, File.read(path), QUERY, where)
+      TreeSitter.capture(Grammar::RUBY, path.read, QUERY, where)
     rescue TreeSitter::ParseError => e
       # Source the grammar cannot read is not a difference between the two
       # sides: half a file declares names the rest of it never did.

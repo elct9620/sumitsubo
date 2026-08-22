@@ -1,3 +1,4 @@
+require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/grammar"
 require "sumitsubo/definitions"
@@ -16,6 +17,10 @@ module Sumitsubo
   # Spinel decides what an executable carries when it is built, so there is no
   # hook to register through. Prose comes last because it answers for whatever
   # the languages before it did not claim.
+  #
+  # A caller that composed its path holds a Pathname and one that read it off
+  # the filesystem holds a String, so this seam wraps what it is handed and a
+  # language reaches the file through that object rather than through File.
   module Language
     class Error < Sumitsubo::Error; end
 
@@ -35,7 +40,7 @@ module Sumitsubo
       def comments_in(path, where)
         found = []
         captures = TreeSitter.capture(
-          Grammar::RUBY, File.read("#{path}"), Grammar::COMMENTS, where
+          Grammar::RUBY, path.read, Grammar::COMMENTS, where
         )
         captures.each { |capture| found.push(Region.new(capture.line, capture.text)) }
         found
@@ -50,7 +55,7 @@ module Sumitsubo
       def attached_comments_in(path, where)
         found = []
         captures = TreeSitter.capture(
-          Grammar::RUBY, File.read("#{path}"), Grammar::ATTACHED, where
+          Grammar::RUBY, path.read, Grammar::ATTACHED, where
         )
         captures.each { |capture| found.push(Region.new(capture.line, capture.text)) }
         found
@@ -76,7 +81,7 @@ module Sumitsubo
       def comments_in(path, where)
         found = []
         line = 0
-        File.readlines("#{path}").each do |text|
+        path.readlines.each do |text|
           line += 1
           found.push(Region.new(line, text))
         end
@@ -105,10 +110,11 @@ module Sumitsubo
     # caller holding one would have to know what it is, and the whole of what
     # this is for is that nobody outside has to.
     def self.comments_in(path, where)
+      file = Pathname.new(path)
       index = 0
       while index < ALL.length
         language = ALL[index]
-        return language.comments_in(path, where) if language.reads?(path)
+        return language.comments_in(file, where) if language.reads?(file)
 
         index += 1
       end
@@ -119,10 +125,11 @@ module Sumitsubo
     # with the reading above: what they share is a loop, and a way to hand one
     # question to the other is a mechanism where two of these are ten lines.
     def self.attached_comments_in(path, where)
+      file = Pathname.new(path)
       index = 0
       while index < ALL.length
         language = ALL[index]
-        return language.attached_comments_in(path, where) if language.reads?(path)
+        return language.attached_comments_in(file, where) if language.reads?(file)
 
         index += 1
       end
@@ -133,10 +140,11 @@ module Sumitsubo
     # says so by answering none, which is how anything but source is passed
     # over without a caller having to ask what it was.
     def self.declarations_in(path, where)
+      file = Pathname.new(path)
       index = 0
       while index < ALL.length
         language = ALL[index]
-        return language.declarations_in(path, where) if language.reads?(path)
+        return language.declarations_in(file, where) if language.reads?(file)
 
         index += 1
       end
