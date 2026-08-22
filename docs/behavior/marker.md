@@ -2,6 +2,10 @@
 
 What a piece of source claims to implement, read out of the comments a language offers.
 
+A contract is named by the interface itself — `GET /users/:id` — rather than by a handle standing in for it, which is why what follows the marker is read whole. Behavior's ids are handles and read as a list.
+
+Marker hands back the line either way. How it is read belongs to the mechanism that named the word.
+
 ## M-001 — A claim attaches to whatever statement follows it
 
 | Step | Statement |

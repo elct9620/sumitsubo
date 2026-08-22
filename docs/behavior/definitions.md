@@ -2,6 +2,8 @@
 
 What a piece of source declares, read from the syntax tree.
 
+Nesting is recovered from where the nodes sit rather than from the query: a pattern reaches only its direct children, and tree-sitter has no operator for a deeper one. Two constructs spanning the same lines therefore answer with no scope, which loses a prefix rather than inventing one.
+
 ## D-001 — A name carries the scopes holding it
 
 | Step | Statement |

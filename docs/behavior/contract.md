@@ -2,6 +2,30 @@
 
 The interfaces a project registers, and what source claims to implement them.
 
+What this establishes is that a registered interface is implemented somewhere in scope, and reached the way the specification says — never that what it does behind that is right. It is the same sentence Behavior turns on, and it licenses everything the mechanism cannot check.
+
+## Verification runs one way
+
+An interface nothing claims is a difference, answered at the line registering it, because that is where a reader chooses between writing the code and dropping the contract. An interface nobody registered is not one: only the contracts that matter are written down, so an absent registration says nothing about the code.
+
+A claim resolving to no contract belongs to the marker reading alone, since it is about a claim and the syntax tree makes none. It is a comparison that could not be made rather than a difference.
+
+A name the other reading could resolve to no construct stops the mechanism rather than answering. Read as Ruby, a route-shaped name is undefined everywhere, and reporting that would blame the code for a specification that lost its marker.
+
+## A second way in
+
+A behavior may be claimed by as many tests as exercise it, but a contract is the way in, so a second one is an entrance the specification does not describe. Under the marker reading that is one interface claimed in two places; under the other it is one name defined with two shapes.
+
+Which is why a method defined twice said nothing while only names were compared: the name is the way in, and there was one of them. Definitions agreeing on their shape are one way in still, so ordinary reopening goes on saying nothing. Both places are answered, each naming the other, since deciding which to keep means comparing them.
+
+## What is compared, and what stays out
+
+A contract registering parameters is compared against them entire, since a shape half-registered would let the rest drift; one registering none asks for none to be compared, which is the same one-way rule. Where the definitions disagree among themselves the contract is not also compared against one of them: two entrances are already the answer.
+
+The kind words a parameter carries are the language's own, and they live in the reading that answers them. Contract compares them as text without learning what any of them means, which is what lets a specification stay silent about the language it is about — `include` already says which files, and those files are read by whatever answers for them.
+
+`internal` is a fact about the interface rather than a preference about pages, which is what separates it from a configuration switching a whole specification off. A kind whose every interface is internal has nothing to render at all.
+
 ## T-001 — What the directory registers, and where
 
 | Step | Statement |
