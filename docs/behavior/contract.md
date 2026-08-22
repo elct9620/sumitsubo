@@ -20,11 +20,11 @@ Which is why a method defined twice said nothing while only names were compared:
 
 ## What is compared, and what stays out
 
-A contract registering parameters is compared against them entire, since a shape half-registered would let the rest drift; one registering none asks for none to be compared, which is the same one-way rule. Where the definitions disagree among themselves the contract is not also compared against one of them: two entrances are already the answer.
+A shape half-registered would let the rest drift, which is why a registered shape is compared entire and an unregistered one asks for nothing. Where the definitions disagree among themselves the contract is not also compared against one of them: two entrances are already the answer.
 
 The kind words a parameter carries are the language's own, and they live in the reading that answers them. Contract compares them as text without learning what any of them means, which is what lets a specification stay silent about the language it is about — `include` already says which files, and those files are read by whatever answers for them.
 
-`internal` is a fact about the interface rather than a preference about pages, which is what separates it from a configuration switching a whole specification off. A kind whose every interface is internal has nothing to render at all.
+`internal` is a fact about the interface rather than a preference about pages, which is what separates it from a configuration switching a whole specification off.
 
 ## T-001 — What the directory registers, and where
 

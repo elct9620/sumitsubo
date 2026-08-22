@@ -82,11 +82,11 @@
     {
       "type": "paragraph",
       "text": [
-        "A contract registering parameters is compared against them entire,",
-        "since a shape half-registered would let the rest drift; one registering",
-        "none asks for none to be compared, which is the same one-way rule.",
-        "Where the definitions disagree among themselves the contract is not also",
-        "compared against one of them: two entrances are already the answer."
+        "A shape half-registered would let the rest drift, which is why a",
+        "registered shape is compared entire and an unregistered one asks for",
+        "nothing. Where the definitions disagree among themselves the contract",
+        "is not also compared against one of them: two entrances are already",
+        "the answer."
       ]
     },
     {
@@ -103,10 +103,9 @@
     {
       "type": "paragraph",
       "text": [
-        "`internal` is a fact about the interface rather than a preference about",
-        "pages, which is what separates it from a configuration switching a whole",
-        "specification off. A kind whose every interface is internal has nothing",
-        "to render at all."
+        "`internal` is a fact about the interface rather than a preference",
+        "about pages, which is what separates it from a configuration",
+        "switching a whole specification off."
       ]
     }
   ],

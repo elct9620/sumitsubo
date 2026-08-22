@@ -6,17 +6,9 @@ What this establishes is that a behavior was read and implemented, never that th
 
 The model is Gherkin's, not its file format: these scenarios are read rather than executed, so `.feature` would buy nothing the other mechanisms could share.
 
-## One sentence each
+Of the three disciplines that make one sentence each reachable, the reason is the one that creeps back into a `then`. It belongs to the title, and the exit code follows from which of the three the `then` named.
 
-`when` and `then` are one sentence each, which three disciplines make reachable rather than a cap that turns work away: the operation under test is the last one and everything before it is `given`; an outcome is what one observation settles, so two observations are two scenarios; and `then` names the observable difference and stops.
-
-Not the exit code, which follows from which of the three a `then` names, and not the reason, which belongs to the title. The reason is the one that creeps back in.
-
-## Verification runs one way
-
-A scenario nothing claims is a difference, answered at the line of the specification declaring it, because that is where a reader chooses between writing the test and dropping the scenario. A claim resolving to no scenario is not one: there is nothing on the specification side to compare it against.
-
-Both collect before reporting, the way a linter does, so a renamed id is fixed in one pass.
+A scenario nothing claims is answered at the line declaring it because that is where a reader chooses between writing the test and dropping the scenario. Both findings collect before reporting, the way a linter does, so a renamed id is fixed in one pass.
 
 ## B-001 — What the directory declares, and where
 
