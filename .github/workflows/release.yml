@@ -3,13 +3,22 @@ name: Release
 on:
   push:
     tags: ['v*']
+  workflow_call:
+    inputs:
+      tag:
+        description: >-
+          The release tag to build and attach executables to. A tag pushed by
+          hand arrives on the trigger above; one pushed by release-please
+          cannot, so the release chain hands it in here.
+        required: true
+        type: string
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-${{ inputs.tag || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -31,7 +40,12 @@ jobs:
             runner: macos-latest
 
     steps:
+      # The tag, not the branch it sits on: a release chained from main would
+      # otherwise build whatever landed after it and stamp a revision the
+      # release never named.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - uses: ./.github/actions/setup-spinel
 
@@ -86,3 +100,37 @@ jobs:
           name: sumi-${{ matrix.name }}
           path: build/bin/sumi
           if-no-files-found: error
+
+  # release-please tags a release and leaves it empty; this is what puts the
+  # executables on it. A bare workflow_dispatch builds from a branch head and
+  # names no release, so it stops after the artifacts above.
+  attach:
+    name: attach the executables to the release
+    needs: build
+    if: ${{ inputs.tag || github.ref_type == 'tag' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: sumi-*
+          path: dist
+
+      # An artifact hands the file back without its mode, so each one is
+      # installed executable under a name carrying the version and the target
+      # it answers for — a release holds all three side by side.
+      - name: Attach the executables
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          mkdir -p upload
+          for dir in dist/sumi-*; do
+            install -m 755 "$dir/sumi" "upload/sumi-${version}-${dir#dist/sumi-}"
+          done
+          ls -l upload
+          gh release upload "$TAG" upload/* --clobber

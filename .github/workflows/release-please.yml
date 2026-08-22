@@ -1,0 +1,81 @@
+name: Release Please
+
+# The version is pinned at 0.1.0 and only the preview number moves:
+# `versioning: prerelease` increments the number a version already carries
+# rather than raising major, minor or patch, and `bump-minor-pre-major` is
+# what keeps a breaking change from taking 0.x to 1.0.0 past that rule.
+# Cutting the real 0.1.0 is a `Release-As: 0.1.0` footer, not a setting.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      pr: ${{ steps.release.outputs.pr }}
+    steps:
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
+
+  # `test/version_test.rb.expected` is stdout captured byte for byte, so it
+  # carries the version literally and release-please cannot reach it: the only
+  # updater that works on an arbitrary file keys on an `x-release-please-version`
+  # annotation, and a snapshot that holds one no longer matches the run.
+  # Regenerating it on the release branch is what keeps main green after the
+  # pull request lands.
+  sync-snapshot:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.pr }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-spinel
+
+      # `--regen` runs the test under CRuby, so this needs neither the
+      # vendored sources nor a build — only the toolchain and a Ruby.
+      - name: Regenerate the version snapshot
+        run: '"$SPIN" test --regen test/version_test.rb'
+
+      # A commit authored by GITHUB_TOKEN starts no workflow run, and neither
+      # did the pull request it lands on. The run on main is what reports on
+      # the result, after the merge.
+      - name: Commit the snapshot
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          BRANCH_NAME: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
+        with:
+          script: |
+            const syncVersionSnapshot = require('./.github/scripts/sync-version-snapshot.js');
+            await syncVersionSnapshot({ github, context, core });
+
+  # Actions does not re-trigger on an event GITHUB_TOKEN authored, so the tag
+  # release-please pushes never reaches `release.yml`'s own `on: push`
+  # trigger. Calling it is what makes the release carry executables.
+  release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.release-please.outputs.tag_name }}
