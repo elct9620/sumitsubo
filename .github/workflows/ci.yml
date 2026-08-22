@@ -20,8 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # The three targets CD ships, so a platform-specific
-          # assumption fails a test rather than reaching a release.
+          # The three targets a release ships, so a platform-specific
+          # assumption fails a test rather than reaching one.
           - name: linux-x86_64
             runner: ubuntu-latest
           - name: linux-aarch64
