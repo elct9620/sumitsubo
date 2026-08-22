@@ -194,23 +194,6 @@ pattern reaches only its direct children and tree-sitter has no operator for a
 deeper one. Two constructs spanning the same lines therefore answer with no
 scope, which loses a prefix rather than inventing one.
 
-What the tree cannot see, it cannot verify, and a contract naming one of these
-is answered as undefined however plainly the code works:
-
-| Written as | Why it is missed |
-|------------|------------------|
-| `attr_reader :size` | A call, not a definition — the method exists only once it runs. |
-| `define_method(:computed)` | The same, and the name need not be a literal at all. |
-| `def_delegator :@parts, :count` | The same, through `Forwardable`. |
-| `include Helper` | `Helper#helped` is declared; `Widget#helped` never is. |
-| `def Other.oddball` | Only a receiver of `self` is read, which is what a class calls itself from inside. |
-| `def m(a); end; def m(b); end` on one line | A definition is found by its name and the line it sits on, so one line holding two of a name merges their parameters — the one place here that invents rather than loses. |
-
-The list is what one reading of one grammar reaches, not a judgement about the
-code. A project leaning on these registers the contracts it can check and
-leaves the rest unregistered, since an interface nobody registered says
-nothing.
-
 ### Behavior
 
 What this establishes is that a behavior was **read and implemented**, never
@@ -282,15 +265,6 @@ unreadable one stops the run.
 `.spec` is the default for two reasons, both about what else claims the name:
 `spec/` is RSpec's, and Spinel scans directories that do not start with a dot,
 so a specification directory without one would be swept in as source.
-
-### Features
-
-| Feature | Description                                                          |
-|---------|----------------------------------------------------------------------|
-| Init    | Lay down an empty specification to start a reference line from.      |
-| Render  | Render the structured specification into documents a person reads.   |
-| Verify  | Verify the source code is aligned with the verifiable specification. |
-| Help    | Explain how to write a specification, from the executable itself.    |
 
 ### Render
 

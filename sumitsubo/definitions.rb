@@ -267,7 +267,8 @@ module Sumitsubo
 
     # A method's name sits on the same line as `def`, so the line and the name
     # together are what tell two methods apart at the resolution the captures
-    # carry.
+    # carry. One line holding two of a name is below that resolution, and their
+    # parameters merge — the one place this reading invents rather than loses.
     def self.owner(line, name)
       "#{line}\t#{name}"
     end
