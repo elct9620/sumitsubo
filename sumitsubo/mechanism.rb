@@ -14,10 +14,10 @@ module Sumitsubo
   # executable carries when it is built, so there is no hook to register
   # through.
   #
-  # `Language` is only ever passed from here, never called: with one call site
-  # holding it as a receiver, another handing it on answered with the wrong
-  # implementation — a Ruby file read as prose, and one the grammar cannot
-  # parse read as prose rather than refused. Both silently.
+  # `Language` is handed to the mechanisms from here rather than named by
+  # them, which keeps the grammar out of their requires: their snapshots stay
+  # ones `--regen` can write, and a second language is carried without any of
+  # them being touched.
   module Mechanism
     # What a mechanism lays down to start a reference line from. A seed with no
     # content is a directory: a project keeps one specification per feature, so

@@ -124,10 +124,6 @@ module Sumitsubo
     # One finding per line, however often the word appears on it: the line is
     # what a reader goes to, and what an exclusion would one day be written
     # against.
-    #
-    # The pattern is read from the blocks below and never escapes into a
-    # stored one: a runtime Regexp in a closure cell goes unrooted under
-    # Spinel, and a collection landing before the call takes the process down.
     def self.findings_for(path, regions, name, entry)
       found = []
       pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")
