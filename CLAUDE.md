@@ -155,7 +155,8 @@ AOT compiler for Ruby. Its constraints shape the design:
   is built as strings for that reason: templates would let a project word its
   own pages, and there is no engine to move the wording to. A snapshot taken from CRuby can therefore record
   behavior the executable does not have.
-- `Pathname#join` reduces with `acc + part`, and once the accumulator loses
-  its type that `+` dispatches to String, so it answers a String. `#/` and
-  `#+` answer a Pathname on every branch, which is what the next call in a
-  chain needs.
+- `Pathname#join` does not survive being chained: a second call on a first
+  one's answer drops the part it was handed and gives the receiver back as a
+  String, so the path is silently short rather than merely untyped. `#/` and
+  `#+` answer a Pathname on every branch, which is what every path here is
+  composed with.
