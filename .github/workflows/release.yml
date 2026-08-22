@@ -117,9 +117,10 @@ jobs:
           pattern: sumi-*
           path: dist
 
-      # An artifact hands the file back without its mode, so each one is
-      # installed executable under a name carrying the version and the target
-      # it answers for — a release holds all three side by side.
+      # Neither an artifact nor a release asset carries a file mode, and a
+      # download nobody can run without a chmod is not the executable this
+      # ships. A tar carries the mode, so that is what a release holds: one
+      # per target, named for the version and the target it answers for.
       - name: Attach the executables
         env:
           GH_TOKEN: ${{ github.token }}
@@ -130,7 +131,8 @@ jobs:
           version="${TAG#v}"
           mkdir -p upload
           for dir in dist/sumi-*; do
-            install -m 755 "$dir/sumi" "upload/sumi-${version}-${dir#dist/sumi-}"
+            chmod 755 "$dir/sumi"
+            tar czf "upload/sumi-${version}-${dir#dist/sumi-}.tar.gz" -C "$dir" sumi
           done
           ls -l upload
           gh release upload "$TAG" upload/* --clobber
