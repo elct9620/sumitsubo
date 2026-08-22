@@ -2,6 +2,14 @@
 
 Where a run is configured from, and what the configuration decides.
 
+A run takes the nearest `.sumi.json` at or above where it started, which is the convention tsc and RuboCop both follow: each walks up the ancestor directories until a configuration answers.
+
+Two bases come out of that and they answer different questions. What the configuration says is read against the directory holding it, so wherever under it a run starts it reaches the same files; findings answer relative to where the run started, so a reader can go straight to one.
+
+The two switches sit in the same entry and are independent. `verify: false` keeps a specification without checking it, which a Render that only records it still needs; `render: false` keeps one out of the documents without stopping the check.
+
+`.spec` is the default because `spec/` is already RSpec's, and because a directory that does not start with a dot is one a build is liable to sweep in as source.
+
 ## C-001 — The nearest .sumi.json decides the base
 
 | Step | Statement |

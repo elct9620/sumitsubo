@@ -1,35 +1,20 @@
 Sumitsubo verifies that source code stays aligned with its specification. The
 specification is the reference line; the source code is the material.
 
-## Alignment
-
-The specification is the baseline: verification runs from specification to
-source code. Sumitsubo reports the difference and does not decide which side is
-wrong — correcting the specification is as valid an outcome as correcting the
-code.
-
-Several mechanisms establish alignment. Known so far:
-
-| Mechanism | The specification declares                                             | Verified against                |
-|-----------|------------------------------------------------------------------------|---------------------------------|
-| Glossary  | The domain vocabulary, and the words rejected in its place.            | Words a person wrote: comments, and prose.       |
-| Contract  | The interfaces it means to keep.                                        | Source code claiming an interface, or declaring one the language carries. |
-| Behavior  | Behaviors in a BDD style.                                              | Test code declaring which behavior it implements. |
-
-The set is not closed, and each mechanism takes its shape from what can
-actually be verified — see Dogfooding.
-
 ## Dogfooding
 
-Sumitsubo verifies its own specification. That specification is written as the
-verification catches up to it, never ahead of it: a specification the tool
-cannot verify is a document, not a reference line. Until a mechanism can check
-it, the absence of a specification here is deliberate.
+Sumitsubo verifies its own specification. The set of mechanisms is not
+closed, and each takes its shape from what can actually be verified. The
+specification is written as the verification catches up to it, never ahead of
+it: a specification the tool cannot verify is a document, not a reference
+line. Until a mechanism can check it, the absence of a specification here is
+deliberate.
 
 What the rule governs is a claim. A scenario asserts that a behavior was
 implemented, so writing one no mechanism can check is a promise nobody holds.
 A term that rejects nothing asserts nothing about the code — it names what the
-project means — and there is no unchecked promise in naming.
+project means — and there is no unchecked promise in naming. A note is the
+same.
 
 `.spec/behavior/` therefore arrived with the Behavior mechanism and not before,
 `.spec/contract/` with Contract, and `.spec/glossary.json` stayed empty until
@@ -53,58 +38,6 @@ out, and that is what makes it checkable. A finding there answers at a derived
 file and the fix belongs in the specification it came from. The rendered
 contract and behavior documents stay out of scope, since their source is
 already in it and two findings for one drift are noise.
-
-A rejected word carries the reason it is rejected, and that reason says why
-that word is wrong rather than why the term is right. What the term means
-belongs in its definition, which is the half a document carries.
-
-## Specification
-
-Sumitsubo reads the structured specification and checks the source code
-against the verifiable part of it. Ruby is the only language it targets.
-
-A specification that is not there is a different question, and not every
-mechanism answers it the same way. `init` lays down what each starts from, so
-a root without `glossary.json` is one something removed, and the run stops
-rather than pass an absent reference line off as agreement. `behavior/` cannot
-say the same: git carries no empty directory, so a fresh clone of a project
-that committed what `init` laid down arrives without one, and declaring no
-scenarios is what keeps every such clone from failing.
-
-## Command
-
-### Configuration
-
-`.sumi.json` says where. A run takes the nearest one at or above where it
-started; failing that the repository it sits in, failing that — with neither
-to go on — where it started. Two bases come out of this and they answer
-different questions: what the configuration says is read against that base,
-so wherever under it a run starts it reaches the same files, while findings
-answer relative to where the run started, so a reader can go straight to one.
-This is the convention tsc and RuboCop both follow.
-
-```json
-{
-  "root": ".spec",
-  "docs": "docs",
-  "specifications": { "glossary": { "verify": false } }
-}
-```
-
-`root` is where the specifications live, `.spec` by default, and `docs` is
-where Render writes, `docs` by default.
-
-`specifications` lists only the exceptions: one nobody mentions is both
-verified and rendered. The two switches sit in the same entry and are
-independent — `verify: false` keeps a specification without checking it, which
-a Render that only records it still needs, and `render: false` keeps one out of
-the documents without stopping the check. A project that has said nothing is
-not misconfigured, so an absent `.sumi.json` answers the defaults; only an
-unreadable one stops the run.
-
-`.spec` is the default for two reasons, both about what else claims the name:
-`spec/` is RSpec's, and Spinel scans directories that do not start with a dot,
-so a specification directory without one would be swept in as source.
 
 ## Comments
 
@@ -192,6 +125,8 @@ AOT compiler for Ruby. Its constraints shape the design:
 - No `eval`, `method_missing`, `define_method` with computed names,
   `ObjectSpace`, `TracePoint`, or refinements — mechanisms register themselves
   statically, not through a dynamic DSL.
+- Directories that do not start with a dot are scanned as source, which is
+  half of why `.spec` is the default specification root.
 - Dependencies are source trees compiled into the executable. Nothing loads at
   runtime, so what the executable supports is decided when it is built.
 - C is reached through FFI declarations in a package. The tree-sitter binding
