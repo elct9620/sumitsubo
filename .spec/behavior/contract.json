@@ -233,6 +233,60 @@
       ],
       "when": "the directory is read",
       "then": "each contract answers at the line declaring it"
+    },
+    {
+      "id": "T-026",
+      "title": "The prose a specification carries for its document",
+      "given": [
+        "a contract file writing notes under the kind and under one contract"
+      ],
+      "when": "the definition is rendered",
+      "then": "each note answers under the heading it hangs from"
+    },
+    {
+      "id": "T-027",
+      "title": "A heading answers relative to where its notes hang",
+      "given": [
+        "a note under a contract writing a heading at level 1"
+      ],
+      "when": "the definition is rendered",
+      "then": "the heading sits one level under the contract's own"
+    },
+    {
+      "id": "T-028",
+      "title": "Notes under an interface the project does not publish",
+      "given": [
+        "a contract marked internal writing notes of its own"
+      ],
+      "when": "the definition is rendered",
+      "then": "the document carries neither the interface nor its notes"
+    },
+    {
+      "id": "T-029",
+      "title": "A note of a kind this document has no words for",
+      "given": [
+        "a contract file writing a note whose type is none of the three"
+      ],
+      "when": "the directory is read",
+      "then": "the file is named as one that cannot be read"
+    },
+    {
+      "id": "T-030",
+      "title": "A note whose text is not lines",
+      "given": [
+        "a contract file writing a note whose text is one string"
+      ],
+      "when": "the directory is read",
+      "then": "the file is named as one that cannot be read"
+    },
+    {
+      "id": "T-031",
+      "title": "A heading deeper than a page carries",
+      "given": [
+        "a contract file writing a heading below the deepest level"
+      ],
+      "when": "the directory is read",
+      "then": "the file is named as one that cannot be read"
     }
   ]
 }

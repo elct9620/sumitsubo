@@ -32,19 +32,29 @@ Taking payment for an order.
 
 The commands the executable answers.
 
-| Contract | Description |
-| --- | --- |
-| verify | Check the source against the specification. |
+## verify
+
+Check the source against the specification.
 --- docs/contract/api.md ---
 # API
 
 The methods this package exposes.
 
-| Contract | Description |
-| --- | --- |
-| Cache.open(path, mode?) | Open the cache. |
-| Cache#close() | Close it. |
-| Cache | The cache itself. |
+## Cache.open
+
+Open the cache.
+
+`Cache.open(path, mode?)`
+
+## Cache#close
+
+Close it.
+
+`Cache#close()`
+
+## Cache
+
+The cache itself.
 --- what docs/contract holds ---
 ["docs/contract/api.md", "docs/contract/cli.md"]
 --- a second run brings the document up to date ---

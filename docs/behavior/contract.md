@@ -205,3 +205,51 @@ The interfaces a project registers, and what source claims to implement them.
 | Given | a contract file whose kind, one contract and one parameter of another are spelled alike |
 | When | the directory is read |
 | Then | each contract answers at the line declaring it |
+
+## T-026 — The prose a specification carries for its document
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract file writing notes under the kind and under one contract |
+| When | the definition is rendered |
+| Then | each note answers under the heading it hangs from |
+
+## T-027 — A heading answers relative to where its notes hang
+
+| Step | Statement |
+| --- | --- |
+| Given | a note under a contract writing a heading at level 1 |
+| When | the definition is rendered |
+| Then | the heading sits one level under the contract's own |
+
+## T-028 — Notes under an interface the project does not publish
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract marked internal writing notes of its own |
+| When | the definition is rendered |
+| Then | the document carries neither the interface nor its notes |
+
+## T-029 — A note of a kind this document has no words for
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract file writing a note whose type is none of the three |
+| When | the directory is read |
+| Then | the file is named as one that cannot be read |
+
+## T-030 — A note whose text is not lines
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract file writing a note whose text is one string |
+| When | the directory is read |
+| Then | the file is named as one that cannot be read |
+
+## T-031 — A heading deeper than a page carries
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract file writing a heading below the deepest level |
+| When | the directory is read |
+| Then | the file is named as one that cannot be read |
