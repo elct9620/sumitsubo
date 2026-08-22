@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.0-preview2](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview1...v0.1.0-preview2) (2026-08-22)
+
+
+### Features
+
+* **release:** publish the executables as an image ([2241557](https://github.com/elct9620/sumitsubo/commit/2241557c8be9a26cf4cc5612d721beb2e8d34f85))
+
+
+### Bug Fixes
+
+* **release:** hand back an executable that is still executable ([e797f9d](https://github.com/elct9620/sumitsubo/commit/e797f9df3f1a5ce7297d62a7a79b9823aa39202c))
+* **release:** let the chain hand down the registry it needs ([2a89b4f](https://github.com/elct9620/sumitsubo/commit/2a89b4fc8b402d01b6f80bb9fdb92a4f37cc6a83))
+
 ## [0.1.0-preview1](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview0...v0.1.0-preview1) (2026-08-22)
 
 
