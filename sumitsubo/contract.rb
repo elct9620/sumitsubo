@@ -32,10 +32,10 @@ module Sumitsubo
 
     class Error < Sumitsubo::Error; end
 
-    # The kind a parameter carries when the specification names none. It is
-    # the only one of these words this file knows, and it knows it as the value
-    # to fill in — so a reading answers `positional` for the parameter its
-    # language writes plainly, whatever that language calls the rest.
+    # The kind a parameter carries when the specification names none, and the
+    # one kind word this tool owns rather than borrows: it names the parameter
+    # a caller writes with no marking of any sort, which every language has one
+    # of. A reading answers it for that parameter and names the rest itself.
     POSITIONAL = "positional"
 
     # One parameter a contract registers. The kind is carried as text and

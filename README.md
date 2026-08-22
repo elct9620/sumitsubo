@@ -174,9 +174,10 @@ parameter the language lets go unnamed registers a kind alone.
 }
 ```
 
-The kind words are the language's own. Sumitsubo compares them as text without
-knowing what any of them means, so a specification writes the words its own
-language uses. A marker names no language: a claim is a claim in whatever the
+`positional` is the one kind word Sumitsubo owns — the parameter a caller
+writes with no marking of any sort, which every language has one of, and what
+`kind` defaults to. Every other kind word is the language's own, compared as
+text without knowing what any of them means. A marker names no language: a claim is a claim in whatever the
 file is written in, and naming both — or neither — is a specification that
 cannot be read rather than a difference to report. So is a language this build
 was not given.

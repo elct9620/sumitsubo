@@ -92,10 +92,15 @@
     {
       "type": "paragraph",
       "text": [
-        "The kind words a parameter carries are the language's own, and they",
-        "live in the reading that answers them. Contract compares them as",
-        "text without learning what any of them means, so a specification",
-        "writes the words its own language uses."
+        "`positional` is the one kind word this tool owns. It names the",
+        "parameter a caller writes with no marking of any sort, which every",
+        "language has one of, and it is what a contract leaving `kind` out",
+        "is compared as — so a reading answers it for that parameter and",
+        "names the rest itself.",
+        "Every other kind word belongs to the language and lives in the",
+        "reading that answers it. Contract compares them as text without",
+        "learning what any of them means, so a specification writes the",
+        "words its own language uses."
       ]
     },
     {

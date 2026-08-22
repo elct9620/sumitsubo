@@ -164,13 +164,17 @@ module Sumitsubo
             definition takes.
 
             A parameter is what it is called, its `kind`, and whether a caller
-            may leave it out. `kind` defaults to `positional`, and a parameter
-            the language lets go unnamed registers a kind alone. The kind words
-            are each language's own, compared as text:
+            may leave it out. A parameter the language lets go unnamed registers
+            a kind alone.
 
-                ruby  positional  keyword  splat  hash_splat  block
-                      destructured  forward
-                rust  positional  self
+            `positional` is the one kind word sumi owns: it names the parameter
+            a caller writes with no marking of any sort, which every language
+            has, and it is what `kind` defaults to when a contract leaves it
+            out. Every other kind word belongs to the language and is compared
+            as text, sumi knowing nothing of what it means:
+
+                ruby  keyword  splat  hash_splat  block  destructured  forward
+                rust  self
 
             A contract registering parameters is compared against them entire;
             one registering none asks for none to be compared. In a finding the

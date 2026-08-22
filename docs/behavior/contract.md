@@ -22,7 +22,7 @@ Which is why a method defined twice said nothing while only names were compared:
 
 A shape half-registered would let the rest drift, which is why a registered shape is compared entire and an unregistered one asks for nothing. Where the definitions disagree among themselves the contract is not also compared against one of them: two entrances are already the answer.
 
-The kind words a parameter carries are the language's own, and they live in the reading that answers them. Contract compares them as text without learning what any of them means, so a specification writes the words its own language uses.
+`positional` is the one kind word this tool owns. It names the parameter a caller writes with no marking of any sort, which every language has one of, and it is what a contract leaving `kind` out is compared as — so a reading answers it for that parameter and names the rest itself. Every other kind word belongs to the language and lives in the reading that answers it. Contract compares them as text without learning what any of them means, so a specification writes the words its own language uses.
 
 `internal` is a fact about the interface rather than a preference about pages, which is what separates it from a configuration switching a whole specification off.
 
