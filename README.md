@@ -21,7 +21,52 @@ whatever else is prose.
 
 ## Installation
 
-Not published yet — build from source, see [Development](#development).
+<!-- x-release-please-start-version -->
+
+Every [release](https://github.com/elct9620/sumitsubo/releases) carries one
+executable per target, as a tarball because that is what keeps the file mode:
+
+```console
+$ version=0.1.0-preview2 target=macos-aarch64
+$ curl -sSL "https://github.com/elct9620/sumitsubo/releases/download/v$version/sumi-$version-$target.tar.gz" | tar xz
+$ ./sumi -v
+```
+
+The targets are `linux-x86_64`, `linux-aarch64` and `macos-aarch64`. The Linux
+executables ask the host for glibc 2.34 or newer — Ubuntu 22.04, Debian 12 and
+RHEL 9 onward. Anything older, and anything that is not one of these three,
+reaches `sumi` through the image instead.
+
+### Docker
+
+The image holds the same executable a release ships, so it is a way to run
+`sumi` rather than a different tool. Windows has no executable of its own here,
+and this is the way in:
+
+```console
+$ docker run --rm -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview2 verify
+```
+
+It is built `FROM scratch` and carries the executable, the glibc loader, and
+the libraries it names — no shell, no package manager, nothing else. What the
+image weighs is what the executable weighs, plus the few megabytes glibc costs.
+`/work` is where a run starts, so the tree to check is what gets mounted there.
+
+`init` and `render` write into that tree, and a container writing as `root`
+leaves files behind that the person who ran it does not own. On Linux, say who
+you are:
+
+```console
+$ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview2 render
+```
+
+Docker Desktop maps ownership back to whoever is running it, so on macOS and
+Windows the flag changes nothing and PowerShell spells the mount
+`-v ${PWD}:/work`.
+
+<!-- x-release-please-end -->
+
+To build from source instead, see [Development](#development).
 
 ## Usage
 

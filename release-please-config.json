@@ -8,7 +8,10 @@
       "versioning": "prerelease",
       "prerelease": true,
       "prerelease-type": "preview",
-      "bump-minor-pre-major": true
+      "bump-minor-pre-major": true,
+      "extra-files": [
+        "README.md"
+      ]
     }
   }
 }
