@@ -149,6 +149,10 @@ AOT compiler for Ruby. Its constraints shape the design:
   provide: json, csv, erb, set, strscan, stringio, pathname, optparse, digest,
   base64, forwardable, prelude. Structured specifications are JSON for that
   reason; YAML is a direction, not a capability.
+- `spin` compiles with the compiler's require gate on, so a file naming one of
+  those packages requires it first and a require nothing can satisfy fails the
+  build. That is what keeps a source file reading the same here as under the
+  CRuby run that takes a snapshot.
 - Those packages are Spinel's own implementations, and some are subsets:
   optparse drops option descriptions from `to_s` and lets an unknown flag
   through instead of raising, and `erb` answers a template unchanged. Rendering
