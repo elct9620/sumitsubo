@@ -121,8 +121,11 @@ The command is `sumi`, shipped as a single native executable.
 - `.claude/hooks/` holds this repository to the same promises inside a
   session: one renders the documents after any tool call that could have moved
   the specification, the other runs the suite before a turn is allowed to end.
-- Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows has no
-  entry — the Spinel runtime depends on POSIX structurally.
+- Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows gets no
+  executable — the Spinel runtime depends on POSIX structurally — and reaches
+  the tool through the image instead. That image compiles nothing: it holds a
+  Linux executable a release already built, which is what keeps one build path
+  answering for both ways of shipping.
 
 ## Compiler
 
