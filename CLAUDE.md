@@ -139,7 +139,9 @@ AOT compiler for Ruby. Its constraints shape the design:
   compiling its C a second time as part of this application, since a package
   is scanned for the `.c` it carries. The runtime and the grammars are the
   application's to link in, which is why a grammar it does not carry fails at
-  link time rather than at run time.
+  link time rather than at run time. Nothing outside `sumitsubo/language/`
+  reaches the binding, and only `bin/sumi.rb` decides which of what is linked
+  in a build actually answers.
 - `Exception#backtrace` and `Kernel#caller` return empty arrays, so an error
   carries whatever context it needs by itself.
 - String literals are frozen by default.

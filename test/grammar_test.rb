@@ -3,7 +3,7 @@
 # This test crosses into the binding, so it can never be regenerated: `spin test
 # --regen` produces its snapshot by running the file under CRuby, which has no
 # ffi_func. The snapshot below is written by hand and stays that way.
-require "sumitsubo/grammar"
+require "sumitsubo/language/grammar"
 
 SOURCE = "# A Customer is billed here.\n" \
          "class Charge\n" \

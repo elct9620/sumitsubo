@@ -1,5 +1,5 @@
 require "sumitsubo/error"
-require "sumitsubo/grammar"
+require "sumitsubo/language/grammar"
 require "sumitsubo/definitions"
 
 module Sumitsubo
