@@ -46,6 +46,11 @@
           ]
         },
         {
+          "term": "Language",
+          "definition": "How a file is read for what a person put in it, and how the names it declares are spelled. A file is offered to each in turn and the first one claiming it answers, which is how comments are found without anyone saying what the file is written in; a name, though, is spelled the way one language spells it, so a specification registering names says which it means. What a build carries is decided when it is built.",
+          "not": []
+        },
+        {
           "term": "Contract",
           "definition": "An interface a project registers as one it means to keep, found in the source that implements it. Source claims one in a comment where no construct of the language points at it, and declares it outright where one does.",
           "not": []
