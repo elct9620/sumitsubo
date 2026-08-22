@@ -2,6 +2,14 @@
 
 Checking the source against the verifiable part of the specification, and answering what was found.
 
+The reader is an agent working in the codebase, with a person reading over its shoulder. Findings answer as `path:line` relative to where the run started, one per line, sorted on a key that leaves no ties.
+
+One finding per line however often the word appears on it: the line is what a reader goes to, and what an exclusion would one day be written against.
+
+The three words a 2 stands for — absent, unreadable, ambiguous — are a list that grows with every mechanism. A mechanism that could not be read stops that mechanism and no other, the way a linter reports every file it managed to parse, and arguments the run cannot act on answer the same 2: a run that compared nothing has nothing to certify.
+
+Findings and failures share one stream, so whoever reads them reads them in the order they happened.
+
 ## V-001 — Code that drifted from its glossary
 
 | Step | Statement |

@@ -2,6 +2,14 @@
 
 Rendering the structured specification into documents a person reads.
 
+A document carries what the specification means, not what the tool needs in order to find things. The words a glossary rejects stay out, because they record where a project drifted rather than what its vocabulary is, and a reader is handed one at the line it was tripped on instead. The `include` globs stay out for the same reason, and a contract's marker with them: they say where to look and what to look for.
+
+Notes are the other half of that sentence. They are what a specification means and nothing the tool finds things by, so they are rendered whole — and they are a document rather than a reference line, which is what lets a worked example live in one and be compared against nothing.
+
+A document is derived, so a run replaces what the last one wrote. What `init` refuses to overwrite is a reference line, and this is not one.
+
+An absent specification is nothing to render rather than a comparison that could not be made, so it is passed over in silence. Render records where Verify certifies, and the run that would otherwise pass an absent reference line off as agreement is `verify`, which still stops.
+
 ## R-001 — The vocabulary becomes a document
 
 | Step | Statement |

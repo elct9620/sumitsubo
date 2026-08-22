@@ -106,60 +106,6 @@ unreadable one stops the run.
 `spec/` is RSpec's, and Spinel scans directories that do not start with a dot,
 so a specification directory without one would be swept in as source.
 
-### Render
-
-Render writes the structured specification out as something a person reads:
-`glossary.md` under the documents path, one file per kind of contract under
-`contract/`, and one file per feature under `behavior/`, each named after the
-file declaring it.
-
-A document carries what the specification means, not what the tool needs in
-order to find things. A glossary renders its terms and their definitions; the
-words it rejects stay out, because they record where this project drifted
-rather than what the vocabulary is, and a reader is handed one at the line it
-was tripped on instead. The `include` globs stay out for the same reason, and a
-contract's marker with them: they say where to look and what to look for.
-Structured fields become tables, and a scenario is sentences rather than
-fields, so its table carries one step per row.
-
-A document is derived, so a run replaces what the last one wrote. What `init`
-refuses to overwrite is a reference line, and this is not one.
-
-An absent specification is nothing to render rather than a comparison that
-could not be made, so it is passed over in silence. Render records where Verify
-certifies, and the run that would otherwise pass an absent reference line off
-as agreement is `verify`, which still stops.
-
-Templates are the obvious way to word these pages, and would let a project word
-its own. Spinel's `erb` is a placeholder that answers the template unchanged,
-so the wording is built in the mechanism and stays there until there is an
-engine to move it to.
-
-### Output
-
-The reader is an agent working in the codebase, with a person reading over its
-shoulder. Findings answer as `path:line`, relative to where the run started,
-one per line and sorted on a key that leaves no ties. One finding per line
-however often the word appears on it: the line is what a reader goes to, and
-what an exclusion would one day be written against.
-
-The run answers 0 where the two sides agree, 1 where they differ, and 2 where
-the comparison could not be made — whatever had to be read first was absent,
-unreadable, or ambiguous — three words standing in for a list that grows with
-every mechanism. A difference is a finding about the code; being unable to
-compare is not, and an operator branches on which it got. A run with both
-answers 2: it says everything it found either way, and the answer is what
-refuses to certify it. A mechanism that could not be read stops that mechanism
-and no other, the way a linter reports every file it managed to parse.
-Arguments the run cannot act on answer the same 2, since a run that compared
-nothing has nothing to certify.
-Findings and failures share stdout, the test harness comparing the two streams
-merged.
-
-Render reads the same ladder one rung short. It compares nothing, so it never
-answers 1, and its 0 says every document it had to write is written. What it
-could not read answers 2 as everywhere else.
-
 ## Comments
 
 The code says what it does; a comment says why it is that way — the intent it
@@ -263,7 +209,9 @@ AOT compiler for Ruby. Its constraints shape the design:
   reason; YAML is a direction, not a capability.
 - Those packages are Spinel's own implementations, and some are subsets:
   optparse drops option descriptions from `to_s` and lets an unknown flag
-  through instead of raising. A snapshot taken from CRuby can therefore record
+  through instead of raising, and `erb` answers a template unchanged. Rendering
+  is built as strings for that reason: templates would let a project word its
+  own pages, and there is no engine to move the wording to. A snapshot taken from CRuby can therefore record
   behavior the executable does not have.
 - `Pathname#join` reduces with `acc + part`, and once the accumulator loses
   its type that `+` dispatches to String, so it answers a String. `#/` and
