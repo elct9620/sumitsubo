@@ -25,8 +25,10 @@ comment the project holds.
 ## Vocabulary
 
 The vocabulary lives in `.spec/glossary.json`, checked against this file, the
-contract and behavior specifications, the comments under `sumitsubo/`, and
-`docs/glossary.md`.
+contract and behavior specifications, the comments under `sumitsubo/` and in
+`test/*.rb`, and `docs/glossary.md`. A specification is checked at its source,
+which is where a finding's fix belongs; the fixtures are left out, since what
+they carry is deliberately wrong.
 A term earns a rejected word when the project has actually drifted on it; the
 rest name what the project means and reject nothing, which the tool carries
 without checking.
