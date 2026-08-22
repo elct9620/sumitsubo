@@ -175,6 +175,34 @@ module Sumitsubo
             of is the document. A kind whose every interface is internal renders
             no page.
 
+        Notes
+            `"notes"` is the prose a specification carries for its document
+            alone. A structured field says what a project declares; nothing in
+            one says why the declaration is right, and that is the half this
+            holds. Nothing compares it against source.
+
+            Notes sit under the kind and under each contract:
+
+              "notes": [
+                { "type": "paragraph",
+                  "text": ["The store keeps one entry per key.",
+                           "Nothing here says how it is stored."] },
+                { "type": "heading", "level": 1, "text": ["Example"] },
+                { "type": "code", "language": "ruby",
+                  "text": ["store = Store.open(path)"] }
+              ]
+
+            A block is a `heading`, a `paragraph`, or a `code` fence, and its
+            text is written as lines. They close up by kind - prose with
+            spaces, code with newlines - so a paragraph reworded a word at a
+            time shows which sentence moved.
+
+            A heading's `level` counts from what its notes hang under rather
+            than from the top of the page: 1 is one level in. It defaults to 1
+            and goes no deeper than 4.
+
+            An internal interface takes its notes out of the document with it.
+
         include
             With a marker it narrows the search: the union of every file covered
             is scanned, so a claim written somewhere unexpected is still found -
@@ -216,6 +244,11 @@ module Sumitsubo
             .spec/contract/routes.json names GET /users/:id, which no Ruby definition can be; sumi help contract has the two readings   (exit 2)
                 The file registers a name only the marker reading could resolve
                 and names no marker. Usually a marker that went missing.
+
+            .spec/contract/api.json writes a note of type quote, which is none this document has   (exit 2)
+                A note whose type is not one of the three, whose text is not
+                lines, or whose heading sits deeper than 4, is a specification
+                that could not be read.
 
         What the reading cannot see
             The syntax tree reading finds a definition by its name in the tree.
@@ -281,6 +314,25 @@ module Sumitsubo
 
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.
+
+        Notes
+            `"notes"` is the prose a feature carries for its document alone -
+            why these scenarios are the right ones, which no mechanism can
+            check. It hangs from the feature and not from a scenario, whose
+            reason belongs to its title.
+
+              "notes": [
+                { "type": "heading", "level": 1, "text": ["Why these are read"] },
+                { "type": "paragraph",
+                  "text": ["A scenario asserts a behavior was implemented.",
+                           "Whether the code under it is right is not read."] }
+              ]
+
+            A block is a `heading`, a `paragraph`, or a `code` fence, and its
+            text is written as lines. They close up by kind - prose with
+            spaces, code with newlines. A heading's `level` counts from what
+            its notes hang under: 1 is one level in, and 4 is as deep as it
+            goes. `sumi help contract` has the same form.
 
         Claiming
             Source claims a scenario in the comment in front of the code
