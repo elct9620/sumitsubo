@@ -68,19 +68,47 @@ module Sumitsubo
       []
     end
 
-    # The names this file declares. A language with no declarations to read
-    # says so by answering none, which is how anything but source is passed
-    # over without a caller having to ask what it was.
-    def self.declarations_in(path, where)
+    # The names this file declares, read as the language named. A name is
+    # spelled the way one language spells it and two of them can spell one
+    # name differently, so which reads the file is the specification's to say
+    # rather than the filename's to imply.
+    def self.declarations_in(path, where, language)
       file = Pathname.new(path)
       index = 0
       while index < ALL.length
-        language = ALL[index]
-        return language.declarations_in(file, where) if language.reads?(file)
+        reading = ALL[index]
+        return reading.declarations_in(file, where) if reading.named?(language)
 
         index += 1
       end
       []
+    end
+
+    # Whether this build carries the language a specification named. What an
+    # executable can read is decided when it is built, so a name it does not
+    # answer to is a run that cannot compare rather than one that guesses.
+    def self.carries?(language)
+      index = 0
+      while index < ALL.length
+        return true if ALL[index].named?(language)
+
+        index += 1
+      end
+      false
+    end
+
+    # Whether a definition written in that language could carry this name.
+    # A shape judgement and nothing more: it says the name is spellable there,
+    # never that anything defines it.
+    def self.definable?(language, name)
+      index = 0
+      while index < ALL.length
+        reading = ALL[index]
+        return reading.definable?(name) if reading.named?(language)
+
+        index += 1
+      end
+      false
     end
   end
 end

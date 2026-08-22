@@ -9,6 +9,25 @@ require "sumitsubo/contract"
 
 FIXTURE = "test/fixtures/contract"
 
+# The languages arrive from outside, and a stand-in is what keeps the grammar
+# out of this file's requires. What the loader needs of one is which names it
+# carries and which of them could spell a given name; the spelling rule a
+# language actually uses is that language's to pin, so this one holds only
+# enough to tell a method from the way a route is written.
+module Spelling
+  def self.carries?(language)
+    language == "ruby"
+  end
+
+  def self.definable?(language, name)
+    carries?(language) && !name.include?(" ")
+  end
+end
+
+def loaded(directory)
+  Sumitsubo::Contract.load(directory, Spelling)
+end
+
 def claim(path, line, keyword, name)
   Sumitsubo::Contract::Claim.new(path, line, keyword, name)
 end
@@ -21,7 +40,7 @@ end
 
 # @behavior T-001
 puts "--- what the directory registers, and where ---"
-definitions = Sumitsubo::Contract.load("#{FIXTURE}/.spec/contract")
+definitions = loaded("#{FIXTURE}/.spec/contract")
 definitions.each do |definition|
   puts "#{definition.name} #{definition.marker} #{definition.includes.inspect}"
   definition.interfaces.each do |interface|
@@ -39,36 +58,46 @@ puts Sumitsubo::Contract.scope(definitions, Pathname.new(FIXTURE)).inspect
 
 # @behavior T-002
 puts "--- a directory nobody wrote registers no contracts ---"
-p Sumitsubo::Contract.load("#{FIXTURE}/.spec/absent")
+p loaded("#{FIXTURE}/.spec/absent")
 
 # The marker is the namespace, so one name may sit under two of them.
 # @behavior T-004
 puts "--- the same name under two markers is two contracts ---"
-p Sumitsubo::Contract.load("#{FIXTURE}/shared").length
+p loaded("#{FIXTURE}/shared").length
 
 # @behavior T-005
 puts "--- one name twice under one marker leaves a claim nothing to resolve to ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/duplicate") }
+fails { loaded("#{FIXTURE}/duplicate") }
 
 # @behavior T-006
 puts "--- a contract with no name cannot be claimed at all ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/nameless") }
+fails { loaded("#{FIXTURE}/nameless") }
 
 # A marker is what a route needs because nothing in Ruby points at one. A
 # definition naming none is read from the syntax tree instead.
 # @behavior T-007
 puts "--- a definition with no marker is read from the syntax tree ---"
-p Sumitsubo::Contract.defined(Sumitsubo::Contract.load("#{FIXTURE}/nomarker")).length
+p Sumitsubo::Contract.defined(loaded("#{FIXTURE}/nomarker")).length
 
 # The syntax tree reading shares one namespace, so a name twice in it is the
 # same ambiguity — said without a marker in front of it.
 # @behavior T-017
 puts "--- one name twice with no marker ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/twice") }
+fails { loaded("#{FIXTURE}/twice") }
 
+# A shape judgement and nothing more: the name is one that language cannot
+# spell, which is a specification to fix rather than a difference to report.
 # @behavior T-015
-puts "--- a contract no Ruby definition can be ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/unresolvable") }
+puts "--- a contract the named language cannot spell ---"
+fails { loaded("#{FIXTURE}/unresolvable") }
+
+# `include` says which files, never what they are written in, so the reading
+# that spells names says which language spells them.
+# @behavior T-032 T-033 T-034
+puts "--- a definition that says neither how to spell nor how to claim ---"
+fails { loaded("#{FIXTURE}/unsaid") }
+fails { loaded("#{FIXTURE}/unknown") }
+fails { loaded("#{FIXTURE}/both") }
 
 # `Store.open` is registered as internal and answers here all the same: what
 # internal keeps it out of is the document, not the comparison.
@@ -76,14 +105,14 @@ fails { Sumitsubo::Contract.load("#{FIXTURE}/unresolvable") }
 puts "--- an interface the syntax tree does not define ---"
 Declared = Struct.new(:path, :line, :name, :params)
 Sumitsubo::Contract.undefined(
-  Sumitsubo::Contract.load("#{FIXTURE}/nomarker"), [Declared.new("src/commands.rb", 3, "init", [])]
+  loaded("#{FIXTURE}/nomarker"), [Declared.new("src/commands.rb", 3, "init", [])]
 ).each do |finding|
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
 
 # @behavior T-008
 puts "--- and neither is a specification that will not parse ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/broken") }
+fails { loaded("#{FIXTURE}/broken") }
 
 claims = [
   claim("src/commands.rb", 3, "@command", "verify"),
@@ -125,7 +154,7 @@ def declares(line, name, params)
   Declared.new("src/store.rb", line, name, params)
 end
 
-registered = Sumitsubo::Contract.load("#{FIXTURE}/params")
+registered = loaded("#{FIXTURE}/params")
 
 # A kind nobody named is the one a bare name says, and `Store#touch` registers
 # no shape at all — which is not the same as `Store#write` registering that it
@@ -168,7 +197,7 @@ end
 # under a marker would be a promise nobody holds.
 # @behavior T-024
 puts "--- parameters registered under a marker ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/marked") }
+fails { loaded("#{FIXTURE}/marked") }
 
 # `"name"` names three things here: the kind, each contract, and each
 # parameter. `loose` is spelled the same as a parameter of the contract before
@@ -176,7 +205,7 @@ fails { Sumitsubo::Contract.load("#{FIXTURE}/marked") }
 # than at the first one carrying the word.
 # @behavior T-025
 puts "--- a name the specification uses at more than one depth ---"
-Sumitsubo::Contract.load("#{FIXTURE}/collide")[0].interfaces.each do |interface|
+loaded("#{FIXTURE}/collide")[0].interfaces.each do |interface|
   puts "  #{interface.path}:#{interface.line} #{interface.name}"
 end
 
@@ -185,18 +214,18 @@ end
 # notes leave with it.
 # @behavior T-026 T-027 T-028
 puts "--- the prose a specification carries for its document ---"
-puts Sumitsubo::Contract.render(Sumitsubo::Contract.load("#{FIXTURE}/noted")[0])
+puts Sumitsubo::Contract.render(loaded("#{FIXTURE}/noted")[0])
 
 # The three refusals a note can raise. Each is a specification the mechanism
 # could not read rather than a difference about the code.
 # @behavior T-029
 puts "--- a note of a kind this document has no words for ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/badtype") }
+fails { loaded("#{FIXTURE}/badtype") }
 
 # @behavior T-030
 puts "--- a note whose text is not lines ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/badtext") }
+fails { loaded("#{FIXTURE}/badtext") }
 
 # @behavior T-031
 puts "--- a heading deeper than a page carries ---"
-fails { Sumitsubo::Contract.load("#{FIXTURE}/baddepth") }
+fails { loaded("#{FIXTURE}/baddepth") }

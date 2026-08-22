@@ -29,13 +29,6 @@ module Sumitsubo
     # specification that declares it.
     NAME = /"name"\s*:\s*"([^"]*)"/
 
-    # A constant path, and a method name. What the check exists for is a file
-    # that meant to register routes and lost its marker: read as Ruby, every
-    # one of its names would answer as undefined, which is a finding about the
-    # code where the truth is a specification that cannot be read.
-    CONSTANT = /\A[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)*\z/
-    METHOD = /\A([A-Za-z_][A-Za-z0-9_]*[?!=]?|\[\]=?|[<>=!+\-*\/%&|^~]+)\z/
-
     class Error < Sumitsubo::Error; end
 
     # The kind a parameter carries when the specification names none. It is
@@ -45,9 +38,8 @@ module Sumitsubo
 
     # One parameter a contract registers. The kind is carried as text and
     # never read: what these words mean belongs to the reading that answers
-    # them, which is what lets a specification stay silent about the language
-    # it is about — it speaks whatever the reading of its included files
-    # speaks.
+    # them, so a specification writes the words its language uses and this
+    # file learns none of them.
     Param = Struct.new(:name, :kind, :optional)
 
     # An interface is internal when the project means to keep it but not to
@@ -62,7 +54,13 @@ module Sumitsubo
     # A file's worth of contracts. The marker is the word source claims them
     # with, and two files may name the same one: a project splitting its routes
     # across files is registering more of one kind, not a second kind.
-    Definition = Struct.new(:name, :description, :marker, :includes, :interfaces, :path, :notes)
+    #
+    # The language is what the other reading is written in, and only that
+    # reading carries one: a claim is a claim in whatever the file is written
+    # in, while a name is spelled the way one language spells it.
+    Definition = Struct.new(
+      :name, :description, :marker, :language, :includes, :interfaces, :path, :notes
+    )
     # An interface its reading did not find. The scope is carried so the finding
     # says where it looked rather than that nothing implements it anywhere, and
     # the marker so it can say the word to claim it with. The syntax tree
@@ -85,12 +83,12 @@ module Sumitsubo
     # Every definition the directory holds. A directory nobody wrote registers
     # no contracts, and a project that has said nothing is not misconfigured,
     # so that answers empty rather than failing.
-    def self.load(directory)
+    def self.load(directory, languages)
       path = Pathname.new(directory)
       return [] unless path.directory?
 
       definitions = []
-      files_in(path).each { |file| definitions.push(definition_from(file)) }
+      files_in(path).each { |file| definitions.push(definition_from(file, languages)) }
       refuse_ambiguity(definitions)
       definitions
     end
@@ -391,7 +389,7 @@ module Sumitsubo
       "#{Pathname.new(definition.path).basename(".json")}"
     end
 
-    def self.definition_from(path)
+    def self.definition_from(path, languages)
       text = File.read(path)
       document = parse(path, text)
       # `"name"` is a key this specification uses at three depths — the kind's
@@ -407,6 +405,7 @@ module Sumitsubo
       # A definition naming no marker is read from the syntax tree, so there is
       # no word to look for and none is needed.
       marker = document["marker"]
+      language = language_of(path, document, marker, languages)
 
       interfaces = []
       (document["contracts"] || []).each do |raw|
@@ -416,9 +415,9 @@ module Sumitsubo
                        "sumi help contract has the form"
         end
 
-        if marker.nil? && !resolvable?(name)
-          raise Error, "#{Where.of(path)} names #{name}, which no Ruby definition can be; " \
-                       "sumi help contract has the two readings"
+        if marker.nil? && !languages.definable?(language, name)
+          raise Error, "#{Where.of(path)} names #{name}, which no #{language} definition " \
+                       "can be spelled; sumi help contract has the two readings"
         end
 
         # Only the syntax tree answers what a definition takes. Parameters
@@ -446,11 +445,37 @@ module Sumitsubo
         document["name"],
         document["description"],
         marker,
+        language,
         document["include"] || [],
         interfaces,
         path,
         Note.all_in(path, document["notes"], "contract")
       )
+    end
+
+    # The language the syntax tree reading is written in. `include` says which
+    # files a reading reaches and never what they are written in — a generated
+    # file may carry one language under an extension nobody knows — so a
+    # definition read that way says which, and one read through a marker has
+    # nothing to say it about.
+    def self.language_of(path, document, marker, languages)
+      named = document["language"]
+      unless marker.nil?
+        return nil if named.nil?
+
+        raise Error, "#{Where.of(path)} names both a marker and a language, " \
+                     "and a claim is a claim in whatever the file is written in; " \
+                     "sumi help contract has the two readings"
+      end
+
+      if named.nil?
+        raise Error, "#{Where.of(path)} names no marker and no language, " \
+                     "so nothing says how to spell what it registers; " \
+                     "sumi help contract has the two readings"
+      end
+      return named if languages.carries?(named)
+
+      raise Error, "#{Where.of(path)} names #{named}, which this sumi does not carry"
     end
 
     # The marker is the namespace, so two files may share one word and one
@@ -555,23 +580,9 @@ module Sumitsubo
       registered
     end
 
-    # Whether the syntax tree reading could ever answer this name: a constant
-    # path, a method, or one qualified by the other.
-    def self.resolvable?(name)
-      at = name.index("#")
-      at = name.index(".") if at.nil?
-      return named?(CONSTANT, name) || named?(METHOD, name) if at.nil?
-
-      named?(CONSTANT, "#{name[0, at]}") && named?(METHOD, "#{name[(at + 1)..-1]}")
-    end
-
-    def self.named?(pattern, text)
-      !pattern.match(text).nil?
-    end
-
     # What a claim resolves against. The marker is part of it because it is the
     # namespace: `@command verify` and `@route verify` name different things.
-    # The syntax tree reading has one namespace, Ruby's, which is what a
+    # The syntax tree reading has one namespace, the source's, which is what a
     # definition naming no marker shares with every other one.
     def self.key(marker, name)
       "#{marker} #{name}"

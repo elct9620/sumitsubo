@@ -124,13 +124,20 @@ module Sumitsubo
             a name need not be a Ruby name at all.
 
             WITHOUT ONE, the interfaces are read from the syntax tree and
-            nothing is written in front of the code. The name is how Ruby spells
-            it: `.` for a singleton method, `#` for an instance one, a bare path
-            for a class or module.
+            nothing is written in front of the code. The name is how that
+            language spells it - in Ruby, `.` for a singleton method, `#` for an
+            instance one, a bare path for a class or module.
+
+            Such a file names its `language`. `include` says which files a
+            reading reaches and never what they are written in, and a name is
+            spelled the way one language spells it, so the file says which
+            rather than leaving the filename to imply it. A marker needs none:
+            a claim is a claim in whatever the file is written in.
 
             {
               "name": "Internal seams",
               "description": "The places this project keeps to one shape.",
+              "language": "ruby",
               "include": ["lib/**/*.rb"],
               "contracts": [
                 {
@@ -241,9 +248,13 @@ module Sumitsubo
                 A claim nothing registers is a comparison that could not be made
                 rather than a difference. Usually a renamed name.
 
-            .spec/contract/routes.json names GET /users/:id, which no Ruby definition can be; sumi help contract has the two readings   (exit 2)
-                The file registers a name only the marker reading could resolve
-                and names no marker. Usually a marker that went missing.
+            .spec/contract/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings   (exit 2)
+                The file registers a name the language it named cannot spell.
+                Usually a marker that went missing.
+
+            .spec/contract/seams.json names no marker and no language, so nothing says how to spell what it registers; sumi help contract has the two readings   (exit 2)
+                One of the two has to be there: the marker says a claim carries
+                the name, and the language says how a definition spells it.
 
             .spec/contract/api.json writes a note of type quote, which is none this document has   (exit 2)
                 A note whose type is not one of the three, whose text is not

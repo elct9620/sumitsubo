@@ -22,8 +22,12 @@ test/fixtures/contract/nameless/cli.json declares a contract with no "name"; sum
 1
 --- one name twice with no marker ---
 Store.open is declared twice, at test/fixtures/contract/twice/one.json:1 and test/fixtures/contract/twice/two.json:1
---- a contract no Ruby definition can be ---
-test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no Ruby definition can be; sumi help contract has the two readings
+--- a contract the named language cannot spell ---
+test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings
+--- a definition that says neither how to spell nor how to claim ---
+test/fixtures/contract/unsaid/seams.json names no marker and no language, so nothing says how to spell what it registers; sumi help contract has the two readings
+test/fixtures/contract/unknown/seams.json names cobol, which this sumi does not carry
+test/fixtures/contract/both/routes.json names both a marker and a language, and a claim is a claim in whatever the file is written in; sumi help contract has the two readings
 --- an interface the syntax tree does not define ---
 test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere in src/*.rb, and a method made by a call or mixed in never is
 test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/*.rb, and a method made by a call or mixed in never is

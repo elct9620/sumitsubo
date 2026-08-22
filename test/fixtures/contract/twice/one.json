@@ -1,1 +1,1 @@
-{ "name": "One", "include": ["src/*.rb"], "contracts": [{ "name": "Store.open" }] }
+{ "language": "ruby", "name": "One", "include": ["src/*.rb"], "contracts": [{ "name": "Store.open" }] }

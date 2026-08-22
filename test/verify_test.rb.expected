@@ -46,8 +46,8 @@ src/store.rb:6 Store#read takes (key) here and (key, default) at src/store.rb:16
 src/store.rb:16 Store#read takes (key, default) here and (key) at src/store.rb:6
 3 differences
 exit=1
---- a contract naming no marker and nothing Ruby can define ---
-.spec/contract/routes.json names GET /users/:id, which no Ruby definition can be; sumi help contract has the two readings
+--- a contract the language it named cannot spell ---
+.spec/contract/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings
 0 differences
 exit=2
 --- no specification at all ---

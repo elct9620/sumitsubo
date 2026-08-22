@@ -1,5 +1,6 @@
 {
   "name": "Internal seams",
+  "language": "ruby",
   "description": "The places this project keeps to one implementation, and means to go on keeping.",
   "include": [
     "sumitsubo/**/*.rb"
@@ -79,7 +80,7 @@
     },
     {
       "name": "Sumitsubo::Language.declarations_in",
-      "description": "The reading of what a piece of source declares, for a file whose language has declarations to read.",
+      "description": "The reading of what a piece of source declares, as the language a specification named.",
       "internal": true,
       "params": [
         {
@@ -87,6 +88,32 @@
         },
         {
           "name": "where"
+        },
+        {
+          "name": "language"
+        }
+      ]
+    },
+    {
+      "name": "Sumitsubo::Language.carries?",
+      "description": "The one place a run answers whether this build reads the language a specification named.",
+      "internal": true,
+      "params": [
+        {
+          "name": "language"
+        }
+      ]
+    },
+    {
+      "name": "Sumitsubo::Language.definable?",
+      "description": "The one place a name is judged against how a language spells what it defines.",
+      "internal": true,
+      "params": [
+        {
+          "name": "language"
+        },
+        {
+          "name": "name"
         }
       ]
     },

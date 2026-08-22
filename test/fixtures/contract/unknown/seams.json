@@ -1,0 +1,1 @@
+{ "language": "cobol", "name": "Seams", "contracts": [{ "name": "Store.open" }] }

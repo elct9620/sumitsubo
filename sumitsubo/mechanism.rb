@@ -72,7 +72,7 @@ module Sumitsubo
       # here, named the same.
       def documents(config)
         found = []
-        Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root)).each do |definition|
+        Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), Sumitsubo::Language).each do |definition|
           next unless Sumitsubo::Contract.published?(definition)
 
           name = Sumitsubo::Contract.document_name(definition)
@@ -85,7 +85,7 @@ module Sumitsubo
       end
 
       def verify(config, report)
-        definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root))
+        definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), Sumitsubo::Language)
         claims = claims_in(definitions, config)
 
         Sumitsubo::Contract.unclaimed(definitions, claims).each do |finding|
@@ -136,12 +136,16 @@ module Sumitsubo
       end
 
       # What the source in scope defines, for the definitions read that way.
+      # Each is read as the language it named, so a definition scanned for two
+      # of them is scanned once per language rather than once.
       def names_in(definitions, config, languages)
         names = []
-        Sumitsubo::Contract.scope(
-          Sumitsubo::Contract.defined(definitions), config.base
-        ).each do |path|
-          languages.declarations_in(path, Where.of(path)).each { |name| names.push(name) }
+        Sumitsubo::Contract.defined(definitions).each do |definition|
+          Sumitsubo::Contract.scope([definition], config.base).each do |path|
+            languages.declarations_in(path, Where.of(path), definition.language).each do |name|
+              names.push(name)
+            end
+          end
         end
         names
       end

@@ -138,14 +138,16 @@ def show
 ```
 
 **Without one**, the interfaces are read from the syntax tree and nothing is
-written in front of the code. The name is how Ruby spells it: `.` for a
-singleton method, `#` for an instance one, a bare path for a class or module.
-A name that could be none of those stops the run rather than answering, since
-read as Ruby it would be undefined everywhere.
+written in front of the code. Such a file names its `language`: `include` says
+which files a reading reaches and never what they are written in, while a name
+is spelled the way one language spells it. In Ruby that is `.` for a singleton
+method, `#` for an instance one, a bare path for a class or module. A name that
+language could spell no definition of stops the run rather than answering.
 
 ```json
 {
   "name": "Internal seams",
+  "language": "ruby",
   "include": ["lib/**/*.rb"],
   "contracts": [
     { "name": "Store.open", "description": "Open the store." },
@@ -171,9 +173,11 @@ parameter the language lets go unnamed registers a kind alone.
 ```
 
 The kind words are the language's own. Sumitsubo compares them as text without
-knowing what any of them means, so a specification never has to say which
-language it is about — `include` already said which files, and those files are
-read by whatever reading answers for them.
+knowing what any of them means, so a specification writes the words its own
+language uses. A marker names no language: a claim is a claim in whatever the
+file is written in, and naming both — or neither — is a specification that
+cannot be read rather than a difference to report. So is a language this build
+was not given.
 
 A contract registering `params` is compared against them entire; one
 registering none asks for none to be compared. A shape that differs answers at

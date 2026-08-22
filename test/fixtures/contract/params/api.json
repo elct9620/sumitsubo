@@ -1,5 +1,5 @@
 {
-  "name": "API",
+  "language": "ruby", "name": "API",
   "include": ["src/*.rb"],
   "contracts": [
     {

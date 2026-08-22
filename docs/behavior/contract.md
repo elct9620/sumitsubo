@@ -10,7 +10,7 @@ An interface nothing claims is a difference, answered at the line registering it
 
 A claim resolving to no contract belongs to the marker reading alone, since it is about a claim and the syntax tree makes none. It is a comparison that could not be made rather than a difference.
 
-A name the other reading could resolve to no construct stops the mechanism rather than answering. Read as Ruby, a route-shaped name is undefined everywhere, and reporting that would blame the code for a specification that lost its marker.
+A name the language it named could spell no definition of stops the mechanism rather than answering. Reporting it would blame the code for a specification that says how its names are spelled and then writes one that language cannot spell.
 
 ## A second way in
 
@@ -22,9 +22,15 @@ Which is why a method defined twice said nothing while only names were compared:
 
 A shape half-registered would let the rest drift, which is why a registered shape is compared entire and an unregistered one asks for nothing. Where the definitions disagree among themselves the contract is not also compared against one of them: two entrances are already the answer.
 
-The kind words a parameter carries are the language's own, and they live in the reading that answers them. Contract compares them as text without learning what any of them means, which is what lets a specification stay silent about the language it is about — `include` already says which files, and those files are read by whatever answers for them.
+The kind words a parameter carries are the language's own, and they live in the reading that answers them. Contract compares them as text without learning what any of them means, so a specification writes the words its own language uses.
 
 `internal` is a fact about the interface rather than a preference about pages, which is what separates it from a configuration switching a whole specification off.
+
+## Which language spells a name
+
+`include` says which files a reading reaches and never what they are written in: a generated file may carry one language under an extension nobody knows. A name, though, is spelled the way one language spells it and two of them can spell one name differently, so the reading that compares names says which language it means.
+
+A marker needs none, because a claim is a claim in whatever the file is written in. Naming both says one thing twice, and naming neither leaves nothing to say how a name is spelled — each is a specification that cannot be read rather than a difference to report. So is a language this build was not given: what an executable can read is decided when it is built, and a run that guessed would compare against the wrong spelling.
 
 ## T-001 — What the directory registers, and where
 
@@ -138,14 +144,14 @@ The kind words a parameter carries are the language's own, and they live in the 
 | When | the scope is asked for |
 | Then | the union of every include answers, without repeats |
 
-## T-015 — A contract no Ruby definition can be
+## T-015 — A contract the named language cannot spell
 
 | Step | Statement |
 | --- | --- |
-| Given | a definition naming no marker |
+| Given | a definition naming a language rather than a marker |
 | Given | an interface named the way a route is named |
 | When | the directory is loaded |
-| Then | the file is named as registering something no Ruby definition can be |
+| Then | the file is named as registering a name that language cannot spell |
 
 ## T-016 — An interface the syntax tree does not define
 
@@ -277,3 +283,27 @@ The kind words a parameter carries are the language's own, and they live in the 
 | Given | a contract file writing a heading below the deepest level |
 | When | the directory is read |
 | Then | the file is named as one that cannot be read |
+
+## T-032 — A definition that says neither how to claim nor how to spell
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition naming no marker and no language |
+| When | the directory is loaded |
+| Then | the file is named as leaving nothing to say how its names are spelled |
+
+## T-033 — A language this build does not carry
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition naming a language the executable was not built with |
+| When | the directory is loaded |
+| Then | the file is named as asking for a language this sumi does not carry |
+
+## T-034 — A definition naming both a marker and a language
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition naming a marker and a language |
+| When | the directory is loaded |
+| Then | the file is named as saying both, where a claim needs neither |

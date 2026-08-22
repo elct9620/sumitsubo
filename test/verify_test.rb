@@ -75,7 +75,7 @@ Dir.chdir(back)
 # Read as Ruby every name in the file would answer as undefined, so what the
 # run says is that the specification cannot be read.
 # @behavior V-016
-puts "--- a contract naming no marker and nothing Ruby can define ---"
+puts "--- a contract the language it named cannot spell ---"
 Dir.chdir("test/fixtures/unresolvable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)

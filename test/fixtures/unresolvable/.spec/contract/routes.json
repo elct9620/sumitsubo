@@ -1,5 +1,5 @@
 {
-  "name": "Routes",
+  "language": "ruby", "name": "Routes",
   "description": "A file that meant to register routes and lost its marker.",
   "include": ["app/*.rb"],
   "contracts": [

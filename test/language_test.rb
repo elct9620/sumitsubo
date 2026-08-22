@@ -29,12 +29,25 @@ p spell(Sumitsubo::Language.comments_in(PROSE, "overview.md")).length
 puts "--- and offers nowhere for a claim to sit ---"
 p Sumitsubo::Language.attached_comments_in(PROSE, "overview.md")
 
+# A name is spelled the way one language spells it, so which reads the file is
+# the specification's to say rather than the filename's to imply.
 # @behavior L-004
-puts "--- and declares nothing ---"
-p Sumitsubo::Language.declarations_in(PROSE, "overview.md")
+puts "--- source is read as the language a specification named ---"
+p Sumitsubo::Language.declarations_in(RUBY, RUBY, "ruby").length
 
-puts "--- while source declares what it declares ---"
-p Sumitsubo::Language.declarations_in(RUBY, RUBY).length
+# What an executable can read is decided when it is built, and a name it does
+# not answer to is a run that cannot compare rather than one that guesses.
+# @behavior L-008
+puts "--- what this build carries ---"
+p Sumitsubo::Language.carries?("ruby")
+p Sumitsubo::Language.carries?("cobol")
+
+# A shape judgement and nothing more: it says the name is spellable there,
+# never that anything defines it.
+# @behavior L-009
+puts "--- and how that language spells what it defines ---"
+p Sumitsubo::Language.definable?("ruby", "Sumitsubo::Where.of")
+p Sumitsubo::Language.definable?("ruby", "GET /users/:id")
 
 # The claims sit in a class body, a method body and a block comment, and all
 # three are offered — while the comment at the end of `verify_test.rb`, with

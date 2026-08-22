@@ -1,1 +1,1 @@
-{ "name": "Store", "contracts": [], "notes": [{ "type": "quote", "text": ["nope"] }] }
+{ "language": "ruby", "name": "Store", "contracts": [], "notes": [{ "type": "quote", "text": ["nope"] }] }

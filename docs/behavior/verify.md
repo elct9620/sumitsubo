@@ -134,14 +134,14 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | the two sides are compared |
 | Then | it is answered at the line registering it, naming the scope that was searched |
 
-## V-016 — A contract naming no marker and nothing Ruby can define
+## V-016 — A contract the language it named cannot spell
 
 | Step | Statement |
 | --- | --- |
-| Given | a contract naming no marker |
+| Given | a contract naming a language rather than a marker |
 | Given | an interface named the way a route is named |
 | When | the two sides are compared |
-| Then | the file is named as registering something no Ruby definition can be |
+| Then | the file is named as registering a name that language cannot spell |
 
 ## V-017 — Source whose shape drifted from the contract
 

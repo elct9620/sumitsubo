@@ -4,10 +4,14 @@
 2
 --- and offers nowhere for a claim to sit ---
 []
---- and declares nothing ---
-[]
---- while source declares what it declares ---
+--- source is read as the language a specification named ---
 24
+--- what this build carries ---
+true
+false
+--- and how that language spells what it defines ---
+true
+false
 --- where a claim could sit ---
 3
 ["1:# A linear snapshot script, which is how this project writes its own tests.", "2:# There is no method for a claim to attach to, so it attaches to the statement.", "7:# @behavior G-001", "10:# @behavior G-002 I-001", "13:# @behavior G-404"]

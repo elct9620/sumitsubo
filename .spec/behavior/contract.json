@@ -39,10 +39,10 @@
     {
       "type": "paragraph",
       "text": [
-        "A name the other reading could resolve to no construct stops the",
-        "mechanism rather than answering. Read as Ruby, a route-shaped name is",
-        "undefined everywhere, and reporting that would blame the code for a",
-        "specification that lost its marker."
+        "A name the language it named could spell no definition of stops",
+        "the mechanism rather than answering. Reporting it would blame the",
+        "code for a specification that says how its names are spelled and",
+        "then writes one that language cannot spell."
       ]
     },
     {
@@ -93,11 +93,9 @@
       "type": "paragraph",
       "text": [
         "The kind words a parameter carries are the language's own, and they",
-        "live in the reading that answers them. Contract compares them as text",
-        "without learning what any of them means, which is what lets a",
-        "specification stay silent about the language it is about — `include`",
-        "already says which files, and those files are read by whatever answers",
-        "for them."
+        "live in the reading that answers them. Contract compares them as",
+        "text without learning what any of them means, so a specification",
+        "writes the words its own language uses."
       ]
     },
     {
@@ -106,6 +104,34 @@
         "`internal` is a fact about the interface rather than a preference",
         "about pages, which is what separates it from a configuration",
         "switching a whole specification off."
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "text": [
+        "Which language spells a name"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": [
+        "`include` says which files a reading reaches and never what they are",
+        "written in: a generated file may carry one language under an extension",
+        "nobody knows. A name, though, is spelled the way one language spells it",
+        "and two of them can spell one name differently, so the reading that",
+        "compares names says which language it means."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": [
+        "A marker needs none, because a claim is a claim in whatever the file is",
+        "written in. Naming both says one thing twice, and naming neither leaves",
+        "nothing to say how a name is spelled — each is a specification that",
+        "cannot be read rather than a difference to report. So is a language this",
+        "build was not given: what an executable can read is decided when it is",
+        "built, and a run that guessed would compare against the wrong spelling."
       ]
     }
   ],
@@ -241,13 +267,13 @@
     },
     {
       "id": "T-015",
-      "title": "A contract no Ruby definition can be",
+      "title": "A contract the named language cannot spell",
       "given": [
-        "a definition naming no marker",
+        "a definition naming a language rather than a marker",
         "an interface named the way a route is named"
       ],
       "when": "the directory is loaded",
-      "then": "the file is named as registering something no Ruby definition can be"
+      "then": "the file is named as registering a name that language cannot spell"
     },
     {
       "id": "T-016",
@@ -395,6 +421,33 @@
       ],
       "when": "the directory is read",
       "then": "the file is named as one that cannot be read"
+    },
+    {
+      "id": "T-032",
+      "title": "A definition that says neither how to claim nor how to spell",
+      "given": [
+        "a definition naming no marker and no language"
+      ],
+      "when": "the directory is loaded",
+      "then": "the file is named as leaving nothing to say how its names are spelled"
+    },
+    {
+      "id": "T-033",
+      "title": "A language this build does not carry",
+      "given": [
+        "a definition naming a language the executable was not built with"
+      ],
+      "when": "the directory is loaded",
+      "then": "the file is named as asking for a language this sumi does not carry"
+    },
+    {
+      "id": "T-034",
+      "title": "A definition naming both a marker and a language",
+      "given": [
+        "a definition naming a marker and a language"
+      ],
+      "when": "the directory is loaded",
+      "then": "the file is named as saying both, where a claim needs neither"
     }
   ]
 }

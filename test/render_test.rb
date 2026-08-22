@@ -90,6 +90,7 @@ JSON
 File.write(".spec/contract/api.json", <<~JSON)
   {
     "name": "API",
+    "language": "ruby",
     "description": "The methods this package exposes.",
     "include": ["src/*.rb"],
     "contracts": [
@@ -107,6 +108,7 @@ JSON
 File.write(".spec/contract/hidden.json", <<~JSON)
   {
     "name": "Hidden",
+    "language": "ruby",
     "description": "A kind this project keeps entirely to itself.",
     "include": ["src/*.rb"],
     "contracts": [

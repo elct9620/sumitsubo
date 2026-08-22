@@ -1,5 +1,5 @@
 {
-  "name": "CLI",
+  "language": "ruby", "name": "CLI",
   "include": ["src/*.rb"],
   "contracts": [
     { "name": "verify" },

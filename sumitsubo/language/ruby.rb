@@ -23,8 +23,31 @@ module Sumitsubo
       # reach.
       ATTACHED = "((comment) @text . (_))"
 
+      # A constant path, and a method name. A specification naming this
+      # language is registering names it spells, so a name of neither shape is
+      # one no definition here could carry — a shape judgement, and not a
+      # reading of what the specification meant by writing it.
+      CONSTANT = /\A[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)*\z/
+      METHOD = /\A([A-Za-z_][A-Za-z0-9_]*[?!=]?|\[\]=?|[<>=!+\-*\/%&|^~]+)\z/
+
+      # What a specification calls this language when it names one.
+      def named?(name)
+        name == Grammar::RUBY
+      end
+
       def reads?(path)
         "#{path}".end_with?(".rb")
+      end
+
+      # Whether a definition written here could carry this name. `.` spells a
+      # singleton method and `#` an instance one, so a name holding either is
+      # a constant path and a method name either side of it.
+      def definable?(name)
+        at = name.index("#")
+        at = name.index(".") if at.nil?
+        return spelled?(CONSTANT, name) || spelled?(METHOD, name) if at.nil?
+
+        spelled?(CONSTANT, "#{name[0, at]}") && spelled?(METHOD, "#{name[(at + 1)..-1]}")
       end
 
       # What a person wrote for another person is the comments and nothing
@@ -58,6 +81,12 @@ module Sumitsubo
       # that makes them rather than moving up to the seam.
       def declarations_in(path, where)
         Definitions.names_in(path)
+      end
+
+      private
+
+      def spelled?(pattern, text)
+        !pattern.match(text).nil?
       end
     end
   end

@@ -6,6 +6,13 @@ module Sumitsubo
     # Reached through `language.rb`, which holds the seam and the shapes a
     # reading answers with, so nothing here requires its way back up.
     class Prose
+      # Prose is what a file falls to rather than something a specification
+      # names, so it answers to no name and declares nothing: a specification
+      # asking for what a file declares has said which language it means.
+      def named?(name)
+        false
+      end
+
       def reads?(path)
         true
       end
@@ -21,12 +28,8 @@ module Sumitsubo
       end
 
       # Prose has no code for a comment to sit in front of, so nothing here
-      # claims anything, and it declares nothing either.
+      # claims anything.
       def attached_comments_in(path, where)
-        []
-      end
-
-      def declarations_in(path, where)
         []
       end
     end

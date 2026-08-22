@@ -1,0 +1,1 @@
+{ "marker": "@route", "language": "ruby", "name": "Routes", "contracts": [{ "name": "GET /x" }] }

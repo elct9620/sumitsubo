@@ -181,13 +181,13 @@
     },
     {
       "id": "V-016",
-      "title": "A contract naming no marker and nothing Ruby can define",
+      "title": "A contract the language it named cannot spell",
       "given": [
-        "a contract naming no marker",
+        "a contract naming a language rather than a marker",
         "an interface named the way a route is named"
       ],
       "when": "the two sides are compared",
-      "then": "the file is named as registering something no Ruby definition can be"
+      "then": "the file is named as registering a name that language cannot spell"
     },
     {
       "id": "V-017",
