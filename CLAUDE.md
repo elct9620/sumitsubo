@@ -71,43 +71,6 @@ say the same: git carries no empty directory, so a fresh clone of a project
 that committed what `init` laid down arrives without one, and declaring no
 scenarios is what keeps every such clone from failing.
 
-### Behavior
-
-What this establishes is that a behavior was **read and implemented**, never
-that the implementation is right. Nothing mechanical can judge whether the code
-under a claim does what the claim says, so that one sentence licenses
-everything the mechanism cannot check.
-
-`behavior/` under the root holds one file per feature; a behavior file plays
-the role a glossary section plays, carrying its own `include`, and the union of
-those is what gets searched. `.spec/behavior/` is the worked example. Source
-claims a scenario in the comment in front of the code implementing it —
-`# @behavior V-008 V-009`.
-
-The model is Gherkin's, not its file format: these scenarios are read rather
-than executed, so `.feature` would buy nothing the other mechanisms could
-share. `given` is a list with no limit. `when` and `then` are one sentence
-each, which three disciplines make reachable rather than a cap that turns work
-away:
-
-- The operation under test is the last one; everything before it is `given`.
-- An outcome is what one observation settles — two observations are two
-  scenarios, repeating their `given` and `when`.
-- `then` names the observable difference and stops. Not the exit code, which
-  Output governs and which follows from which of the three a `then` names; not
-  the reason, which belongs to the title. The reason is the one that creeps
-  back in.
-
-An id is unique across the whole directory, since a claim carries only the id
-and a referent that is not unique resolves to nothing.
-
-A scenario nothing claims is a difference, answered at the line of the
-specification declaring it, because that is where a reader chooses between
-writing the test and dropping the scenario. A claim resolving to no scenario is
-not one: there is nothing on the specification side to compare it against.
-Both collect before reporting, the way a linter does, so a renamed id is fixed
-in one pass.
-
 ## Command
 
 ### Configuration

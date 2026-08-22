@@ -2,6 +2,22 @@
 
 The scenarios a project declares, and where each one sits.
 
+What this establishes is that a behavior was read and implemented, never that the implementation is right. Nothing mechanical can judge whether the code under a claim does what the claim says, so that one sentence licenses everything the mechanism cannot check.
+
+The model is Gherkin's, not its file format: these scenarios are read rather than executed, so `.feature` would buy nothing the other mechanisms could share.
+
+## One sentence each
+
+`when` and `then` are one sentence each, which three disciplines make reachable rather than a cap that turns work away: the operation under test is the last one and everything before it is `given`; an outcome is what one observation settles, so two observations are two scenarios; and `then` names the observable difference and stops.
+
+Not the exit code, which follows from which of the three a `then` names, and not the reason, which belongs to the title. The reason is the one that creeps back in.
+
+## Verification runs one way
+
+A scenario nothing claims is a difference, answered at the line of the specification declaring it, because that is where a reader chooses between writing the test and dropping the scenario. A claim resolving to no scenario is not one: there is nothing on the specification side to compare it against.
+
+Both collect before reporting, the way a linter does, so a renamed id is fixed in one pass.
+
 ## B-001 — What the directory declares, and where
 
 | Step | Statement |
