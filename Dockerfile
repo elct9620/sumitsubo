@@ -28,6 +28,12 @@ RUN set -eu; \
     done
 
 FROM scratch
+# What a registry shows of an image it holds. `source` is the one that matters:
+# it is what links the package back to the repository it was built from.
+LABEL org.opencontainers.image.source="https://github.com/elct9620/sumitsubo" \
+      org.opencontainers.image.description="Verify that source code stays aligned with its specification." \
+      org.opencontainers.image.licenses="Apache-2.0"
+
 COPY --from=runtime /rootfs /
 # A run answers about the tree it is handed, so the mount point is where it
 # starts. Nothing else is here: no shell, no `/etc`, no package manager.

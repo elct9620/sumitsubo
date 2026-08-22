@@ -136,3 +136,111 @@ jobs:
           done
           ls -l upload
           gh release upload "$TAG" upload/* --clobber
+
+  # The same executables, assembled into an image so a machine with no way to
+  # run one natively still has a way to run `sumi` — Windows above all. Nothing
+  # is compiled here: the image carries the bytes the tarballs carry.
+  #
+  # One runner per architecture, as the build above: the executable is run to
+  # prove the image holds it, and running it under emulation would prove only
+  # that the emulator can. Unlike `attach` the job is not gated as a whole —
+  # a bare workflow_dispatch reaches everything except the push, which is what
+  # makes this the one place the image can be tried before a release names it.
+  docker:
+    name: image (${{ matrix.name }})
+    needs: build
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x86_64
+            runner: ubuntu-latest
+          - name: linux-aarch64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: sumi-${{ matrix.name }}
+          path: dist/sumi-${{ matrix.name }}
+
+      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      # The image is built and run before anything is pushed. Its libraries come
+      # from a base that has to carry a glibc no older than the one the
+      # executable was linked against, and the two drifting apart breaks an
+      # image that still builds — nothing else here would notice.
+      - name: Build the image and run what it holds
+        run: |
+          set -euo pipefail
+          docker buildx build --load -t sumi:probe -f Dockerfile dist
+          docker run --rm sumi:probe -v
+          # This tree is what the image is pointed at, so a `verify` here
+          # reaches a grammar and every mechanism. It answering at all is the
+          # proof; `1` is a specification that moved, which is CI's to report.
+          answer=0
+          docker run --rm -v "$PWD:/work:ro" sumi:probe verify || answer=$?
+          [ "$answer" -le 1 ] || { echo "::error::the image could not verify a tree"; exit 1; }
+
+      # Pushed without a tag of its own: an architecture is half of what an
+      # operator pulls, and naming it would leave that half standing in the
+      # registry after the two are joined below.
+      - name: Push this architecture by digest
+        if: ${{ inputs.tag || github.ref_type == 'tag' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "$GH_TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker buildx build -f Dockerfile dist \
+            --output "type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=true" \
+            --metadata-file metadata.json
+          mkdir -p digests
+          touch "digests/$(jq -r '."containerimage.digest"' metadata.json | cut -d: -f2)"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ inputs.tag || github.ref_type == 'tag' }}
+        with:
+          name: digest-${{ matrix.name }}
+          path: digests/*
+          if-no-files-found: error
+
+  # The two architectures joined into the one name an operator pulls. `latest`
+  # is left alone while the versions are previews: what it should point at is a
+  # decision the real 0.1.0 gets to make.
+  manifest:
+    name: join the architectures under one tag
+    needs: docker
+    if: ${{ inputs.tag || github.ref_type == 'tag' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: digest-*
+          path: digests
+          merge-multiple: true
+
+      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Create the manifest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+          IMAGE: ghcr.io/${{ github.repository }}
+        run: |
+          set -euo pipefail
+          echo "$GH_TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker buildx imagetools create --tag "$IMAGE:${TAG#v}" \
+            $(cd digests && printf "$IMAGE@sha256:%s " *)
+          docker buildx imagetools inspect "$IMAGE:${TAG#v}"
