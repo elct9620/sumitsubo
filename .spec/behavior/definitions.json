@@ -14,7 +14,8 @@
     }
   ],
   "include": [
-    "test/definitions_test.rb"
+    "test/definitions_test.rb",
+    "test/language_test.rb"
   ],
   "scenarios": [
     {
@@ -143,6 +144,33 @@
       ],
       "when": "the file is read for what it declares",
       "then": "the class does not declare the method"
+    },
+    {
+      "id": "D-016",
+      "title": "Captures grouped by the match they came from",
+      "given": [
+        "captures from two matches, arriving interleaved"
+      ],
+      "when": "they are grouped",
+      "then": "each match answers whole, in the order the parser met them"
+    },
+    {
+      "id": "D-017",
+      "title": "A match that declares nothing",
+      "given": [
+        "a match carrying no capture that names it"
+      ],
+      "when": "the matches are read for what they declare",
+      "then": "it answers nothing, and the node beside it carries the lines its text spans"
+    },
+    {
+      "id": "D-018",
+      "title": "The nodes holding one, outermost first",
+      "given": [
+        "a node inside two others, and a third spanning exactly its lines"
+      ],
+      "when": "what holds it is worked out",
+      "then": "the two answer outermost first and the third does not, since neither can be told from it"
     }
   ]
 }

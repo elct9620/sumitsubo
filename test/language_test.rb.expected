@@ -39,3 +39,30 @@ broken.rb: cannot be parsed by the ruby grammar
   Ledger::record(self, positional charge)
   Charge::record(self, positional charge)
   audit::Entry::at(self)
+--- what a Ruby file declares ---
+  test/fixtures/definitions/sample.rb:1 Outer
+  test/fixtures/definitions/sample.rb:2 Outer::Inner
+  test/fixtures/definitions/sample.rb:3 Outer::Inner.load (path:positional)
+  test/fixtures/definitions/sample.rb:7 Outer::Inner#check (text:positional)
+  test/fixtures/definitions/sample.rb:13 Flat::Scoped
+  test/fixtures/definitions/sample.rb:14 Flat::Scoped.of (path:positional)
+  test/fixtures/definitions/sample.rb:19 Alone
+  test/fixtures/definitions/sample.rb:20 Alone#solo ()
+  test/fixtures/definitions/sample.rb:24 loose ()
+  test/fixtures/definitions/sample.rb:27 Reopened
+  test/fixtures/definitions/sample.rb:29 Reopened.built ()
+  test/fixtures/definitions/sample.rb:34 Signed
+  test/fixtures/definitions/sample.rb:35 Signed#positional (one:positional, two:positional?)
+  test/fixtures/definitions/sample.rb:38 Signed#keyworded (three:keyword, four:keyword?)
+  test/fixtures/definitions/sample.rb:41 Signed#gathered (rest:splat?, opts:hash_splat?, block:block?)
+  test/fixtures/definitions/sample.rb:44 Signed#anonymous (-:splat?, -:hash_splat?, -:block?)
+  test/fixtures/definitions/sample.rb:47 Signed#unusual (-:destructured, -:forward?)
+  test/fixtures/definitions/sample.rb:50 Signed#strict (one:positional)
+  test/fixtures/definitions/sample.rb:53 Signed#bare ()
+  test/fixtures/definitions/sample.rb:56 Signed.singular (one:positional, two:keyword?)
+  test/fixtures/definitions/sample.rb:60 Called
+  test/fixtures/definitions/sample.rb:65 Helper
+  test/fixtures/definitions/sample.rb:66 Helper#helped ()
+  test/fixtures/definitions/sample.rb:70 Widget
+--- and the reading of what it declares refuses it too ---
+  test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar

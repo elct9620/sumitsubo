@@ -1,55 +1,51 @@
-require "sumitsubo/language"
 require "sumitsubo/definitions"
 
-# The syntax tree reading: what a Ruby file declares, spelled the way a contract
-# would have to name it.
+# The part of reading a syntax tree that no language owns: captures grouped by
+# the match they came from, made into nodes, and nested by where they sit.
 #
-# This reaches the grammar, so the snapshot beside it is written by hand —
-# `--regen` runs under CRuby, which has no `ffi_func`.
+# Nothing here reaches the binding — a capture is four fields and this file
+# makes its own — so `--regen` can write the snapshot beside it.
 
-FIXTURE = "test/fixtures/definitions"
+Capture = Struct.new(:match, :name, :line, :text)
 
-def show(path)
-  Sumitsubo::Definitions.names_in(path).each do |name|
-    puts "  #{name.path}:#{name.line} #{name.name}#{signature(name)}"
-  end
+def node(kind, text, first, last)
+  Sumitsubo::Definitions::Node.new(kind, text, first, last)
 end
 
-# The parameters as a caller would have to satisfy them: the name, the kind,
-# and a `?` where the caller may leave it out. A dash stands where Ruby let the
-# parameter go unnamed.
-def signature(name)
-  return "" if name.params.nil?
-
+# Captures arrive in node position rather than pattern order, so the two
+# matches below interleave and each still answers whole.
+# @behavior D-016
+puts "--- captures grouped by the match they came from ---"
+Sumitsubo::Definitions.matches_in([
+  Capture.new(1, "scope", 1, "class A\nend"),
+  Capture.new(2, "instance", 4, "def go\nend"),
+  Capture.new(1, "name", 1, "A"),
+  Capture.new(2, "name", 4, "go")
+]).each do |captures|
   spelled = []
-  name.params.each do |param|
-    spelled.push("#{param.name.nil? ? "-" : param.name}:#{param.kind}#{param.optional ? "?" : ""}")
-  end
-  " (#{spelled.join(", ")})"
+  captures.each { |capture| spelled.push("#{capture.name}=#{capture.text.split("\n")[0]}") }
+  puts "  #{spelled.join(" ")}"
 end
 
-# One file answers five: `Outer::Inner` is qualified by its nesting, `.load`
-# and `#check` are told apart the way Ruby spells them, `Flat::Scoped` is
-# written as a path rather than nested, `loose` sits outside every scope, and
-# `Reopened.built` belongs to its class though it is written as an instance method.
-#
-# `Signed` then answers what each method takes: the kind Ruby's spelling gives
-# each parameter, which of them a caller may leave out, the ones Ruby let go
-# unnamed, and the difference between a method taking none and a scope taking
-# no parameters at all. `**nil` names no parameter, so `#strict` answers one.
-#
-# What the reading does not carry is declared here too: `Called` answers itself
-# and neither of the methods its calls bring into being, and `Widget` answers
-# itself without the method it mixes in.
-# @behavior D-001 D-002 D-003 D-004 D-007 D-008 D-009 D-010 D-011 D-012 D-013
-# @behavior D-014 D-015
-puts "--- what a file declares ---"
-show("#{FIXTURE}/sample.rb")
+# A match with no `name` capture declares nothing: a parameter names the method
+# it belongs to rather than a name of its own. The node's last line is the
+# newlines in the text it was captured with.
+# @behavior D-017
+puts "--- what those matches declare ---"
+Sumitsubo::Definitions.nodes_in([
+  [Capture.new(1, "scope", 1, "class A\n  def go\n  end\nend"), Capture.new(1, "name", 1, "A")],
+  [Capture.new(2, "of", 2, "go"), Capture.new(2, "positional", 2, "at")]
+]).each { |found| puts "  #{found.kind} #{found.text} #{found.first}-#{found.last}" }
 
-# @behavior D-006
-puts "--- source the grammar cannot read ---"
-begin
-  show("test/fixtures/behavior/test/broken.rb")
-rescue Sumitsubo::Definitions::Error => e
-  puts "  #{e.message}"
+# Nesting is recovered from where the nodes sit, because a pattern reaches only
+# its direct children. Two spanning the same lines hold each other or are the
+# same node, and neither can be told from the other here — so `Same` answers no
+# scope rather than an invented one.
+# @behavior D-018
+puts "--- the nodes holding one, outermost first ---"
+scopes = [node("scope", "Inner", 2, 5), node("scope", "Outer", 1, 8), node("scope", "Same", 3, 3)]
+[node("instance", "go", 3, 3), node("instance", "away", 6, 6)].each do |held|
+  holding = []
+  Sumitsubo::Definitions.enclosing(scopes, held).each { |scope| holding.push(scope.text) }
+  puts "  #{held.text}: #{holding.join(" > ")}"
 end

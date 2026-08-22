@@ -1,5 +1,12 @@
 require "pathname"
 require "sumitsubo/error"
+# Each language is a file of its own, holding the grammar it reads through and
+# the queries written against that grammar's node names. They are required here
+# rather than requiring their way back, so a caller reaches one through this
+# seam and never by name.
+require "sumitsubo/language/ruby"
+require "sumitsubo/language/rust"
+require "sumitsubo/language/prose"
 
 module Sumitsubo
   # How a file is read for what a person put in it. A mechanism puts its
@@ -39,20 +46,7 @@ module Sumitsubo
     # so a second language brings its own vocabulary in its own reading rather
     # than negotiating a shared one with the specification.
     Param = Struct.new(:name, :kind, :optional)
-  end
-end
 
-# Each language is a file of its own, holding the grammar it reads through and
-# the queries written against that grammar's node names. They are required here
-# rather than requiring their way back, so a caller reaches one through this
-# seam and never by name — and they arrive between the shapes they answer with
-# and the roster they are listed in, which is the order those three need.
-require "sumitsubo/language/ruby"
-require "sumitsubo/language/rust"
-require "sumitsubo/language/prose"
-
-module Sumitsubo
-  module Language
     # The order a file is offered to them, which is what puts Prose last.
     ALL = [Ruby.new, Rust.new, Prose.new]
 

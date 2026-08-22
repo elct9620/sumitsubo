@@ -116,3 +116,27 @@ Nesting is recovered from where the nodes sit rather than from the query: a patt
 | Given | a class including that module |
 | When | the file is read for what it declares |
 | Then | the class does not declare the method |
+
+## D-016 — Captures grouped by the match they came from
+
+| Step | Statement |
+| --- | --- |
+| Given | captures from two matches, arriving interleaved |
+| When | they are grouped |
+| Then | each match answers whole, in the order the parser met them |
+
+## D-017 — A match that declares nothing
+
+| Step | Statement |
+| --- | --- |
+| Given | a match carrying no capture that names it |
+| When | the matches are read for what they declare |
+| Then | it answers nothing, and the node beside it carries the lines its text spans |
+
+## D-018 — The nodes holding one, outermost first
+
+| Step | Statement |
+| --- | --- |
+| Given | a node inside two others, and a third spanning exactly its lines |
+| When | what holds it is worked out |
+| Then | the two answer outermost first and the third does not, since neither can be told from it |

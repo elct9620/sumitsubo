@@ -1,5 +1,6 @@
 require "sumitsubo/error"
 require "sumitsubo/grammar"
+require "sumitsubo/definitions"
 
 module Sumitsubo
   module Language
@@ -34,11 +35,6 @@ module Sumitsubo
       HOLDER = "holder"
       SCOPE = "scope"
       ITEM = "item"
-      NAME = "name"
-
-      # One match of the query above: what kind of node it was, what it is
-      # called, and the lines it spans. Nothing outside this reading holds one.
-      Node = Struct.new(:kind, :text, :first, :last)
 
       # The function a parameter belongs to, and the two kinds Rust hands a
       # caller. A receiver is the parameter that decides whether a function is
@@ -81,16 +77,16 @@ module Sumitsubo
       end
 
       def comments_in(path, where)
-        captured(path, COMMENTS, where)
+        regions(captured(path, COMMENTS, where))
       end
 
       def attached_comments_in(path, where)
-        captured(path, ATTACHED, where)
+        regions(captured(path, ATTACHED, where))
       end
 
       def declarations_in(path, where)
-        matches = matches_in(path, where)
-        nodes = nodes_in(matches)
+        matches = Definitions.matches_in(captured(path, QUERY, where))
+        nodes = sorted(Definitions.nodes_in(matches))
         taken = params_in(matches)
 
         holders = []
@@ -109,27 +105,31 @@ module Sumitsubo
 
       private
 
-      def captured(path, query, where)
+      def regions(captures)
         found = []
-        TreeSitter.capture(Grammar::RUST, path.read, query, where).each do |capture|
-          found.push(Region.new(capture.line, capture.text))
-        end
+        captures.each { |capture| found.push(Region.new(capture.line, capture.text)) }
         found
+      end
+
+      def captured(path, query, where)
+        TreeSitter.capture(Grammar::RUST, path.read, query, where)
       rescue TreeSitter::ParseError => e
         # Source the grammar cannot read is not a difference between the two
         # sides either: half a file yields regions the rest of it never made.
         raise Error, e.message
       end
 
+      # A reading answers in the order the parser met the nodes; a path is
+      # built from what encloses one, so the blocks have to be in file order.
+      def sorted(nodes)
+        nodes.sort_by { |node| node.first }
+      end
+
       # The path a contract would have to write to reach this node, the blocks
       # holding it in front of it.
       def qualified(holders, node)
         path = []
-        holders.each do |holder|
-          next if holder.first == node.first && holder.last == node.last
-
-          path.push(base(holder.text)) if holder.first <= node.first && node.last <= holder.last
-        end
+        Definitions.enclosing(holders, node).each { |holder| path.push(base(holder.text)) }
         path.push(base(node.text))
         path.join("::")
       end
@@ -139,45 +139,6 @@ module Sumitsubo
       def base(text)
         at = text.index("<")
         at.nil? ? text : "#{text[0, at]}"
-      end
-
-      def matches_in(path, where)
-        grouped = {}
-        order = []
-        captures_in(path, where).each do |capture|
-          holding = grouped[capture.match]
-          if holding.nil?
-            holding = []
-            grouped[capture.match] = holding
-            order.push(capture.match)
-          end
-          holding.push(capture)
-        end
-
-        found = []
-        order.each { |key| found.push(grouped[key]) }
-        found
-      end
-
-      def nodes_in(matches)
-        found = []
-        matches.each do |captures|
-          kind = nil
-          text = nil
-          first = 0
-          last = 0
-          captures.each do |capture|
-            if capture.name == NAME
-              text = capture.text
-            else
-              kind = capture.name
-              first = capture.line
-              last = capture.line + capture.text.count("\n")
-            end
-          end
-          found.push(Node.new(kind, text, first, last)) unless kind.nil? || text.nil?
-        end
-        found.sort_by { |node| node.first }
       end
 
       # The parameters each function takes, kept under the function they
@@ -219,11 +180,6 @@ module Sumitsubo
         found.nil? ? [] : found
       end
 
-      def captures_in(path, where)
-        TreeSitter.capture(Grammar::RUST, path.read, QUERY, where)
-      rescue TreeSitter::ParseError => e
-        raise Error, e.message
-      end
     end
   end
 end

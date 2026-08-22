@@ -119,7 +119,7 @@
     },
     {
       "name": "Sumitsubo::Marker.claims_in",
-      "description": "The reading of what a piece of source claims, for an interface no Ruby construct points at.",
+      "description": "The reading of what a piece of source claims, for an interface no construct of the language points at.",
       "internal": true,
       "params": [
         {
@@ -134,12 +134,35 @@
       ]
     },
     {
-      "name": "Sumitsubo::Definitions.names_in",
-      "description": "The reading of what a piece of source declares, for an interface that is a Ruby construct.",
+      "name": "Sumitsubo::Definitions.matches_in",
+      "description": "The one place a reading's captures are grouped by the match they came from.",
       "internal": true,
       "params": [
         {
-          "name": "path"
+          "name": "captures"
+        }
+      ]
+    },
+    {
+      "name": "Sumitsubo::Definitions.nodes_in",
+      "description": "The one place matches become the nodes a file declares.",
+      "internal": true,
+      "params": [
+        {
+          "name": "matches"
+        }
+      ]
+    },
+    {
+      "name": "Sumitsubo::Definitions.enclosing",
+      "description": "The one place nesting is recovered from where the nodes sit.",
+      "internal": true,
+      "params": [
+        {
+          "name": "scopes"
+        },
+        {
+          "name": "node"
         }
       ]
     },
