@@ -8,8 +8,7 @@
         ".spec/contract/*.json",
         ".spec/behavior/*.json",
         "sumitsubo/**/*.rb",
-        "test/*.rb",
-        "docs/glossary.md"
+        "test/*.rb"
       ],
       "terms": [
         {
@@ -93,6 +92,11 @@
         {
           "term": "Note",
           "definition": "A block of prose a specification carries for its document alone: a heading, a paragraph, or a fenced example. It says why a declaration is right, which no mechanism can check, so it is compared against nothing.",
+          "not": []
+        },
+        {
+          "term": "Ignore",
+          "definition": "One line a rejection does not answer for, and the reason that line is right to say what it says. It names a finding and nothing wider, so fixing the line leaves it naming nothing and the run says so.",
           "not": []
         },
         {

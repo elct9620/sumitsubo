@@ -15,5 +15,6 @@
 | Marker | The word source claims a contract or behavior with, written in the comment in front of the code. It is what an interface needs when no construct of the language points at it. |
 | Internal | An interface the project means to keep but not to publish. It is verified like any other, and what it stays out of is the Document. |
 | Note | A block of prose a specification carries for its document alone: a heading, a paragraph, or a fenced example. It says why a declaration is right, which no mechanism can check, so it is compared against nothing. |
+| Ignore | One line a rejection does not answer for, and the reason that line is right to say what it says. It names a finding and nothing wider, so fixing the line leaves it naming nothing and the run says so. |
 | Subdomain | A part of the problem a project addresses, and the vocabulary that part keeps. A glossary entry declares one by naming it, and its terms hold in the files its includes cover, in place of Global's wherever both name the same term. |
 | Global | The vocabulary a project keeps wherever no subdomain says otherwise. It is declared by the glossary entry that names no subdomain, and a subdomain covering a file stands in for it there. |
