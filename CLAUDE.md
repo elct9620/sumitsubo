@@ -24,25 +24,15 @@ comment the project holds.
 
 ## Vocabulary
 
-The vocabulary lives in `.spec/glossary.json`, checked against this file, itself,
-the contract and behavior specifications, and the comments under `sumitsubo/`
-and in `test/*.rb`. A specification is checked at its source, which is where a
-finding's fix belongs; the fixtures are left out, since what they carry is
-deliberately wrong.
+The vocabulary lives in `.spec/glossary.json`, and its includes say what it
+reaches. A specification is checked at its source, which is where a finding's
+fix belongs; the fixtures stay out, since what they carry is deliberately
+wrong, and so does every rendered document, since its source is already in
+scope and two findings for one drift are noise.
+
 A term earns a rejected word when the project has actually drifted on it; the
 rest name what the project means and reject nothing, which the tool carries
 without checking.
-
-The vocabulary reaches its own file because a word being spelled as a `term` is
-the specification declaring it rather than any use of it, so the one place a
-rejected word can legitimately appear there is exempt by what it is. No rendered
-document is in scope: each has its source in it already, and two findings for
-one drift are noise.
-
-An `ignore` is the way out where the source is right and the rejection is not.
-It names one finding, so fixing that line leaves it naming nothing and the run
-refuses to certify — deliberately unlike a fingerprint, which is built to
-survive exactly that.
 
 ## Comments
 
