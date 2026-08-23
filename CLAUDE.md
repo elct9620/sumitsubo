@@ -164,8 +164,8 @@ AOT compiler for Ruby. Its constraints shape the design:
   is built as strings for that reason: templates would let a project word its
   own pages, and there is no engine to move the wording to. A snapshot taken from CRuby can therefore record
   behavior the executable does not have.
-- A `join` on a receiver widened to untyped is lowered with no dispatch on the
-  receiver's class, so a class of ours defining `join` would never be entered:
-  the call answers the receiver's string form. `Pathname#join` answers untyped,
-  which is what makes chaining it silently short. Every path here is composed
-  with `#/`, and no class here defines `join`.
+- A `join` whose receiver arrives untyped answers that receiver's string form
+  with the arguments dropped, so a `Pathname` reaching one answers `""`. An
+  Array is answered correctly, which is what every `join` here is; a path is
+  composed with `#/`, which answers a `Pathname` on every branch, rather than
+  with the `join` the ecosystem writes.
