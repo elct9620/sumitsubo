@@ -37,6 +37,15 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | the run verifies |
 | Then | only the line outside the excluded directory answers |
 
+## V-021 — A build directory the .gitignore already leaves out
+
+| Step | Statement |
+| --- | --- |
+| Given | a project keeping a .gitignore that names a build directory |
+| Given | source under it drifted from the glossary the same way source outside it did |
+| When | the run verifies |
+| Then | only the line outside that directory answers, without the configuration saying so again |
+
 ## V-002 — The same run from a subdirectory
 
 | Step | Statement |

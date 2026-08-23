@@ -19,13 +19,20 @@ here = Pathname.pwd
   {
     "root": ".spec/",
     "docs": "docs/spec",
-    "exclude": ["target/"],
+    "exclude": ["target/", "!vendor/kept.rb"],
     "specifications": {
       "glossary": { "verify": false, "render": false },
       "behavior": { "render": false }
     }
   }
 JSON
+(here / "project" / ".gitignore").write(<<~TEXT)
+  # what the build leaves behind
+  vendor/
+TEXT
+(here / "switched").mkpath
+(here / "switched" / ".gitignore").write("vendor/\n")
+(here / "switched" / ".sumi.json").write("{ \"gitignore\": false }\n")
 (here / "repo" / "lib").mkpath
 (here / "repo" / ".git").write("gitdir: elsewhere\n")
 (here / "loose").mkpath
@@ -84,6 +91,20 @@ rules = Sumitsubo::Config.load.exclusion
 end
 Dir.chdir(here / "loose")
 puts "  a project that said nothing excludes nothing: #{Sumitsubo::Config.load.exclusion.inspect}"
+
+# A project keeping a .gitignore has already said which paths are not its
+# source. Saying so is not the same as being made to say it twice, so the
+# switch is what a project reaches for when git's answer is the wrong one.
+# @behavior C-012
+puts "--- and what its .gitignore already said ---"
+Dir.chdir(here / "project")
+rules = Sumitsubo::Config.load.exclusion
+puts "  vendor/gem.rb: #{Sumitsubo::Exclusion.excludes?(rules, "vendor/gem.rb")}"
+# .sumi.json is read after the .gitignore, so a `!` there is the last rule to
+# match and the path comes back.
+puts "  vendor/kept.rb, put back by .sumi.json: #{Sumitsubo::Exclusion.excludes?(rules, "vendor/kept.rb")}"
+Dir.chdir(here / "switched")
+puts "  switched off: #{Sumitsubo::Exclusion.excludes?(Sumitsubo::Config.load.exclusion, "vendor/gem.rb")}"
 
 Dir.chdir(back)
 root.rmtree

@@ -98,3 +98,11 @@ The base a configuration is read against and the one findings answer from are de
 | Given | a configuration naming what to exclude |
 | When | the configuration is loaded |
 | Then | it answers the rules once for the project, and a configuration naming none answers none |
+
+## C-012 — What the .gitignore beside it already said
+
+| Step | Statement |
+| --- | --- |
+| Given | a project keeping a .gitignore |
+| When | the configuration is loaded |
+| Then | what git leaves out is excluded too, the configuration read after it so a `!` there puts a path back, and a switch takes the .gitignore out of it entirely |

@@ -19,3 +19,7 @@ loose: base=. root=.spec docs=docs
   app/order.rb: false
   target/debug/generated.rb: true
   a project that said nothing excludes nothing: []
+--- and what its .gitignore already said ---
+  vendor/gem.rb: true
+  vendor/kept.rb, put back by .sumi.json: false
+  switched off: false

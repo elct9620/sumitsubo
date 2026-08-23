@@ -31,6 +31,16 @@ Dir.chdir("test/fixtures/excluded")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# The same tree, saying it through the file it already keeps. The generated
+# file is committed with `git add -f`, since this repository's git reads that
+# .gitignore too — and a tracked file is one git keeps and this tool still
+# leaves out, which is the whole of the difference between the two readings.
+# @behavior V-021
+puts "--- a build directory the project's .gitignore already leaves out ---"
+Dir.chdir("test/fixtures/gitignored")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 # @behavior V-003
 puts "--- a specification switched off is not read, however far the code drifted ---"
 Dir.chdir("test/fixtures/disabled")

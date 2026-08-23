@@ -71,6 +71,16 @@
       "then": "only the line outside the excluded directory answers"
     },
     {
+      "id": "V-021",
+      "title": "A build directory the .gitignore already leaves out",
+      "given": [
+        "a project keeping a .gitignore that names a build directory",
+        "source under it drifted from the glossary the same way source outside it did"
+      ],
+      "when": "the run verifies",
+      "then": "only the line outside that directory answers, without the configuration saying so again"
+    },
+    {
       "id": "V-002",
       "title": "The same run from a subdirectory",
       "given": [

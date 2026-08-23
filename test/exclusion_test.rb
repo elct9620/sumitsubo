@@ -53,3 +53,14 @@ against("!crates/one/run.log", "*.log")
 
 puts "--- a rule matching nothing takes nothing out ---"
 against("nowhere/")
+
+# A .gitignore writes for a reader as well as for git, and neither the remark
+# nor the blank line between sections is a pattern.
+puts "--- what a .gitignore holds, less what it wrote for a reader ---"
+puts Sumitsubo::Exclusion.patterns_in(<<~TEXT).inspect
+  # what the build leaves behind
+  /target/
+
+    vendor/
+  !vendor/keep.rs
+TEXT

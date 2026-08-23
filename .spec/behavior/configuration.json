@@ -137,6 +137,15 @@
       ],
       "when": "the configuration is loaded",
       "then": "it answers the rules once for the project, and a configuration naming none answers none"
+    },
+    {
+      "id": "C-012",
+      "title": "What the .gitignore beside it already said",
+      "given": [
+        "a project keeping a .gitignore"
+      ],
+      "when": "the configuration is loaded",
+      "then": "what git leaves out is excluded too, the configuration read after it so a `!` there puts a path back, and a switch takes the .gitignore out of it entirely"
     }
   ]
 }

@@ -13,6 +13,7 @@ module Sumitsubo
   # side that --regen can still write a snapshot for.
   class Config
     FILE = ".sumi.json"
+    GITIGNORE = ".gitignore"
     DEFAULT_ROOT = ".spec"
     DEFAULT_DOCS = "docs"
 
@@ -58,7 +59,15 @@ module Sumitsubo
       # What every mechanism leaves alone. A build directory belongs to the
       # project rather than to any one specification, so it is said once here
       # instead of beside each `include`.
-      @exclusion = Exclusion.read(document["exclude"] || [])
+      #
+      # A project keeping a .gitignore has already said which paths are not
+      # its source, and being made to say it twice is the drift this tool
+      # exists to catch. What .sumi.json says is read after it, so a `!` line
+      # there puts back a path git leaves out.
+      patterns = []
+      patterns.concat(gitignored_in(base)) unless document["gitignore"] == false
+      patterns.concat(document["exclude"] || [])
+      @exclusion = Exclusion.read(patterns)
       @specifications = document["specifications"] || {}
     end
 
@@ -74,6 +83,15 @@ module Sumitsubo
     end
 
     private
+
+    # Only the one beside the .sumi.json, whose rules are written against the
+    # same directory this run reads everything else against. What git reads
+    # besides — the ones deeper in the tree, the user's own, and the rule that
+    # a tracked file is never left out — this does not.
+    def gitignored_in(base)
+      path = base / GITIGNORE
+      path.exist? ? Exclusion.patterns_in(path.read) : []
+    end
 
     # Only the exceptions are listed, so a specification nobody mentioned is
     # both verified and rendered once its file is there.

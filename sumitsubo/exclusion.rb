@@ -17,6 +17,13 @@ module Sumitsubo
       patterns.map { |pattern| rule_from(pattern) }
     end
 
+    # The patterns a `.gitignore` holds, less what it wrote for a reader. A
+    # rule there is written against the directory the file sits in, which is
+    # the base a run reads everything else against.
+    def self.patterns_in(text)
+      text.split("\n").map { |line| line.strip }.reject { |line| line.empty? || line.start_with?("#") }
+    end
+
     # The last rule to match decides, so a `!` line written after one puts a
     # path back.
     def self.excludes?(rules, path)
