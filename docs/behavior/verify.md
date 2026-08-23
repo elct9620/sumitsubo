@@ -46,6 +46,15 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | the run verifies |
 | Then | only the line outside that directory answers, without the configuration saying so again |
 
+## V-022 — An include covering no file
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary whose include matches nothing |
+| Given | a second vocabulary whose only file the project excludes |
+| When | the run verifies |
+| Then | the first refuses to certify at the line that wrote it, and the second says nothing |
+
 ## V-002 — The same run from a subdirectory
 
 | Step | Statement |

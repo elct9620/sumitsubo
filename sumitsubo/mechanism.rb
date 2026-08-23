@@ -2,6 +2,7 @@ require "sumitsubo/glossary"
 require "sumitsubo/contract"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
+require "sumitsubo/scope"
 
 module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
@@ -50,6 +51,11 @@ module Sumitsubo
       def verify(config, report, languages)
         path = Sumitsubo::Glossary.path_in(config.root)
         sections = Sumitsubo::Glossary.load(path)
+        # An include reaching nothing is not a difference: what the words were
+        # to be checked against was never read.
+        Sumitsubo::Glossary.barren(sections, config.base, path).each do |barren|
+          report.failure(barren.path, barren.line, Scope.describe(barren))
+        end
         scope = Sumitsubo::Glossary.scope(sections, config.base, config.exclusion)
         findings = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, languages), path, config.base
@@ -99,6 +105,9 @@ module Sumitsubo
 
       def verify(config, report, languages)
         definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), languages)
+        Sumitsubo::Contract.barren(definitions, config.base).each do |barren|
+          report.failure(barren.path, barren.line, Scope.describe(barren))
+        end
         claims = claims_in(definitions, config, languages)
 
         Sumitsubo::Contract.unclaimed(definitions, claims).each do |finding|
@@ -189,6 +198,9 @@ module Sumitsubo
 
       def verify(config, report, languages)
         features = Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root))
+        Sumitsubo::Behavior.barren(features, config.base).each do |barren|
+          report.failure(barren.path, barren.line, Scope.describe(barren))
+        end
         claims = claims_in(features, config, languages)
 
         Sumitsubo::Behavior.uncovered(features, claims).each do |finding|

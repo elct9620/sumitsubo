@@ -81,6 +81,16 @@
       "then": "only the line outside that directory answers, without the configuration saying so again"
     },
     {
+      "id": "V-022",
+      "title": "An include covering no file",
+      "given": [
+        "a vocabulary whose include matches nothing",
+        "a second vocabulary whose only file the project excludes"
+      ],
+      "when": "the run verifies",
+      "then": "the first refuses to certify at the line that wrote it, and the second says nothing"
+    },
+    {
       "id": "V-002",
       "title": "The same run from a subdirectory",
       "given": [

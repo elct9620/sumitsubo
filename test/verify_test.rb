@@ -41,6 +41,15 @@ Dir.chdir("test/fixtures/gitignored")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# Two includes reach nothing and only one of them is wrong: what the project
+# excludes is what the project asked for, while a pattern nothing ever matched
+# is a vocabulary checked against nothing at all.
+# @behavior V-022
+puts "--- an include covering no file, beside one whose files are excluded ---"
+Dir.chdir("test/fixtures/nowhere")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 # @behavior V-003
 puts "--- a specification switched off is not read, however far the code drifted ---"
 Dir.chdir("test/fixtures/disabled")

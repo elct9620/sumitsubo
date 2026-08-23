@@ -80,6 +80,17 @@ module Sumitsubo
       found.uniq.sort
     end
 
+    # Every include a feature writes that covers no file. Its scenarios are
+    # then compared against nothing, which answers as though every one of them
+    # were claimed.
+    def self.barren(features, base)
+      found = []
+      features.each do |feature|
+        Scope.barren(base, feature.includes, feature.path).each { |one| found.push(one) }
+      end
+      found
+    end
+
     # The ids one marker line carries. A claim is data rather than prose, so a
     # trailing remark becomes an id resolving to nothing, which the run reports
     # rather than quietly accepting.

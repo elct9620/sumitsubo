@@ -1,0 +1,30 @@
+{
+  "glossary": [
+    {
+      "include": ["app/**/*.rb", "nowhere/**/*.rb"],
+      "terms": [
+        {
+          "term": "Order",
+          "definition": "What a customer asks us to fulfil.",
+          "not": [
+            {
+              "term": "Purchase",
+              "reason": "Order is what the domain calls it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Generated",
+      "include": ["target/**/*.rb"],
+      "terms": [
+        {
+          "term": "Order",
+          "definition": "What the build writes a row for.",
+          "not": []
+        }
+      ]
+    }
+  ]
+}

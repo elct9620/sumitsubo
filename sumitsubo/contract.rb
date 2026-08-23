@@ -113,6 +113,17 @@ module Sumitsubo
       found.uniq.sort
     end
 
+    # Every include a definition writes that covers no file. Its interfaces
+    # are then compared against nothing, which answers as though every one of
+    # them were implemented.
+    def self.barren(definitions, base)
+      found = []
+      definitions.each do |definition|
+        Scope.barren(base, definition.includes, definition.path).each { |one| found.push(one) }
+      end
+      found
+    end
+
     # The definitions whose interfaces source claims in a comment, and the ones
     # read from the syntax tree. Each reading searches only its own files: a
     # marker nobody wrote is not worth parsing for, and a definition nobody

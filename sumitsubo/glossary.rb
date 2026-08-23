@@ -250,6 +250,17 @@ module Sumitsubo
       found
     end
 
+    # Every include the vocabulary writes that covers no file. One entry
+    # reaching nothing takes its whole vocabulary out of the run, and the
+    # words it carries are then checked nowhere.
+    # Every entry's includes are asked about at once: they are written in one
+    # file, and a pattern two entries share is one mistake rather than two.
+    def self.barren(sections, base, path)
+      patterns = []
+      sections.each { |section| section.includes.each { |pattern| patterns.push(pattern) } }
+      Scope.barren(base, patterns.uniq, path)
+    end
+
     # A found path is a String relative to the base: these are the keys a
     # file's vocabulary is held under, and check composes each back onto the
     # base to read it.

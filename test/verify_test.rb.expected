@@ -22,6 +22,11 @@ exit=1
 app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 1 difference
 exit=1
+--- an include covering no file, beside one whose files are excluded ---
+.spec/glossary.json:4 include nowhere/**/*.rb covers no file; the pattern is wrong or what it pointed at is gone
+app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+1 difference
+exit=2
 --- a specification switched off is not read, however far the code drifted ---
 0 differences
 exit=0
