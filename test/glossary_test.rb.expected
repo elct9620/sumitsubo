@@ -16,6 +16,8 @@ docs/overview.md Order: What a customer asks us to fulfil.
 docs/overview.md Order rejects Purchase: Order is what the domain calls it.
 --- read backwards, Global lands on top ---
 app/billing/charge.rb Order: What a customer asks us to fulfil.
+--- what the specification spells is not a use of it ---
+app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 --- a missing glossary is a broken reference line, not a difference ---
 no glossary at test/fixtures/glossary/absent.json; sumi init lays one down
 --- so is one that will not parse ---

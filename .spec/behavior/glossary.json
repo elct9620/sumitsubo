@@ -51,6 +51,13 @@
       "given": ["Global and a subdomain covering one file and declaring the same term"],
       "when": "the entries are read in the reverse of the order the specification writes them",
       "then": "Global's term replaces the subdomain's, which is why Global is written first"
+    },
+    {
+      "id": "G-008",
+      "title": "The specification spelling a word is not a use of it",
+      "given": ["findings against the glossary's own file and against a source file, for a word the glossary spells"],
+      "when": "the uses among them are worked out",
+      "then": "the one at the line the glossary spells the word on is set aside, and the other stands"
     }
   ]
 }

@@ -91,6 +91,11 @@ module Sumitsubo
             Any other file: entire - prose is a comment for its whole length.
             Matching is whole-word and case sensitive.
 
+            The glossary itself, where its own includes cover it: a word has
+            to be spelled to be declared rejected, so the line spelling one as
+            a `term` declares it rather than uses it, and nothing is reported
+            there.
+
         Findings
             app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
                 The line uses a word the vocabulary rejects, one finding per

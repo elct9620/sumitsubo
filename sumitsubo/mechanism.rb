@@ -48,9 +48,11 @@ module Sumitsubo
       end
 
       def verify(config, report, languages)
-        sections = Sumitsubo::Glossary.load(Sumitsubo::Glossary.path_in(config.root))
+        path = Sumitsubo::Glossary.path_in(config.root)
+        sections = Sumitsubo::Glossary.load(path)
         scope = Sumitsubo::Glossary.scope(sections, config.base)
-        Sumitsubo::Glossary.check(scope, config.base, languages).each do |finding|
+        findings = Sumitsubo::Glossary.check(scope, config.base, languages)
+        Sumitsubo::Glossary.uses(findings, path, config.base).each do |finding|
           report.difference(
             Where.of(config.base / finding.path), finding.line,
             Sumitsubo::Glossary.describe(finding)

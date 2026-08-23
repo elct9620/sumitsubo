@@ -35,6 +35,17 @@ puts "--- read backwards, Global lands on top ---"
 backwards = Sumitsubo::Glossary.scope(sections.reverse, Pathname.pwd)
 puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].definition}"
 
+# A finding is built here rather than read out of a run: what is being shown
+# is which of two the rule sets aside, and reaching a grammar to get them
+# would cost this file its snapshot.
+# @behavior G-008
+puts "--- what the specification spells is not a use of it ---"
+spelled = Sumitsubo::Glossary::Finding.new(".spec/glossary.json", 10, "Order", "Purchase", "Order is what the domain calls it.")
+used = Sumitsubo::Glossary::Finding.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
+Sumitsubo::Glossary.uses([spelled, used], ".spec/glossary.json", Pathname.pwd).each do |finding|
+  puts "#{finding.path}:#{finding.line} #{Sumitsubo::Glossary.describe(finding)}"
+end
+
 Dir.chdir(back)
 
 # @behavior G-003

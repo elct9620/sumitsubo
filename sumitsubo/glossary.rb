@@ -1,6 +1,7 @@
 require "json"
 require "pathname"
 require "sumitsubo/error"
+require "sumitsubo/locations"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -11,6 +12,10 @@ module Sumitsubo
   module Glossary
     FILE = "glossary.json"
     GLOBAL = "Global"
+
+    # Where the specification spells a word, whether as a term or as one a
+    # term rejects. Both spellings declare, and neither uses.
+    TERM = /"term"\s*:\s*"([^"]*)"/
 
     EMPTY = <<~JSON
       {
@@ -99,6 +104,31 @@ module Sumitsubo
       findings.sort_by { |f| [f.path, f.line, f.term, f.used] }
     end
 
+    # The findings that are uses of a rejected word rather than the
+    # specification spelling one. A word has to be spelled to be declared
+    # rejected, so a glossary its own includes cover would report against
+    # itself every rejection it declares.
+    #
+    # JSON carries no line numbers, so where each word is spelled is read off
+    # the raw text, which is what Locations is for.
+    def self.uses(findings, path, base)
+      # Composed against the base whether the caller named the glossary from
+      # there or from the root it already holds: an absolute one answers
+      # itself, so a caller is not made to say where it is twice.
+      file = base / path
+      where = "#{file.relative_path_from(base)}"
+      spelled = {}
+      Locations.all_in(file.read, TERM).each { |at| spelled["#{at.line} #{at.text}"] = true }
+
+      found = []
+      findings.each do |finding|
+        next if finding.path == where && spelled["#{finding.line} #{finding.used}"]
+
+        found.push(finding)
+      end
+      found
+    end
+
     # The mechanism words its own finding; where it points is the tool's to
     # shape.
     def self.describe(finding)
@@ -131,11 +161,17 @@ module Sumitsubo
     # against.
     def self.findings_for(path, regions, name, entry)
       found = []
+      # Spelled rather than passed on: both arrive as keys of a hash, which
+      # reaches the compiler carrying no type, and a Finding built from one
+      # gets integer members where it should hold text. Spinel 2026-08-22;
+      # drop the spelling once a key arrives knowing what it is.
+      where = "#{path}"
+      term = "#{name}"
       pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")
       regions.each do |region|
         line = region.line
         region.text.split("\n").each do |text|
-          found.push(Finding.new(path, line, name, entry.term, entry.reason)) unless pattern.match(text).nil?
+          found.push(Finding.new(where, line, term, entry.term, entry.reason)) unless pattern.match(text).nil?
           line += 1
         end
       end

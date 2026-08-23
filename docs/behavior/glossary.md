@@ -57,3 +57,11 @@ The domain vocabulary a project declares, and the words it rejects in their plac
 | Given | Global and a subdomain covering one file and declaring the same term |
 | When | the entries are read in the reverse of the order the specification writes them |
 | Then | Global's term replaces the subdomain's, which is why Global is written first |
+
+## G-008 — The specification spelling a word is not a use of it
+
+| Step | Statement |
+| --- | --- |
+| Given | findings against the glossary's own file and against a source file, for a word the glossary spells |
+| When | the uses among them are worked out |
+| Then | the one at the line the glossary spells the word on is set aside, and the other stands |

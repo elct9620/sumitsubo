@@ -4,6 +4,7 @@
       "include": [
         "CLAUDE.md",
         "README.md",
+        ".spec/glossary.json",
         ".spec/contract/*.json",
         ".spec/behavior/*.json",
         "sumitsubo/**/*.rb",
