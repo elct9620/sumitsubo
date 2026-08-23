@@ -95,8 +95,7 @@ puts "--- with the receiver among its parameters ---"
 Sumitsubo::Language.declarations_in(RUST, "sample.rs", "rust").each do |name|
   next if name.params.nil? || name.params.empty?
 
-  spelled = []
-  name.params.each { |param| spelled.push("#{param.kind}#{param.name.nil? ? "" : " #{param.name}"}") }
+  spelled = name.params.map { |param| "#{param.kind}#{param.name.nil? ? "" : " #{param.name}"}" }
   puts "  #{name.name}(#{spelled.join(", ")})"
 end
 
