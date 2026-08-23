@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.0-preview3](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview2...v0.1.0-preview3) (2026-08-23)
+
+
+### Features
+
+* **config:** let a project say which paths are not its source ([a23e9ae](https://github.com/elct9620/sumitsubo/commit/a23e9aec50a90019fb54c1131d8cd68ea2dd9612))
+* **config:** take what the .gitignore already says as said ([1261e57](https://github.com/elct9620/sumitsubo/commit/1261e57ca80a6150b04eef6f8397f07ccd5285a4))
+* **exclusion:** let the same rules say what a run reads ([05b7fcc](https://github.com/elct9620/sumitsubo/commit/05b7fcc65c30e5898d1192c6b0f084048ca10e0c))
+* **scope:** walk for the files an include covers, rather than glob for them ([eeaa8f6](https://github.com/elct9620/sumitsubo/commit/eeaa8f610f6cf7c792d4e60136d74a3e023acf70))
+
+
+### Bug Fixes
+
+* refuse to certify an include that covers no file ([0a94023](https://github.com/elct9620/sumitsubo/commit/0a940232b68f06b2127045871a549a6f4adfd037))
+* **scope:** refuse an excluded directory rather than walk it ([1dc960e](https://github.com/elct9620/sumitsubo/commit/1dc960eae5ac39863ebd4cc6e91cb5876185f3c1))
+
 ## [0.1.0-preview2](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview1...v0.1.0-preview2) (2026-08-23)
 
 

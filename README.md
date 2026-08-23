@@ -27,7 +27,7 @@ Every [release](https://github.com/elct9620/sumitsubo/releases) carries one
 executable per target, as a tarball because that is what keeps the file mode:
 
 ```console
-$ version=0.1.0-preview2 target=macos-aarch64
+$ version=0.1.0-preview3 target=macos-aarch64
 $ curl -sSL "https://github.com/elct9620/sumitsubo/releases/download/v$version/sumi-$version-$target.tar.gz" | tar xz
 $ ./sumi -v
 ```
@@ -44,7 +44,7 @@ The image holds the same executable a release ships, so it is a way to run
 and this is the way in:
 
 ```console
-$ docker run --rm -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview2 verify
+$ docker run --rm -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview3 verify
 ```
 
 It is built `FROM scratch` and carries the executable, the glibc loader, and
@@ -57,7 +57,7 @@ leaves files behind that the person who ran it does not own. On Linux, say who
 you are:
 
 ```console
-$ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview2 render
+$ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview3 render
 ```
 
 Docker Desktop maps ownership back to whoever is running it, so on macOS and
