@@ -1,4 +1,4 @@
-require "sumitsubo/exclusion"
+require "sumitsubo/patterns"
 
 # Which paths a run leaves alone. The rules take the form a `.gitignore` line
 # takes, and nothing here reaches the filesystem — a path is text — so `--regen`
@@ -18,8 +18,8 @@ PATHS = [
 ]
 
 def against(*patterns)
-  rules = Sumitsubo::Exclusion.read(patterns)
-  kept = PATHS.reject { |path| Sumitsubo::Exclusion.excludes?(rules, path) }
+  rules = Sumitsubo::Patterns.read(patterns)
+  kept = PATHS.reject { |path| Sumitsubo::Patterns.excludes?(rules, path) }
   puts "  #{patterns.join(" ")} -> #{kept.join(" ")}"
 end
 
@@ -55,8 +55,8 @@ puts "--- a rule matching nothing takes nothing out ---"
 against("nowhere/")
 
 def selected(pattern)
-  rule = Sumitsubo::Exclusion.read([pattern])[0]
-  puts "  #{pattern} -> #{PATHS.select { |path| Sumitsubo::Exclusion.selects?(rule, path) }.join(" ")}"
+  rule = Sumitsubo::Patterns.read([pattern])[0]
+  puts "  #{pattern} -> #{PATHS.select { |path| Sumitsubo::Patterns.selects?(rule, path) }.join(" ")}"
 end
 
 # An include is anchored to the base and names files, so the whole path has to
@@ -77,7 +77,7 @@ selected("run.log")
 # A .gitignore writes for a reader as well as for git, and neither the remark
 # nor the blank line between sections is a pattern.
 puts "--- what a .gitignore holds, less what it wrote for a reader ---"
-puts Sumitsubo::Exclusion.patterns_in(<<~TEXT).inspect
+puts Sumitsubo::Patterns.patterns_in(<<~TEXT).inspect
   # what the build leaves behind
   /target/
 
@@ -130,8 +130,8 @@ def globbed(base, pattern)
 end
 
 def matched(pattern)
-  rule = Sumitsubo::Exclusion.read([pattern])[0]
-  TREE.select { |path| Sumitsubo::Exclusion.selects?(rule, path) }.sort
+  rule = Sumitsubo::Patterns.read([pattern])[0]
+  TREE.select { |path| Sumitsubo::Patterns.selects?(rule, path) }.sort
 end
 
 # Every shape the two projects' 23 include patterns take. Same answer both

@@ -10,11 +10,12 @@ module Sumitsubo
   #
   # Character classes and escapes are not read: a pattern carrying a bracket
   # matches the bracket.
-  module Exclusion
-    # A pattern split into what it matches and what its punctuation said. A
-    # separator at the start or the middle anchors the pattern to the base;
-    # without one it matches a name at any depth, which is what lets `target/`
-    # reach a build directory wherever it sits.
+  module Patterns
+    # A pattern split into what it matches and what its punctuation said.
+    # Everything but the segments is the exclusion reading's: a separator at
+    # the start or the middle anchors the pattern, and without one it reaches a
+    # name at any depth, which is what lets `target/` reach a build directory
+    # wherever it sits. An include is anchored whatever the punctuation says.
     Rule = Struct.new(:segments, :anchored, :directory, :negated)
 
     def self.read(patterns)

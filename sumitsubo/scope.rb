@@ -1,5 +1,5 @@
 require "pathname"
-require "sumitsubo/exclusion"
+require "sumitsubo/patterns"
 require "sumitsubo/locations"
 require "sumitsubo/where"
 
@@ -32,7 +32,7 @@ module Sumitsubo
       patterns.each do |pattern|
         base.glob(pattern).each { |path| found.push(path) }
       end
-      found.reject { |path| Exclusion.excludes?(exclusion, path.relative_path_from(base)) }
+      found.reject { |path| Patterns.excludes?(exclusion, path.relative_path_from(base)) }
     end
 
     # Judged before anything is excluded: a pattern nothing matches is one

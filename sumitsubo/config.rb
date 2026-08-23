@@ -1,7 +1,7 @@
 require "json"
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/exclusion"
+require "sumitsubo/patterns"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -67,7 +67,7 @@ module Sumitsubo
       patterns = []
       patterns.concat(gitignored_in(base)) unless document["gitignore"] == false
       patterns.concat(document["exclude"] || [])
-      @exclusion = Exclusion.read(patterns)
+      @exclusion = Patterns.read(patterns)
       @specifications = document["specifications"] || {}
     end
 
@@ -90,7 +90,7 @@ module Sumitsubo
     # a tracked file is never left out — this does not.
     def gitignored_in(base)
       path = base / GITIGNORE
-      path.exist? ? Exclusion.patterns_in(path.read) : []
+      path.exist? ? Patterns.patterns_in(path.read) : []
     end
 
     # Only the exceptions are listed, so a specification nobody mentioned is
