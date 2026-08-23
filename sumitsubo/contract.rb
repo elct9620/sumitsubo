@@ -4,6 +4,7 @@ require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/locations"
 require "sumitsubo/note"
+require "sumitsubo/scope"
 
 module Sumitsubo
   # The structured specification the Contract mechanism verifies against. What
@@ -107,9 +108,7 @@ module Sumitsubo
     def self.scope(definitions, base)
       found = []
       definitions.each do |definition|
-        definition.includes.each do |pattern|
-          base.glob(pattern).each { |path| found.push(Where.of(path)) }
-        end
+        Scope.of(base, definition.includes).each { |path| found.push(Where.of(path)) }
       end
       found.uniq.sort
     end

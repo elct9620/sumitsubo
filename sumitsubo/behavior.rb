@@ -4,6 +4,7 @@ require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/locations"
 require "sumitsubo/note"
+require "sumitsubo/scope"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -69,16 +70,12 @@ module Sumitsubo
       path.glob("*.json").map { |file| "#{file}" }.sort
     end
 
-    # Every file any feature reaches. Globs are answered against the base,
-    # which is where the configuration was found, so a run from a subdirectory
-    # reaches the same files. The union is what gets scanned: `include` narrows
-    # the search rather than tying a scenario to one place.
+    # Every file any feature reaches. The union is what gets scanned:
+    # `include` narrows the search rather than tying a scenario to one place.
     def self.scope(features, base)
       found = []
       features.each do |feature|
-        feature.includes.each do |pattern|
-          base.glob(pattern).each { |path| found.push(Where.of(path)) }
-        end
+        Scope.of(base, feature.includes).each { |path| found.push(Where.of(path)) }
       end
       found.uniq.sort
     end

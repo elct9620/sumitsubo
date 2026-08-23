@@ -2,6 +2,7 @@ require "json"
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/locations"
+require "sumitsubo/scope"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -249,16 +250,11 @@ module Sumitsubo
       found
     end
 
-    # Globs are answered against the base, which is where the configuration
-    # was found, so a run from a subdirectory reaches the same files.
+    # A found path is a String relative to the base: these are the keys a
+    # file's vocabulary is held under, and check composes each back onto the
+    # base to read it.
     def self.paths_for(section, base)
-      found = []
-      section.includes.each do |pattern|
-        # A found path is a String: these are the keys a file's vocabulary is
-        # held under, and check composes each back onto the base to read it.
-        base.glob(pattern).each { |path| found.push("#{path.relative_path_from(base)}") }
-      end
-      found.uniq.sort
+      Scope.of(base, section.includes).map { |path| "#{path.relative_path_from(base)}" }.uniq.sort
     end
 
     def self.section_from(raw, where, lines)
