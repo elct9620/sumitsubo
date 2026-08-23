@@ -1,8 +1,12 @@
 module Sumitsubo
-  # Which paths a run leaves alone wherever it reads source. A pattern takes
-  # the form a `.gitignore` line takes, so a project writes the exclusion it
+  # Which paths a run reads and which it leaves alone. A pattern takes the
+  # form a `.gitignore` line takes, so a project writes the exclusion it
   # already knows how to write and the `.gitignore` itself reads into the
   # same rules.
+  #
+  # The two sides read one rule differently, and they sit together so that
+  # difference is readable: an exclusion reaches a name at any depth, an
+  # include is anchored to the base.
   #
   # Character classes and escapes are not read: a pattern carrying a bracket
   # matches the bracket.
@@ -32,6 +36,18 @@ module Sumitsubo
       return false if matched.empty?
 
       !matched.last.negated
+    end
+
+    # Whether an include reaches this path. An include is anchored to the base
+    # and names files, so the whole path has to match and a rule with no
+    # separator reaches the base and no deeper — where the same rule read as an
+    # exclusion reaches a name at any depth. The two sides differ here because
+    # a .gitignore and a glob differ here, and both are what they say they are.
+    #
+    # What a rule says about directories, and about putting a path back, is
+    # exclusion's and says nothing on this side.
+    def self.selects?(rule, path)
+      walks?(rule.segments, "#{path}".split("/"), 0, 0)
     end
 
     def self.rule_from(pattern)
