@@ -2,21 +2,21 @@
 
 The domain vocabulary a project declares, and the words it rejects in their place.
 
-## G-001 — A section reaches the files its includes cover
+## G-001 — An entry reaches the files its includes cover, under the name it carries
 
 | Step | Statement |
 | --- | --- |
-| Given | a glossary whose sections carry include globs |
-| When | the sections are resolved against the base |
-| Then | each section answers the files its globs cover |
+| Given | a glossary carrying Global and a named subdomain, each with include globs |
+| When | the entries are resolved against the base |
+| Then | each answers the files its globs cover, Global under that name and the subdomain under its own |
 
-## G-002 — A later term replaces an earlier one of the same name
+## G-002 — A subdomain stands in for Global where both name one term
 
 | Step | Statement |
 | --- | --- |
-| Given | two sections covering one file and declaring the same term |
+| Given | Global and a subdomain covering one file and declaring the same term |
 | When | the effective vocabulary for that file is worked out |
-| Then | the later term replaces the earlier one outright, its rejected words included |
+| Then | the subdomain's term replaces Global's outright, its rejected words included |
 
 ## G-003 — A missing glossary is a broken reference line
 
@@ -49,3 +49,11 @@ The domain vocabulary a project declares, and the words it rejects in their plac
 | Given | a glossary named by an absolute path that is not there |
 | When | the glossary is loaded |
 | Then | the path answers relative to where the run started |
+
+## G-007 — Order is all that decides which vocabulary is laid over which
+
+| Step | Statement |
+| --- | --- |
+| Given | Global and a subdomain covering one file and declaring the same term |
+| When | the entries are read in the reverse of the order the specification writes them |
+| Then | Global's term replaces the subdomain's, which is why Global is written first |

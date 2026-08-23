@@ -5,17 +5,17 @@
   "scenarios": [
     {
       "id": "G-001",
-      "title": "A section reaches the files its includes cover",
-      "given": ["a glossary whose sections carry include globs"],
-      "when": "the sections are resolved against the base",
-      "then": "each section answers the files its globs cover"
+      "title": "An entry reaches the files its includes cover, under the name it carries",
+      "given": ["a glossary carrying Global and a named subdomain, each with include globs"],
+      "when": "the entries are resolved against the base",
+      "then": "each answers the files its globs cover, Global under that name and the subdomain under its own"
     },
     {
       "id": "G-002",
-      "title": "A later term replaces an earlier one of the same name",
-      "given": ["two sections covering one file and declaring the same term"],
+      "title": "A subdomain stands in for Global where both name one term",
+      "given": ["Global and a subdomain covering one file and declaring the same term"],
       "when": "the effective vocabulary for that file is worked out",
-      "then": "the later term replaces the earlier one outright, its rejected words included"
+      "then": "the subdomain's term replaces Global's outright, its rejected words included"
     },
     {
       "id": "G-003",
@@ -44,6 +44,13 @@
       "given": ["a glossary named by an absolute path that is not there"],
       "when": "the glossary is loaded",
       "then": "the path answers relative to where the run started"
+    },
+    {
+      "id": "G-007",
+      "title": "Order is all that decides which vocabulary is laid over which",
+      "given": ["Global and a subdomain covering one file and declaring the same term"],
+      "when": "the entries are read in the reverse of the order the specification writes them",
+      "then": "Global's term replaces the subdomain's, which is why Global is written first"
     }
   ]
 }

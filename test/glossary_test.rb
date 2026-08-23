@@ -6,10 +6,10 @@ Dir.chdir("test/fixtures/glossary")
 
 sections = Sumitsubo::Glossary.load(".spec/glossary.json")
 
-# Which files a section reaches is half of what the merge rule means, so the
+# Which files an entry reaches is half of what the laying rule means, so the
 # scope is printed rather than inferred from the merged result.
 # @behavior G-001
-puts "--- what each section covers ---"
+puts "--- what each entry covers ---"
 sections.each do |section|
   puts "#{section.name} #{section.includes.inspect} -> #{Sumitsubo::Glossary.paths_for(section, Pathname.pwd).inspect}"
 end
@@ -27,6 +27,13 @@ scope.keys.sort.each do |path|
     end
   end
 end
+
+# Order is the whole of the rule, so reading the same glossary backwards is
+# what shows nothing else decides which vocabulary lands on top.
+# @behavior G-007
+puts "--- read backwards, Global lands on top ---"
+backwards = Sumitsubo::Glossary.scope(sections.reverse, Pathname.pwd)
+puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].definition}"
 
 Dir.chdir(back)
 

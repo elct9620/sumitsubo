@@ -20,10 +20,12 @@ module Sumitsubo
 
     class Error < Sumitsubo::Error; end
 
-    # A designation the section rejects for the term it sits under. The
-    # reason is what stops the same word being proposed again.
+    # A designation the term it sits under rejects. The reason is what stops
+    # the same word being proposed again.
     Disallowed = Struct.new(:term, :reason)
     Term = Struct.new(:term, :definition, :disallowed)
+    # One vocabulary and the files it reaches. A name declares a subdomain,
+    # and the entry carrying no name is Global's.
     Section = Struct.new(:name, :includes, :terms)
     Finding = Struct.new(:path, :line, :term, :used, :reason)
 
@@ -55,10 +57,12 @@ module Sumitsubo
       sections.map { |raw| section_from(raw) }
     end
 
-    # A file's effective vocabulary is every matching section applied in the
-    # order the specification lists them, a later term replacing an earlier
-    # one of the same name outright — its disallowed list included, since a
-    # term meaning something else here rejects different words.
+    # A file's effective vocabulary is Global's terms with every subdomain
+    # covering it laid over them, in the order the specification lists them,
+    # a later term replacing an earlier one of the same name outright — its
+    # disallowed list included, since a term meaning something else here
+    # rejects different words. Order is all that decides which way the laying
+    # goes, so Global is written first.
     def self.scope(sections, base)
       effective = {}
       sections.each do |section|
@@ -101,7 +105,7 @@ module Sumitsubo
     end
 
     # The mechanism words its own document, as it words its own findings. Only
-    # the terms are rendered: what a section rejects is a record of where this
+    # the terms are rendered: what a term rejects is a record of where this
     # project drifted rather than vocabulary, and the tool hands it to a reader
     # at the line it was tripped on.
     def self.render(sections)

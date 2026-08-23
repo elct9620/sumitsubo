@@ -54,12 +54,13 @@ A project using sumi has the command and nothing else of this repository, and a 
 
 The vocabulary a project means to use, and the words it rejects.
 
-One file at the root of the specification. A section scopes its terms by include globs, and only the words a term rejects are checked: a term rejecting none is vocabulary the tool carries but cannot verify.
+One file at the root of the specification. An entry names a subdomain, or names none and carries Global; either scopes its terms by include globs, and a file takes every entry covering it in the order they are written, so Global is written first. Only the words a term rejects are checked: a term rejecting none is vocabulary the tool carries but cannot verify.
 
 ```json
 {
   "glossary": [
     {
+      "name": "",
       "include": [],
       "terms": [
         { "term": "", "definition": "", "not": [{ "term": "", "reason": "" }] }

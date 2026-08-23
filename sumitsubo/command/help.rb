@@ -55,15 +55,30 @@ module Sumitsubo
                       ]
                     }
                   ]
+                },
+                {
+                  "name": "Billing",
+                  "include": ["app/billing/**/*.rb"],
+                  "terms": [
+                    {
+                      "term": "Order",
+                      "definition": "The billable set of lines.",
+                      "not": []
+                    }
+                  ]
                 }
               ]
             }
 
-            A section is scoped by its `include` globs. A file takes every
-            section covering it, in the order the file lists them; a later term
-            replaces an earlier one of the same name outright, its rejected
-            words included, because a term meaning something else there rejects
-            different words.
+            An entry naming no subdomain carries Global - the words the project
+            keeps wherever nothing says otherwise. A named one carries that
+            subdomain's. Either is scoped by its `include` globs.
+
+            A file takes every entry covering it, in the order the file lists
+            them; a later term replaces an earlier one of the same name
+            outright, its rejected words included, because a term meaning
+            something else there rejects different words. Order is all that
+            decides which way that goes, so Global is written first.
 
             A `reason` says why that word is wrong, not why the term is right -
             what the term means is what `definition` carries. The reason is

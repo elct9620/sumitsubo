@@ -93,6 +93,16 @@
           "term": "Note",
           "definition": "A block of prose a specification carries for its document alone: a heading, a paragraph, or a fenced example. It says why a declaration is right, which no mechanism can check, so it is compared against nothing.",
           "not": []
+        },
+        {
+          "term": "Subdomain",
+          "definition": "A part of the problem a project addresses, and the vocabulary that part keeps. A glossary entry declares one by naming it, and its terms hold in the files its includes cover, in place of Global's wherever both name the same term.",
+          "not": []
+        },
+        {
+          "term": "Global",
+          "definition": "The vocabulary a project keeps wherever no subdomain says otherwise. It is declared by the glossary entry that names no subdomain, and a subdomain covering a file stands in for it there.",
+          "not": []
         }
       ]
     }
