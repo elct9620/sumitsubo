@@ -51,7 +51,10 @@ module Sumitsubo
         sections = Sumitsubo::Glossary.load(Sumitsubo::Glossary.path_in(config.root))
         scope = Sumitsubo::Glossary.scope(sections, config.base)
         Sumitsubo::Glossary.check(scope, config.base, languages).each do |finding|
-          report.difference(finding.path, finding.line, Sumitsubo::Glossary.describe(finding))
+          report.difference(
+            Where.of(config.base / finding.path), finding.line,
+            Sumitsubo::Glossary.describe(finding)
+          )
         end
       end
     end

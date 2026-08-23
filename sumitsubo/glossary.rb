@@ -77,20 +77,21 @@ module Sumitsubo
 
     # Whole words, case sensitive, over the regions the vocabulary reaches.
     #
-    # What a person wrote is read by the language answering for the file, and
-    # that arrives from outside: this mechanism checks a vocabulary and names
-    # no language, which is what leaves a second one to be carried without it
-    # being touched.
+    # A finding answers at the path the vocabulary is scoped by, which is the
+    # one the specification writes its includes in; rendering it for a reader
+    # is the tool's, and happens once at the edge. What a person wrote is read
+    # by the language answering for the file, and that arrives from outside:
+    # this mechanism checks a vocabulary and names no language, which is what
+    # leaves a second one to be carried without it being touched.
     def self.check(scope, base, languages)
       findings = []
       scope.keys.sort.each do |path|
         file = base / path
-        where = Where.of(file)
-        regions = languages.comments_in(file, where)
+        regions = languages.comments_in(file, Where.of(file))
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].disallowed.each do |entry|
-            findings.concat(findings_for(where, regions, name, entry))
+            findings.concat(findings_for(path, regions, name, entry))
           end
         end
       end
