@@ -88,10 +88,10 @@ module Sumitsubo
     # disallowed list included, since a term meaning something else here
     # rejects different words. Order is all that decides which way the laying
     # goes, so Global is written first.
-    def self.scope(sections, base)
+    def self.scope(sections, base, exclusion)
       effective = {}
       sections.each do |section|
-        paths_for(section, base).each do |path|
+        paths_for(section, base, exclusion).each do |path|
           terms = effective[path] || {}
           section.terms.each { |term| terms[term.term] = term }
           effective[path] = terms
@@ -253,8 +253,8 @@ module Sumitsubo
     # A found path is a String relative to the base: these are the keys a
     # file's vocabulary is held under, and check composes each back onto the
     # base to read it.
-    def self.paths_for(section, base)
-      Scope.of(base, section.includes).map { |path| "#{path.relative_path_from(base)}" }.uniq.sort
+    def self.paths_for(section, base, exclusion)
+      Scope.of(base, section.includes, exclusion).map { |path| "#{path.relative_path_from(base)}" }.uniq.sort
     end
 
     def self.section_from(raw, where, lines)

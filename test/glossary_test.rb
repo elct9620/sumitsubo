@@ -11,12 +11,12 @@ sections = Sumitsubo::Glossary.load(".spec/glossary.json")
 # @behavior G-001
 puts "--- what each entry covers ---"
 sections.each do |section|
-  puts "#{section.name} #{section.includes.inspect} -> #{Sumitsubo::Glossary.paths_for(section, Pathname.pwd).inspect}"
+  puts "#{section.name} #{section.includes.inspect} -> #{Sumitsubo::Glossary.paths_for(section, Pathname.pwd, []).inspect}"
 end
 
 # @behavior G-002
 puts "--- effective vocabulary per file ---"
-scope = Sumitsubo::Glossary.scope(sections, Pathname.pwd)
+scope = Sumitsubo::Glossary.scope(sections, Pathname.pwd, [])
 scope.keys.sort.each do |path|
   terms = scope[path]
   terms.keys.sort.each do |name|
@@ -32,7 +32,7 @@ end
 # what shows nothing else decides which vocabulary lands on top.
 # @behavior G-007
 puts "--- read backwards, Global lands on top ---"
-backwards = Sumitsubo::Glossary.scope(sections.reverse, Pathname.pwd)
+backwards = Sumitsubo::Glossary.scope(sections.reverse, Pathname.pwd, [])
 puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].definition}"
 
 # A finding is built here rather than read out of a run: what is being shown

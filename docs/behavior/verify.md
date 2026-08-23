@@ -28,6 +28,15 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | `sumi verify` runs |
 | Then | the first line is not reported, and the second ignore answers at the specification as a comparison that could not be made |
 
+## V-020 — A build directory the project excludes
+
+| Step | Statement |
+| --- | --- |
+| Given | a project whose configuration excludes a directory |
+| Given | source under it drifted from the glossary the same way source outside it did |
+| When | the run verifies |
+| Then | only the line outside the excluded directory answers |
+
 ## V-002 — The same run from a subdirectory
 
 | Step | Statement |

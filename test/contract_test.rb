@@ -54,7 +54,7 @@ puts Sumitsubo::Contract.keywords(definitions).inspect
 
 # @behavior T-014
 puts "--- the files to look in ---"
-puts Sumitsubo::Contract.scope(definitions, Pathname.new(FIXTURE)).inspect
+puts Sumitsubo::Contract.scope(definitions, Pathname.new(FIXTURE), []).inspect
 
 # @behavior T-002
 puts "--- a directory nobody wrote registers no contracts ---"

@@ -50,7 +50,7 @@ module Sumitsubo
       def verify(config, report, languages)
         path = Sumitsubo::Glossary.path_in(config.root)
         sections = Sumitsubo::Glossary.load(path)
-        scope = Sumitsubo::Glossary.scope(sections, config.base)
+        scope = Sumitsubo::Glossary.scope(sections, config.base, config.exclusion)
         findings = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, languages), path, config.base
         )
@@ -138,7 +138,7 @@ module Sumitsubo
         claims = []
         claimed = Sumitsubo::Contract.claimed(definitions)
         keywords = Sumitsubo::Contract.keywords(claimed)
-        Sumitsubo::Contract.scope(claimed, config.base).each do |path|
+        Sumitsubo::Contract.scope(claimed, config.base, config.exclusion).each do |path|
           Marker.claims_in(path, keywords, languages).each do |claim|
             claims.push(Sumitsubo::Contract::Claim.new(
               claim.path, claim.line, claim.keyword, claim.text
@@ -154,7 +154,7 @@ module Sumitsubo
       def names_in(definitions, config, languages)
         names = []
         Sumitsubo::Contract.defined(definitions).each do |definition|
-          Sumitsubo::Contract.scope([definition], config.base).each do |path|
+          Sumitsubo::Contract.scope([definition], config.base, config.exclusion).each do |path|
             languages.declarations_in(path, Where.of(path), definition.language).each do |name|
               names.push(name)
             end
@@ -209,7 +209,7 @@ module Sumitsubo
       def claims_in(features, config, languages)
         claims = []
         keywords = [Sumitsubo::Behavior::MARKER]
-        Sumitsubo::Behavior.scope(features, config.base).each do |path|
+        Sumitsubo::Behavior.scope(features, config.base, config.exclusion).each do |path|
           Marker.claims_in(path, keywords, languages).each do |claim|
             Sumitsubo::Behavior.ids_in(claim.text).each do |id|
               claims.push(Sumitsubo::Behavior::Claim.new(claim.path, claim.line, id))

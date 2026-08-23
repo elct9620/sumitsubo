@@ -1,0 +1,16 @@
+--- a directory named at any depth ---
+  target/ -> src/main.rs crates/one/src/lib.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs run.log crates/one/run.log
+--- anchored by a separator at the start or the middle ---
+  /target/ -> src/main.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs run.log crates/one/run.log
+  crates/*/target/ -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs run.log crates/one/run.log
+--- however many directories ---
+  a/**/c.rs -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md run.log crates/one/run.log
+  **/target/ -> src/main.rs crates/one/src/lib.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs run.log crates/one/run.log
+--- a name at any depth ---
+  *.log -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs
+  ?.rs -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md run.log crates/one/run.log
+--- put back by a later rule ---
+  *.log !crates/one/run.log -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs crates/one/run.log
+  !crates/one/run.log *.log -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs
+--- a rule matching nothing takes nothing out ---
+  nowhere/ -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs run.log crates/one/run.log

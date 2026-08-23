@@ -90,3 +90,11 @@ The base a configuration is read against and the one findings answer from are de
 | Given | a .sumi.json naming one specification as not to be rendered |
 | When | the configuration is asked about each specification |
 | Then | a specification the file does not mention is rendered |
+
+## C-011 — What the project leaves alone
+
+| Step | Statement |
+| --- | --- |
+| Given | a configuration naming what to exclude |
+| When | the configuration is loaded |
+| Then | it answers the rules once for the project, and a configuration naming none answers none |

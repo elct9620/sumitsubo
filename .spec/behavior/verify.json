@@ -61,6 +61,16 @@
       "then": "the first line is not reported, and the second ignore answers at the specification as a comparison that could not be made"
     },
     {
+      "id": "V-020",
+      "title": "A build directory the project excludes",
+      "given": [
+        "a project whose configuration excludes a directory",
+        "source under it drifted from the glossary the same way source outside it did"
+      ],
+      "when": "the run verifies",
+      "then": "only the line outside the excluded directory answers"
+    },
+    {
       "id": "V-002",
       "title": "The same run from a subdirectory",
       "given": [

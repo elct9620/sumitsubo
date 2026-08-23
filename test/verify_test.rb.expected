@@ -14,6 +14,10 @@ exit=1
 .spec/glossary.json:19 nothing at app/order.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
 0 differences
 exit=2
+--- a build directory the project excludes ---
+app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+1 difference
+exit=1
 --- a specification switched off is not read, however far the code drifted ---
 0 differences
 exit=0

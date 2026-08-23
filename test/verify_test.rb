@@ -23,6 +23,14 @@ Dir.chdir("test/fixtures/ignored")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# Both files drifted the same way, and `**/*.rb` covers both. What decides is
+# the project having said the build directory is not its source.
+# @behavior V-020
+puts "--- a build directory the project excludes ---"
+Dir.chdir("test/fixtures/excluded")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 # @behavior V-003
 puts "--- a specification switched off is not read, however far the code drifted ---"
 Dir.chdir("test/fixtures/disabled")

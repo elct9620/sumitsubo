@@ -72,10 +72,10 @@ module Sumitsubo
 
     # Every file any feature reaches. The union is what gets scanned:
     # `include` narrows the search rather than tying a scenario to one place.
-    def self.scope(features, base)
+    def self.scope(features, base, exclusion)
       found = []
       features.each do |feature|
-        Scope.of(base, feature.includes).each { |path| found.push(Where.of(path)) }
+        Scope.of(base, feature.includes, exclusion).each { |path| found.push(Where.of(path)) }
       end
       found.uniq.sort
     end

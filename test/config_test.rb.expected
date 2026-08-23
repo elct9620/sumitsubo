@@ -15,3 +15,7 @@ loose: base=. root=.spec docs=docs
   render: glossary=true behavior=true contract=true
 --- a .sumi.json that will not parse is not a difference ---
 .sumi.json is not readable JSON
+--- what the project excludes ---
+  app/order.rb: false
+  target/debug/generated.rb: true
+  a project that said nothing excludes nothing: []

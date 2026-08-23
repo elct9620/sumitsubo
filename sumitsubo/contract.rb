@@ -105,10 +105,10 @@ module Sumitsubo
     # the search rather than tying an interface to one place: the union is what
     # gets scanned, so a claim written outside the file that declared it is
     # still found — and still counted when two places claim one contract.
-    def self.scope(definitions, base)
+    def self.scope(definitions, base, exclusion)
       found = []
       definitions.each do |definition|
-        Scope.of(base, definition.includes).each { |path| found.push(Where.of(path)) }
+        Scope.of(base, definition.includes, exclusion).each { |path| found.push(Where.of(path)) }
       end
       found.uniq.sort
     end

@@ -1,6 +1,7 @@
 require "json"
 require "pathname"
 require "sumitsubo/error"
+require "sumitsubo/exclusion"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -15,7 +16,7 @@ module Sumitsubo
     DEFAULT_ROOT = ".spec"
     DEFAULT_DOCS = "docs"
 
-    attr_reader :base, :root, :docs
+    attr_reader :base, :root, :docs, :exclusion
 
     # The directory a run is configured from: the nearest one at or above the
     # starting point holding a .sumi.json, else the repository it sits in, else
@@ -54,6 +55,10 @@ module Sumitsubo
       # Where Render writes, answered against the base as the root is, so a run
       # from a subdirectory writes to the same place it would from the top.
       @docs = (base / (document["docs"] || DEFAULT_DOCS)).cleanpath
+      # What every mechanism leaves alone. A build directory belongs to the
+      # project rather than to any one specification, so it is said once here
+      # instead of beside each `include`.
+      @exclusion = Exclusion.read(document["exclude"] || [])
       @specifications = document["specifications"] || {}
     end
 

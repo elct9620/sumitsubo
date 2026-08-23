@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo/config"
+require "sumitsubo/exclusion"
 
 # Where a run is configured from is decided by what is on disk above it, so the
 # cases are real directories walked into rather than a layout described to a
@@ -18,6 +19,7 @@ here = Pathname.pwd
   {
     "root": ".spec/",
     "docs": "docs/spec",
+    "exclude": ["target/"],
     "specifications": {
       "glossary": { "verify": false, "render": false },
       "behavior": { "render": false }
@@ -69,6 +71,19 @@ begin
 rescue Sumitsubo::Error => e
   puts e.message
 end
+
+# What a run leaves alone is the project's rather than any one
+# specification's, so it is read once here and every mechanism is handed the
+# same answer.
+# @behavior C-011
+puts "--- what the project excludes ---"
+Dir.chdir(here / "project")
+rules = Sumitsubo::Config.load.exclusion
+["app/order.rb", "target/debug/generated.rb"].each do |path|
+  puts "  #{path}: #{Sumitsubo::Exclusion.excludes?(rules, path)}"
+end
+Dir.chdir(here / "loose")
+puts "  a project that said nothing excludes nothing: #{Sumitsubo::Config.load.exclusion.inspect}"
 
 Dir.chdir(back)
 root.rmtree
