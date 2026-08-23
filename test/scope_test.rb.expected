@@ -1,0 +1,16 @@
+--- where a walk starts ---
+  app/**/*.rb -> ["app"]
+  app/*.rb app/billing/*.rb -> ["app"]
+  **/*.rb -> [""]
+  top.rb -> []
+  docs/*.md app/**/*.rb top.rb -> ["app", "docs"]
+--- a root under another root is dropped ---
+  ["app", "docs"]
+--- what a walk from the base reaches ---
+  app/billing/charge.rb app/order.rb docs/guide.md top.rb
+--- a root nothing wrote ---
+  []
+--- what an include covers ---
+  app/billing/charge.rb app/order.rb top.rb
+  app/order.rb top.rb
+  app/billing/charge.rb

@@ -1,0 +1,72 @@
+require "pathname"
+require "sumitsubo/patterns"
+require "sumitsubo/scope"
+
+# What the walk reaches, and where it starts from. The tree is built here so
+# the answers are against a shape this file wrote rather than whatever the
+# repository holds. Nothing reaches the grammar, so `--regen` can write the
+# snapshot beside it.
+
+root = Pathname.new("/tmp/sumi_scope_test_#{Process.pid}")
+root.rmtree if root.exist?
+back = Dir.pwd
+root.mkpath
+Dir.chdir(root)
+base = Pathname.pwd
+
+[
+  "top.rb",
+  "app/order.rb",
+  "app/billing/charge.rb",
+  ".hidden/kept.rb",
+  "app/.cache/gen.rb",
+  "docs/guide.md"
+].each do |path|
+  file = base / path
+  file.parent.mkpath
+  file.write("")
+end
+# A directory that links back up the tree: descending it would never end.
+File.symlink("#{base / "app"}", "#{base / "app" / "loop"}")
+
+# A pattern names its walk by everything before its first wildcard, so a
+# literal one names no walk at all.
+# @behavior W-001
+puts "--- where a walk starts ---"
+[
+  ["app/**/*.rb"],
+  ["app/*.rb", "app/billing/*.rb"],
+  ["**/*.rb"],
+  ["top.rb"],
+  ["docs/*.md", "app/**/*.rb", "top.rb"]
+].each do |patterns|
+  puts "  #{patterns.join(" ")} -> #{Sumitsubo::Scope.roots_in(patterns).inspect}"
+end
+
+# `app/billing` sits under `app`, so it is walked by that one and not again.
+# @behavior W-002
+puts "--- a root under another root is dropped ---"
+puts "  #{Sumitsubo::Scope.roots_in(["app/**/*.rb", "app/billing/*.rb", "docs/*.md"]).inspect}"
+
+# Hidden entries are passed over, hidden directories are not descended, and a
+# symlinked directory is not followed.
+# @behavior W-003
+puts "--- what a walk from the base reaches ---"
+puts "  #{Sumitsubo::Scope.under(base, "").sort.join(" ")}"
+
+# A root the specification names and nothing wrote is an include reaching
+# nothing, which is a finding rather than a crash.
+# @behavior W-004
+puts "--- a root nothing wrote ---"
+puts "  #{Sumitsubo::Scope.under(base, "nowhere").inspect}"
+
+# The whole of it: patterns in, files out, with what the project excludes
+# taken off.
+# @behavior W-005
+puts "--- what an include covers ---"
+puts "  #{Sumitsubo::Scope.of(base, ["**/*.rb"], []).sort.join(" ")}"
+puts "  #{Sumitsubo::Scope.of(base, ["**/*.rb"], Sumitsubo::Patterns.read(["billing/"])).sort.join(" ")}"
+puts "  #{Sumitsubo::Scope.of(base, ["app/*/*.rb"], []).sort.join(" ")}"
+
+Dir.chdir(back)
+root.rmtree

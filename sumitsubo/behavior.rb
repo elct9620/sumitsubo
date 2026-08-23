@@ -75,7 +75,7 @@ module Sumitsubo
     def self.scope(features, base, exclusion)
       found = []
       features.each do |feature|
-        Scope.of(base, feature.includes, exclusion).each { |path| found.push(Where.of(path)) }
+        Scope.of(base, feature.includes, exclusion).each { |path| found.push(Where.of(base / path)) }
       end
       found.uniq.sort
     end

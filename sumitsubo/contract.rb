@@ -108,7 +108,7 @@ module Sumitsubo
     def self.scope(definitions, base, exclusion)
       found = []
       definitions.each do |definition|
-        Scope.of(base, definition.includes, exclusion).each { |path| found.push(Where.of(path)) }
+        Scope.of(base, definition.includes, exclusion).each { |path| found.push(Where.of(base / path)) }
       end
       found.uniq.sort
     end

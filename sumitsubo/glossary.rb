@@ -265,7 +265,7 @@ module Sumitsubo
     # file's vocabulary is held under, and check composes each back onto the
     # base to read it.
     def self.paths_for(section, base, exclusion)
-      Scope.of(base, section.includes, exclusion).map { |path| "#{path.relative_path_from(base)}" }.uniq.sort
+      Scope.of(base, section.includes, exclusion).uniq.sort
     end
 
     def self.section_from(raw, where, lines)

@@ -1,0 +1,54 @@
+{
+  "name": "Scope",
+  "description": "Which files a specification's include covers, and the walk that finds them.",
+  "include": [
+    "test/scope_test.rb"
+  ],
+  "scenarios": [
+    {
+      "id": "W-001",
+      "title": "Where a walk starts",
+      "given": [
+        "an include carrying a wildcard"
+      ],
+      "when": "the scope is asked which directories to walk",
+      "then": "it names everything before the first wildcard, and a pattern carrying none names no walk at all"
+    },
+    {
+      "id": "W-002",
+      "title": "A root under another root",
+      "given": [
+        "two includes whose directories nest"
+      ],
+      "when": "the scope is asked which directories to walk",
+      "then": "only the outermost is walked, so a file is met once however many includes reach it"
+    },
+    {
+      "id": "W-003",
+      "title": "What a walk passes over",
+      "given": [
+        "a tree holding a hidden entry, a hidden directory, and a directory linked back up the tree"
+      ],
+      "when": "the walk runs",
+      "then": "the hidden entries are passed over and the link is not followed"
+    },
+    {
+      "id": "W-004",
+      "title": "A root nothing wrote",
+      "given": [
+        "an include naming a directory that is not there"
+      ],
+      "when": "the walk runs",
+      "then": "it answers nothing rather than refusing to run"
+    },
+    {
+      "id": "W-005",
+      "title": "What an include covers",
+      "given": [
+        "an include, and what the project excludes"
+      ],
+      "when": "the scope is asked what it covers",
+      "then": "it answers the files the include reaches less the excluded ones, a wildcard matching a directory in the middle included"
+    }
+  ]
+}
