@@ -58,8 +58,7 @@ module Sumitsubo
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      features = []
-      files_in(path).each { |file| features.push(feature_from(file)) }
+      features = files_in(path).map { |file| feature_from(file) }
       refuse_ambiguity(features)
       features
     end
@@ -67,9 +66,7 @@ module Sumitsubo
     # A found path is a String: it is what a feature answers with, and what a
     # finding about one of its scenarios points at.
     def self.files_in(path)
-      found = []
-      path.glob("*.json").each { |file| found.push("#{file}") }
-      found.sort
+      path.glob("*.json").map { |file| "#{file}" }.sort
     end
 
     # Every file any feature reaches. Globs are answered against the base,

@@ -104,21 +104,17 @@ module Sumitsubo
       # concept's name, so counting one would answer for every legitimate
       # class in the tree.
       def comments_in(path, where)
-        found = []
-        captured(path, COMMENTS, where).each do |capture|
-          found.push(Region.new(capture.line, capture.text))
+        captured(path, COMMENTS, where).map do |capture|
+          Region.new(capture.line, capture.text)
         end
-        found
       end
 
       # The comments with code after them. A claim sits in front of what
       # implements it, so a comment nothing follows claims nothing.
       def attached_comments_in(path, where)
-        found = []
-        captured(path, ATTACHED, where).each do |capture|
-          found.push(Region.new(capture.line, capture.text))
+        captured(path, ATTACHED, where).map do |capture|
+          Region.new(capture.line, capture.text)
         end
-        found
       end
 
       # The names this file declares and the shape each is reached by, spelled
@@ -164,8 +160,7 @@ module Sumitsubo
       # The name a contract would have to use to reach this node, its enclosing
       # scopes included.
       def qualified(scopes, reopened, node)
-        holding = []
-        Definitions.enclosing(scopes, node).each { |scope| holding.push(scope.text) }
+        holding = Definitions.enclosing(scopes, node).map { |scope| scope.text }
         return holding.push(node.text).join("::") if node.kind == SCOPE
         # A definition outside every scope is reached by its bare name: there
         # is no path to put in front of it.

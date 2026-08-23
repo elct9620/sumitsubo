@@ -35,9 +35,7 @@ module Sumitsubo
         holding.push(capture)
       end
 
-      found = []
-      order.each { |key| found.push(grouped[key]) }
-      found
+      order.map { |key| grouped[key] }
     end
 
     # The nodes those matches declare. A match that declares nothing answers

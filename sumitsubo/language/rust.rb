@@ -106,9 +106,7 @@ module Sumitsubo
       private
 
       def regions(captures)
-        found = []
-        captures.each { |capture| found.push(Region.new(capture.line, capture.text)) }
-        found
+        captures.map { |capture| Region.new(capture.line, capture.text) }
       end
 
       def captured(path, query, where)
@@ -128,8 +126,7 @@ module Sumitsubo
       # The path a contract would have to write to reach this node, the blocks
       # holding it in front of it.
       def qualified(holders, node)
-        path = []
-        Definitions.enclosing(holders, node).each { |holder| path.push(base(holder.text)) }
+        path = Definitions.enclosing(holders, node).map { |holder| base(holder.text) }
         path.push(base(node.text))
         path.join("::")
       end

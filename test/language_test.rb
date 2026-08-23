@@ -10,9 +10,7 @@ RUBY = "test/fixtures/definitions/sample.rb"
 PROSE = "test/fixtures/behavior/test/overview.md"
 
 def spell(regions)
-  spelled = []
-  regions.each { |region| spelled.push("#{region.line}:#{region.text}") }
-  spelled
+  regions.map { |region| "#{region.line}:#{region.text}" }
 end
 
 # An identifier is a spelling of a concept rather than the concept's name, so
@@ -113,9 +111,8 @@ end
 def signature(name)
   return "" if name.params.nil?
 
-  spelled = []
-  name.params.each do |param|
-    spelled.push("#{param.name.nil? ? "-" : param.name}:#{param.kind}#{param.optional ? "?" : ""}")
+  spelled = name.params.map do |param|
+    "#{param.name.nil? ? "-" : param.name}:#{param.kind}#{param.optional ? "?" : ""}"
   end
   " (#{spelled.join(", ")})"
 end

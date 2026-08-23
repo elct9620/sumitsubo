@@ -22,8 +22,7 @@ Sumitsubo::Definitions.matches_in([
   Capture.new(1, "name", 1, "A"),
   Capture.new(2, "name", 4, "go")
 ]).each do |captures|
-  spelled = []
-  captures.each { |capture| spelled.push("#{capture.name}=#{capture.text.split("\n")[0]}") }
+  spelled = captures.map { |capture| "#{capture.name}=#{capture.text.split("\n")[0]}" }
   puts "  #{spelled.join(" ")}"
 end
 
@@ -45,7 +44,6 @@ Sumitsubo::Definitions.nodes_in([
 puts "--- the nodes holding one, outermost first ---"
 scopes = [node("scope", "Inner", 2, 5), node("scope", "Outer", 1, 8), node("scope", "Same", 3, 3)]
 [node("instance", "go", 3, 3), node("instance", "away", 6, 6)].each do |held|
-  holding = []
-  Sumitsubo::Definitions.enclosing(scopes, held).each { |scope| holding.push(scope.text) }
+  holding = Sumitsubo::Definitions.enclosing(scopes, held).map { |scope| scope.text }
   puts "  #{held.text}: #{holding.join(" > ")}"
 end

@@ -89,8 +89,7 @@ module Sumitsubo
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      definitions = []
-      files_in(path).each { |file| definitions.push(definition_from(file, languages)) }
+      definitions = files_in(path).map { |file| definition_from(file, languages) }
       refuse_ambiguity(definitions)
       definitions
     end
@@ -98,9 +97,7 @@ module Sumitsubo
     # A found path is a String: it is what a definition answers with, and what
     # a finding about one of its interfaces points at.
     def self.files_in(path)
-      found = []
-      path.glob("*.json").each { |file| found.push("#{file}") }
-      found.sort
+      path.glob("*.json").map { |file| "#{file}" }.sort
     end
 
     # Every file any definition reaches. As with Behavior, `include` narrows
@@ -135,9 +132,7 @@ module Sumitsubo
 
     # The words source claims these contracts with, read in one pass.
     def self.keywords(definitions)
-      found = []
-      claimed(definitions).each { |definition| found.push(definition.marker) }
-      found.uniq.sort
+      claimed(definitions).map { |definition| definition.marker }.uniq.sort
     end
 
     # An interface nothing claims: the specification registers it and no source
@@ -320,8 +315,7 @@ module Sumitsubo
     def self.spell(params)
       return "nothing" if params.nil?
 
-      spelled = []
-      params.each { |param| spelled.push(spelled_as(param)) }
+      spelled = params.map { |param| spelled_as(param) }
       "(#{spelled.join(", ")})"
     end
 
