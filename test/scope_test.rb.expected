@@ -10,6 +10,11 @@
   app/billing/charge.rb app/order.rb docs/guide.md top.rb
 --- a root nothing wrote ---
   []
+--- a directory the walk refuses ---
+  reached: app/order.rb docs/guide.md top.rb
+  refused: ["app/billing"]
+  billing/*.rb emptied by the project: true
+  nowhere/*.rb nobody could have meant: false
 --- what an include covers ---
   app/billing/charge.rb app/order.rb top.rb
   app/order.rb top.rb

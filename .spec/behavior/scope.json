@@ -49,6 +49,15 @@
       ],
       "when": "the scope is asked what it covers",
       "then": "it answers the files the include reaches less the excluded ones, a wildcard matching a directory in the middle included"
+    },
+    {
+      "id": "W-006",
+      "title": "A directory the walk refuses",
+      "given": [
+        "an excluded directory holding files an include would otherwise reach"
+      ],
+      "when": "the walk runs",
+      "then": "it is not walked into at all, and what was refused is carried so an include the project emptied is told apart from one nobody could have meant"
     }
   ]
 }

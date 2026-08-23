@@ -32,8 +32,25 @@ module Sumitsubo
     # The last rule to match decides, so a `!` line written after one puts a
     # path back.
     def self.excludes?(rules, path)
-      segments = "#{path}".split("/")
-      matched = rules.select { |rule| covers?(rule, segments) }
+      decided(rules, "#{path}".split("/"), false)
+    end
+
+    # The same question about a directory, which a rule naming one answers
+    # differently: `target/` is the directory itself here, where against a
+    # file it can only be one the file sits under. Asked while walking, so a
+    # directory left out is never looked inside.
+    def self.excludes_directory?(rules, path)
+      decided(rules, "#{path}".split("/"), true)
+    end
+
+    def self.decided(rules, segments, directory)
+      matched = []
+      index = 0
+      while index < rules.length
+        rule = rules[index]
+        matched.push(rule) if covers?(rule, segments, directory)
+        index += 1
+      end
       return false if matched.empty?
 
       !matched.last.negated
@@ -66,10 +83,9 @@ module Sumitsubo
     # A rule covers a path when it matches the path itself or a directory
     # above it: excluding a directory is excluding everything it holds, and
     # what a scope holds is files rather than the directories they sit in.
-    def self.covers?(rule, segments)
-      # A rule ending in a separator names a directory, which the whole path
-      # never is.
-      deepest = rule.directory ? segments.length - 1 : segments.length
+    def self.covers?(rule, segments, directory)
+      # A rule ending in a separator names a directory, which a file never is.
+      deepest = rule.directory && !directory ? segments.length - 1 : segments.length
       depth = 1
       while depth <= deepest
         return true if matches?(rule, segments[0, depth])

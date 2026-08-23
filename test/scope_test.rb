@@ -52,13 +52,25 @@ puts "  #{Sumitsubo::Scope.roots_in(["app/**/*.rb", "app/billing/*.rb", "docs/*.
 # symlinked directory is not followed.
 # @behavior W-003
 puts "--- what a walk from the base reaches ---"
-puts "  #{Sumitsubo::Scope.under(base, "").sort.join(" ")}"
+puts "  #{Sumitsubo::Scope.walk(base, ["**/*"], []).paths.sort.join(" ")}"
 
 # A root the specification names and nothing wrote is an include reaching
 # nothing, which is a finding rather than a crash.
 # @behavior W-004
 puts "--- a root nothing wrote ---"
-puts "  #{Sumitsubo::Scope.under(base, "nowhere").inspect}"
+puts "  #{Sumitsubo::Scope.walk(base, ["nowhere/**/*.rb"], []).paths.inspect}"
+
+# An excluded directory is refused rather than walked and then thrown away,
+# which is what keeps a build tree from costing anything at all. What it
+# refused is carried, because that is what tells an include the project
+# emptied apart from one nobody could have meant.
+# @behavior W-006
+puts "--- a directory the walk refuses ---"
+walked = Sumitsubo::Scope.walk(base, ["**/*.rb"], Sumitsubo::Patterns.read(["billing/"]))
+puts "  reached: #{walked.paths.sort.join(" ")}"
+puts "  refused: #{walked.pruned.inspect}"
+puts "  billing/*.rb emptied by the project: #{Sumitsubo::Scope.refused?(walked.pruned, "app/billing")}"
+puts "  nowhere/*.rb nobody could have meant: #{Sumitsubo::Scope.refused?(walked.pruned, "nowhere")}"
 
 # The whole of it: patterns in, files out, with what the project excludes
 # taken off.

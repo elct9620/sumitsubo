@@ -83,10 +83,10 @@ module Sumitsubo
     # Every include a feature writes that covers no file. Its scenarios are
     # then compared against nothing, which answers as though every one of them
     # were claimed.
-    def self.barren(features, base)
+    def self.barren(features, base, exclusion)
       found = []
       features.each do |feature|
-        Scope.barren(base, feature.includes, feature.path).each { |one| found.push(one) }
+        Scope.barren(base, feature.includes, feature.path, exclusion).each { |one| found.push(one) }
       end
       found
     end

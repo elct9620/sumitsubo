@@ -29,26 +29,46 @@ module Sumitsubo
     Barren = Struct.new(:path, :pattern, :line)
 
     def self.of(base, patterns, exclusion)
-      candidates = candidates_in(base, patterns)
       found = []
+      candidates = walk(base, patterns, exclusion).paths
       patterns.each do |pattern|
         selected(pattern, candidates).each { |path| found.push(path) }
       end
-      found.reject { |path| Patterns.excludes?(exclusion, path) }
+      found
     end
 
-    # Judged before anything is excluded: a pattern nothing matches is one
-    # nobody can have meant, while one whose files the project excludes is the
-    # project getting what it asked for.
-    def self.barren(base, patterns, path)
+    # An excluded directory is never walked into, so a pattern reaching only
+    # what the project excluded reaches nothing here. What tells the two apart
+    # is whether any directory the walk refused stands on the pattern's own
+    # path: a pattern nothing matches is one nobody can have meant, while one
+    # whose files the project took away is the project getting what it asked
+    # for.
+    def self.barren(base, patterns, path, exclusion)
       lines = Locations.of(Pathname.new(path).read, SPELLED)
       where = Where.of(path)
-      candidates = candidates_in(base, patterns)
+      walked = walk(base, patterns, exclusion)
       found = []
       patterns.each do |pattern|
-        found.push(Barren.new(where, pattern, lines[pattern])) if selected(pattern, candidates).empty?
+        next unless selected(pattern, walked.paths).empty?
+        next if refused?(walked.pruned, root_of(pattern))
+
+        found.push(Barren.new(where, pattern, lines[pattern]))
       end
       found
+    end
+
+    # Whether any directory the walk refused stands on this pattern's path,
+    # either above its root or under it.
+    def self.refused?(pruned, root)
+      index = 0
+      while index < pruned.length
+        gone = pruned[index]
+        return true if root == gone || root.start_with?("#{gone}/") || gone.start_with?("#{root}/")
+        return true if root == ""
+
+        index += 1
+      end
+      false
     end
 
     # Nothing was read where the specification says something should have
@@ -58,19 +78,25 @@ module Sumitsubo
       "the pattern is wrong or what it pointed at is gone"
     end
 
-    # Every file these patterns could reach. A pattern with no wildcard names
-    # one file and is answered by asking whether it is there; the rest are
-    # answered by walking, and only from the directory each names before its
-    # first wildcard.
-    def self.candidates_in(base, patterns)
-      found = []
+    # What the walk found and what it refused to look inside. A pattern with
+    # no wildcard names one file and is answered by asking whether it is
+    # there; the rest are answered by walking, and only from the directory
+    # each names before its first wildcard.
+    Found = Struct.new(:paths, :pruned)
+
+    def self.walk(base, patterns, exclusion)
+      paths = []
       patterns.each do |pattern|
-        found.push(pattern) if literal?(pattern) && (base / pattern).file?
+        next unless literal?(pattern) && (base / pattern).file?
+
+        paths.push(pattern) unless Patterns.excludes?(exclusion, pattern)
       end
+      pruned = []
       roots_in(patterns).each do |root|
-        under(base, root).each { |path| found.push(path) }
+        found = under(base, root, exclusion, pruned)
+        found.each { |path| paths.push(path) }
       end
-      found.uniq
+      Found.new(paths.uniq, pruned)
     end
 
     def self.selected(pattern, candidates)
@@ -137,7 +163,7 @@ module Sumitsubo
     # Written against an explicit stack rather than recursing, the way
     # Pathname#find is: a method that both yields and calls itself through a
     # block is one Spinel has emitted as a walk that never descended.
-    def self.under(base, root)
+    def self.under(base, root, exclusion, pruned)
       start = root == "" ? base : base / root
       found = []
       return found unless start.directory?
@@ -152,10 +178,18 @@ module Sumitsubo
           index += 1
           next if "#{child.basename}".start_with?(".")
 
+          where = "#{child.relative_path_from(base)}"
           if child.directory?
-            stack.push(child) unless child.symlink?
-          else
-            found.push("#{child.relative_path_from(base)}")
+            # Refusing the directory rather than its files is the whole of why
+            # this is cheap: a build tree is not walked at all rather than
+            # walked and then thrown away.
+            if Patterns.excludes_directory?(exclusion, where)
+              pruned.push(where)
+            elsif !child.symlink?
+              stack.push(child)
+            end
+          elsif !Patterns.excludes?(exclusion, where)
+            found.push(where)
           end
         end
       end

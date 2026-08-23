@@ -53,7 +53,7 @@ module Sumitsubo
         sections = Sumitsubo::Glossary.load(path)
         # An include reaching nothing is not a difference: what the words were
         # to be checked against was never read.
-        Sumitsubo::Glossary.barren(sections, config.base, path).each do |barren|
+        Sumitsubo::Glossary.barren(sections, config.base, path, config.exclusion).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end
         scope = Sumitsubo::Glossary.scope(sections, config.base, config.exclusion)
@@ -105,7 +105,7 @@ module Sumitsubo
 
       def verify(config, report, languages)
         definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), languages)
-        Sumitsubo::Contract.barren(definitions, config.base).each do |barren|
+        Sumitsubo::Contract.barren(definitions, config.base, config.exclusion).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end
         claims = claims_in(definitions, config, languages)
@@ -198,7 +198,7 @@ module Sumitsubo
 
       def verify(config, report, languages)
         features = Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root))
-        Sumitsubo::Behavior.barren(features, config.base).each do |barren|
+        Sumitsubo::Behavior.barren(features, config.base, config.exclusion).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end
         claims = claims_in(features, config, languages)

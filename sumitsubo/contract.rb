@@ -116,10 +116,10 @@ module Sumitsubo
     # Every include a definition writes that covers no file. Its interfaces
     # are then compared against nothing, which answers as though every one of
     # them were implemented.
-    def self.barren(definitions, base)
+    def self.barren(definitions, base, exclusion)
       found = []
       definitions.each do |definition|
-        Scope.barren(base, definition.includes, definition.path).each { |one| found.push(one) }
+        Scope.barren(base, definition.includes, definition.path, exclusion).each { |one| found.push(one) }
       end
       found
     end

@@ -255,10 +255,10 @@ module Sumitsubo
     # words it carries are then checked nowhere.
     # Every entry's includes are asked about at once: they are written in one
     # file, and a pattern two entries share is one mistake rather than two.
-    def self.barren(sections, base, path)
+    def self.barren(sections, base, path, exclusion)
       patterns = []
       sections.each { |section| section.includes.each { |pattern| patterns.push(pattern) } }
-      Scope.barren(base, patterns.uniq, path)
+      Scope.barren(base, patterns.uniq, path, exclusion)
     end
 
     # A found path is a String relative to the base: these are the keys a

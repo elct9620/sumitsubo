@@ -41,3 +41,11 @@ Which files a specification's include covers, and the walk that finds them.
 | Given | an include, and what the project excludes |
 | When | the scope is asked what it covers |
 | Then | it answers the files the include reaches less the excluded ones, a wildcard matching a directory in the middle included |
+
+## W-006 — A directory the walk refuses
+
+| Step | Statement |
+| --- | --- |
+| Given | an excluded directory holding files an include would otherwise reach |
+| When | the walk runs |
+| Then | it is not walked into at all, and what was refused is carried so an include the project emptied is told apart from one nobody could have meant |
