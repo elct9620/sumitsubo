@@ -125,4 +125,4 @@ Where the specifications live, what a run touches, and what it answers.
 }
 ```
 
-A build directory belongs to the project rather than to any one specification, so what a run leaves alone is written once here rather than beside each include. An exclusion takes the form a .gitignore line takes, and the .gitignore beside this file is read as well — only that one, so what git reads besides is not what this reads.
+`include` and `exclude` are one glob form read two ways, and the .gitignore beside this file is read as well. An excluded directory is never looked inside; an include covering no file at all refuses to certify.

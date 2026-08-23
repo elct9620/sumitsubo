@@ -462,31 +462,32 @@ module Sumitsubo
             keeps a specification without checking it, and `render: false` keeps
             one out of the documents without stopping the check.
 
-        What a run leaves alone
-            A build directory belongs to the project rather than to any one
-            specification, so `exclude` is written once here instead of beside
-            each `include`. A pattern takes the form a .gitignore line takes:
-            `*` and `?` within a name, `**` for however many directories, a
-            separator at the start or the middle anchoring it to the base, one
-            at the end naming a directory and everything under it, and `!`
-            putting a path back. Character classes and escapes are not read.
+        What a run reads
+            `include` and `exclude` are globs read against the directory
+            holding the .sumi.json: `*` and `?` within a name, `**` for
+            however many directories, one in the middle included - so
+            `crates/*/src/**/*.rs` is each crate's own source. Character
+            classes and escapes are read by neither, a wildcard never reaches
+            a hidden file, and a directory linking back up the tree is not
+            followed.
 
-            A project keeping a .gitignore has already said which paths are
-            not its source, so the one beside the .sumi.json is read as well.
-            Only that one: what git reads besides — the files deeper in the
-            tree, the user's own, and the rule that a tracked file is never
-            left out — this does not, so the two answers differ where a
-            project has force-added something its .gitignore names.
+            An include is where it says: `README.md` is the one at the top,
+            `**/README.md` is every one. An exclusion with no separator
+            reaches a name at any depth, which is what makes `target/` every
+            build directory; `!` and a trailing separator are its alone.
 
-            .sumi.json is read after the .gitignore, so a `!` here puts back a
-            path git leaves out, and `"gitignore": false` takes the file out
-            of the reckoning entirely.
+            The .gitignore beside this file is read as well, and only that one
+            - not the ones deeper in the tree, not the user's own, and not
+            git's rule that a tracked file is never left out. This file is
+            read after it, so `!` here puts a path back and
+            `"gitignore": false` takes the .gitignore out entirely.
 
-            Excluding narrows what is read and never what is reported: an
-            `include` covering no file at all is a pattern nobody can have
-            meant, and the run refuses to certify rather than answer that the
-            two sides agree. One whose files this leaves out is the project
-            getting what it asked for, and says nothing.
+            An excluded directory is never looked inside, so `target/` is
+            worth more than anything written about what is under it.
+
+            An include covering no file at all is a pattern nobody can have
+            meant, and the run refuses to certify. One whose files `exclude`
+            takes away says nothing.
 
         Answers
             0   the two sides agree
