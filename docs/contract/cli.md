@@ -113,12 +113,16 @@ One file per feature, under `behavior/`, each carrying its own include. A scenar
 
 Where the specifications live, what a run touches, and what it answers.
 
-`.sumi.json` says where the specifications live, where the documents go, and which of them a run verifies or renders. A run reads the nearest one at or above where it started, and a project that has said nothing gets the defaults.
+`.sumi.json` says where the specifications live, where the documents go, which of them a run verifies or renders, and which paths no mechanism reads. A run reads the nearest one at or above where it started, and a project that has said nothing gets the defaults.
 
 ```json
 {
   "root": ".spec",
   "docs": "docs",
+  "exclude": ["vendor/"],
+  "gitignore": true,
   "specifications": { "glossary": { "verify": false, "render": false } }
 }
 ```
+
+A build directory belongs to the project rather than to any one specification, so what a run leaves alone is written once here rather than beside each include. An exclusion takes the form a .gitignore line takes, and the .gitignore beside this file is read as well — only that one, so what git reads besides is not what this reads.

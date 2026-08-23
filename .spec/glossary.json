@@ -100,6 +100,11 @@
           "not": []
         },
         {
+          "term": "Exclude",
+          "definition": "A path no mechanism reads, however wide an include reaches. It is written once for the project because a build directory is the project's rather than any one specification's, and it decides what is read where an Ignore decides what is answered for.",
+          "not": []
+        },
+        {
           "term": "Subdomain",
           "definition": "A part of the problem a project addresses, and the vocabulary that part keeps. A glossary entry declares one by naming it, and its terms hold in the files its includes cover, in place of Global's wherever both name the same term.",
           "not": []

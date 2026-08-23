@@ -124,13 +124,18 @@ Form
     {
       "root": ".spec",
       "docs": "docs",
+      "exclude": ["vendor/"],
+      "gitignore": true,
       "specifications": { "glossary": { "verify": false } }
     }
 
-    root    where the specifications live, `.spec` by default
-    docs    where `sumi render` writes, `docs` by default
+    root        where the specifications live, `.spec` by default
+    docs        where `sumi render` writes, `docs` by default
+    exclude     paths no mechanism reads, whatever an include covers
+    gitignore   whether the .gitignore beside this file is read too,
+                which it is unless this says false
 
-    Both are read against the directory holding the .sumi.json, so
+    All are read against the directory holding the .sumi.json, so
     wherever under it a run starts it reaches the same files. Findings
     answer relative to where the run started, so a reader can go
     straight to one.
@@ -140,6 +145,32 @@ Form
     and `behavior`. The two switches are independent - `verify: false`
     keeps a specification without checking it, and `render: false` keeps
     one out of the documents without stopping the check.
+
+What a run leaves alone
+    A build directory belongs to the project rather than to any one
+    specification, so `exclude` is written once here instead of beside
+    each `include`. A pattern takes the form a .gitignore line takes:
+    `*` and `?` within a name, `**` for however many directories, a
+    separator at the start or the middle anchoring it to the base, one
+    at the end naming a directory and everything under it, and `!`
+    putting a path back. Character classes and escapes are not read.
+
+    A project keeping a .gitignore has already said which paths are
+    not its source, so the one beside the .sumi.json is read as well.
+    Only that one: what git reads besides — the files deeper in the
+    tree, the user's own, and the rule that a tracked file is never
+    left out — this does not, so the two answers differ where a
+    project has force-added something its .gitignore names.
+
+    .sumi.json is read after the .gitignore, so a `!` here puts back a
+    path git leaves out, and `"gitignore": false` takes the file out
+    of the reckoning entirely.
+
+    Excluding narrows what is read and never what is reported: an
+    `include` covering no file at all is a pattern nobody can have
+    meant, and the run refuses to certify rather than answer that the
+    two sides agree. One whose files this leaves out is the project
+    getting what it asked for, and says nothing.
 
 Answers
     0   the two sides agree
