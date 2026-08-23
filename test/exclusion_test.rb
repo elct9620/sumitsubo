@@ -84,3 +84,95 @@ puts Sumitsubo::Exclusion.patterns_in(<<~TEXT).inspect
     vendor/
   !vendor/keep.rs
 TEXT
+
+# --- parity with Dir.glob -----------------------------------------------
+#
+# Taking `include` over means answering what Dir.glob answered. The rule this
+# holds the matcher to: what Dir.glob matched, the matcher matches; where
+# Dir.glob answered nothing for a well-formed pattern, the matcher answers.
+#
+# The tree is built here rather than pointed at, so the ground truth is the
+# list this file wrote and not whatever the repository happens to hold.
+
+require "pathname"
+
+root = Pathname.new("/tmp/sumi_parity_test_#{Process.pid}")
+root.rmtree if root.exist?
+back = Dir.pwd
+root.mkpath
+Dir.chdir(root)
+base = Pathname.pwd
+
+TREE = [
+  "CLAUDE.md",
+  "README.md",
+  ".spec/glossary.json",
+  ".spec/contract/cli.json",
+  ".spec/behavior/verify.json",
+  "sumitsubo/config.rb",
+  "sumitsubo/command/help.rb",
+  "sumitsubo/language/ruby.rb",
+  "test/verify_test.rb",
+  "test/fixtures/app/order.rb",
+  "docs/spec/glossary.md",
+  "lib/kobako.rb",
+  "crates/one/src/lib.rs",
+  "crates/one/build.rs"
+]
+TREE.each do |path|
+  file = base / path
+  file.parent.mkpath
+  file.write("")
+end
+
+def globbed(base, pattern)
+  base.glob(pattern).map { |path| "#{path.relative_path_from(base)}" }.sort
+end
+
+def matched(pattern)
+  rule = Sumitsubo::Exclusion.read([pattern])[0]
+  TREE.select { |path| Sumitsubo::Exclusion.selects?(rule, path) }.sort
+end
+
+# Every shape the two projects' 23 include patterns take. Same answer both
+# ways is what licenses the change.
+puts "--- the shapes in use answer the same either way ---"
+[
+  "CLAUDE.md",
+  "README.md",
+  ".spec/glossary.json",
+  ".spec/contract/*.json",
+  ".spec/behavior/*.json",
+  "sumitsubo/**/*.rb",
+  "sumitsubo/command/*.rb",
+  "test/*.rb",
+  "test/verify_test.rb",
+  "docs/**/*.md",
+  "crates/**/*.rs",
+  "lib/**/*.rb"
+].each do |pattern|
+  glob = globbed(base, pattern)
+  mine = matched(pattern)
+  puts "  #{glob == mine ? "same" : "DIFFERS"}  #{pattern} -> #{mine.join(" ")}"
+end
+
+# The other side of the rule: well-formed patterns the glob this replaces
+# never answered, so nobody could write them. What that glob does with them is
+# not asserted here — it is upstream's behavior, and it differs between the
+# compiler and the CRuby run that takes this snapshot. What is asserted is the
+# answer this matcher gives, which is what a later change would break.
+puts "--- shapes that had no answer before ---"
+[
+  "crates/*/src/**/*.rs",
+  "sumitsubo/**/**/*.rb",
+  "sumitsubo/**"
+].each { |pattern| puts "  #{pattern} -> #{matched(pattern).join(" ")}" }
+
+# The matcher has no opinion about hidden directories, and answers inside one.
+# Skipping them is the walk's, which is where the glob this replaces keeps it
+# too, so this line is what the walk has to go on to disagree with.
+puts "--- inside a hidden directory, which the walk and not the matcher rules on ---"
+puts "  **/*.json -> #{matched("**/*.json").join(" ")}"
+
+Dir.chdir(back)
+root.rmtree
