@@ -58,6 +58,27 @@
       "given": ["findings against the glossary's own file and against a source file, for a word the glossary spells"],
       "when": "the uses among them are worked out",
       "then": "the one at the line the glossary spells the word on is set aside, and the other stands"
+    },
+    {
+      "id": "G-009",
+      "title": "A finding the specification sets aside by hand is not reported",
+      "given": ["a rejection carrying an ignore, and findings at that line and at another"],
+      "when": "the findings that still stand are worked out",
+      "then": "the one the ignore names is set aside and the other stands"
+    },
+    {
+      "id": "G-010",
+      "title": "An ignore naming no finding is a broken reference line",
+      "given": ["a rejection carrying an ignore that no finding answers to"],
+      "when": "the unresolved ignores are worked out",
+      "then": "it answers at the line the specification wrote it on, saying what it no longer names"
+    },
+    {
+      "id": "G-011",
+      "title": "An ignore missing either half is refused where it is written",
+      "given": ["a glossary writing an ignore with no place to point, and one with no reason"],
+      "when": "the glossary is loaded",
+      "then": "each is named as one the specification cannot carry"
     }
   ]
 }

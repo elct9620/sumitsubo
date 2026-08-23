@@ -51,6 +51,16 @@
       "then": "one finding is reported for the line the word appears on"
     },
     {
+      "id": "V-019",
+      "title": "A finding set aside by hand, and an ignore that no longer names one",
+      "given": [
+        "a rejection carrying an ignore for the line a comment trips on",
+        "and a second ignore naming a line nothing trips on"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "the first line is not reported, and the second ignore answers at the specification as a comparison that could not be made"
+    },
+    {
       "id": "V-002",
       "title": "The same run from a subdirectory",
       "given": [

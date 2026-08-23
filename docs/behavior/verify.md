@@ -19,6 +19,15 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | `sumi verify` runs |
 | Then | one finding is reported for the line the word appears on |
 
+## V-019 — A finding set aside by hand, and an ignore that no longer names one
+
+| Step | Statement |
+| --- | --- |
+| Given | a rejection carrying an ignore for the line a comment trips on |
+| Given | and a second ignore naming a line nothing trips on |
+| When | `sumi verify` runs |
+| Then | the first line is not reported, and the second ignore answers at the specification as a comparison that could not be made |
+
 ## V-002 — The same run from a subdirectory
 
 | Step | Statement |

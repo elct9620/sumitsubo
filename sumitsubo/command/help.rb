@@ -50,7 +50,13 @@ module Sumitsubo
                       "not": [
                         {
                           "term": "Purchase",
-                          "reason": "Order is what the domain calls it."
+                          "reason": "Order is what the domain calls it.",
+                          "ignore": [
+                            {
+                              "at": "app/legacy_import.rb:88",
+                              "reason": "Quotes the upstream column name."
+                            }
+                          ]
                         }
                       ]
                     }
@@ -84,6 +90,18 @@ module Sumitsubo
             what the term means is what `definition` carries. The reason is
             what a reader is handed at the line they tripped on.
 
+            An `ignore` sets one finding aside: the line is right to say what
+            it says, and its own `reason` says why. Which term is rejecting
+            and which word it rejects come from where the ignore sits, so `at`
+            is the whole of what it names - `path:line`, against the same
+            place the `include` globs are, which is what a finding prints when
+            the run starts there. Both halves are required.
+
+            Fix the line and `at` names nothing, so the run stops until the
+            exception is looked at again. That is the opposite of what a
+            fingerprint would do, and deliberate: an exception nobody is made
+            to revisit outlives what it was written for.
+
         What is read
             A source file: its comments, found through the syntax tree. An
             identifier is a spelling of a concept rather than the concept's
@@ -102,6 +120,12 @@ module Sumitsubo
                 line however often the word appears on it. Fix the wording, or
                 drop the rejected word from the specification - which side is
                 wrong is not the tool's to decide.
+
+            .spec/glossary.json:31 nothing at app/legacy_import.rb:88 has Order
+            rejecting Purchase; the line moved or the wording was fixed (exit 2)
+                An ignore names a finding that is no longer there. Point it at
+                where the line went, or drop it - nothing was set aside, so
+                nothing was compared either.
 
             no glossary at .spec/glossary.json; sumi init lays one down (exit 2)
                 `sumi init` lays this file down, so a root without one is a root

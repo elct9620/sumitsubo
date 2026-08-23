@@ -17,6 +17,12 @@ Dir.chdir("test/fixtures/glossary/app")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# @behavior V-019
+puts "--- a finding set aside by hand, and an ignore that no longer names one ---"
+Dir.chdir("test/fixtures/ignored")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 # @behavior V-003
 puts "--- a specification switched off is not read, however far the code drifted ---"
 Dir.chdir("test/fixtures/disabled")

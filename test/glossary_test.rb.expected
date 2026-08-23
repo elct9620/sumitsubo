@@ -18,11 +18,17 @@ docs/overview.md Order rejects Purchase: Order is what the domain calls it.
 app/billing/charge.rb Order: What a customer asks us to fulfil.
 --- what the specification spells is not a use of it ---
 app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+--- a finding the specification set aside, and one it did not ---
+app/other.rb:3 Order rejects Purchase: Order is what the domain calls it.
+ignored.json:19 nothing at app/gone.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
 --- a missing glossary is a broken reference line, not a difference ---
 no glossary at test/fixtures/glossary/absent.json; sumi init lays one down
 --- so is one that will not parse ---
 test/fixtures/glossary/broken.json is not readable JSON
 --- and so is one with no glossary in it ---
 test/fixtures/glossary/shapeless.json declares no "glossary"; sumi help glossary has the form
+--- an ignore that could not be written down is a broken reference line ---
+test/fixtures/glossary/noat.json writes an ignore with no "at"; sumi help glossary has the form
+test/fixtures/glossary/noreason.json writes an ignore at app/order.rb:2 with no "reason"; sumi help glossary has the form
 --- and one named absolutely still answers where the run started ---
 no glossary at test/fixtures/glossary/absent.json; sumi init lays one down

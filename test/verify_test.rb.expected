@@ -10,6 +10,10 @@ billing/charge.rb:2 Order rejects Invoice: An invoice is issued later, from an o
 order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 3 differences
 exit=1
+--- a finding set aside by hand, and an ignore that no longer names one ---
+.spec/glossary.json:19 nothing at app/order.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
+0 differences
+exit=2
 --- a specification switched off is not read, however far the code drifted ---
 0 differences
 exit=0

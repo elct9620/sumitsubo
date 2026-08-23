@@ -51,11 +51,20 @@ module Sumitsubo
         path = Sumitsubo::Glossary.path_in(config.root)
         sections = Sumitsubo::Glossary.load(path)
         scope = Sumitsubo::Glossary.scope(sections, config.base)
-        findings = Sumitsubo::Glossary.check(scope, config.base, languages)
-        Sumitsubo::Glossary.uses(findings, path, config.base).each do |finding|
+        findings = Sumitsubo::Glossary.uses(
+          Sumitsubo::Glossary.check(scope, config.base, languages), path, config.base
+        )
+        Sumitsubo::Glossary.standing(findings, sections).each do |finding|
           report.difference(
             Where.of(config.base / finding.path), finding.line,
             Sumitsubo::Glossary.describe(finding)
+          )
+        end
+        # An ignore naming nothing is not a difference about the code: what it
+        # was written against is gone, so there was nothing to compare.
+        Sumitsubo::Glossary.unresolved(findings, sections).each do |stale|
+          report.failure(
+            Where.of(path), stale.line, Sumitsubo::Glossary.describe_unresolved(stale)
           )
         end
       end

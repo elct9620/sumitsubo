@@ -46,6 +46,20 @@ Sumitsubo::Glossary.uses([spelled, used], ".spec/glossary.json", Pathname.pwd).e
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Glossary.describe(finding)}"
 end
 
+# Findings are built here rather than read out of a run for the same reason
+# as above: what is being shown is which of them the specification set aside.
+# @behavior G-009 G-010
+puts "--- a finding the specification set aside, and one it did not ---"
+ignored = Sumitsubo::Glossary.load("ignored.json")
+aside = Sumitsubo::Glossary::Finding.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
+kept = Sumitsubo::Glossary::Finding.new("app/other.rb", 3, "Order", "Purchase", "Order is what the domain calls it.")
+Sumitsubo::Glossary.standing([aside, kept], ignored).each do |finding|
+  puts "#{finding.path}:#{finding.line} #{Sumitsubo::Glossary.describe(finding)}"
+end
+Sumitsubo::Glossary.unresolved([aside, kept], ignored).each do |stale|
+  puts "ignored.json:#{stale.line} #{Sumitsubo::Glossary.describe_unresolved(stale)}"
+end
+
 Dir.chdir(back)
 
 # @behavior G-003
@@ -70,6 +84,16 @@ begin
   Sumitsubo::Glossary.load("test/fixtures/glossary/shapeless.json")
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
+end
+
+# @behavior G-011
+puts "--- an ignore that could not be written down is a broken reference line ---"
+["test/fixtures/glossary/noat.json", "test/fixtures/glossary/noreason.json"].each do |path|
+  begin
+    Sumitsubo::Glossary.load(path)
+  rescue Sumitsubo::Glossary::Error => e
+    puts e.message
+  end
 end
 
 # The root arrives absolute at runtime, so a message composed from the path

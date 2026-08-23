@@ -65,3 +65,27 @@ The domain vocabulary a project declares, and the words it rejects in their plac
 | Given | findings against the glossary's own file and against a source file, for a word the glossary spells |
 | When | the uses among them are worked out |
 | Then | the one at the line the glossary spells the word on is set aside, and the other stands |
+
+## G-009 — A finding the specification sets aside by hand is not reported
+
+| Step | Statement |
+| --- | --- |
+| Given | a rejection carrying an ignore, and findings at that line and at another |
+| When | the findings that still stand are worked out |
+| Then | the one the ignore names is set aside and the other stands |
+
+## G-010 — An ignore naming no finding is a broken reference line
+
+| Step | Statement |
+| --- | --- |
+| Given | a rejection carrying an ignore that no finding answers to |
+| When | the unresolved ignores are worked out |
+| Then | it answers at the line the specification wrote it on, saying what it no longer names |
+
+## G-011 — An ignore missing either half is refused where it is written
+
+| Step | Statement |
+| --- | --- |
+| Given | a glossary writing an ignore with no place to point, and one with no reason |
+| When | the glossary is loaded |
+| Then | each is named as one the specification cannot carry |
