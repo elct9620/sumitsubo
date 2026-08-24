@@ -64,11 +64,12 @@ module Sumitsubo
     Definition = Struct.new(
       :name, :description, :marker, :language, :includes, :interfaces, :path, :notes
     )
-    # An interface its reading did not find. The scope is carried so the finding
-    # says where it looked rather than that nothing implements it anywhere, and
-    # the marker so it can say the word to claim it with. The syntax tree
-    # reading has none, so its wording carries the name alone.
-    Finding = Struct.new(:path, :line, :marker, :name, :scope)
+    # An interface its reading did not find. It answers at the specification
+    # that registers it, which is also where the include that bounded the
+    # search is written, so the finding names neither. The marker is carried so
+    # it can say the word to claim it with; the syntax tree reading has none,
+    # so its wording carries the name alone.
+    Finding = Struct.new(:path, :line, :marker, :name)
     # An interface defined with a shape other than the one registered. Both
     # are carried, because what a reader chooses between is the two of them.
     Mismatch = Struct.new(:path, :line, :name, :registered, :taken)
@@ -227,8 +228,7 @@ module Sumitsubo
           next unless made[key(definition.marker, interface.name)].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line,
-            definition.marker, interface.name, definition.includes
+            Where.of(interface.path), interface.line, definition.marker, interface.name
           ))
         end
       end
@@ -286,8 +286,7 @@ module Sumitsubo
           next unless declared[interface.name].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line,
-            definition.marker, interface.name, definition.includes
+            Where.of(interface.path), interface.line, definition.marker, interface.name
           ))
         end
       end
@@ -404,8 +403,7 @@ module Sumitsubo
     # The mechanism words its own findings; where each points is the tool's to
     # shape.
     def self.describe_unclaimed(finding)
-      "#{spoken(finding.marker, finding.name)} is claimed nowhere in " \
-        "#{finding.scope.join(", ")}"
+      "#{spoken(finding.marker, finding.name)} is claimed nowhere this specification includes"
     end
 
     # The caveat rides every one of these because the tree cannot tell the two
@@ -414,8 +412,8 @@ module Sumitsubo
     # nothing. Which constructs those are is each language's own, so the
     # message names the shape and `sumi help contract` names them.
     def self.describe_undefined(finding)
-      "#{spoken(finding.marker, finding.name)} is defined nowhere in " \
-        "#{finding.scope.join(", ")}, and one the reading cannot see never is"
+      "#{spoken(finding.marker, finding.name)} is defined nowhere this specification " \
+        "includes, and one the reading cannot see never is"
     end
 
     def self.describe_conflicting(pair)

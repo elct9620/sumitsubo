@@ -102,7 +102,7 @@ A marker needs none, because a claim is a claim in whatever the file is written 
 | --- | --- |
 | Given | a registered interface no claim in scope names |
 | When | the two sides are compared |
-| Then | it is answered at the line registering it, naming the scope that was searched |
+| Then | it is answered at the line registering it, saying nothing was found among what that specification includes |
 
 ## T-010 — A claim resolving to no contract
 
@@ -195,7 +195,7 @@ A marker needs none, because a claim is a claim in whatever the file is written 
 | Given | a definition naming no marker |
 | Given | names the source in scope declares, one of them missing |
 | When | the two sides are compared |
-| Then | the missing one is answered at the line registering it, naming the scope that was searched |
+| Then | the missing one is answered at the line registering it, saying nothing was found among what that specification includes |
 
 ## T-017 — One name twice with no marker
 

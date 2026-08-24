@@ -113,7 +113,7 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | --- | --- |
 | Given | a behavior specification with a scenario no source in scope claims |
 | When | `sumi verify` runs |
-| Then | the scenario is reported at the line of the specification that declares it, naming the scope that was searched |
+| Then | the scenario is reported at the line of the specification that declares it, saying nothing was found among what that specification includes |
 
 ## V-006 — A claim resolving to no scenario
 
@@ -170,7 +170,7 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | --- | --- |
 | Given | a contract specification registering an interface no source in scope claims |
 | When | `sumi verify` runs |
-| Then | the interface is reported at the line registering it, naming the scope that was searched |
+| Then | the interface is reported at the line registering it, saying nothing was found among what that specification includes |
 
 ## V-013 — One interface claimed in two places
 
@@ -195,7 +195,7 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | Given | a contract naming no marker |
 | Given | a registered method no source in scope defines |
 | When | the two sides are compared |
-| Then | it is answered at the line registering it, naming the scope that was searched |
+| Then | it is answered at the line registering it, saying nothing was found among what that specification includes |
 
 ## V-016 — A contract the language it named cannot spell
 

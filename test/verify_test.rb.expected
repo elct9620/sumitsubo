@@ -34,7 +34,7 @@ exit=0
 0 differences
 exit=0
 --- a scenario nothing claims answers at the specification ---
-.spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere in test/*_test.rb
+.spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere this specification includes
 1 difference
 exit=1
 --- claims that resolve to nothing a run can compare against ---
@@ -43,12 +43,12 @@ test/verify_test.rb:13 G-404 resolves to no scenario
 0 differences
 exit=2
 --- a mechanism that cannot be read leaves the others still answering ---
-.spec/behavior/verify.json:5 @behavior U-001 is claimed nowhere in test/*_test.rb
+.spec/behavior/verify.json:5 @behavior U-001 is claimed nowhere this specification includes
 app/broken.rb: cannot be parsed by the ruby grammar
 1 difference
 exit=2
 --- an interface nothing claims, one claimed twice, one registered nowhere, and one claimed out of reach ---
-.spec/contract/cli.json:8 @command verify is claimed nowhere in src/*.rb
+.spec/contract/cli.json:8 @command verify is claimed nowhere this specification includes
 app/controller.rb:7 @command verify is claimed outside what .spec/contract/cli.json includes
 src/commands.rb:3 @command init is claimed at src/commands.rb:7 as well
 src/commands.rb:7 @command init is claimed at src/commands.rb:3 as well
@@ -56,7 +56,7 @@ src/commands.rb:12 @command render resolves to no contract
 3 differences
 exit=2
 --- an interface the syntax tree does not declare ---
-.spec/contract/api.json:8 Store#write is defined nowhere in src/*.rb, and one the reading cannot see never is
+.spec/contract/api.json:8 Store#write is defined nowhere this specification includes, and one the reading cannot see never is
 1 difference
 exit=1
 --- source whose shape drifted from the contract ---

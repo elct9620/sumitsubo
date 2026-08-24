@@ -39,9 +39,10 @@ module Sumitsubo
     # somewhere legitimate to write that reason instead is what would let it
     # stop being carried there.
     Feature = Struct.new(:name, :description, :includes, :scenarios, :path, :notes)
-    # A scenario nothing claims. The scope is the declaring feature's include,
-    # which is both where the search ran and what would have counted.
-    Finding = Struct.new(:path, :line, :id, :scope)
+    # A scenario nothing claims. It answers at the specification that declares
+    # it, which is also where the include that bounded the search is written,
+    # so the finding names neither.
+    Finding = Struct.new(:path, :line, :id)
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.
     Claim = Struct.new(:path, :line, :id)
@@ -177,7 +178,7 @@ module Sumitsubo
         feature.scenarios.each do |scenario|
           next unless claimed[scenario.id].nil?
 
-          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id, feature.includes))
+          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id))
         end
       end
       found
@@ -201,7 +202,7 @@ module Sumitsubo
     # The mechanism words its own findings; where each points is the tool's to
     # shape.
     def self.describe_uncovered(finding)
-      "#{MARKER} #{finding.id} is claimed nowhere in #{finding.scope.join(", ")}"
+      "#{MARKER} #{finding.id} is claimed nowhere this specification includes"
     end
 
     def self.describe_unresolved(claim)

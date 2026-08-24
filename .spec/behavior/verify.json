@@ -155,7 +155,7 @@
         "a behavior specification with a scenario no source in scope claims"
       ],
       "when": "`sumi verify` runs",
-      "then": "the scenario is reported at the line of the specification that declares it, naming the scope that was searched"
+      "then": "the scenario is reported at the line of the specification that declares it, saying nothing was found among what that specification includes"
     },
     {
       "id": "V-006",
@@ -219,7 +219,7 @@
         "a contract specification registering an interface no source in scope claims"
       ],
       "when": "`sumi verify` runs",
-      "then": "the interface is reported at the line registering it, naming the scope that was searched"
+      "then": "the interface is reported at the line registering it, saying nothing was found among what that specification includes"
     },
     {
       "id": "V-013",
@@ -247,7 +247,7 @@
         "a registered method no source in scope defines"
       ],
       "when": "the two sides are compared",
-      "then": "it is answered at the line registering it, naming the scope that was searched"
+      "then": "it is answered at the line registering it, saying nothing was found among what that specification includes"
     },
     {
       "id": "V-016",

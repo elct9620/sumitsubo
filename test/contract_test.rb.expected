@@ -15,10 +15,10 @@ Routes @route ["app/*.rb"]
 --- the files to look in ---
 ["test/fixtures/contract/app/controller.rb", "test/fixtures/contract/src/commands.rb"]
 --- a contract claimed only from outside its own definition ---
-  test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere in app/*.rb
-  test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere in src/*.rb
-  test/fixtures/contract/.spec/contract/cli.json:8 @command verify is claimed nowhere in src/*.rb
-  test/fixtures/contract/.spec/contract/routes.json:7 @route GET /users/:id is claimed nowhere in app/*.rb
+  test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere this specification includes
+  test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere this specification includes
+  test/fixtures/contract/.spec/contract/cli.json:8 @command verify is claimed nowhere this specification includes
+  test/fixtures/contract/.spec/contract/routes.json:7 @route GET /users/:id is claimed nowhere this specification includes
 --- and the claim that could not implement it ---
   test/fixtures/contract/app/controller.rb:4 @command init is claimed outside what test/fixtures/contract/.spec/contract/cli.json includes
 --- a directory nobody wrote registers no contracts ---
@@ -40,15 +40,15 @@ test/fixtures/contract/unsaid/seams.json names no marker and no language, so not
 test/fixtures/contract/unknown/seams.json names cobol, which this sumi does not carry
 test/fixtures/contract/both/routes.json names both a marker and a language, and a claim is a claim in whatever the file is written in; sumi help contract has the two readings
 --- an interface the syntax tree does not define ---
-test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere in src/*.rb, and one the reading cannot see never is
-test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere in src/*.rb, and one the reading cannot see never is
+test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere this specification includes, and one the reading cannot see never is
+test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
 --- a declaration outside the definition registering its name ---
   test/fixtures/contract/src/commands.rb:3 verify
 --- and neither is a specification that will not parse ---
 test/fixtures/contract/broken/cli.json is not readable JSON
 --- an interface nothing claims ---
-test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere in app/*.rb
-test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere in src/*.rb
+test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere this specification includes
+test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere this specification includes
 --- a claim resolving to no contract, and one naming none at all ---
 src/commands.rb:20 @command render resolves to no contract
 src/commands.rb:24 @command names no contract

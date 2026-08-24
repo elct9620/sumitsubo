@@ -223,7 +223,7 @@
         "a registered interface no claim in scope names"
       ],
       "when": "the two sides are compared",
-      "then": "it is answered at the line registering it, naming the scope that was searched"
+      "then": "it is answered at the line registering it, saying nothing was found among what that specification includes"
     },
     {
       "id": "T-010",
@@ -325,7 +325,7 @@
         "names the source in scope declares, one of them missing"
       ],
       "when": "the two sides are compared",
-      "then": "the missing one is answered at the line registering it, naming the scope that was searched"
+      "then": "the missing one is answered at the line registering it, saying nothing was found among what that specification includes"
     },
     {
       "id": "T-017",
