@@ -101,6 +101,16 @@
       "then": "the claim is reported at the line it sits on as sitting outside what that specification includes"
     },
     {
+      "id": "V-024",
+      "title": "A contract claimed where the definition registering it does not reach",
+      "given": [
+        "a contract registered by a definition that includes one directory",
+        "a claim of that contract sitting in a file another definition includes"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "the claim is reported at the line it sits on as sitting outside what that specification includes"
+    },
+    {
       "id": "V-002",
       "title": "The same run from a subdirectory",
       "given": [

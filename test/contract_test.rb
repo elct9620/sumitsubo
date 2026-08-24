@@ -52,9 +52,37 @@ end
 puts "--- the words to look for ---"
 puts Sumitsubo::Contract.keywords(definitions).inspect
 
+# An `include` is the boundary of what a definition answers for rather than a
+# list of files to read: two definitions over one tree reach different files,
+# and the union of them is only what gets read once.
+# @behavior T-035
+puts "--- what each definition's include reaches ---"
+reach = Sumitsubo::Contract.reach(definitions, Pathname.new(FIXTURE), [])
+definitions.each { |definition| puts "  #{definition.name} #{reach[definition.path].keys.sort.inspect}" }
+
 # @behavior T-014
 puts "--- the files to look in ---"
-puts Sumitsubo::Contract.scope(definitions, Pathname.new(FIXTURE), []).inspect
+puts Sumitsubo::Contract.scope(reach).inspect
+
+# `init` is registered by the CLI definition, whose include reaches only src.
+# A claim of it from the controller names the contract without being able to
+# implement it, so the contract stands unclaimed.
+astray = [Sumitsubo::Contract::Claim.new(
+  "test/fixtures/contract/app/controller.rb", 4, "@command", "init"
+)]
+
+# @behavior T-036
+puts "--- a contract claimed only from outside its own definition ---"
+witnessing = Sumitsubo::Contract.witnessing(definitions, astray, reach)
+Sumitsubo::Contract.unclaimed(definitions, witnessing).each do |finding|
+  puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_unclaimed(finding)}"
+end
+
+# @behavior T-037
+puts "--- and the claim that could not implement it ---"
+Sumitsubo::Contract.misplaced(definitions, astray, reach).each do |claim|
+  puts "  #{claim.path}:#{claim.line} #{Sumitsubo::Contract.describe_misplaced(claim)}"
+end
 
 # @behavior T-002
 puts "--- a directory nobody wrote registers no contracts ---"

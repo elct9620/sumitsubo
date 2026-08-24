@@ -47,8 +47,9 @@ exit=2
 app/broken.rb: cannot be parsed by the ruby grammar
 1 difference
 exit=2
---- an interface nothing claims, one claimed twice, and a claim registered nowhere ---
+--- an interface nothing claims, one claimed twice, one registered nowhere, and one claimed out of reach ---
 .spec/contract/cli.json:8 @command verify is claimed nowhere in src/*.rb
+app/controller.rb:7 @command verify is claimed outside what .spec/contract/cli.json includes
 src/commands.rb:3 @command init is claimed at src/commands.rb:7 as well
 src/commands.rb:7 @command init is claimed at src/commands.rb:3 as well
 src/commands.rb:12 @command render resolves to no contract

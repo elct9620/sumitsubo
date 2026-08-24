@@ -268,7 +268,34 @@
         "definitions whose includes cover different directories"
       ],
       "when": "the scope is asked for",
-      "then": "the union of every include answers, without repeats"
+      "then": "the union of what every definition reaches answers, without repeats"
+    },
+    {
+      "id": "T-035",
+      "title": "What each definition's include reaches",
+      "given": ["two definitions writing different includes over the same tree"],
+      "when": "the files each one reaches are taken",
+      "then": "each answers the files its own include covers and no other definition's"
+    },
+    {
+      "id": "T-036",
+      "title": "A contract claimed only from outside its own definition",
+      "given": [
+        "a contract whose definition includes one directory",
+        "a claim of it sitting in a file that definition does not include"
+      ],
+      "when": "the two sides are compared",
+      "then": "the contract answers as one nothing claims"
+    },
+    {
+      "id": "T-037",
+      "title": "The claim that could not implement it",
+      "given": [
+        "a contract whose definition includes one directory",
+        "a claim of it sitting in a file that definition does not include"
+      ],
+      "when": "the two sides are compared",
+      "then": "the claim answers at the line it sits on, naming the specification that registers it"
     },
     {
       "id": "T-015",

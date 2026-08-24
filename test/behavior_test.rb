@@ -88,7 +88,8 @@ claims = [Sumitsubo::Behavior::Claim.new("test/fixtures/behavior/test/verify_tes
 
 # @behavior B-012
 puts "--- a scenario claimed only from outside its own feature ---"
-Sumitsubo::Behavior.uncovered(features, claims, reach).each do |finding|
+witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
+Sumitsubo::Behavior.uncovered(features, witnessing).each do |finding|
   puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Behavior.describe_uncovered(finding)}"
 end
 

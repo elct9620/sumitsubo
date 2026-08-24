@@ -76,6 +76,12 @@ module Sumitsubo
     # keyword unread, and a contract is named by the interface itself, so the
     # whole of it is the name.
     Claim = Struct.new(:path, :line, :keyword, :name)
+    # A claim naming a contract that is really registered, from a file the
+    # definition registering it does not include. What it carries is that
+    # definition rather than its includes: the fix is written there, and a
+    # definition reaching dozens of files would otherwise spell all of them
+    # at the reader.
+    Misplaced = Struct.new(:path, :line, :marker, :name, :spec)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -101,15 +107,32 @@ module Sumitsubo
       path.glob("*.json").map { |file| "#{file}" }.sort
     end
 
-    # Every file any definition reaches. As with Behavior, `include` narrows
-    # the search rather than tying an interface to one place: the union is what
-    # gets scanned, so a claim written outside the file that declared it is
-    # still found — and still counted when two places claim one contract.
-    def self.scope(definitions, base, exclusion)
+    # The files each definition reaches, held under the specification that
+    # wrote them. As with Behavior, an `include` is the boundary of what a
+    # definition answers for: a contract is implemented by the files its own
+    # definition covers, and a claim from anywhere else names it without being
+    # able to implement it. That boundary is what tells one component's
+    # interfaces from another's under a single root, the way a glossary
+    # subdomain tells one vocabulary from another.
+    def self.reach(definitions, base, exclusion)
+      found = {}
+      definitions.each { |definition| found[definition.path] = covered(definition, base, exclusion) }
+      found
+    end
+
+    # One definition's files as a set: what is asked of a claim is whether it
+    # sits in there, once per claim.
+    def self.covered(definition, base, exclusion)
+      found = {}
+      Scope.of(base, definition.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
+      found
+    end
+
+    # Every file any definition reaches, which is what gets read. One file
+    # answering for two definitions is read once and asked about twice.
+    def self.scope(reach)
       found = []
-      definitions.each do |definition|
-        Scope.of(base, definition.includes, exclusion).each { |path| found.push(Where.of(base / path)) }
-      end
+      reach.keys.each { |spec| found.concat(reach[spec].keys) }
       found.uniq.sort
     end
 
@@ -145,9 +168,55 @@ module Sumitsubo
       claimed(definitions).map { |definition| definition.marker }.uniq.sort
     end
 
+    # The claims that can implement what they name: each sitting among the
+    # files the definition registering it answers for. Filtering once is what
+    # leaves the readings below unchanged — an interface is claimed, or
+    # claimed twice, by the claims that count.
+    def self.witnessing(definitions, claims, reach)
+      registering = registering_in(definitions)
+      found = []
+      claims.each do |claim|
+        spec = registering[key(claim.keyword, claim.name)]
+        next if spec.nil?
+        next if reach[spec][claim.path].nil?
+
+        found.push(claim)
+      end
+      found
+    end
+
+    # A claim naming a contract the definition registering it does not reach.
+    # The name resolves, so neither side is wrong about the interface; what
+    # could not be made is the comparison, since nothing among the files that
+    # definition answers for says the interface was implemented.
+    def self.misplaced(definitions, claims, reach)
+      registering = registering_in(definitions)
+      found = []
+      claims.each do |claim|
+        spec = registering[key(claim.keyword, claim.name)]
+        next if spec.nil?
+        next unless reach[spec][claim.path].nil?
+
+        found.push(Misplaced.new(claim.path, claim.line, claim.keyword, claim.name, Where.of(spec)))
+      end
+      found
+    end
+
+    # Which specification registers each contract, so a claim can be asked
+    # whether it sits where that specification can see it. One pair belongs to
+    # one definition, which is what refuse_ambiguity guarantees.
+    def self.registering_in(definitions)
+      found = {}
+      claimed(definitions).each do |definition|
+        spec = definition.path
+        definition.interfaces.each { |interface| found[key(definition.marker, interface.name)] = spec }
+      end
+      found
+    end
+
     # An interface nothing claims: the specification registers it and no source
-    # in scope says it was implemented, which is a difference between the two
-    # sides.
+    # the definition reaches says it was implemented, which is a difference
+    # between the two sides.
     def self.unclaimed(definitions, claims)
       made = {}
       claims.each { |claim| made[key(claim.keyword, claim.name)] = true }
@@ -287,6 +356,10 @@ module Sumitsubo
         end
       end
       found
+    end
+
+    def self.describe_misplaced(claim)
+      "#{spoken(claim.marker, claim.name)} is claimed outside what #{claim.spec} includes"
     end
 
     # The mechanism words its own findings; where each points is the tool's to

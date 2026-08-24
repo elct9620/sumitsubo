@@ -108,15 +108,26 @@ module Sumitsubo
         Sumitsubo::Contract.barren(definitions, config.base, config.exclusion).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end
-        claims = claims_in(definitions, config, languages)
+        claimed = Sumitsubo::Contract.claimed(definitions)
+        reach = Sumitsubo::Contract.reach(claimed, config.base, config.exclusion)
+        claims = claims_in(reach, definitions, languages)
+        # What the two readings below compare is the claims that can implement
+        # what they name; the rest answer for themselves further down.
+        witnessing = Sumitsubo::Contract.witnessing(definitions, claims, reach)
 
-        Sumitsubo::Contract.unclaimed(definitions, claims).each do |finding|
+        Sumitsubo::Contract.unclaimed(definitions, witnessing).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_unclaimed(finding))
         end
         # A contract is the way in, so a second way in is a difference about
         # the code rather than a specification that could not be read.
-        Sumitsubo::Contract.duplicated(definitions, claims).each do |pair|
+        Sumitsubo::Contract.duplicated(definitions, witnessing).each do |pair|
           report.difference(pair[0].path, pair[0].line, Sumitsubo::Contract.describe_duplicated(pair))
+        end
+        # A claim the registering definition does not reach implements nothing,
+        # and saying nothing about it would leave the interface reported as
+        # claimed nowhere with the claim in plain sight.
+        Sumitsubo::Contract.misplaced(definitions, claims, reach).each do |claim|
+          report.failure(claim.path, claim.line, Sumitsubo::Contract.describe_misplaced(claim))
         end
         # A claim resolving to no contract is not a difference: there is
         # nothing on the specification side to compare it against.
@@ -143,11 +154,10 @@ module Sumitsubo
 
       # Every word every definition claims, read in one pass: parsing is the
       # cost, so a project registering several kinds still reads each file once.
-      def claims_in(definitions, config, languages)
+      def claims_in(reach, definitions, languages)
         claims = []
-        claimed = Sumitsubo::Contract.claimed(definitions)
-        keywords = Sumitsubo::Contract.keywords(claimed)
-        Sumitsubo::Contract.scope(claimed, config.base, config.exclusion).each do |path|
+        keywords = Sumitsubo::Contract.keywords(definitions)
+        Sumitsubo::Contract.scope(reach).each do |path|
           Marker.claims_in(path, keywords, languages).each do |claim|
             claims.push(Sumitsubo::Contract::Claim.new(
               claim.path, claim.line, claim.keyword, claim.text
@@ -163,7 +173,8 @@ module Sumitsubo
       def names_in(definitions, config, languages)
         names = []
         Sumitsubo::Contract.defined(definitions).each do |definition|
-          Sumitsubo::Contract.scope([definition], config.base, config.exclusion).each do |path|
+          reach = Sumitsubo::Contract.reach([definition], config.base, config.exclusion)
+          Sumitsubo::Contract.scope(reach).each do |path|
             languages.declarations_in(path, Where.of(path), definition.language).each do |name|
               names.push(name)
             end
@@ -203,8 +214,11 @@ module Sumitsubo
         end
         reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
         claims = claims_in(reach, languages)
+        # What the reading below compares is the claims that can witness; the
+        # rest answer for themselves further down.
+        witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
 
-        Sumitsubo::Behavior.uncovered(features, claims, reach).each do |finding|
+        Sumitsubo::Behavior.uncovered(features, witnessing).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Behavior.describe_uncovered(finding))
         end
         # A claim the declaring feature does not reach witnesses nothing, and

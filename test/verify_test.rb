@@ -83,10 +83,12 @@ Dir.chdir("test/fixtures/unparseable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
-# One run answers all three: `verify` is registered and claimed nowhere, `init`
-# is claimed twice, and `render` is claimed but registered nowhere.
-# @behavior V-012 V-013 V-014
-puts "--- an interface nothing claims, one claimed twice, and a claim registered nowhere ---"
+# One run answers all four: `verify` is registered and claimed nowhere, `init`
+# is claimed twice, `render` is claimed but registered nowhere, and the one
+# claim of `verify` sits in a file only the routes definition includes — read,
+# and unable to implement a contract the CLI definition registers.
+# @behavior V-012 V-013 V-014 V-024
+puts "--- an interface nothing claims, one claimed twice, one registered nowhere, and one claimed out of reach ---"
 Dir.chdir("test/fixtures/contracted")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)

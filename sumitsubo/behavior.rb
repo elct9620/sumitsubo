@@ -121,12 +121,19 @@ module Sumitsubo
       text.split(" ")
     end
 
-    # A scenario nothing claims: the specification says a behavior should be
-    # implemented and no source the declaring feature reaches claims it, which
-    # is a difference between the two sides.
-    def self.uncovered(features, claims, reach)
+    # The claims that can witness: each sitting among the files the feature
+    # declaring its scenario answers for. Filtering once is what leaves the
+    # reading below unchanged — a scenario is claimed by the claims that count.
+    def self.witnessing(features, claims, reach)
+      declaring = declaring_in(features)
       found = []
-      features.each { |feature| found.concat(unwitnessed_in(feature, claims, reach)) }
+      claims.each do |claim|
+        spec = declaring[claim.id]
+        next if spec.nil?
+        next if reach[spec][claim.path].nil?
+
+        found.push(claim)
+      end
       found
     end
 
@@ -135,47 +142,44 @@ module Sumitsubo
     # be made is the comparison, since nothing among the files that feature
     # answers for says the scenario was implemented.
     def self.misplaced(features, claims, reach)
-      found = []
-      features.each { |feature| found.concat(misplaced_in(feature, claims, reach)) }
-      found
-    end
-
-    # The scenarios this feature's own files claim.
-    def self.witnessed_in(feature, claims, reach)
-      covered = reach[feature.path]
-      found = {}
-      claims.each { |claim| found[claim.id] = true unless covered[claim.path].nil? }
-      found
-    end
-
-    def self.unwitnessed_in(feature, claims, reach)
-      witnessed = witnessed_in(feature, claims, reach)
-      found = []
-      feature.scenarios.each do |scenario|
-        next unless witnessed[scenario.id].nil?
-
-        found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id, feature.includes))
-      end
-      found
-    end
-
-    # The claims of this feature's scenarios that sit where it cannot see them.
-    def self.misplaced_in(feature, claims, reach)
-      covered = reach[feature.path]
-      declared = declared_in(feature)
+      declaring = declaring_in(features)
       found = []
       claims.each do |claim|
-        next if declared[claim.id].nil?
-        next unless covered[claim.path].nil?
+        spec = declaring[claim.id]
+        next if spec.nil?
+        next unless reach[spec][claim.path].nil?
 
-        found.push(Misplaced.new(claim.path, claim.line, claim.id, Where.of(feature.path)))
+        found.push(Misplaced.new(claim.path, claim.line, claim.id, Where.of(spec)))
       end
       found
     end
 
-    def self.declared_in(feature)
+    # Which specification declares each scenario, so a claim can be asked
+    # whether it sits where that specification can see it. One id belongs to
+    # one feature, which is what refuse_ambiguity guarantees.
+    def self.declaring_in(features)
       found = {}
-      feature.scenarios.each { |scenario| found[scenario.id] = true }
+      features.each do |feature|
+        feature.scenarios.each { |scenario| found[scenario.id] = feature.path }
+      end
+      found
+    end
+
+    # A scenario nothing claims: the specification says a behavior should be
+    # implemented and no claim that could witness it does, which is a
+    # difference between the two sides.
+    def self.uncovered(features, claims)
+      claimed = {}
+      claims.each { |claim| claimed[claim.id] = true }
+
+      found = []
+      features.each do |feature|
+        feature.scenarios.each do |scenario|
+          next unless claimed[scenario.id].nil?
+
+          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id, feature.includes))
+        end
+      end
       found
     end
 

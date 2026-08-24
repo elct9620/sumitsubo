@@ -64,6 +64,15 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | `sumi verify` runs |
 | Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
 
+## V-024 — A contract claimed where the definition registering it does not reach
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract registered by a definition that includes one directory |
+| Given | a claim of that contract sitting in a file another definition includes |
+| When | `sumi verify` runs |
+| Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
+
 ## V-002 — The same run from a subdirectory
 
 | Step | Statement |

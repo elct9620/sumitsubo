@@ -142,7 +142,33 @@ A marker needs none, because a claim is a claim in whatever the file is written 
 | --- | --- |
 | Given | definitions whose includes cover different directories |
 | When | the scope is asked for |
-| Then | the union of every include answers, without repeats |
+| Then | the union of what every definition reaches answers, without repeats |
+
+## T-035 — What each definition's include reaches
+
+| Step | Statement |
+| --- | --- |
+| Given | two definitions writing different includes over the same tree |
+| When | the files each one reaches are taken |
+| Then | each answers the files its own include covers and no other definition's |
+
+## T-036 — A contract claimed only from outside its own definition
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract whose definition includes one directory |
+| Given | a claim of it sitting in a file that definition does not include |
+| When | the two sides are compared |
+| Then | the contract answers as one nothing claims |
+
+## T-037 — The claim that could not implement it
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract whose definition includes one directory |
+| Given | a claim of it sitting in a file that definition does not include |
+| When | the two sides are compared |
+| Then | the claim answers at the line it sits on, naming the specification that registers it |
 
 ## T-015 — A contract the named language cannot spell
 

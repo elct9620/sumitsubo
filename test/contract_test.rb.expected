@@ -8,8 +8,19 @@ Routes @route ["app/*.rb"]
   test/fixtures/contract/.spec/contract/routes.json:7 GET /users/:id — One user.
 --- the words to look for ---
 ["@command", "@route"]
+--- what each definition's include reaches ---
+  Admin routes ["test/fixtures/contract/app/controller.rb"]
+  CLI ["test/fixtures/contract/src/commands.rb"]
+  Routes ["test/fixtures/contract/app/controller.rb"]
 --- the files to look in ---
 ["test/fixtures/contract/app/controller.rb", "test/fixtures/contract/src/commands.rb"]
+--- a contract claimed only from outside its own definition ---
+  test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere in app/*.rb
+  test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere in src/*.rb
+  test/fixtures/contract/.spec/contract/cli.json:8 @command verify is claimed nowhere in src/*.rb
+  test/fixtures/contract/.spec/contract/routes.json:7 @route GET /users/:id is claimed nowhere in app/*.rb
+--- and the claim that could not implement it ---
+  test/fixtures/contract/app/controller.rb:4 @command init is claimed outside what test/fixtures/contract/.spec/contract/cli.json includes
 --- a directory nobody wrote registers no contracts ---
 []
 --- the same name under two markers is two contracts ---
