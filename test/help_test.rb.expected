@@ -173,6 +173,12 @@ What a run reads
     meant, and the run refuses to certify. One whose files `exclude`
     takes away says nothing.
 
+    `exclude` says what no mechanism reads. An `include` says more
+    than which files are read: it is the boundary of what one
+    specification answers for, so the same file under two of them
+    answers for both, and under neither answers for nothing. Each
+    mechanism's help has what that means for it.
+
 Answers
     0   the two sides agree
     1   they differ

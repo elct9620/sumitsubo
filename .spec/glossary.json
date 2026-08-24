@@ -106,7 +106,7 @@
         },
         {
           "term": "Subdomain",
-          "definition": "A part of the problem a project addresses, and the vocabulary that part keeps. A glossary entry declares one by naming it, and its terms hold in the files its includes cover, in place of Global's wherever both name the same term.",
+          "definition": "A part of the problem a project addresses, and what one specification answers for there. Its `include` is the boundary: a glossary entry's terms hold in the files it covers, in place of Global's wherever both name the same term; a feature's scenarios are witnessed only there, and a definition's contracts implemented only there. One file may sit under two, and answers for both.",
           "not": []
         },
         {

@@ -266,11 +266,17 @@ module Sumitsubo
             An internal interface takes its notes out of the document with it.
 
         include
-            With a marker it narrows the search: the union of every file covered
-            is scanned, so a claim written somewhere unexpected is still found -
-            and still counted when two places claim one contract. Without one it
-            is simply where a definition has to be for the interface to count as
-            implemented.
+            The boundary of what a definition answers for, and not merely a
+            list of files to read. With a marker, a contract is implemented by
+            the files its own definition covers, and a claim from anywhere else
+            names it without being able to implement it. Without one, a
+            definition has to sit among those files to count, so a type of the
+            same name in another component is a type of the same name in
+            another component.
+
+            One file may sit under two definitions, which is how a module
+            answering for both is written. `sumi help glossary` has the same
+            boundary under another word: a subdomain.
 
             Two files may share a marker: a project whose routes outgrow one
             file is registering more of one kind, not a second kind. What cannot
@@ -278,12 +284,13 @@ module Sumitsubo
 
         Findings
             .spec/contract/routes.json:6 @route GET /users/:id is claimed nowhere in app/**/*.rb
-                Registered, and no source in scope claims it. Write the claim
-                the finding leads with, or drop the contract.
+                Registered, and no source this definition reaches claims it.
+                Write the claim the finding leads with, or drop the contract.
 
             .spec/contract/api.json:5 Store.open is defined nowhere in lib/**/*.rb, and a method made by a call or mixed in never is
-                Registered, and the syntax tree finds no such definition. Read
-                "What the reading cannot see" before changing the code.
+                Registered, and the syntax tree finds no such definition among
+                the files this definition reaches. Read "What the reading
+                cannot see" before changing the code.
 
             .spec/contract/api.json:5 Store#read takes (id) where the specification registers (key)
                 The shape differs from the one registered, answered at the line
@@ -302,6 +309,14 @@ module Sumitsubo
             app/show.rb:1 @route GET /users/:id resolves to no contract      (exit 2)
                 A claim nothing registers is a comparison that could not be made
                 rather than a difference. Usually a renamed name.
+
+            app/show.rb:1 @route GET /users/:id is claimed outside what .spec/contract/routes.json includes   (exit 2)
+                The name resolves and the definition registering it does not
+                reach this file, so nothing here can implement it. Widen that
+                include, or move the claim. A definition merely spelling a
+                registered name says nothing this way: a claim asserts that a
+                contract was implemented, where a class of that name asserts
+                nothing at all.
 
             .spec/contract/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings   (exit 2)
                 The file registers a name the language it named cannot spell.
@@ -409,6 +424,15 @@ module Sumitsubo
             its notes hang under: 1 is one level in, and 4 is as deep as it
             goes. `sumi help contract` has the same form.
 
+        include
+            The boundary of what a feature answers for, and not merely a list
+            of files to read: a scenario is witnessed by the files its own
+            feature covers, and a claim from anywhere else names it without
+            being able to witness it. One file may sit under two features,
+            which is how a test answering for both is written.
+            `sumi help glossary` has the same boundary under another word: a
+            subdomain.
+
         Claiming
             Source claims a scenario in the comment in front of the code
             implementing it. A claim is read as a list, so one may carry
@@ -420,12 +444,17 @@ module Sumitsubo
 
         Findings
             .spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere in test/*_test.rb
-                Declared, and no test in scope claims it. Write the claim the
-                finding leads with, or drop the scenario.
+                Declared, and no test this feature reaches claims it. Write the
+                claim the finding leads with, or drop the scenario.
 
             test/verify_test.rb:13 V-404 resolves to no scenario             (exit 2)
                 A claim naming no scenario is a comparison that could not be
                 made rather than a difference. Usually a renamed id.
+
+            test/other_test.rb:13 V-002 is claimed outside what .spec/behavior/verify.json includes   (exit 2)
+                The id resolves and the feature declaring it does not reach
+                this file, so nothing here can witness it. Widen that include,
+                or move the claim.
       TEXT
 
       # @command help config
@@ -488,6 +517,12 @@ module Sumitsubo
             An include covering no file at all is a pattern nobody can have
             meant, and the run refuses to certify. One whose files `exclude`
             takes away says nothing.
+
+            `exclude` says what no mechanism reads. An `include` says more
+            than which files are read: it is the boundary of what one
+            specification answers for, so the same file under two of them
+            answers for both, and under neither answers for nothing. Each
+            mechanism's help has what that means for it.
 
         Answers
             0   the two sides agree
