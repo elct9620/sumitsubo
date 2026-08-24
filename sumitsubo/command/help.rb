@@ -283,11 +283,11 @@ module Sumitsubo
             happen is one name twice under one word.
 
         Findings
-            .spec/contract/routes.json:6 @route GET /users/:id is claimed nowhere in app/**/*.rb
+            .spec/contract/routes.json:6 @route GET /users/:id is claimed nowhere this specification includes
                 Registered, and no source this definition reaches claims it.
                 Write the claim the finding leads with, or drop the contract.
 
-            .spec/contract/api.json:5 Store.open is defined nowhere in lib/**/*.rb, and a method made by a call or mixed in never is
+            .spec/contract/api.json:5 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
                 Registered, and the syntax tree finds no such definition among
                 the files this definition reaches. Read "What the reading
                 cannot see" before changing the code.
@@ -443,7 +443,7 @@ module Sumitsubo
             A behavior may be claimed by as many tests as exercise it.
 
         Findings
-            .spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere in test/*_test.rb
+            .spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere this specification includes
                 Declared, and no test this feature reaches claims it. Write the
                 claim the finding leads with, or drop the scenario.
 

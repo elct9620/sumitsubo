@@ -88,7 +88,7 @@ the documents go, and which of them a run touches.
 
 ```console
 $ sumi verify
-.spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere in test/*_test.rb
+.spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere this specification includes
 app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 2 differences
 ```
