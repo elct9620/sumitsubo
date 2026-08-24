@@ -136,7 +136,12 @@ module Sumitsubo
         end
         # The other reading makes no claims, so what it compares is what the
         # source defines and the shape a caller would have to call it with.
-        names = names_in(definitions, config, languages)
+        spelled = Sumitsubo::Contract.reach(
+          Sumitsubo::Contract.defined(definitions), config.base, config.exclusion
+        )
+        names = Sumitsubo::Contract.defining(
+          definitions, names_in(spelled, definitions, languages), spelled
+        )
         Sumitsubo::Contract.undefined(definitions, names).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_undefined(finding))
         end
@@ -170,11 +175,10 @@ module Sumitsubo
       # What the source in scope defines, for the definitions read that way.
       # Each is read as the language it named, so a definition scanned for two
       # of them is scanned once per language rather than once.
-      def names_in(definitions, config, languages)
+      def names_in(reach, definitions, languages)
         names = []
         Sumitsubo::Contract.defined(definitions).each do |definition|
-          reach = Sumitsubo::Contract.reach([definition], config.base, config.exclusion)
-          Sumitsubo::Contract.scope(reach).each do |path|
+          Sumitsubo::Contract.reached(reach, definition).each do |path|
             languages.declarations_in(path, Where.of(path), definition.language).each do |name|
               names.push(name)
             end

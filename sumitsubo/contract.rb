@@ -173,7 +173,7 @@ module Sumitsubo
     # leaves the readings below unchanged — an interface is claimed, or
     # claimed twice, by the claims that count.
     def self.witnessing(definitions, claims, reach)
-      registering = registering_in(definitions)
+      registering = registering_claims(definitions)
       found = []
       claims.each do |claim|
         spec = registering[key(claim.keyword, claim.name)]
@@ -190,7 +190,7 @@ module Sumitsubo
     # could not be made is the comparison, since nothing among the files that
     # definition answers for says the interface was implemented.
     def self.misplaced(definitions, claims, reach)
-      registering = registering_in(definitions)
+      registering = registering_claims(definitions)
       found = []
       claims.each do |claim|
         spec = registering[key(claim.keyword, claim.name)]
@@ -205,7 +205,7 @@ module Sumitsubo
     # Which specification registers each contract, so a claim can be asked
     # whether it sits where that specification can see it. One pair belongs to
     # one definition, which is what refuse_ambiguity guarantees.
-    def self.registering_in(definitions)
+    def self.registering_claims(definitions)
       found = {}
       claimed(definitions).each do |definition|
         spec = definition.path
@@ -235,9 +235,48 @@ module Sumitsubo
       found
     end
 
+    # The declarations that can define what they name: each sitting among the
+    # files the definition registering that name answers for. Filtering once
+    # is what leaves the three readings below unchanged.
+    #
+    # Nothing is reported about the ones left out, which is where this reading
+    # parts from the other: a claim asserts that a contract was implemented
+    # and is wrong where it cannot be, while a class merely sharing a
+    # registered name asserts nothing at all.
+    def self.defining(definitions, names, reach)
+      registering = registering_names(definitions)
+      found = []
+      names.each do |name|
+        spec = registering[name.name]
+        next if spec.nil?
+        next if reach[spec][name.path].nil?
+
+        found.push(name)
+      end
+      found
+    end
+
+    # Which specification registers each name the syntax tree answers for.
+    # The reading has one namespace, the source's, so the name is the whole
+    # key; one of them belongs to one definition, which refuse_ambiguity is
+    # what guarantees.
+    def self.registering_names(definitions)
+      found = {}
+      defined(definitions).each do |definition|
+        spec = definition.path
+        definition.interfaces.each { |interface| found[interface.name] = spec }
+      end
+      found
+    end
+
+    # The files one definition reached, in a fixed order.
+    def self.reached(reach, definition)
+      reach[definition.path].keys.sort
+    end
+
     # An interface the syntax tree does not define. The specification
-    # registers it and no source in scope defines it, which is the same
-    # difference an unclaimed interface is — the other reading of it.
+    # registers it and no source that definition reaches defines it, which is
+    # the same difference an unclaimed interface is — the other reading of it.
     def self.undefined(definitions, names)
       declared = declared_in(names)
 
@@ -268,7 +307,7 @@ module Sumitsubo
       declared = declared_in(names)
 
       found = []
-      registered_names(definitions).each do |name|
+      spelled_names(definitions).each do |name|
         group = declared[name]
         next if group.nil? || group.length < 2 || agreed?(group)
 
@@ -610,7 +649,7 @@ module Sumitsubo
 
     # The names the syntax tree reading registers, in an order that leaves no
     # ties.
-    def self.registered_names(definitions)
+    def self.spelled_names(definitions)
       found = []
       defined(definitions).each do |definition|
         definition.interfaces.each { |interface| found.push(interface.name) }

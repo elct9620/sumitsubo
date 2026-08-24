@@ -298,6 +298,16 @@
       "then": "the claim answers at the line it sits on, naming the specification that registers it"
     },
     {
+      "id": "T-038",
+      "title": "A declaration outside the definition registering its name",
+      "given": [
+        "a name registered by a definition that includes one directory",
+        "a declaration of that name from a file the definition does not include"
+      ],
+      "when": "the declarations that can define what they name are taken",
+      "then": "that declaration is left out, and nothing answers for it"
+    },
+    {
       "id": "T-015",
       "title": "A contract the named language cannot spell",
       "given": [

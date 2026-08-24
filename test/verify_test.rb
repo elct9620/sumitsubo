@@ -94,8 +94,10 @@ puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
 # `Store#write` is registered and the class does not declare it; the other two
-# are there, so only the one answers.
-# @behavior V-015
+# are there, so only the one answers. The worker declares a `Store#write` of
+# its own, in a file the API definition does not include — a class sharing a
+# registered name defines nothing for it, and nothing answers for the class.
+# @behavior V-015 V-025
 puts "--- an interface the syntax tree does not declare ---"
 Dir.chdir("test/fixtures/declared")
 puts "exit=#{cli.run(["verify"])}"

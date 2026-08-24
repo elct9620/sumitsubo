@@ -138,6 +138,20 @@ Sumitsubo::Contract.undefined(
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
 
+# `verify` is registered by a definition reaching src alone. A class merely
+# spelling that name asserts nothing, so the declaration from the controller
+# is left out and no finding is written about it — where a claim from outside
+# would have answered for itself.
+# @behavior T-038
+puts "--- a declaration outside the definition registering its name ---"
+spelled = loaded("#{FIXTURE}/nomarker")
+Sumitsubo::Contract.defining(
+  spelled,
+  [Declared.new("#{FIXTURE}/src/commands.rb", 3, "verify", []),
+   Declared.new("#{FIXTURE}/app/controller.rb", 9, "verify", [])],
+  Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
+).each { |name| puts "  #{name.path}:#{name.line} #{name.name}" }
+
 # @behavior T-008
 puts "--- and neither is a specification that will not parse ---"
 fails { loaded("#{FIXTURE}/broken") }

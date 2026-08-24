@@ -73,6 +73,15 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | `sumi verify` runs |
 | Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
 
+## V-025 — A registered name spelled in another definition's files
+
+| Step | Statement |
+| --- | --- |
+| Given | a name registered by a definition that includes one directory |
+| Given | a class spelling that name in a file another definition includes |
+| When | `sumi verify` runs |
+| Then | the interface still answers at the line registering it as one the reading does not define |
+
 ## V-002 — The same run from a subdirectory
 
 | Step | Statement |

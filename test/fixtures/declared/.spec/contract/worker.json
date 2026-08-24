@@ -1,0 +1,8 @@
+{
+  "language": "ruby", "name": "Worker",
+  "description": "The methods the background worker exposes.",
+  "include": ["worker/*.rb"],
+  "contracts": [
+    { "name": "Queue.push", "description": "Queue one job." }
+  ]
+}

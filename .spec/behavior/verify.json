@@ -111,6 +111,16 @@
       "then": "the claim is reported at the line it sits on as sitting outside what that specification includes"
     },
     {
+      "id": "V-025",
+      "title": "A registered name spelled in another definition's files",
+      "given": [
+        "a name registered by a definition that includes one directory",
+        "a class spelling that name in a file another definition includes"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "the interface still answers at the line registering it as one the reading does not define"
+    },
+    {
       "id": "V-002",
       "title": "The same run from a subdirectory",
       "given": [

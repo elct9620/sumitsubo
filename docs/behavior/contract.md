@@ -170,6 +170,15 @@ A marker needs none, because a claim is a claim in whatever the file is written 
 | When | the two sides are compared |
 | Then | the claim answers at the line it sits on, naming the specification that registers it |
 
+## T-038 — A declaration outside the definition registering its name
+
+| Step | Statement |
+| --- | --- |
+| Given | a name registered by a definition that includes one directory |
+| Given | a declaration of that name from a file the definition does not include |
+| When | the declarations that can define what they name are taken |
+| Then | that declaration is left out, and nothing answers for it |
+
 ## T-015 — A contract the named language cannot spell
 
 | Step | Statement |
