@@ -37,7 +37,8 @@ exit=0
 .spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere in test/*_test.rb
 1 difference
 exit=1
---- a claim resolving to no scenario is not a difference but a failure to compare ---
+--- claims that resolve to nothing a run can compare against ---
+test/verify_test.rb:10 I-001 is claimed outside what .spec/behavior/init.json includes
 test/verify_test.rb:13 G-404 resolves to no scenario
 0 differences
 exit=2

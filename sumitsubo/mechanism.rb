@@ -201,10 +201,17 @@ module Sumitsubo
         Sumitsubo::Behavior.barren(features, config.base, config.exclusion).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end
-        claims = claims_in(features, config, languages)
+        reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
+        claims = claims_in(reach, languages)
 
-        Sumitsubo::Behavior.uncovered(features, claims).each do |finding|
+        Sumitsubo::Behavior.uncovered(features, claims, reach).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Behavior.describe_uncovered(finding))
+        end
+        # A claim the declaring feature does not reach witnesses nothing, and
+        # saying nothing about it would leave the scenario reported as claimed
+        # nowhere with the claim in plain sight.
+        Sumitsubo::Behavior.misplaced(features, claims, reach).each do |claim|
+          report.failure(claim.path, claim.line, Sumitsubo::Behavior.describe_misplaced(claim))
         end
         # A claim resolving to no scenario is not a difference: there is nothing
         # on the specification side to compare it against.
@@ -218,10 +225,10 @@ module Sumitsubo
       # Marker finds the word and hands back the rest of the line; splitting
       # that into ids is Behavior's, which is what lets Contract read the same
       # line as one name instead.
-      def claims_in(features, config, languages)
+      def claims_in(reach, languages)
         claims = []
         keywords = [Sumitsubo::Behavior::MARKER]
-        Sumitsubo::Behavior.scope(features, config.base, config.exclusion).each do |path|
+        Sumitsubo::Behavior.scope(reach).each do |path|
           Marker.claims_in(path, keywords, languages).each do |claim|
             Sumitsubo::Behavior.ids_in(claim.text).each do |id|
               claims.push(Sumitsubo::Behavior::Claim.new(claim.path, claim.line, id))

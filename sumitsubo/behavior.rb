@@ -39,12 +39,17 @@ module Sumitsubo
     # somewhere legitimate to write that reason instead is what would let it
     # stop being carried there.
     Feature = Struct.new(:name, :description, :includes, :scenarios, :path, :notes)
-    # A scenario nothing claims. The scope is carried so the finding can say
-    # where it looked rather than claiming no test exists anywhere.
+    # A scenario nothing claims. The scope is the declaring feature's include,
+    # which is both where the search ran and what would have counted.
     Finding = Struct.new(:path, :line, :id, :scope)
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.
     Claim = Struct.new(:path, :line, :id)
+    # A claim naming a scenario that is really there, from a file the feature
+    # declaring it does not include. What it carries is that feature rather
+    # than its includes: the fix is written there, and a feature reaching
+    # dozens of files would otherwise spell all of them at the reader.
+    Misplaced = Struct.new(:path, :line, :id, :spec)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -70,13 +75,31 @@ module Sumitsubo
       path.glob("*.json").map { |file| "#{file}" }.sort
     end
 
-    # Every file any feature reaches. The union is what gets scanned:
-    # `include` narrows the search rather than tying a scenario to one place.
-    def self.scope(features, base, exclusion)
+    # The files each feature reaches, held under the specification that wrote
+    # them. An `include` is the boundary of what a feature answers for: a
+    # scenario is witnessed by the files its own feature covers, and a claim
+    # from anywhere else names it without being able to witness it. That
+    # boundary is what lets one root hold several components, the way a
+    # glossary subdomain does.
+    def self.reach(features, base, exclusion)
+      found = {}
+      features.each { |feature| found[feature.path] = covered(feature, base, exclusion) }
+      found
+    end
+
+    # One feature's files as a set: what is asked of a claim is whether it
+    # sits in there, once per claim.
+    def self.covered(feature, base, exclusion)
+      found = {}
+      Scope.of(base, feature.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
+      found
+    end
+
+    # Every file any feature reaches, which is what gets read. One file
+    # answering for two features is read once and asked about twice.
+    def self.scope(reach)
       found = []
-      features.each do |feature|
-        Scope.of(base, feature.includes, exclusion).each { |path| found.push(Where.of(base / path)) }
-      end
+      reach.keys.each { |spec| found.concat(reach[spec].keys) }
       found.uniq.sort
     end
 
@@ -99,20 +122,60 @@ module Sumitsubo
     end
 
     # A scenario nothing claims: the specification says a behavior should be
-    # implemented and no source in scope claims it, which is a difference
-    # between the two sides.
-    def self.uncovered(features, claims)
-      claimed = {}
-      claims.each { |claim| claimed[claim.id] = true }
-
+    # implemented and no source the declaring feature reaches claims it, which
+    # is a difference between the two sides.
+    def self.uncovered(features, claims, reach)
       found = []
-      features.each do |feature|
-        feature.scenarios.each do |scenario|
-          next unless claimed[scenario.id].nil?
+      features.each { |feature| found.concat(unwitnessed_in(feature, claims, reach)) }
+      found
+    end
 
-          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id, feature.includes))
-        end
+    # A claim naming a scenario the feature declaring it does not reach. The
+    # id resolves, so neither side is wrong about the behavior; what could not
+    # be made is the comparison, since nothing among the files that feature
+    # answers for says the scenario was implemented.
+    def self.misplaced(features, claims, reach)
+      found = []
+      features.each { |feature| found.concat(misplaced_in(feature, claims, reach)) }
+      found
+    end
+
+    # The scenarios this feature's own files claim.
+    def self.witnessed_in(feature, claims, reach)
+      covered = reach[feature.path]
+      found = {}
+      claims.each { |claim| found[claim.id] = true unless covered[claim.path].nil? }
+      found
+    end
+
+    def self.unwitnessed_in(feature, claims, reach)
+      witnessed = witnessed_in(feature, claims, reach)
+      found = []
+      feature.scenarios.each do |scenario|
+        next unless witnessed[scenario.id].nil?
+
+        found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id, feature.includes))
       end
+      found
+    end
+
+    # The claims of this feature's scenarios that sit where it cannot see them.
+    def self.misplaced_in(feature, claims, reach)
+      covered = reach[feature.path]
+      declared = declared_in(feature)
+      found = []
+      claims.each do |claim|
+        next if declared[claim.id].nil?
+        next unless covered[claim.path].nil?
+
+        found.push(Misplaced.new(claim.path, claim.line, claim.id, Where.of(feature.path)))
+      end
+      found
+    end
+
+    def self.declared_in(feature)
+      found = {}
+      feature.scenarios.each { |scenario| found[scenario.id] = true }
       found
     end
 
@@ -139,6 +202,10 @@ module Sumitsubo
 
     def self.describe_unresolved(claim)
       "#{claim.id} resolves to no scenario"
+    end
+
+    def self.describe_misplaced(claim)
+      "#{claim.id} is claimed outside what #{claim.spec} includes"
     end
 
     # The mechanism words its own document, as it words its own findings. A

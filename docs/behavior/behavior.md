@@ -74,6 +74,32 @@ A scenario nothing claims is answered at the line declaring it because that is w
 | When | the directory is loaded |
 | Then | both answer at that line rather than the second answering at none |
 
+## B-011 — What each feature's include reaches
+
+| Step | Statement |
+| --- | --- |
+| Given | two features writing different includes over the same directory |
+| When | the files each one reaches are taken |
+| Then | each answers the files its own include covers and no other feature's |
+
+## B-012 — A scenario claimed only from outside its own feature
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario whose feature includes one file |
+| Given | a claim of it sitting in a file that feature does not include |
+| When | the two sides are compared |
+| Then | the scenario answers as one nothing claims |
+
+## B-013 — The claim that could not witness it
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario whose feature includes one file |
+| Given | a claim of it sitting in a file that feature does not include |
+| When | the two sides are compared |
+| Then | the claim answers at the line it sits on, naming the specification that declares it |
+
 ## B-009 — The prose a feature carries for its document
 
 | Step | Statement |

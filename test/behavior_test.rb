@@ -70,6 +70,34 @@ Sumitsubo::Behavior.load("test/fixtures/behavior/oneline").each do |feature|
   feature.scenarios.each { |scenario| puts "  #{scenario.line} #{scenario.id}" }
 end
 
+# An `include` is the boundary of what a feature answers for rather than a
+# list of files to read: two features over one directory reach different files,
+# and the union of them is only what gets read once.
+# @behavior B-011
+puts "--- what each feature's include reaches ---"
+base = Pathname.new("test/fixtures/behavior")
+features = Sumitsubo::Behavior.load(base / ".spec/behavior")
+reach = Sumitsubo::Behavior.reach(features, base, [])
+features.each { |feature| puts "  #{feature.name} #{reach[feature.path].keys.sort.inspect}" }
+puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
+
+# I-001 is declared by Init, whose include reaches only its own test. A claim
+# of it from the file next door names the scenario without being able to
+# witness it, so the scenario stands unclaimed.
+claims = [Sumitsubo::Behavior::Claim.new("test/fixtures/behavior/test/verify_test.rb", 9, "I-001")]
+
+# @behavior B-012
+puts "--- a scenario claimed only from outside its own feature ---"
+Sumitsubo::Behavior.uncovered(features, claims, reach).each do |finding|
+  puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Behavior.describe_uncovered(finding)}"
+end
+
+# @behavior B-013
+puts "--- and the claim that could not witness it ---"
+Sumitsubo::Behavior.misplaced(features, claims, reach).each do |claim|
+  puts "  #{claim.path}:#{claim.line} #{Sumitsubo::Behavior.describe_misplaced(claim)}"
+end
+
 # A note says what no mechanism checks — why a rule is the way it is — so it
 # reaches the document and nothing else. It hangs from the feature: a scenario
 # names the observable difference and stops.

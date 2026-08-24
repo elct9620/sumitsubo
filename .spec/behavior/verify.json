@@ -91,6 +91,16 @@
       "then": "the first refuses to certify at the line that wrote it, and the second says nothing"
     },
     {
+      "id": "V-023",
+      "title": "A claim the feature declaring it does not reach",
+      "given": [
+        "a scenario declared by a feature that includes one test file",
+        "a claim of that scenario sitting in another test file the run reads"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "the claim is reported at the line it sits on as sitting outside what that specification includes"
+    },
+    {
       "id": "V-002",
       "title": "The same run from a subdirectory",
       "given": [

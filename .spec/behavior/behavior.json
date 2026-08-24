@@ -115,6 +115,33 @@
       "then": "both answer at that line rather than the second answering at none"
     },
     {
+      "id": "B-011",
+      "title": "What each feature's include reaches",
+      "given": ["two features writing different includes over the same directory"],
+      "when": "the files each one reaches are taken",
+      "then": "each answers the files its own include covers and no other feature's"
+    },
+    {
+      "id": "B-012",
+      "title": "A scenario claimed only from outside its own feature",
+      "given": [
+        "a scenario whose feature includes one file",
+        "a claim of it sitting in a file that feature does not include"
+      ],
+      "when": "the two sides are compared",
+      "then": "the scenario answers as one nothing claims"
+    },
+    {
+      "id": "B-013",
+      "title": "The claim that could not witness it",
+      "given": [
+        "a scenario whose feature includes one file",
+        "a claim of it sitting in a file that feature does not include"
+      ],
+      "when": "the two sides are compared",
+      "then": "the claim answers at the line it sits on, naming the specification that declares it"
+    },
+    {
       "id": "B-009",
       "title": "The prose a feature carries for its document",
       "given": [

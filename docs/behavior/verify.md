@@ -55,6 +55,15 @@ Findings and failures share one stream, so whoever reads them reads them in the 
 | When | the run verifies |
 | Then | the first refuses to certify at the line that wrote it, and the second says nothing |
 
+## V-023 — A claim the feature declaring it does not reach
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario declared by a feature that includes one test file |
+| Given | a claim of that scenario sitting in another test file the run reads |
+| When | `sumi verify` runs |
+| Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
+
 ## V-002 — The same run from a subdirectory
 
 | Step | Statement |

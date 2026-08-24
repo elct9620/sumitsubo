@@ -68,8 +68,11 @@ Dir.chdir("test/fixtures/uncovered")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
-# @behavior V-006
-puts "--- a claim resolving to no scenario is not a difference but a failure to compare ---"
+# Two claims this run cannot compare against anything: one names a scenario
+# that is not there at all, and the other names one whose feature does not
+# include the file it sits in — so it resolves, and still witnesses nothing.
+# @behavior V-006 V-023
+puts "--- claims that resolve to nothing a run can compare against ---"
 Dir.chdir("test/fixtures/behavior")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
