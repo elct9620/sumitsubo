@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.0-preview4](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview3...v0.1.0-preview4) (2026-08-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **contract:** let an include say which names a definition spells
+* **contract:** let an include say what a definition answers for
+* **behavior:** let an include say what a feature answers for
+
+### Bug Fixes
+
+* **behavior:** let an include say what a feature answers for ([9c41cfe](https://github.com/elct9620/sumitsubo/commit/9c41cfef806f492c147c0a7bad309d1c95fbf3fc))
+* **contract:** let an include say what a definition answers for ([11d5ad2](https://github.com/elct9620/sumitsubo/commit/11d5ad26809bb4655c5f48a2511e906d4ef017e3))
+* **contract:** let an include say which names a definition spells ([bcfa0d7](https://github.com/elct9620/sumitsubo/commit/bcfa0d76a0a02d615b0e2623680dd0ac730568e6))
+* say a finding searched what the specification includes, not which globs ([cdbd142](https://github.com/elct9620/sumitsubo/commit/cdbd14207fe86ef69a60cc11e1d2a5db6420a957))
+
 ## [0.1.0-preview3](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview2...v0.1.0-preview3) (2026-08-23)
 
 
