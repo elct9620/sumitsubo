@@ -33,3 +33,40 @@ end
 # reading is asked rather than told.
 reading = Sumitsubo::Reading::Markdown.new
 p [reading.reads?("init.md"), reading.reads?("init.json"), reading.reads?(".spec/behavior/init.md")]
+
+# The same specification written both ways reads into the same shape. This is
+# what says the format changed and nothing else did: path and line are what a
+# document carries rather than what it says, so they are the only two fields
+# the two sides are allowed to differ in.
+require "sumitsubo/reading/json"
+
+def agree(said, one, other)
+  puts "  #{one == other ? "same" : "DIFFER"} #{said}#{one == other ? "" : " #{one.inspect} / #{other.inspect}"}"
+end
+
+def agree_on_steps(taken, given)
+  agree("#{taken.key} steps", taken.attributes, given.attributes)
+end
+
+puts "--- the same specification, written both ways ---"
+written = Sumitsubo::Reading::Markdown.new.behavior("test/fixtures/reading/init.md")
+structured = Sumitsubo::Reading::Json.new.behavior("test/fixtures/reading/init.json")
+
+agree("key", written.key, structured.key)
+agree("text", written.text, structured.text)
+agree("includes", written.includes, structured.includes)
+agree("scenario count", written.statements.length, structured.statements.length)
+agree("ids", written.statements.map { |one| one.key }, structured.statements.map { |one| one.key })
+agree("titles", written.statements.map { |one| one.text }, structured.statements.map { |one| one.text })
+
+index = 0
+while index < written.statements.length
+  agree_on_steps(written.statements[index], structured.statements[index])
+  index += 1
+end
+
+# What they are allowed to differ in, said out loud so the exception is not a
+# silent one: a line is where a reader goes, and the two formats write the same
+# declaration in different places.
+puts "  path #{written.statements[0].path} / #{structured.statements[0].path}"
+puts "  line #{written.statements[0].line} / #{structured.statements[0].line}"

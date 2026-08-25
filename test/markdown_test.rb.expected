@@ -21,3 +21,17 @@ Init ["test/init_test.rb"]
     when `sumi init` runs
     then a contract directory is created at the configured root
 [true, false, true]
+--- the same specification, written both ways ---
+  same key
+  same text
+  same includes
+  same scenario count
+  same ids
+  same titles
+  same I-001 steps
+  same I-002 steps
+  same I-003 steps
+  same I-004 steps
+  same I-005 steps
+  path test/fixtures/reading/init.md / test/fixtures/reading/init.json
+  line 9 / 9
