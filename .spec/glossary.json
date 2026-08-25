@@ -13,17 +13,12 @@
       "terms": [
         {
           "term": "Specification",
-          "definition": "What a project declares its source should stay aligned with. It is the structured files; what Render writes from them is a Document.",
+          "definition": "What a project declares its source should stay aligned with. It is the reference line and what a person reads, which is why there is no second copy of it.",
           "not": []
         },
         {
           "term": "Structured Specification",
           "definition": "The machine-readable file a mechanism reads: .spec/glossary.json, one file per kind of contract under .spec/contract/, and one file per feature under .spec/behavior/.",
-          "not": []
-        },
-        {
-          "term": "Document",
-          "definition": "What Render writes for a person to read: the half of the specification that says what it means, without what the tool needs in order to find things.",
           "not": []
         },
         {
@@ -86,12 +81,7 @@
         },
         {
           "term": "Internal",
-          "definition": "An interface the project means to keep but not to publish. It is verified like any other, and what it stays out of is the Document.",
-          "not": []
-        },
-        {
-          "term": "Note",
-          "definition": "A block of prose a specification carries for its document alone: a heading, a paragraph, or a fenced example. It says why a declaration is right, which no mechanism can check, so it is compared against nothing.",
+          "definition": "An interface the project means to keep but not to publish. It is verified like any other; what it says is that a reader outside the project is not the one it is kept for.",
           "not": []
         },
         {

@@ -98,20 +98,3 @@ puts "--- and the claim that could not witness it ---"
 Sumitsubo::Behavior.misplaced(features, claims, reach).each do |claim|
   puts "  #{claim.path}:#{claim.line} #{Sumitsubo::Behavior.describe_misplaced(claim)}"
 end
-
-# A note says what no mechanism checks — why a rule is the way it is — so it
-# reaches the document and nothing else. It hangs from the feature: a scenario
-# names the observable difference and stops.
-# @behavior B-009
-puts "--- the prose a feature carries for its document ---"
-puts Sumitsubo::Behavior.render(Sumitsubo::Behavior.load("test/fixtures/behavior/noted")[0])
-
-# The reading a note takes is shared, so what this pins is the mechanism it
-# sends a reader to: each names its own help.
-# @behavior B-010
-puts "--- a note of a kind this document has no words for ---"
-begin
-  Sumitsubo::Behavior.load("test/fixtures/behavior/badnote")
-rescue Sumitsubo::Error => e
-  puts e.message
-end

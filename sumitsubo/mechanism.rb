@@ -24,10 +24,6 @@ module Sumitsubo
     # there is a place rather than a file to create.
     Seed = Struct.new(:path, :content)
 
-    # What a mechanism has to say on a page. The command writes it, the way
-    # Init writes a seed: where a document goes is the tool's to decide.
-    Document = Struct.new(:path, :content)
-
     class Glossary
       # The name .sumi.json knows this specification by.
       def specification
@@ -36,16 +32,6 @@ module Sumitsubo
 
       def seed(root)
         Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::EMPTY)
-      end
-
-      # An absent reference line is nothing to write rather than a comparison
-      # that could not be made: Render records where Verify certifies.
-      def documents(config, languages)
-        path = Sumitsubo::Glossary.path_in(config.root)
-        return [] unless path.exist?
-
-        content = Sumitsubo::Glossary.render(Sumitsubo::Glossary.load(path))
-        [Document.new(config.docs / "glossary.md", content)]
       end
 
       def verify(config, report, languages)
@@ -85,22 +71,6 @@ module Sumitsubo
       # contract per file, so there is a place rather than a file to create.
       def seed(root)
         Seed.new(Sumitsubo::Contract.path_in(root), nil)
-      end
-
-      # The documents mirror the specification: one file per kind there, one
-      # here, named the same.
-      def documents(config, languages)
-        found = []
-        Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), languages).each do |definition|
-          next unless Sumitsubo::Contract.published?(definition)
-
-          name = Sumitsubo::Contract.document_name(definition)
-          found.push(Document.new(
-            config.docs / Sumitsubo::Contract::DIRECTORY / "#{name}.md",
-            Sumitsubo::Contract.render(definition)
-          ))
-        end
-        found
       end
 
       def verify(config, report, languages)
@@ -195,20 +165,6 @@ module Sumitsubo
 
       def seed(root)
         Seed.new(Sumitsubo::Behavior.path_in(root), nil)
-      end
-
-      # The documents mirror the specification: one file per feature there,
-      # one here, named the same.
-      def documents(config, languages)
-        found = []
-        Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root)).each do |feature|
-          name = Sumitsubo::Behavior.document_name(feature)
-          found.push(Document.new(
-            config.docs / Sumitsubo::Behavior::DIRECTORY / "#{name}.md",
-            Sumitsubo::Behavior.render(feature)
-          ))
-        end
-        found
       end
 
       def verify(config, report, languages)

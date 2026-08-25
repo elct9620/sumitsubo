@@ -140,24 +140,6 @@
       ],
       "when": "the two sides are compared",
       "then": "the claim answers at the line it sits on, naming the specification that declares it"
-    },
-    {
-      "id": "B-009",
-      "title": "The prose a feature carries for its document",
-      "given": [
-        "a feature file writing notes of its own"
-      ],
-      "when": "the feature is rendered",
-      "then": "the notes answer between the description and the first scenario"
-    },
-    {
-      "id": "B-010",
-      "title": "A note of a kind this document has no words for",
-      "given": [
-        "a feature file writing a note whose type is none the form has"
-      ],
-      "when": "the directory is read",
-      "then": "the file is named as one that cannot be read, and the help that has the form"
     }
   ]
 }

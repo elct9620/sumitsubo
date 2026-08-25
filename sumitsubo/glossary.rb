@@ -207,27 +207,6 @@ module Sumitsubo
         "the line moved or the wording was fixed"
     end
 
-    # The mechanism words its own document, as it words its own findings. Only
-    # the terms are rendered: what a term rejects is a record of where this
-    # project drifted rather than vocabulary, and the tool hands it to a reader
-    # at the line it was tripped on.
-    def self.render(sections)
-      lines = ["# Glossary", ""]
-      sections.each do |section|
-        lines.push("## #{section.name}", "") unless section.name == GLOBAL
-        lines.push("| Term | Definition |", "| --- | --- |")
-        section.terms.each { |term| lines.push("| #{cell(term.term)} | #{cell(term.definition)} |") }
-        lines.push("")
-      end
-      lines.join("\n")
-    end
-
-    # A bar would end the cell it sits in, so it is spelled rather than left to
-    # split the table.
-    def self.cell(text)
-      "#{text}".split("|").join("\\|")
-    end
-
     # One finding per line, however often the word appears on it: the line is
     # what a reader goes to, and what an exclusion would one day be written
     # against.

@@ -55,18 +55,6 @@ src/commands.rb:24 @command names no contract
 --- one contract claimed in two places ---
 app/controller.rb:5 @route GET /users/:id is claimed at app/legacy.rb:9 as well
 app/legacy.rb:9 @route GET /users/:id is claimed at app/controller.rb:5 as well
---- the document a definition becomes ---
-# CLI
-
-The commands the executable answers.
-
-## init
-
-Lay down an empty specification.
-
-## verify
-
-Check the source against the specification.
 --- the shape a contract registers ---
   Store.open (path, mode?)
   Store#read (key:keyword, -:block?)
@@ -83,30 +71,3 @@ test/fixtures/contract/marked/cli.json gives verify parameters, which a marker l
   test/fixtures/contract/collide/store.json:6 Store.open
   test/fixtures/contract/collide/store.json:9 loose
   test/fixtures/contract/collide/store.json:10 Store
---- the prose a specification carries for its document ---
-# Store
-
-What the store exposes.
-
-The store keeps one entry per key. Nothing here says how it is stored.
-
-## Store.open
-
-Open the store.
-
-`Store.open(path)`
-
-### Example
-
-Opening twice answers the same store.
-
-```ruby
-store = Store.open(path)
-store.read(key)
-```
---- a note of a kind this document has no words for ---
-test/fixtures/contract/badtype/api.json writes a note of type quote, which is none this document has; sumi help contract has the form
---- a note whose text is not lines ---
-test/fixtures/contract/badtext/api.json writes a note whose "text" is not lines; sumi help contract has the form
---- a heading deeper than a page carries ---
-test/fixtures/contract/baddepth/api.json writes a heading at level 5, which is deeper than a page carries; sumi help contract has the form

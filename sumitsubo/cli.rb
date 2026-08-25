@@ -4,7 +4,6 @@ require "sumitsubo/error"
 require "sumitsubo/config"
 require "sumitsubo/command/help"
 require "sumitsubo/command/init"
-require "sumitsubo/command/render"
 require "sumitsubo/command/verify"
 
 module Sumitsubo
@@ -22,7 +21,6 @@ module Sumitsubo
     def run(argv)
       case argv.first
       when "init" then Command::Init.new.run(Config.load)
-      when "render" then Command::Render.new.run(Config.load, @languages)
       when "verify" then Command::Verify.new.run(Config.load, @languages)
       when "help" then Command::Help.new.run(argv[1])
       else unknown?(argv.first) ? refuse(argv.first) : flags(argv)

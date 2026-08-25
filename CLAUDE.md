@@ -27,8 +27,7 @@ comment the project holds.
 The vocabulary lives in `.spec/glossary.json`, and its includes say what it
 reaches. A specification is checked at its source, which is where a finding's
 fix belongs; the fixtures stay out, since what they carry is deliberately
-wrong, and so does every rendered document, since its source is already in
-scope and two findings for one drift are noise.
+wrong.
 
 A term earns a rejected word when the project has actually drifted on it; the
 rest name what the project means and reject nothing, which the tool carries
@@ -112,8 +111,7 @@ The command is `sumi`, shipped as a single native executable.
 - Tests compile at `-O1` and the shipped executable at the compiler's default,
   so CI builds and runs `sumi` in addition to running the tests.
 - `.claude/hooks/` holds this repository to the same promises inside a
-  session: one renders the documents after any tool call that could have moved
-  the specification, the other runs the suite before a turn is allowed to end.
+  session: the suite runs before a turn is allowed to end.
 - Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows gets no
   executable — the Spinel runtime depends on POSIX structurally — and reaches
   the tool through the image instead. That image compiles nothing: it holds a

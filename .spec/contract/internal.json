@@ -165,35 +165,6 @@
           "name": "node"
         }
       ]
-    },
-    {
-      "name": "Sumitsubo::Note.all_in",
-      "description": "The one reading of the prose a specification carries, for every mechanism that writes a document.",
-      "internal": true,
-      "params": [
-        {
-          "name": "path"
-        },
-        {
-          "name": "raw"
-        },
-        {
-          "name": "topic"
-        }
-      ]
-    },
-    {
-      "name": "Sumitsubo::Note.spell",
-      "description": "The lines those blocks become, under the level the mechanism anchors them at.",
-      "internal": true,
-      "params": [
-        {
-          "name": "blocks"
-        },
-        {
-          "name": "anchor"
-        }
-      ]
     }
   ]
 }

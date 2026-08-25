@@ -21,8 +21,8 @@
     {
       "type": "paragraph",
       "text": [
-        "`verify: false` and `render: false` are separate because a Render that",
-        "only records a specification still needs one that is not checked."
+        "`verify: false` keeps a specification the project means to hold without",
+        "a run being checked against it yet."
       ]
     },
     {
@@ -92,42 +92,6 @@
       ],
       "when": "the configuration is asked about each specification",
       "then": "a specification the file does not mention is verified"
-    },
-    {
-      "id": "C-007",
-      "title": "Where the rendered specification goes",
-      "given": [
-        "a .sumi.json naming a documents path"
-      ],
-      "when": "the configuration is loaded",
-      "then": "the documents base is that path, answered against the directory the file was found in"
-    },
-    {
-      "id": "C-008",
-      "title": "A project that has said nothing writes to docs",
-      "given": [
-        "a project with no .sumi.json"
-      ],
-      "when": "the configuration is loaded",
-      "then": "the documents base is `docs` under the base"
-    },
-    {
-      "id": "C-009",
-      "title": "A specification that is kept but not rendered",
-      "given": [
-        "a .sumi.json naming one specification as not to be rendered"
-      ],
-      "when": "the configuration is asked about each specification",
-      "then": "the specification it named is not rendered"
-    },
-    {
-      "id": "C-010",
-      "title": "A specification nobody mentioned is rendered",
-      "given": [
-        "a .sumi.json naming one specification as not to be rendered"
-      ],
-      "when": "the configuration is asked about each specification",
-      "then": "a specification the file does not mention is rendered"
     },
     {
       "id": "C-011",

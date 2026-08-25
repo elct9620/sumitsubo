@@ -49,30 +49,6 @@
       ]
     },
     {
-      "name": "render",
-      "description": "Render the structured specification into documents a person reads.",
-      "notes": [
-        {
-          "type": "paragraph",
-          "text": [
-            "Writes what the specification means and not what the tool needs in order to find things,",
-            "so a marker, the include globs and the words a glossary rejects stay out.",
-            "A document is derived, so a run replaces what the last one wrote,",
-            "and a specification that is not there is passed over rather than reported."
-          ]
-        },
-        {
-          "type": "code",
-          "language": "console",
-          "text": [
-            "$ sumi render",
-            "rendered docs/glossary.md",
-            "rendered docs/contract/cli.md"
-          ]
-        }
-      ]
-    },
-    {
       "name": "verify",
       "description": "Verify the source code is aligned with the verifiable specification.",
       "notes": [
@@ -217,8 +193,8 @@
         {
           "type": "paragraph",
           "text": [
-            "`.sumi.json` says where the specifications live, where the documents go,",
-            "which of them a run verifies or renders, and which paths no mechanism reads.",
+            "`.sumi.json` says where the specifications live, which of them a run verifies,",
+            "and which paths no mechanism reads.",
             "A run reads the nearest one at or above where it started, and a project that has said nothing gets the defaults."
           ]
         },
@@ -228,10 +204,9 @@
           "text": [
             "{",
             "  \"root\": \".spec\",",
-            "  \"docs\": \"docs\",",
             "  \"exclude\": [\"vendor/\"],",
             "  \"gitignore\": true,",
-            "  \"specifications\": { \"glossary\": { \"verify\": false, \"render\": false } }",
+            "  \"specifications\": { \"glossary\": { \"verify\": false } }",
             "}"
           ]
         },

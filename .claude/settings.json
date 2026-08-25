@@ -1,20 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/edit.sh",
-            "args": [],
-            "statusMessage": "Rendering the specification",
-            "timeout": 60
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "matcher": "",

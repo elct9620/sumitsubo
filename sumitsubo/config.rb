@@ -15,9 +15,8 @@ module Sumitsubo
     FILE = ".sumi.json"
     GITIGNORE = ".gitignore"
     DEFAULT_ROOT = ".spec"
-    DEFAULT_DOCS = "docs"
 
-    attr_reader :base, :root, :docs, :exclusion
+    attr_reader :base, :root, :exclusion
 
     # The directory a run is configured from: the nearest one at or above the
     # starting point holding a .sumi.json, else the repository it sits in, else
@@ -53,9 +52,6 @@ module Sumitsubo
     def initialize(base, document)
       @base = base
       @root = (base / (document["root"] || DEFAULT_ROOT)).cleanpath
-      # Where Render writes, answered against the base as the root is, so a run
-      # from a subdirectory writes to the same place it would from the top.
-      @docs = (base / (document["docs"] || DEFAULT_DOCS)).cleanpath
       # What every mechanism leaves alone. A build directory belongs to the
       # project rather than to any one specification, so it is said once here
       # instead of beside each `include`.
@@ -71,15 +67,12 @@ module Sumitsubo
       @specifications = document["specifications"] || {}
     end
 
-    # One entry carries both answers, and they are independent: verify: false
-    # keeps a specification without being checked against, which a run that only
-    # renders it still needs.
+    # Only the exceptions are listed, so a specification nobody mentioned is
+    # verified once its file is there. `verify: false` keeps a specification
+    # the project means to hold without a run being checked against it yet.
     def verify?(name)
-      switched_on?(name, "verify")
-    end
-
-    def render?(name)
-      switched_on?(name, "render")
+      entry = @specifications[name]
+      entry.nil? || entry["verify"] != false
     end
 
     private
@@ -91,13 +84,6 @@ module Sumitsubo
     def gitignored_in(base)
       path = base / GITIGNORE
       path.exist? ? Patterns.patterns_in(path.read) : []
-    end
-
-    # Only the exceptions are listed, so a specification nobody mentioned is
-    # both verified and rendered once its file is there.
-    def switched_on?(name, command)
-      entry = @specifications[name]
-      entry.nil? || entry[command] != false
     end
   end
 end

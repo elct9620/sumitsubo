@@ -182,10 +182,6 @@ Sumitsubo::Contract.duplicated(definitions, claims).each do |pair|
   puts "#{pair[0].path}:#{pair[0].line} #{Sumitsubo::Contract.describe_duplicated(pair)}"
 end
 
-# @behavior T-013
-puts "--- the document a definition becomes ---"
-puts Sumitsubo::Contract.render(definitions[1])
-
 Takes = Struct.new(:name, :kind, :optional)
 
 def takes(name, kind = "positional", optional = false)
@@ -250,24 +246,3 @@ puts "--- a name the specification uses at more than one depth ---"
 loaded("#{FIXTURE}/collide")[0].interfaces.each do |interface|
   puts "  #{interface.path}:#{interface.line} #{interface.name}"
 end
-
-# A note says what no mechanism checks — why a rule is the way it is — so it
-# reaches the document and nothing else. `Store#drop` is internal, and its
-# notes leave with it.
-# @behavior T-026 T-027 T-028
-puts "--- the prose a specification carries for its document ---"
-puts Sumitsubo::Contract.render(loaded("#{FIXTURE}/noted")[0])
-
-# The three refusals a note can raise. Each is a specification the mechanism
-# could not read rather than a difference about the code.
-# @behavior T-029
-puts "--- a note of a kind this document has no words for ---"
-fails { loaded("#{FIXTURE}/badtype") }
-
-# @behavior T-030
-puts "--- a note whose text is not lines ---"
-fails { loaded("#{FIXTURE}/badtext") }
-
-# @behavior T-031
-puts "--- a heading deeper than a page carries ---"
-fails { loaded("#{FIXTURE}/baddepth") }

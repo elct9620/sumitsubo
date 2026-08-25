@@ -3,7 +3,6 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/locations"
-require "sumitsubo/note"
 require "sumitsubo/scope"
 
 module Sumitsubo
@@ -46,14 +45,14 @@ module Sumitsubo
     Param = Struct.new(:name, :kind, :optional)
 
     # An interface is internal when the project means to keep it but not to
-    # say so publicly. That is a fact about the interface, and the document it
-    # stays out of follows from it — which is what makes it different from the
-    # configuration switching a whole specification off.
+    # say so publicly. That is a fact about the interface rather than a switch
+    # on the run, which is what makes it different from the configuration
+    # turning a whole specification off.
     #
     # Parameters are absent where the contract registers none, which is not
     # the same as registering that it takes none: only a shape written down
     # asks to be compared.
-    Interface = Struct.new(:name, :description, :path, :line, :internal, :params, :notes)
+    Interface = Struct.new(:name, :description, :path, :line, :internal, :params)
     # A file's worth of contracts. The marker is the word source claims them
     # with, and two files may name the same one: a project splitting its routes
     # across files is registering more of one kind, not a second kind.
@@ -62,7 +61,7 @@ module Sumitsubo
     # reading carries one: a claim is a claim in whatever the file is written
     # in, while a name is spelled the way one language spells it.
     Definition = Struct.new(
-      :name, :description, :marker, :language, :includes, :interfaces, :path, :notes
+      :name, :description, :marker, :language, :includes, :interfaces, :path
     )
     # An interface its reading did not find. It answers at the specification
     # that registers it, which is also where the include that bounded the
@@ -457,56 +456,6 @@ module Sumitsubo
       "#{claim.keyword} #{claim.name} is claimed at #{other.path}:#{other.line} as well"
     end
 
-    # Whether a definition has anything to say on a page. A kind whose every
-    # interface is internal is nothing to render rather than a heading over an
-    # empty table, the way an absent specification is nothing to render at all.
-    def self.published?(definition)
-      found = false
-      definition.interfaces.each { |interface| found = true unless interface.internal }
-      found
-    end
-
-    # The mechanism words its own document, as it words its own findings. An
-    # interface gets a section rather than a row, which is what leaves room
-    # for the notes under it; the marker and the include globs stay out,
-    # because they say how to find things rather than what the contract means.
-    def self.render(definition)
-      lines = ["# #{definition.name || document_name(definition)}", ""]
-      lines.push(definition.description, "") unless definition.description.nil?
-      Note.spell(definition.notes, 1).each { |line| lines.push(line) }
-
-      # An internal interface is still verified; what it is kept out of is the
-      # half of the specification a reader outside the project is handed.
-      definition.interfaces.each do |interface|
-        next if interface.internal
-
-        lines.push("## #{interface.name}", "")
-        lines.push(interface.description, "") unless interface.description.nil?
-        # The shape sits under the name rather than in it: a reader looking up
-        # the interface finds the name, and one about to call it finds this.
-        lines.push("`#{signature(interface)}`", "") unless interface.params.nil?
-        Note.spell(interface.notes, 2).each { |line| lines.push(line) }
-      end
-      lines.join("\n")
-    end
-
-    # How a reader reaches the interface: its name, and the shape to call it
-    # with where the contract registers one. A shape says what the interface
-    # is rather than where to find it, which is the line `include` and the
-    # marker fall on the other side of.
-    def self.signature(interface)
-      return interface.name if interface.params.nil?
-
-      "#{interface.name}#{spell(interface.params)}"
-    end
-
-    # What a definition is called on the document side: the file declaring it,
-    # since one file there is one document here. It stands in for a definition
-    # that named itself nothing.
-    def self.document_name(definition)
-      "#{Pathname.new(definition.path).basename(".json")}"
-    end
-
     def self.definition_from(path, languages)
       text = File.read(path)
       document = parse(path, text)
@@ -554,8 +503,7 @@ module Sumitsubo
         params.each { |param| cursor.line_of(param.name) } unless params.nil?
 
         interfaces.push(Interface.new(
-          name, raw["description"], path, line, raw["internal"] == true, params,
-          Note.all_in(path, raw["notes"], "contract")
+          name, raw["description"], path, line, raw["internal"] == true, params
         ))
       end
 
@@ -566,8 +514,7 @@ module Sumitsubo
         language,
         document["include"] || [],
         interfaces,
-        path,
-        Note.all_in(path, document["notes"], "contract")
+        path
       )
     end
 

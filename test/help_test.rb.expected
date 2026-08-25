@@ -3,7 +3,6 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
-    render           Render the specification to markdown
     verify           Check the source against the specification
     help <topic>     Explain how to write a specification
 
@@ -22,7 +21,6 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
-    render           Render the specification to markdown
     verify           Check the source against the specification
     help <topic>     Explain how to write a specification
 
@@ -41,7 +39,6 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
-    render           Render the specification to markdown
     verify           Check the source against the specification
     help <topic>     Explain how to write a specification
 
@@ -60,7 +57,6 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
-    render           Render the specification to markdown
     verify           Check the source against the specification
     help <topic>     Explain how to write a specification
 
@@ -80,7 +76,6 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
-    render           Render the specification to markdown
     verify           Check the source against the specification
     help <topic>     Explain how to write a specification
 
@@ -99,7 +94,6 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
-    render           Render the specification to markdown
     verify           Check the source against the specification
     help <topic>     Explain how to write a specification
 
@@ -123,14 +117,12 @@ unreadable one stops the run.
 Form
     {
       "root": ".spec",
-      "docs": "docs",
       "exclude": ["vendor/"],
       "gitignore": true,
       "specifications": { "glossary": { "verify": false } }
     }
 
     root        where the specifications live, `.spec` by default
-    docs        where `sumi render` writes, `docs` by default
     exclude     paths no mechanism reads, whatever an include covers
     gitignore   whether the .gitignore beside this file is read too,
                 which it is unless this says false
@@ -141,10 +133,9 @@ Form
     straight to one.
 
     `specifications` lists only the exceptions: one nobody mentions is
-    both verified and rendered. The names are `glossary`, `contract`,
-    and `behavior`. The two switches are independent - `verify: false`
-    keeps a specification without checking it, and `render: false` keeps
-    one out of the documents without stopping the check.
+    verified. The names are `glossary`, `contract`, and `behavior`.
+    `verify: false` keeps a specification the project means to hold
+    without a run being checked against it yet.
 
 What a run reads
     `include` and `exclude` are globs read against the directory
@@ -189,9 +180,6 @@ Answers
     not, and a run with both answers 2: it says everything it found
     either way, and the answer is what refuses to certify it. A
     mechanism that could not be read stops that mechanism and no other.
-
-    `sumi render` compares nothing, so it never answers 1: its 0 says
-    every document it had to write is written.
 exit=0
 --- a word that is no topic ---
 nope is no topic sumi explains
@@ -199,7 +187,6 @@ Usage: sumi <command> [options]
 
 Commands:
     init             Lay down an empty specification to start from
-    render           Render the specification to markdown
     verify           Check the source against the specification
     help <topic>     Explain how to write a specification
 

@@ -52,12 +52,11 @@ the libraries it names — no shell, no package manager, nothing else. What the
 image weighs is what the executable weighs, plus the few megabytes glibc costs.
 `/work` is where a run starts, so the tree to check is what gets mounted there.
 
-`init` and `render` write into that tree, and a container writing as `root`
-leaves files behind that the person who ran it does not own. On Linux, say who
-you are:
+`init` writes into that tree, and a container writing as `root` leaves files
+behind that the person who ran it does not own. On Linux, say who you are:
 
 ```console
-$ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview4 render
+$ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview4 init
 ```
 
 Docker Desktop maps ownership back to whoever is running it, so on macOS and
@@ -98,29 +97,18 @@ where the comparison could not be made — whatever had to be read first was
 absent, unreadable, or ambiguous. Findings answer as `path:line`, relative to
 where the run started.
 
-`sumi render` writes the specification out as something to read — terms and
-their definitions, contracts as sections, scenarios as tables — leaving out
-what the tool needs in order to find things:
-
-```console
-$ sumi render
-rendered docs/glossary.md
-rendered docs/contract/cli.md
-rendered docs/behavior/verify.md
-```
-
 ## Where the rest is
 
 The forms live in the executable, so a project has them wherever `sumi` is
-installed. `docs/` here is this project's own specification, rendered by the
-tool it is:
+installed. The specification is what a person reads, so `.spec/` here is both
+the reference line this project verifies against and its own documentation:
 
 | Looking for | Where |
 |-------------|-------|
 | How to write each specification | `sumi help glossary` \| `contract` \| `behavior` \| `config` |
-| What each command reads, writes and answers | [docs/contract/cli.md](docs/contract/cli.md) |
-| The vocabulary this project keeps | [docs/glossary.md](docs/glossary.md) |
-| The behaviors it holds itself to | [docs/behavior/](docs/behavior) |
+| What each command reads and answers | [.spec/contract/cli.json](.spec/contract/cli.json) |
+| The vocabulary this project keeps | [.spec/glossary.json](.spec/glossary.json) |
+| The behaviors it holds itself to | [.spec/behavior/](.spec/behavior) |
 
 ## Development
 
@@ -147,9 +135,7 @@ reading a specification name no grammar: it keeps their tests on the side that
 can still be regenerated.
 
 That last line is the project verifying its own specification, which CI runs on
-every push. `docs/` is committed, so a change to `.spec/` is followed by
-`./build/bin/sumi render` — which `.claude/hooks/edit.sh` does for you inside a
-Claude Code session.
+every push.
 
 ## License
 

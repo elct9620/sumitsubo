@@ -14,7 +14,6 @@ module Sumitsubo
 
         Commands:
             init             Lay down an empty specification to start from
-            render           Render the specification to markdown
             verify           Check the source against the specification
             help <topic>     Explain how to write a specification
 
@@ -233,9 +232,8 @@ module Sumitsubo
 
         internal
             `"internal": true` says the project means to keep the interface but
-            not to publish it. It is verified like any other; what it stays out
-            of is the document. A kind whose every interface is internal renders
-            no page.
+            not to publish it. It is verified like any other; what it says is
+            that a reader outside the project is not the one it is kept for.
 
         Notes
             `"notes"` is the prose a specification carries for its document
@@ -468,14 +466,12 @@ module Sumitsubo
         Form
             {
               "root": ".spec",
-              "docs": "docs",
               "exclude": ["vendor/"],
               "gitignore": true,
               "specifications": { "glossary": { "verify": false } }
             }
 
             root        where the specifications live, `.spec` by default
-            docs        where `sumi render` writes, `docs` by default
             exclude     paths no mechanism reads, whatever an include covers
             gitignore   whether the .gitignore beside this file is read too,
                         which it is unless this says false
@@ -486,10 +482,9 @@ module Sumitsubo
             straight to one.
 
             `specifications` lists only the exceptions: one nobody mentions is
-            both verified and rendered. The names are `glossary`, `contract`,
-            and `behavior`. The two switches are independent - `verify: false`
-            keeps a specification without checking it, and `render: false` keeps
-            one out of the documents without stopping the check.
+            verified. The names are `glossary`, `contract`, and `behavior`.
+            `verify: false` keeps a specification the project means to hold
+            without a run being checked against it yet.
 
         What a run reads
             `include` and `exclude` are globs read against the directory
@@ -534,9 +529,6 @@ module Sumitsubo
             not, and a run with both answers 2: it says everything it found
             either way, and the answer is what refuses to certify it. A
             mechanism that could not be read stops that mechanism and no other.
-
-            `sumi render` compares nothing, so it never answers 1: its 0 says
-            every document it had to write is written.
       TEXT
 
       def run(name)
