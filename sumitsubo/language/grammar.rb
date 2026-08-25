@@ -15,6 +15,10 @@ module RustGrammar
   ffi_func :tree_sitter_rust, [], :ptr
 end
 
+module MarkdownGrammar
+  ffi_func :tree_sitter_markdown, [], :ptr
+end
+
 module Sumitsubo
   # What a grammar is called here, which is also what a specification names when
   # it says which language spells the names it registers. The queries put to one
@@ -23,8 +27,13 @@ module Sumitsubo
   module Grammar
     RUBY = "ruby"
     RUST = "rust"
+    # The block grammar alone. A specification is read from the structure it
+    # gives — sections, tables, fences — and from the text a block-level
+    # `inline` node holds unparsed, which is what the tool takes verbatim.
+    MARKDOWN = "markdown"
   end
 end
 
 TreeSitter.register(Sumitsubo::Grammar::RUBY, RubyGrammar.tree_sitter_ruby)
 TreeSitter.register(Sumitsubo::Grammar::RUST, RustGrammar.tree_sitter_rust)
+TreeSitter.register(Sumitsubo::Grammar::MARKDOWN, MarkdownGrammar.tree_sitter_markdown)

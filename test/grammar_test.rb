@@ -54,3 +54,25 @@ begin
 rescue TreeSitter::ParseError => e
   puts e.message
 end
+
+# Markdown is carried for the specification rather than for source, and what it
+# is carried for is the structure: a section nests by heading level, and a table
+# is cells. What a heading holds arrives as one unparsed run of text — the block
+# grammar leaves inline content alone, and taking the backticks verbatim out of
+# that run is what the reading does instead of asking a second grammar for them.
+DOCUMENT = "# Init\n" \
+           "\n" \
+           "Laying down a reference line.\n" \
+           "\n" \
+           "## `I-001` The first run\n" \
+           "\n" \
+           "| Step | Statement |\n" \
+           "| --- | --- |\n" \
+           "| Given | a directory with no specification |\n"
+
+def markdown(query)
+  TreeSitter.capture(Sumitsubo::Grammar::MARKDOWN, DOCUMENT, query, "init.md")
+end
+
+p markdown("(atx_heading (inline) @text)").map { |capture| "#{capture.line}:#{capture.text}" }
+p markdown("(pipe_table_row (pipe_table_cell) @cell)").map { |capture| capture.text }

@@ -1,6 +1,6 @@
 #!/bin/sh
-# Fetch the tree-sitter runtime and the Ruby grammar into vendor/, which is not
-# committed. Both are pinned here: the grammar's node names are what the
+# Fetch the tree-sitter runtime and the grammars into vendor/, which is not
+# committed. Every version is pinned here: a grammar's node names are what the
 # queries are written against, and a parse table generated for another runtime
 # is refused at load time rather than misread.
 #
@@ -13,6 +13,7 @@ vendor="$root/vendor"
 RUNTIME=v0.26.12
 RUBY=v0.23.1
 RUST=v0.24.2
+MARKDOWN=v0.5.3
 
 mkdir -p "$vendor"
 
@@ -33,6 +34,12 @@ fetch() {
 fetch tree-sitter tree-sitter/tree-sitter "$RUNTIME"
 fetch tree-sitter-ruby tree-sitter/tree-sitter-ruby "$RUBY"
 fetch tree-sitter-rust tree-sitter/tree-sitter-rust "$RUST"
+# Markdown ships two grammars in one repository. Only the block one is fetched
+# into a translation unit: the inline grammar is reached through
+# ts_parser_set_included_ranges, which this binding does not carry, and the
+# unparsed text a block-level `inline` node holds is what a specification is
+# read from anyway.
+fetch tree-sitter-markdown tree-sitter-grammars/tree-sitter-markdown "$MARKDOWN"
 
 # The binding is compiled against the header it carries, so the pin has one
 # home: re-pointing RUNTIME above refreshes the committed copy, and the diff is
