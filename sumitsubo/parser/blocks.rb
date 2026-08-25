@@ -16,10 +16,13 @@ module Sumitsubo
     # the capture arrived under rather than from the tree: a section nests by
     # level, and the grammar spells each level as a kind of its own.
     #
-    # The walk keeps what it has read in one scope and the helpers take words
-    # and lines rather than what is being built. That is the compiler's
-    # constraint as much as this parser's: a collection crossing a method
-    # boundary reaches it carrying a type it settles from the first call.
+    # The walk keeps what it has read in one scope, and the helpers take words
+    # and lines rather than what is being built. A method whose name a
+    # top-level one also carries is compiled with a different signature, and a
+    # hash handed to it arrives typed as something no caller passes. Spinel
+    # 2026-08-26, matz/spinel#4106; give the walk a method per block once a
+    # build carries the fix — the test names its builders after those blocks,
+    # so they have to be renamed together.
     module Blocks
       # What the query calls each thing it captures. A block says what it is by
       # the name it arrives under, so nothing here reads the text to decide.
