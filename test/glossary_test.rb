@@ -11,7 +11,7 @@ sections = Sumitsubo::Glossary.load(".spec/glossary.json")
 # @behavior G-001
 puts "--- what each entry covers ---"
 sections.each do |section|
-  puts "#{section.name} #{section.includes.inspect} -> #{Sumitsubo::Glossary.paths_for(section, Pathname.pwd, []).inspect}"
+  puts "#{section.key} #{section.includes.inspect} -> #{Sumitsubo::Glossary.paths_for(section, Pathname.pwd, []).inspect}"
 end
 
 # @behavior G-002
@@ -21,9 +21,9 @@ scope.keys.sort.each do |path|
   terms = scope[path]
   terms.keys.sort.each do |name|
     term = terms[name]
-    puts "#{path} #{name}: #{term.definition}"
-    term.disallowed.each do |entry|
-      puts "#{path} #{name} rejects #{entry.term}: #{entry.reason}"
+    puts "#{path} #{name}: #{term.text}"
+    term.statements.each do |entry|
+      puts "#{path} #{name} rejects #{entry.key}: #{entry.text}"
     end
   end
 end
@@ -33,7 +33,7 @@ end
 # @behavior G-007
 puts "--- read backwards, Global lands on top ---"
 backwards = Sumitsubo::Glossary.scope(sections.reverse, Pathname.pwd, [])
-puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].definition}"
+puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].text}"
 
 # A finding is built here rather than read out of a run: what is being shown
 # is which of two the rule sets aside, and reaching a grammar to get them

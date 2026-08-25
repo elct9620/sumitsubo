@@ -3,6 +3,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/locations"
 require "sumitsubo/scope"
+require "sumitsubo/specification"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -30,19 +31,13 @@ module Sumitsubo
 
     class Error < Sumitsubo::Error; end
 
-    # One finding the rejection above it does not answer for, and why that
-    # line is right to say what it says. The reason is required: an exception
-    # nobody explained is the one nobody dares remove.
-    Ignore = Struct.new(:at, :line, :reason)
-
-    # A designation the term it sits under rejects, and the places it is
-    # rejected wrongly. The reason is what stops the same word being proposed
-    # again.
-    Disallowed = Struct.new(:term, :reason, :ignores)
-    Term = Struct.new(:term, :definition, :disallowed)
-    # One vocabulary and the files it reaches. A name declares a subdomain,
-    # and the entry carrying no name is Global's.
-    Section = Struct.new(:name, :includes, :terms)
+    # An entry is a Specification and its terms are Statements: a term's text
+    # is its definition, a rejected word sits under the term rejecting it with
+    # the reason as its text, and a line set aside sits under that word.
+    #
+    # Each of the three earns a statement of its own by being pointed at — an
+    # ignore names the rejection it is written under, and a finding names the
+    # word and the term together.
     Finding = Struct.new(:path, :line, :term, :used, :reason)
 
     # An ignore that no longer names anything, carried with what it takes to
@@ -84,8 +79,8 @@ module Sumitsubo
 
     # A file's effective vocabulary is Global's terms with every subdomain
     # covering it laid over them, in the order the specification lists them,
-    # a later term replacing an earlier one of the same name outright — its
-    # disallowed list included, since a term meaning something else here
+    # a later term replacing an earlier one of the same name outright — the
+    # words it rejects included, since a term meaning something else here
     # rejects different words. Order is all that decides which way the laying
     # goes, so Global is written first.
     def self.scope(sections, base, exclusion)
@@ -93,7 +88,7 @@ module Sumitsubo
       sections.each do |section|
         paths_for(section, base, exclusion).each do |path|
           terms = effective[path] || {}
-          section.terms.each { |term| terms[term.term] = term }
+          section.statements.each { |term| terms[term.key] = term }
           effective[path] = terms
         end
       end
@@ -115,7 +110,7 @@ module Sumitsubo
         regions = languages.comments_in(file, Where.of(file))
         terms = scope[path]
         terms.keys.sort.each do |name|
-          terms[name].disallowed.each do |entry|
+          terms[name].statements.each do |entry|
             findings.concat(findings_for(path, regions, name, entry))
           end
         end
@@ -156,11 +151,11 @@ module Sumitsubo
     def self.set_aside(sections)
       found = {}
       sections.each do |section|
-        section.terms.each do |term|
-          term.disallowed.each do |entry|
-            entry.ignores.each do |ignore|
-              found["#{term.term} #{entry.term} #{ignore.at}"] =
-                Stale.new(ignore.line, ignore.at, term.term, entry.term)
+        section.statements.each do |term|
+          term.statements.each do |entry|
+            entry.statements.each do |ignore|
+              found["#{term.key} #{entry.key} #{ignore.key}"] =
+                Stale.new(ignore.line, ignore.key, term.key, entry.key)
             end
           end
         end
@@ -218,11 +213,11 @@ module Sumitsubo
       # drop the spelling once a key arrives knowing what it is.
       where = "#{path}"
       term = "#{name}"
-      pattern = Regexp.new("\\b" + Regexp.escape(entry.term) + "\\b")
+      pattern = Regexp.new("\\b" + Regexp.escape(entry.key) + "\\b")
       regions.each do |region|
         line = region.line
         region.text.split("\n").each do |text|
-          found.push(Finding.new(where, line, term, entry.term, entry.reason)) unless pattern.match(text).nil?
+          found.push(Finding.new(where, line, term, entry.key, entry.text)) unless pattern.match(text).nil?
           line += 1
         end
       end
@@ -248,25 +243,38 @@ module Sumitsubo
     end
 
     def self.section_from(raw, where, lines)
-      Section.new(
+      Specification.new(
         raw["name"] || GLOBAL,
+        nil,
         raw["include"] || [],
+        where,
         (raw["terms"] || []).map { |term| term_from(term, where, lines) }
       )
     end
 
+    # A term and a rejected word answer no line. Where each is spelled is read
+    # off the raw text when a finding needs it, which is what `uses` does, and
+    # reading it twice to carry it here would be the second read for nothing.
+    # An ignore is the one that has to answer at its own line, so it is the one
+    # the line map is built for.
     def self.term_from(raw, where, lines)
-      Term.new(
+      Statement.new(
         raw["term"],
         raw["definition"],
+        where,
+        nil,
+        {},
         (raw["not"] || []).map { |entry| disallowed_from(entry, where, lines) }
       )
     end
 
     def self.disallowed_from(raw, where, lines)
-      Disallowed.new(
+      Statement.new(
         raw["term"],
         raw["reason"],
+        where,
+        nil,
+        {},
         (raw["ignore"] || []).map { |entry| ignore_from(entry, where, lines) }
       )
     end
@@ -285,7 +293,7 @@ module Sumitsubo
                      "sumi help glossary has the form"
       end
 
-      Ignore.new("#{at}", lines["#{at}"], raw["reason"])
+      Statement.new("#{at}", raw["reason"], where, lines["#{at}"], {}, [])
     end
   end
 end
