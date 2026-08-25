@@ -1,0 +1,190 @@
+{
+  "name": "Markdown",
+  "description": "Reading a specification written as Markdown into the shape every mechanism judges against.",
+  "notes": [
+    {
+      "type": "paragraph",
+      "text": [
+        "A specification written this way is the document a person reads as well as",
+        "the reference line the tool compares against, so what the reading recovers",
+        "is the structure a reader already sees: a title, the globs a Scope section",
+        "lists, a scenario heading opening with its id, and the rows stating its steps."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": [
+        "The grammar refuses nothing — every byte sequence is a legal document — so",
+        "every shape rule below is the reading's own, and each answers at the line",
+        "that broke it rather than at the file."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": [
+        "What names a grammar asks for those blocks and nothing else; what decides",
+        "the meaning of them names none. That is why the scenarios about meaning are",
+        "claimed from a test whose snapshot can still be regenerated."
+      ]
+    }
+  ],
+  "include": [
+    "test/blocks_test.rb",
+    "test/markdown_test.rb"
+  ],
+  "scenarios": [
+    {
+      "id": "MD-001",
+      "title": "A document read into a feature and its scenarios",
+      "given": [
+        "a document with a title, a Scope section and one scenario"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the feature carries the title, the globs it scopes by, and the scenario with its steps"
+    },
+    {
+      "id": "MD-002",
+      "title": "A paragraph wrapped for a reader says what an unwrapped one says",
+      "given": [
+        "a description written across several lines"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "each soft line break answers as a single space"
+    },
+    {
+      "id": "MD-003",
+      "title": "A scenario standing on two states",
+      "given": [
+        "a scenario stating Given twice and no Then"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "both states are held under given, and no then is held at all"
+    },
+    {
+      "id": "MD-004",
+      "title": "An id with nothing written after it",
+      "given": [
+        "a scenario heading that is an id and nothing else"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the scenario carries the id and no title"
+    },
+    {
+      "id": "MD-005",
+      "title": "Prose written under a scenario is prose",
+      "given": [
+        "a paragraph under the title and another under a scenario"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the feature says what the paragraph under the title says"
+    },
+    {
+      "id": "MD-006",
+      "title": "A scenario heading naming no id",
+      "given": [
+        "a scenario heading that does not open with a code span"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, answering at that heading"
+    },
+    {
+      "id": "MD-007",
+      "title": "A pair of backticks with nothing between them",
+      "given": [
+        "a scenario heading opening with an empty code span"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, answering at that heading"
+    },
+    {
+      "id": "MD-008",
+      "title": "An include that is not taken letter for letter",
+      "given": [
+        "a Scope section listing a glob outside backticks"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, answering at that item"
+    },
+    {
+      "id": "MD-009",
+      "title": "A step row that lost a separator",
+      "given": [
+        "a step row the grammar reads as one cell"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, answering at that row"
+    },
+    {
+      "id": "MD-010",
+      "title": "A step row carrying a separator nobody escaped",
+      "given": [
+        "a step row the grammar reads as three cells"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, answering at that row"
+    },
+    {
+      "id": "MD-011",
+      "title": "A row naming something that is not a step",
+      "given": [
+        "a step row whose first cell is neither Given, When nor Then"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, naming the word it was given"
+    },
+    {
+      "id": "MD-012",
+      "title": "A step with no scenario to belong to",
+      "given": [
+        "a step row written before any scenario heading"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, answering at that row"
+    },
+    {
+      "id": "MD-013",
+      "title": "A document that names nothing",
+      "given": [
+        "a document with no title"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, since nothing says what it answers for"
+    },
+    {
+      "id": "MD-014",
+      "title": "A document that names itself twice",
+      "given": [
+        "a document with two titles"
+      ],
+      "when": "the blocks the document is made of are read",
+      "then": "the specification is refused, answering at the second one"
+    },
+    {
+      "id": "MD-015",
+      "title": "A real document read through the grammar",
+      "given": [
+        "a specification file written as Markdown"
+      ],
+      "when": "the reading is asked what it declares",
+      "then": "the blocks the query asks for answer with the lines they sit on"
+    },
+    {
+      "id": "MD-016",
+      "title": "Which reading answers for a file",
+      "given": [
+        "a path"
+      ],
+      "when": "the reading is asked whether it reads it",
+      "then": "only a path ending in the extension it is written for answers yes"
+    },
+    {
+      "id": "MD-017",
+      "title": "The same specification written both ways",
+      "given": [
+        "one specification written as Markdown and as JSON"
+      ],
+      "when": "each is read by the reading answering for it",
+      "then": "the two answer alike in every field but the path and the line"
+    }
+  ]
+}

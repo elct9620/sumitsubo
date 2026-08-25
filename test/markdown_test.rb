@@ -20,6 +20,7 @@ def said(name, holding)
   holding.each { |one| puts "    #{name} #{one}" }
 end
 
+# @behavior MD-015
 feature = Sumitsubo::Reading::Markdown.new.behavior("test/fixtures/reading/init.md")
 
 puts "#{feature.key} #{feature.includes.inspect}"
@@ -31,6 +32,7 @@ end
 
 # The extension is the whole of what says a file is written this way, so a
 # reading is asked rather than told.
+# @behavior MD-016
 reading = Sumitsubo::Reading::Markdown.new
 p [reading.reads?("init.md"), reading.reads?("init.json"), reading.reads?(".spec/behavior/init.md")]
 
@@ -48,6 +50,7 @@ def agree_on_steps(taken, given)
   agree("#{taken.key} steps", taken.attributes, given.attributes)
 end
 
+# @behavior MD-017
 puts "--- the same specification, written both ways ---"
 written = Sumitsubo::Reading::Markdown.new.behavior("test/fixtures/reading/init.md")
 structured = Sumitsubo::Reading::Json.new.behavior("test/fixtures/reading/init.json")
