@@ -40,7 +40,7 @@ puts "--- a feature, its scope, and one scenario ---"
 feature = read([
   title(1, "Init"),
   paragraph(3, "What init lays down\nto start a reference line from."),
-  heading(5, "Scope"),
+  heading(5, "Includes"),
   item(7, "`test/init_test.rb`"),
   item(8, "`test/other_test.rb`"),
   heading(10, "`I-001` The first run lays down an empty glossary"),
@@ -106,7 +106,7 @@ read([title(1, "Init"), heading(3, "`` the first run")])
 
 # @behavior MD-008
 puts "--- an include that is not a glob in backticks ---"
-read([title(1, "Init"), heading(3, "Scope"), item(5, "test/init_test.rb")])
+read([title(1, "Init"), heading(3, "Includes"), item(5, "test/init_test.rb")])
 
 # @behavior MD-009
 puts "--- a step row that lost a separator ---"

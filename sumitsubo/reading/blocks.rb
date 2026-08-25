@@ -30,9 +30,9 @@ module Sumitsubo
       CELL = "cell"
 
       # The heading that says what a specification answers for rather than
-      # declaring something. It is prose, so a scenario called Scope is written
-      # in a code span and does not collide with it.
-      SCOPE = "Scope"
+      # declaring something. It is prose, so a scenario of the same name is
+      # written in a code span and does not collide with it.
+      INCLUDES = "Includes"
 
       # The words a step is spelled with. A row naming another word is refused
       # rather than passed over: a step nobody reads is a promise nobody keeps.
@@ -73,7 +73,7 @@ module Sumitsubo
             text = folded(capture.text) if text.nil? && scenarios.empty?
           when HEADING
             said = folded(capture.text)
-            scoping = said == SCOPE
+            scoping = said == INCLUDES
             scenarios.push(scenario_from(path, said, capture.line)) unless scoping
           when ITEM
             includes.push(spelled(path, capture.line, folded(capture.text))) if scoping

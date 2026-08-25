@@ -2,7 +2,7 @@
 
 Laying down an empty specification to start a reference line from.
 
-## Scope
+## Includes
 
 - `test/init_test.rb`
 

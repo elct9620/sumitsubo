@@ -7,7 +7,7 @@
       "text": [
         "A specification written this way is the document a person reads as well as",
         "the reference line the tool compares against, so what the reading recovers",
-        "is the structure a reader already sees: a title, the globs a Scope section",
+        "is the structure a reader already sees: a title, the globs an Includes section",
         "lists, a scenario heading opening with its id, and the rows stating its steps."
       ]
     },
@@ -37,7 +37,7 @@
       "id": "MD-001",
       "title": "A document read into a feature and its scenarios",
       "given": [
-        "a document with a title, a Scope section and one scenario"
+        "a document with a title, an Includes section and one scenario"
       ],
       "when": "the blocks the document is made of are read",
       "then": "the feature carries the title, the globs it scopes by, and the scenario with its steps"
@@ -100,7 +100,7 @@
       "id": "MD-008",
       "title": "An include that is not taken letter for letter",
       "given": [
-        "a Scope section listing a glob outside backticks"
+        "an Includes section listing a glob outside backticks"
       ],
       "when": "the blocks the document is made of are read",
       "then": "the specification is refused, answering at that item"
