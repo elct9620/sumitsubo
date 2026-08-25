@@ -4,6 +4,7 @@ require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/locations"
 require "sumitsubo/scope"
+require "sumitsubo/specification"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -26,13 +27,13 @@ module Sumitsubo
 
     class Error < Sumitsubo::Error; end
 
-    # `when` and `then` are how the specification spells these, but `then` is
-    # already Kernel's and `when` is a keyword. An identifier is a spelling of
-    # the concept rather than its name, so the members take the safe spelling.
-    Scenario = Struct.new(:id, :title, :given, :action, :outcome, :path, :line)
-    # The path is what a finding about one of its scenarios points at, and
-    # what stands in for a feature that named itself nothing.
-    Feature = Struct.new(:name, :description, :includes, :scenarios, :path)
+    # A feature is a Specification and its scenarios are Statements: an id is
+    # the key a claim names, and the title is what the scenario says.
+    #
+    # The steps are attributes, held under the words the specification spells
+    # them with. `when` and `then` could not be members — one is a keyword and
+    # the other is Kernel's — and as keys they need no second spelling.
+
     # A scenario nothing claims. It answers at the specification that declares
     # it, which is also where the include that bounded the search is written,
     # so the finding names neither.
@@ -155,7 +156,7 @@ module Sumitsubo
     def self.declaring_in(features)
       found = {}
       features.each do |feature|
-        feature.scenarios.each { |scenario| found[scenario.id] = feature.path }
+        feature.statements.each { |scenario| found[scenario.key] = feature.path }
       end
       found
     end
@@ -169,10 +170,10 @@ module Sumitsubo
 
       found = []
       features.each do |feature|
-        feature.scenarios.each do |scenario|
-          next unless claimed[scenario.id].nil?
+        feature.statements.each do |scenario|
+          next unless claimed[scenario.key].nil?
 
-          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.id))
+          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.key))
         end
       end
       found
@@ -185,7 +186,7 @@ module Sumitsubo
     def self.unresolved(features, claims)
       declared = {}
       features.each do |feature|
-        feature.scenarios.each { |scenario| declared[scenario.id] = true }
+        feature.statements.each { |scenario| declared[scenario.key] = true }
       end
 
       found = []
@@ -225,25 +226,23 @@ module Sumitsubo
         scenarios.push(scenario_from(path, raw, lines[id]))
       end
 
-      Feature.new(
+      Specification.new(
         document["name"],
         document["description"],
         document["include"] || [],
-        scenarios,
-        path
+        path,
+        scenarios
       )
     end
 
+    # A step nobody wrote is no step rather than an empty one, which is what
+    # leaves a shape carrying one spelled no differently from one carrying
+    # several.
     def self.scenario_from(path, raw, line)
-      Scenario.new(
-        raw["id"],
-        raw["title"],
-        raw["given"] || [],
-        raw["when"],
-        raw["then"],
-        path,
-        line
-      )
+      steps = { "given" => raw["given"] || [] }
+      steps["when"] = [raw["when"]] unless raw["when"].nil?
+      steps["then"] = [raw["then"]] unless raw["then"].nil?
+      Statement.new(raw["id"], raw["title"], path, line, steps, [])
     end
 
     # Two scenarios under one id leave a marker with nothing to resolve to,
@@ -251,13 +250,13 @@ module Sumitsubo
     def self.refuse_ambiguity(features)
       seen = {}
       features.each do |feature|
-        feature.scenarios.each do |scenario|
-          where = seen[scenario.id]
+        feature.statements.each do |scenario|
+          where = seen[scenario.key]
           unless where.nil?
-            raise Error, "#{scenario.id} is declared twice, at #{where} and #{at(scenario)}"
+            raise Error, "#{scenario.key} is declared twice, at #{where} and #{at(scenario)}"
           end
 
-          seen[scenario.id] = at(scenario)
+          seen[scenario.key] = at(scenario)
         end
       end
     end

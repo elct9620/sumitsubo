@@ -11,12 +11,13 @@ require "sumitsubo/behavior"
 # @behavior B-001
 puts "--- what the directory declares, and where ---"
 Sumitsubo::Behavior.load("test/fixtures/behavior/.spec/behavior").each do |feature|
-  puts "#{feature.name} #{feature.includes.inspect}"
-  feature.scenarios.each do |scenario|
-    puts "  #{scenario.path}:#{scenario.line} #{scenario.id} #{scenario.title}"
-    scenario.given.each { |state| puts "    given #{state}" }
-    puts "    when  #{scenario.action}"
-    puts "    then  #{scenario.outcome}"
+  puts "#{feature.key} #{feature.includes.inspect}"
+  feature.statements.each do |scenario|
+    puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
+    steps = scenario.attributes
+    steps["given"].each { |state| puts "    given #{state}" }
+    puts "    when  #{steps["when"][0]}"
+    puts "    then  #{steps["then"][0]}"
   end
 end
 
@@ -67,7 +68,7 @@ p Sumitsubo::Behavior.ids_in("V-008 V-009")
 # @behavior B-008
 puts "--- two scenarios on one line ---"
 Sumitsubo::Behavior.load("test/fixtures/behavior/oneline").each do |feature|
-  feature.scenarios.each { |scenario| puts "  #{scenario.line} #{scenario.id}" }
+  feature.statements.each { |scenario| puts "  #{scenario.line} #{scenario.key}" }
 end
 
 # An `include` is the boundary of what a feature answers for rather than a
@@ -78,7 +79,7 @@ puts "--- what each feature's include reaches ---"
 base = Pathname.new("test/fixtures/behavior")
 features = Sumitsubo::Behavior.load(base / ".spec/behavior")
 reach = Sumitsubo::Behavior.reach(features, base, [])
-features.each { |feature| puts "  #{feature.name} #{reach[feature.path].keys.sort.inspect}" }
+features.each { |feature| puts "  #{feature.key} #{reach[feature.path].keys.sort.inspect}" }
 puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
 
 # I-001 is declared by Init, whose include reaches only its own test. A claim
