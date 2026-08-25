@@ -1,4 +1,4 @@
-require "sumitsubo/reading/markdown"
+require "sumitsubo/parser/markdown"
 
 # Reading a real Markdown specification through the grammar linked into this
 # build. What the query has to get right is which blocks a document is made of
@@ -21,7 +21,7 @@ def said(name, holding)
 end
 
 # @behavior MD-015
-feature = Sumitsubo::Reading::Markdown.new.behavior("test/fixtures/reading/init.md")
+feature = Sumitsubo::Parser::Markdown.new.behavior("test/fixtures/reading/init.md")
 
 puts "#{feature.key} #{feature.includes.inspect}"
 puts "  #{feature.text}"
@@ -33,14 +33,14 @@ end
 # The extension is the whole of what says a file is written this way, so a
 # reading is asked rather than told.
 # @behavior MD-016
-reading = Sumitsubo::Reading::Markdown.new
+reading = Sumitsubo::Parser::Markdown.new
 p [reading.reads?("init.md"), reading.reads?("init.json"), reading.reads?(".spec/behavior/init.md")]
 
 # The same specification written both ways reads into the same shape. This is
 # what says the format changed and nothing else did: path and line are what a
 # document carries rather than what it says, so they are the only two fields
 # the two sides are allowed to differ in.
-require "sumitsubo/reading/json"
+require "sumitsubo/parser/json"
 
 def agree(said, one, other)
   puts "  #{one == other ? "same" : "DIFFER"} #{said}#{one == other ? "" : " #{one.inspect} / #{other.inspect}"}"
@@ -52,8 +52,8 @@ end
 
 # @behavior MD-017
 puts "--- the same specification, written both ways ---"
-written = Sumitsubo::Reading::Markdown.new.behavior("test/fixtures/reading/init.md")
-structured = Sumitsubo::Reading::Json.new.behavior("test/fixtures/reading/init.json")
+written = Sumitsubo::Parser::Markdown.new.behavior("test/fixtures/reading/init.md")
+structured = Sumitsubo::Parser::Json.new.behavior("test/fixtures/reading/init.json")
 
 agree("key", written.key, structured.key)
 agree("text", written.text, structured.text)

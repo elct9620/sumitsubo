@@ -1,8 +1,8 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/reading"
-require "sumitsubo/reading/json"
+require "sumitsubo/parser"
+require "sumitsubo/parser/json"
 require "sumitsubo/scope"
 
 module Sumitsubo
@@ -52,14 +52,14 @@ module Sumitsubo
     # scenarios, and a project that has said nothing is not misconfigured, so
     # that answers empty rather than failing.
     #
-    # The readings are handed in the way the languages are, and default to the
+    # The parsers are handed in the way the languages are, and default to the
     # one that opens no grammar: which formats a build carries is decided when
     # it is built, and a caller with nothing to say about format says nothing.
-    def self.load(directory, readings = [Reading::Json.new])
+    def self.load(directory, parsers = [Parser::Json.new])
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      features = files_in(path).map { |file| feature_from(file, readings) }
+      features = files_in(path).map { |file| feature_from(file, parsers) }
       refuse_ambiguity(features)
       features
     end
@@ -207,10 +207,10 @@ module Sumitsubo
       "#{claim.id} is claimed outside what #{claim.spec} includes"
     end
 
-    # What a mechanism could not read is its own to report, so the reading's
+    # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
-    def self.feature_from(path, readings)
-      Reading.of(path, readings).behavior(path)
+    def self.feature_from(path, parsers)
+      Parser.of(path, parsers).behavior(path)
     rescue Sumitsubo::Unreadable => e
       raise Error, e.message
     end

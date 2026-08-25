@@ -130,7 +130,7 @@ $ ./build/bin/sumi verify
 `spin test` compares each test's output against a committed snapshot, and
 `spin test --regen` writes those snapshots by running the file under CRuby.
 CRuby has no `ffi_func`, so a test reaching the tree-sitter binding cannot be
-regenerated and its snapshot is written by hand instead. That is why a reading
+regenerated and its snapshot is written by hand instead. That is why a parser
 is split in two: the part naming a grammar asks for the blocks a document is
 made of and nothing else, and the part deciding what they mean names none, so
 the judgement stays on the side that can still be regenerated.

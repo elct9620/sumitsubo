@@ -1,8 +1,8 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/reading"
-require "sumitsubo/reading/json"
+require "sumitsubo/parser"
+require "sumitsubo/parser/json"
 require "sumitsubo/scope"
 
 module Sumitsubo
@@ -68,14 +68,14 @@ module Sumitsubo
     # no contracts, and a project that has said nothing is not misconfigured,
     # so that answers empty rather than failing.
     #
-    # The readings are handed in the way the languages are, and default to the
+    # The parsers are handed in the way the languages are, and default to the
     # one that opens no grammar: which formats a build carries is decided when
     # it is built, and a caller with nothing to say about format says nothing.
-    def self.load(directory, languages, readings = [Reading::Json.new])
+    def self.load(directory, languages, parsers = [Parser::Json.new])
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      definitions = files_in(path).map { |file| definition_from(file, languages, readings) }
+      definitions = files_in(path).map { |file| definition_from(file, languages, parsers) }
       refuse_ambiguity(definitions)
       definitions
     end
@@ -451,10 +451,10 @@ module Sumitsubo
       "#{claim.keyword} #{claim.name} is claimed at #{other.path}:#{other.line} as well"
     end
 
-    # What a mechanism could not read is its own to report, so the reading's
+    # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
-    def self.definition_from(path, languages, readings)
-      Reading.of(path, readings).contract(path, languages)
+    def self.definition_from(path, languages, parsers)
+      Parser.of(path, parsers).contract(path, languages)
     rescue Sumitsubo::Unreadable => e
       raise Error, e.message
     end

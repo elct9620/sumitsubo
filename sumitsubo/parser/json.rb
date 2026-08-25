@@ -6,7 +6,7 @@ require "sumitsubo/specification"
 require "sumitsubo/where"
 
 module Sumitsubo
-  module Reading
+  module Parser
     # A specification as JSON, read into the shapes every mechanism judges
     # against. What the document spells its keys with, and where a line number
     # has to be recovered from because JSON carries none, are this file's and

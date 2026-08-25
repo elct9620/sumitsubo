@@ -1,8 +1,8 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/locations"
-require "sumitsubo/reading"
-require "sumitsubo/reading/json"
+require "sumitsubo/parser"
+require "sumitsubo/parser/json"
 require "sumitsubo/scope"
 require "sumitsubo/where"
 
@@ -45,11 +45,11 @@ module Sumitsubo
       Pathname.new(root) / FILE
     end
 
-    # The readings are handed in the way the languages are, and default to the
+    # The parsers are handed in the way the languages are, and default to the
     # one that opens no grammar. What a mechanism could not read is its own to
-    # report, so the reading's refusal is answered under this mechanism's name.
-    def self.load(path, readings = [Reading::Json.new])
-      Reading.of(path, readings).glossary(path)
+    # report, so the parser's refusal is answered under this mechanism's name.
+    def self.load(path, parsers = [Parser::Json.new])
+      Parser.of(path, parsers).glossary(path)
     rescue Sumitsubo::Unreadable => e
       raise Error, e.message
     end

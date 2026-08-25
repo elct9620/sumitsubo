@@ -1,4 +1,4 @@
-require "sumitsubo/reading/blocks"
+require "sumitsubo/parser/blocks"
 
 # The part of reading a Markdown specification that no grammar owns: blocks
 # arriving in the order the parser met them, made into a feature and its
@@ -29,7 +29,7 @@ def said(name, holding)
 end
 
 def read(captures)
-  Sumitsubo::Reading::Blocks.behavior(captures, "init.md")
+  Sumitsubo::Parser::Blocks.behavior(captures, "init.md")
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil

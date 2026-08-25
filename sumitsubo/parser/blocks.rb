@@ -3,11 +3,11 @@ require "sumitsubo/specification"
 require "sumitsubo/where"
 
 module Sumitsubo
-  module Reading
+  module Parser
     # What the markdown grammar hands back, made into a specification — the
     # part of that work no grammar owns.
     #
-    # Nothing here reaches the binding: a reading captures what its own query
+    # Nothing here reaches the binding: a parser captures what its own query
     # asked for and brings the captures here, which is what keeps this file,
     # and every test of it, on the side a snapshot can be regenerated from.
     #
@@ -18,7 +18,7 @@ module Sumitsubo
     #
     # The walk keeps what it has read in one scope and the helpers take words
     # and lines rather than what is being built. That is the compiler's
-    # constraint as much as this reading's: a collection crossing a method
+    # constraint as much as this parser's: a collection crossing a method
     # boundary reaches it carrying a type it settles from the first call.
     module Blocks
       # What the query calls each thing it captures. A block says what it is by
@@ -69,7 +69,7 @@ module Sumitsubo
           when PARAGRAPH
             # Only the paragraph under the title says what the feature is for.
             # A scenario says it in its own heading, so a paragraph after one
-            # is prose this reading passes over.
+            # is prose this parser passes over.
             text = folded(capture.text) if text.nil? && scenarios.empty?
           when HEADING
             said = folded(capture.text)

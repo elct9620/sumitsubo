@@ -53,11 +53,11 @@
       ]
     },
     {
-      "name": "Sumitsubo::Reading.of",
-      "description": "The one place a file is matched to the reading that answers for it.",
+      "name": "Sumitsubo::Parser.of",
+      "description": "The one place a file is matched to the parser that answers for it.",
       "params": [
         { "name": "path" },
-        { "name": "readings" }
+        { "name": "parsers" }
       ]
     },
     {
@@ -142,7 +142,7 @@
       ]
     },
     {
-      "name": "Sumitsubo::Reading::Blocks.behavior",
+      "name": "Sumitsubo::Parser::Blocks.behavior",
       "description": "The one place the blocks of a Markdown document become a feature and its scenarios.",
       "params": [
         { "name": "captures" },

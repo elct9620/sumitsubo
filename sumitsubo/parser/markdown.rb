@@ -1,12 +1,12 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/language/grammar"
-require "sumitsubo/reading/blocks"
+require "sumitsubo/parser/blocks"
 require "sumitsubo/where"
 require "treesitter"
 
 module Sumitsubo
-  module Reading
+  module Parser
     # A specification as Markdown, which is the document a person reads as well
     # as the reference line the tool compares against.
     #
