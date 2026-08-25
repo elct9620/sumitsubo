@@ -248,6 +248,7 @@ module Sumitsubo
         nil,
         raw["include"] || [],
         where,
+        {},
         (raw["terms"] || []).map { |term| term_from(term, where, lines) }
       )
     end

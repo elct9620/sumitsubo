@@ -12,7 +12,7 @@ module Sumitsubo
   #
   # Nothing is required here. A mechanism reaches for this file, and a reading
   # that reaches a grammar would cost every one of their tests its snapshot.
-  Specification = Struct.new(:key, :text, :includes, :path, :statements)
+  Specification = Struct.new(:key, :text, :includes, :path, :attributes, :statements)
 
   # `key` is what a claim in the source names, and `text` is what the
   # declaration says: an id and its title, a name and its description, a term

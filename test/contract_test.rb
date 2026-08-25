@@ -42,9 +42,9 @@ end
 puts "--- what the directory registers, and where ---"
 definitions = loaded("#{FIXTURE}/.spec/contract")
 definitions.each do |definition|
-  puts "#{definition.name} #{definition.marker} #{definition.includes.inspect}"
-  definition.interfaces.each do |interface|
-    puts "  #{interface.path}:#{interface.line} #{interface.name} — #{interface.description}"
+  puts "#{definition.key} #{Sumitsubo::Contract.marker_of(definition)} #{definition.includes.inspect}"
+  definition.statements.each do |interface|
+    puts "  #{interface.path}:#{interface.line} #{interface.key} — #{interface.text}"
   end
 end
 # Two definitions share `@route`, and the word answers once.
@@ -58,7 +58,7 @@ puts Sumitsubo::Contract.keywords(definitions).inspect
 # @behavior T-035
 puts "--- what each definition's include reaches ---"
 reach = Sumitsubo::Contract.reach(definitions, Pathname.new(FIXTURE), [])
-definitions.each { |definition| puts "  #{definition.name} #{reach[definition.path].keys.sort.inspect}" }
+definitions.each { |definition| puts "  #{definition.key} #{reach[definition.path].keys.sort.inspect}" }
 
 # @behavior T-014
 puts "--- the files to look in ---"
@@ -199,9 +199,10 @@ registered = loaded("#{FIXTURE}/params")
 # takes none.
 # @behavior T-019
 puts "--- the shape a contract registers ---"
-registered[0].interfaces.each do |interface|
-  shape = interface.params.nil? ? "registers no shape" : Sumitsubo::Contract.spell(interface.params)
-  puts "  #{interface.name} #{shape}"
+registered[0].statements.each do |interface|
+  params = interface.attributes["params"]
+  shape = params.nil? ? "registers no shape" : Sumitsubo::Contract.spell(params)
+  puts "  #{interface.key} #{shape}"
 end
 
 # `Store#read` and `Store#write` are defined as registered, and `Store#touch`
@@ -243,6 +244,6 @@ fails { loaded("#{FIXTURE}/marked") }
 # than at the first one carrying the word.
 # @behavior T-025
 puts "--- a name the specification uses at more than one depth ---"
-loaded("#{FIXTURE}/collide")[0].interfaces.each do |interface|
-  puts "  #{interface.path}:#{interface.line} #{interface.name}"
+loaded("#{FIXTURE}/collide")[0].statements.each do |interface|
+  puts "  #{interface.path}:#{interface.line} #{interface.key}"
 end

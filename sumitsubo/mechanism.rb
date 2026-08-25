@@ -149,7 +149,8 @@ module Sumitsubo
         names = []
         Sumitsubo::Contract.defined(definitions).each do |definition|
           Sumitsubo::Contract.reached(reach, definition).each do |path|
-            languages.declarations_in(path, Where.of(path), definition.language).each do |name|
+            language = Sumitsubo::Contract.language_named(definition)
+            languages.declarations_in(path, Where.of(path), language).each do |name|
               names.push(name)
             end
           end

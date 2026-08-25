@@ -4,6 +4,7 @@ require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/locations"
 require "sumitsubo/scope"
+require "sumitsubo/specification"
 
 module Sumitsubo
   # The structured specification the Contract mechanism verifies against. What
@@ -44,25 +45,17 @@ module Sumitsubo
     # file learns none of them.
     Param = Struct.new(:name, :kind, :optional)
 
-    # An interface is internal when the project means to keep it but not to
-    # say so publicly. That is a fact about the interface rather than a switch
-    # on the run, which is what makes it different from the configuration
-    # turning a whole specification off.
+    # A definition is a Specification and its contracts are Statements: a
+    # name is the key a claim names, and the description is what it says.
     #
-    # Parameters are absent where the contract registers none, which is not
-    # the same as registering that it takes none: only a shape written down
-    # asks to be compared.
-    Interface = Struct.new(:name, :description, :path, :line, :internal, :params)
-    # A file's worth of contracts. The marker is the word source claims them
-    # with, and two files may name the same one: a project splitting its routes
-    # across files is registering more of one kind, not a second kind.
-    #
-    # The language is what the other reading is written in, and only that
-    # reading carries one: a claim is a claim in whatever the file is written
-    # in, while a name is spelled the way one language spells it.
-    Definition = Struct.new(
-      :name, :description, :marker, :language, :includes, :interfaces, :path
-    )
+    # The marker and the language are attributes of the definition, and a
+    # definition carries one or the other: the marker is the word source
+    # claims its contracts with, the language is what the other reading
+    # spells names in. Parameters and `internal` are attributes of the
+    # contract. Parameters are absent where none are registered, which is not
+    # the same as registering that it takes none, and `internal` is the empty
+    # list — it says its one thing by being there.
+
     # An interface its reading did not find. It answers at the specification
     # that registers it, which is also where the include that bounded the
     # search is written, so the finding names neither. The marker is carried so
@@ -147,25 +140,40 @@ module Sumitsubo
       found
     end
 
+    # The word source claims this definition's contracts with, or nil where
+    # the definition names a language and is read from the syntax tree
+    # instead. Attributes answer lists, so the one word a definition carries
+    # is the first of one.
+    def self.marker_of(definition)
+      words = definition.attributes["marker"]
+      words.nil? ? nil : words[0]
+    end
+
+    # The language the other reading spells names in, under the same rule.
+    def self.language_named(definition)
+      named = definition.attributes["language"]
+      named.nil? ? nil : named[0]
+    end
+
     # The definitions whose interfaces source claims in a comment, and the ones
     # read from the syntax tree. Each reading searches only its own files: a
     # marker nobody wrote is not worth parsing for, and a definition nobody
     # claims is not worth reading comments for.
     def self.claimed(definitions)
       found = []
-      definitions.each { |definition| found.push(definition) unless definition.marker.nil? }
+      definitions.each { |definition| found.push(definition) unless marker_of(definition).nil? }
       found
     end
 
     def self.defined(definitions)
       found = []
-      definitions.each { |definition| found.push(definition) if definition.marker.nil? }
+      definitions.each { |definition| found.push(definition) if marker_of(definition).nil? }
       found
     end
 
     # The words source claims these contracts with, read in one pass.
     def self.keywords(definitions)
-      claimed(definitions).map { |definition| definition.marker }.uniq.sort
+      claimed(definitions).map { |definition| marker_of(definition) }.uniq.sort
     end
 
     # The claims that can implement what they name: each sitting among the
@@ -209,7 +217,7 @@ module Sumitsubo
       found = {}
       claimed(definitions).each do |definition|
         spec = definition.path
-        definition.interfaces.each { |interface| found[key(definition.marker, interface.name)] = spec }
+        definition.statements.each { |interface| found[key(marker_of(definition), interface.key)] = spec }
       end
       found
     end
@@ -223,11 +231,11 @@ module Sumitsubo
 
       found = []
       claimed(definitions).each do |definition|
-        definition.interfaces.each do |interface|
-          next unless made[key(definition.marker, interface.name)].nil?
+        definition.statements.each do |interface|
+          next unless made[key(marker_of(definition), interface.key)].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line, definition.marker, interface.name
+            Where.of(interface.path), interface.line, marker_of(definition), interface.key
           ))
         end
       end
@@ -263,7 +271,7 @@ module Sumitsubo
       found = {}
       defined(definitions).each do |definition|
         spec = definition.path
-        definition.interfaces.each { |interface| found[interface.name] = spec }
+        definition.statements.each { |interface| found[interface.key] = spec }
       end
       found
     end
@@ -281,11 +289,11 @@ module Sumitsubo
 
       found = []
       defined(definitions).each do |definition|
-        definition.interfaces.each do |interface|
-          next unless declared[interface.name].nil?
+        definition.statements.each do |interface|
+          next unless declared[interface.key].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line, definition.marker, interface.name
+            Where.of(interface.path), interface.line, marker_of(definition), interface.key
           ))
         end
       end
@@ -328,16 +336,17 @@ module Sumitsubo
 
       found = []
       defined(definitions).each do |definition|
-        definition.interfaces.each do |interface|
-          next if interface.params.nil?
+        definition.statements.each do |interface|
+          registered = interface.attributes["params"]
+          next if registered.nil?
 
-          group = declared[interface.name]
+          group = declared[interface.key]
           next if group.nil? || !agreed?(group)
-          next if agree?(interface.params, group[0].params)
+          next if agree?(registered, group[0].params)
 
           found.push(Mismatch.new(
-            Where.of(interface.path), interface.line, interface.name,
-            interface.params, group[0].params
+            Where.of(interface.path), interface.line, interface.key,
+            registered, group[0].params
           ))
         end
       end
@@ -502,19 +511,22 @@ module Sumitsubo
         # a contract spelled the same as one of them answering at its own line.
         params.each { |param| cursor.line_of(param.name) } unless params.nil?
 
-        interfaces.push(Interface.new(
-          name, raw["description"], path, line, raw["internal"] == true, params
-        ))
+        shape = {}
+        shape["params"] = params unless params.nil?
+        shape["internal"] = [] if raw["internal"] == true
+        interfaces.push(Statement.new(name, raw["description"], path, line, shape, []))
       end
 
-      Definition.new(
+      reading = {}
+      reading["marker"] = [marker] unless marker.nil?
+      reading["language"] = [language] unless language.nil?
+      Specification.new(
         document["name"],
         document["description"],
-        marker,
-        language,
         document["include"] || [],
-        interfaces,
-        path
+        path,
+        reading,
+        interfaces
       )
     end
 
@@ -550,11 +562,11 @@ module Sumitsubo
     def self.refuse_ambiguity(definitions)
       seen = {}
       definitions.each do |definition|
-        definition.interfaces.each do |interface|
-          name = key(definition.marker, interface.name)
+        definition.statements.each do |interface|
+          name = key(marker_of(definition), interface.key)
           where = seen[name]
           unless where.nil?
-            raise Error, "#{spoken(definition.marker, interface.name)} is declared twice, " \
+            raise Error, "#{spoken(marker_of(definition), interface.key)} is declared twice, " \
                          "at #{where} and #{at(interface)}"
           end
 
@@ -597,7 +609,7 @@ module Sumitsubo
     def self.spelled_names(definitions)
       found = []
       defined(definitions).each do |definition|
-        definition.interfaces.each { |interface| found.push(interface.name) }
+        definition.statements.each { |interface| found.push(interface.key) }
       end
       found.uniq.sort
     end
@@ -640,7 +652,7 @@ module Sumitsubo
     def self.registered_in(definitions)
       registered = {}
       claimed(definitions).each do |definition|
-        definition.interfaces.each { |interface| registered[key(definition.marker, interface.name)] = true }
+        definition.statements.each { |interface| registered[key(marker_of(definition), interface.key)] = true }
       end
       registered
     end

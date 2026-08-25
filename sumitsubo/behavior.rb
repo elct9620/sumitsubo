@@ -231,6 +231,7 @@ module Sumitsubo
         document["description"],
         document["include"] || [],
         path,
+        {},
         scenarios
       )
     end
