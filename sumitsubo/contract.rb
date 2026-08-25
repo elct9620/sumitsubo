@@ -1,10 +1,9 @@
-require "json"
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/locations"
+require "sumitsubo/reading"
+require "sumitsubo/reading/json"
 require "sumitsubo/scope"
-require "sumitsubo/specification"
 
 module Sumitsubo
   # The structured specification the Contract mechanism verifies against. What
@@ -26,24 +25,7 @@ module Sumitsubo
   module Contract
     DIRECTORY = "contract"
 
-    # An interface's name as it sits in the raw text. JSON carries no line
-    # numbers, and the finding for an interface nothing claims answers at the
-    # specification that declares it.
-    NAME = /"name"\s*:\s*"([^"]*)"/
-
     class Error < Sumitsubo::Error; end
-
-    # The kind a parameter carries when the specification names none, and the
-    # one kind word this tool owns rather than borrows: it names the parameter
-    # a caller writes with no marking of any sort, which every language has one
-    # of. A reading answers it for that parameter and names the rest itself.
-    POSITIONAL = "positional"
-
-    # One parameter a contract registers. The kind is carried as text and
-    # never read: what these words mean belongs to the reading that answers
-    # them, so a specification writes the words its language uses and this
-    # file learns none of them.
-    Param = Struct.new(:name, :kind, :optional)
 
     # A definition is a Specification and its contracts are Statements: a
     # name is the key a claim names, and the description is what it says.
@@ -85,11 +67,15 @@ module Sumitsubo
     # Every definition the directory holds. A directory nobody wrote registers
     # no contracts, and a project that has said nothing is not misconfigured,
     # so that answers empty rather than failing.
-    def self.load(directory, languages)
+    #
+    # The readings are handed in the way the languages are, and default to the
+    # one that opens no grammar: which formats a build carries is decided when
+    # it is built, and a caller with nothing to say about format says nothing.
+    def self.load(directory, languages, readings = [Reading::Json.new])
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      definitions = files_in(path).map { |file| definition_from(file, languages) }
+      definitions = files_in(path).map { |file| definition_from(file, languages, readings) }
       refuse_ambiguity(definitions)
       definitions
     end
@@ -465,94 +451,12 @@ module Sumitsubo
       "#{claim.keyword} #{claim.name} is claimed at #{other.path}:#{other.line} as well"
     end
 
-    def self.definition_from(path, languages)
-      text = File.read(path)
-      document = parse(path, text)
-      # `"name"` is a key this specification uses at three depths — the kind's
-      # own, each contract's, and each parameter's — so a value is taken in
-      # the order it was written rather than looked up. A contract spelled the
-      # same as the kind, or as a parameter of a contract before it, would
-      # otherwise answer at that one's line.
-      cursor = Locations::Cursor.new(Locations.all_in(text, NAME))
-      # The kind names itself first, so passing over it is what leaves the
-      # contracts to be read from where they start.
-      cursor.line_of(document["name"])
-
-      # A definition naming no marker is read from the syntax tree, so there is
-      # no word to look for and none is needed.
-      marker = document["marker"]
-      language = language_of(path, document, marker, languages)
-
-      interfaces = []
-      (document["contracts"] || []).each do |raw|
-        name = raw["name"]
-        if name.nil?
-          raise Error, "#{Where.of(path)} declares a contract with no \"name\"; " \
-                       "sumi help contract has the form"
-        end
-
-        if marker.nil? && !languages.definable?(language, name)
-          raise Error, "#{Where.of(path)} names #{name}, which no #{language} definition " \
-                       "can be spelled; sumi help contract has the two readings"
-        end
-
-        # Only the syntax tree answers what a definition takes. Parameters
-        # registered under a marker would be a promise nobody holds, so the
-        # specification is refused rather than carried unchecked.
-        if !marker.nil? && !raw["params"].nil?
-          raise Error, "#{Where.of(path)} gives #{name} parameters, " \
-                       "which a marker leaves nothing to compare them against; " \
-                       "sumi help contract has the form"
-        end
-
-        line = cursor.line_of(name)
-        params = params_from(raw["params"])
-        # A parameter names itself too, and passing over those is what leaves
-        # a contract spelled the same as one of them answering at its own line.
-        params.each { |param| cursor.line_of(param.name) } unless params.nil?
-
-        shape = {}
-        shape["params"] = params unless params.nil?
-        shape["internal"] = [] if raw["internal"] == true
-        interfaces.push(Statement.new(name, raw["description"], path, line, shape, []))
-      end
-
-      reading = {}
-      reading["marker"] = [marker] unless marker.nil?
-      reading["language"] = [language] unless language.nil?
-      Specification.new(
-        document["name"],
-        document["description"],
-        document["include"] || [],
-        path,
-        reading,
-        interfaces
-      )
-    end
-
-    # The language the syntax tree reading is written in. `include` says which
-    # files a reading reaches and never what they are written in — a generated
-    # file may carry one language under an extension nobody knows — so a
-    # definition read that way says which, and one read through a marker has
-    # nothing to say it about.
-    def self.language_of(path, document, marker, languages)
-      named = document["language"]
-      unless marker.nil?
-        return nil if named.nil?
-
-        raise Error, "#{Where.of(path)} names both a marker and a language, " \
-                     "and a claim is a claim in whatever the file is written in; " \
-                     "sumi help contract has the two readings"
-      end
-
-      if named.nil?
-        raise Error, "#{Where.of(path)} names no marker and no language, " \
-                     "so nothing says how to spell what it registers; " \
-                     "sumi help contract has the two readings"
-      end
-      return named if languages.carries?(named)
-
-      raise Error, "#{Where.of(path)} names #{named}, which this sumi does not carry"
+    # What a mechanism could not read is its own to report, so the reading's
+    # refusal is answered here under this mechanism's own name.
+    def self.definition_from(path, languages, readings)
+      Reading.of(path, readings).contract(path, languages)
+    rescue Sumitsubo::Unreadable => e
+      raise Error, e.message
     end
 
     # The marker is the namespace, so two files may share one word and one
@@ -577,17 +481,6 @@ module Sumitsubo
 
     # The shape a contract registers. A kind nobody named is the one a bare
     # name says, which keeps the common parameter down to what it is called.
-    def self.params_from(raw)
-      return nil if raw.nil?
-
-      found = []
-      raw.each do |param|
-        kind = param["kind"]
-        found.push(Param.new(param["name"], kind.nil? ? POSITIONAL : kind, param["optional"] == true))
-      end
-      found
-    end
-
     # Every definition of each name, kept in the order source declared them. A
     # name may be defined more than once, and which of those a contract
     # describes is not this reading's to decide.
@@ -670,14 +563,6 @@ module Sumitsubo
     # word were missing from it.
     def self.spoken(marker, name)
       marker.nil? ? name : key(marker, name)
-    end
-
-    def self.parse(path, text)
-      JSON.parse(text)
-    rescue JSON::ParserError
-      # The parser's own wording is Spinel's rather than CRuby's, so it stays
-      # out of a message a snapshot has to match on both.
-      raise Error, "#{Where.of(path)} is not readable JSON"
     end
 
     def self.at(interface)

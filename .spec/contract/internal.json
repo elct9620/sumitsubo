@@ -53,6 +53,14 @@
       ]
     },
     {
+      "name": "Sumitsubo::Reading.of",
+      "description": "The one place a file is matched to the reading that answers for it.",
+      "params": [
+        { "name": "path" },
+        { "name": "readings" }
+      ]
+    },
+    {
       "name": "Sumitsubo::Language.comments_in",
       "description": "The reading of what a person wrote for another person, whatever the file is written in.",
       "internal": true,

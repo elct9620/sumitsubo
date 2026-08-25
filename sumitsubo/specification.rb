@@ -24,4 +24,18 @@ module Sumitsubo
   # carrying several, and a flag is the empty list — it says a thing of itself
   # by being there.
   Statement = Struct.new(:key, :text, :path, :line, :attributes, :statements)
+
+  # The kind a parameter carries when the specification names none, and the one
+  # kind word this tool owns rather than borrows: it names the parameter a
+  # caller writes with no marking of any sort, which every language has one of.
+  POSITIONAL = "positional"
+
+  # One parameter a contract registers. The kind is carried as text and never
+  # read: what these words mean belongs to the reading that answers them, so a
+  # specification writes the words its language uses and nothing here learns
+  # any of them.
+  #
+  # It sits with the two shapes above because a reading builds one and a
+  # mechanism compares it, and neither of those may reach for the other.
+  Param = Struct.new(:name, :kind, :optional)
 end

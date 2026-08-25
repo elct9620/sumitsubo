@@ -1,9 +1,9 @@
-require "json"
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/locations"
+require "sumitsubo/reading"
+require "sumitsubo/reading/json"
 require "sumitsubo/scope"
-require "sumitsubo/specification"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -13,15 +13,10 @@ module Sumitsubo
   # no reference line to verify from at all.
   module Glossary
     FILE = "glossary.json"
-    GLOBAL = "Global"
 
     # Where the specification spells a word, whether as a term or as one a
     # term rejects. Both spellings declare, and neither uses.
     TERM = /"term"\s*:\s*"([^"]*)"/
-
-    # Where it names a finding to set aside, so one naming a finding that is
-    # no longer there answers at its own line.
-    AT = /"at"\s*:\s*"([^"]*)"/
 
     EMPTY = <<~JSON
       {
@@ -50,31 +45,13 @@ module Sumitsubo
       Pathname.new(root) / FILE
     end
 
-    def self.load(path)
-      file = Pathname.new(path)
-      where = Where.of(file)
-      raise Error, "no glossary at #{where}; sumi init lays one down" unless file.exist?
-
-      text = file.read
-      begin
-        document = JSON.parse(text)
-      rescue JSON::ParserError
-        # The parser's own wording is Spinel's, not CRuby's, so it stays out
-        # of the message the snapshot has to match on both.
-        raise Error, "#{where} is not readable JSON"
-      end
-
-      sections = document["glossary"]
-      if sections.nil?
-        raise Error, "#{where} declares no \"glossary\"; " \
-                     "sumi help glossary has the form"
-      end
-
-      # JSON carries no line numbers, and an ignore has to answer at the line
-      # it was written on, so where each sits is read off the text here rather
-      # than the file being opened a second time later.
-      lines = Locations.of(text, AT)
-      sections.map { |raw| section_from(raw, where, lines) }
+    # The readings are handed in the way the languages are, and default to the
+    # one that opens no grammar. What a mechanism could not read is its own to
+    # report, so the reading's refusal is answered under this mechanism's name.
+    def self.load(path, readings = [Reading::Json.new])
+      Reading.of(path, readings).glossary(path)
+    rescue Sumitsubo::Unreadable => e
+      raise Error, e.message
     end
 
     # A file's effective vocabulary is Global's terms with every subdomain
@@ -240,61 +217,6 @@ module Sumitsubo
     # base to read it.
     def self.paths_for(section, base, exclusion)
       Scope.of(base, section.includes, exclusion).uniq.sort
-    end
-
-    def self.section_from(raw, where, lines)
-      Specification.new(
-        raw["name"] || GLOBAL,
-        nil,
-        raw["include"] || [],
-        where,
-        {},
-        (raw["terms"] || []).map { |term| term_from(term, where, lines) }
-      )
-    end
-
-    # A term and a rejected word answer no line. Where each is spelled is read
-    # off the raw text when a finding needs it, which is what `uses` does, and
-    # reading it twice to carry it here would be the second read for nothing.
-    # An ignore is the one that has to answer at its own line, so it is the one
-    # the line map is built for.
-    def self.term_from(raw, where, lines)
-      Statement.new(
-        raw["term"],
-        raw["definition"],
-        where,
-        nil,
-        {},
-        (raw["not"] || []).map { |entry| disallowed_from(entry, where, lines) }
-      )
-    end
-
-    def self.disallowed_from(raw, where, lines)
-      Statement.new(
-        raw["term"],
-        raw["reason"],
-        where,
-        nil,
-        {},
-        (raw["ignore"] || []).map { |entry| ignore_from(entry, where, lines) }
-      )
-    end
-
-    # Both halves are refused rather than carried empty: one with nowhere to
-    # point matches nothing and reports itself, and one with no reason is the
-    # exception that outlives whoever knew why.
-    def self.ignore_from(raw, where, lines)
-      at = raw["at"]
-      if at.nil?
-        raise Error, "#{where} writes an ignore with no \"at\"; " \
-                     "sumi help glossary has the form"
-      end
-      if raw["reason"].nil?
-        raise Error, "#{where} writes an ignore at #{at} with no \"reason\"; " \
-                     "sumi help glossary has the form"
-      end
-
-      Statement.new("#{at}", raw["reason"], where, lines["#{at}"], {}, [])
     end
   end
 end

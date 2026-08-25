@@ -1,10 +1,9 @@
-require "json"
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/locations"
+require "sumitsubo/reading"
+require "sumitsubo/reading/json"
 require "sumitsubo/scope"
-require "sumitsubo/specification"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -20,10 +19,6 @@ module Sumitsubo
     # The mechanism names its own marker, as it names its own directory. A
     # later mechanism claims its own word rather than sharing this one.
     MARKER = "@behavior"
-
-    # A scenario's id as it sits in the raw text. JSON carries no line numbers,
-    # and a scenario nothing declares has no source line to answer with.
-    ID = /"id"\s*:\s*"([^"]*)"/
 
     class Error < Sumitsubo::Error; end
 
@@ -56,11 +51,15 @@ module Sumitsubo
     # Every feature the directory holds. A directory nobody wrote declares no
     # scenarios, and a project that has said nothing is not misconfigured, so
     # that answers empty rather than failing.
-    def self.load(directory)
+    #
+    # The readings are handed in the way the languages are, and default to the
+    # one that opens no grammar: which formats a build carries is decided when
+    # it is built, and a caller with nothing to say about format says nothing.
+    def self.load(directory, readings = [Reading::Json.new])
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      features = files_in(path).map { |file| feature_from(file) }
+      features = files_in(path).map { |file| feature_from(file, readings) }
       refuse_ambiguity(features)
       features
     end
@@ -208,42 +207,12 @@ module Sumitsubo
       "#{claim.id} is claimed outside what #{claim.spec} includes"
     end
 
-    def self.feature_from(path)
-      text = File.read(path)
-      document = parse(path, text)
-      lines = Locations.of(text, ID)
-
-      scenarios = []
-      (document["scenarios"] || []).each do |raw|
-        id = raw["id"]
-        # A scenario nothing can name is unreferenceable, which is the same
-        # ambiguity a duplicate is rather than a difference to report.
-        if id.nil?
-          raise Error, "#{Where.of(path)} declares a scenario with no \"id\"; " \
-                       "sumi help behavior has the form"
-        end
-
-        scenarios.push(scenario_from(path, raw, lines[id]))
-      end
-
-      Specification.new(
-        document["name"],
-        document["description"],
-        document["include"] || [],
-        path,
-        {},
-        scenarios
-      )
-    end
-
-    # A step nobody wrote is no step rather than an empty one, which is what
-    # leaves a shape carrying one spelled no differently from one carrying
-    # several.
-    def self.scenario_from(path, raw, line)
-      steps = { "given" => raw["given"] || [] }
-      steps["when"] = [raw["when"]] unless raw["when"].nil?
-      steps["then"] = [raw["then"]] unless raw["then"].nil?
-      Statement.new(raw["id"], raw["title"], path, line, steps, [])
+    # What a mechanism could not read is its own to report, so the reading's
+    # refusal is answered here under this mechanism's own name.
+    def self.feature_from(path, readings)
+      Reading.of(path, readings).behavior(path)
+    rescue Sumitsubo::Unreadable => e
+      raise Error, e.message
     end
 
     # Two scenarios under one id leave a marker with nothing to resolve to,
@@ -260,14 +229,6 @@ module Sumitsubo
           seen[scenario.key] = at(scenario)
         end
       end
-    end
-
-    def self.parse(path, text)
-      JSON.parse(text)
-    rescue JSON::ParserError
-      # The parser's own wording is Spinel's rather than CRuby's, so it stays
-      # out of a message a snapshot has to match on both.
-      raise Error, "#{Where.of(path)} is not readable JSON"
     end
 
     def self.at(scenario)
