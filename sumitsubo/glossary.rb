@@ -184,17 +184,11 @@ module Sumitsubo
     # against.
     def self.findings_for(path, regions, name, entry)
       found = []
-      # Spelled rather than passed on: both arrive as keys of a hash, which
-      # reaches the compiler carrying no type, and a Finding built from one
-      # gets integer members where it should hold text. Spinel 2026-08-22;
-      # drop the spelling once a key arrives knowing what it is.
-      where = "#{path}"
-      term = "#{name}"
       pattern = Regexp.new("\\b" + Regexp.escape(entry.key) + "\\b")
       regions.each do |region|
         line = region.line
         region.text.split("\n").each do |text|
-          found.push(Finding.new(where, line, term, entry.key, entry.text)) unless pattern.match(text).nil?
+          found.push(Finding.new(path, line, name, entry.key, entry.text)) unless pattern.match(text).nil?
           line += 1
         end
       end
