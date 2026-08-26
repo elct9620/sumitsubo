@@ -4,7 +4,7 @@ require "sumitsubo"
 # and the parsers here is what keeps a grammar, and a format, out of every run
 # that only prints or lays down files.
 require "sumitsubo/language"
-require "sumitsubo/language/grammar"
+require "sumitsubo/grammar"
 require "sumitsubo/parser/json"
 require "sumitsubo/parser/markdown"
 require "build_rev"

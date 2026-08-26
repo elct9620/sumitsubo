@@ -139,9 +139,9 @@ AOT compiler for Ruby. Its constraints shape the design:
   is scanned for the `.c` it carries. The runtime and the grammars are the
   application's to link in, which is why a grammar it does not carry fails at
   link time rather than at run time. One file reaches the binding —
-  `sumitsubo/language/grammar.rb`, which every query in the program is put
-  through — and only `bin/sumi.rb` decides which of what is linked in a build
-  actually answers. What that bounds is the blast radius: a reading of source
+  `sumitsubo/grammar.rb`, which every query in the program is put through — and
+  only `bin/sumi.rb` decides which of what is linked in a build actually
+  answers. What that bounds is the blast radius: a reading of source
   or of a specification is handed a grammar rather than reaching for one, so it
   names no grammar and its snapshot can still be regenerated.
 - `Exception#backtrace` and `Kernel#caller` return empty arrays, so an error
