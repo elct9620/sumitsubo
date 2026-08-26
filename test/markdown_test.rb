@@ -1,13 +1,32 @@
 require "sumitsubo/parser/markdown"
 
-# Reading a real Markdown specification through the grammar linked into this
-# build. What the query has to get right is which blocks a document is made of
-# and where they sit; what those blocks mean is Blocks', and tested beside it
-# on the side `--regen` can still write.
+# Reading a Markdown specification into a feature and its scenarios: the part
+# of that work no grammar owns.
 #
-# This test crosses into the binding, so it can never be regenerated: `spin
-# test --regen` produces its snapshot by running the file under CRuby, which
-# has no `ffi_func`. The snapshot below is written by hand and stays that way.
+# The grammar is handed in, so this test hands in one that answers with what it
+# was given. Nothing here reaches the binding, which is what lets `--regen`
+# write the snapshot beside it. Each case below is one way a document drifts
+# out of shape, written on its own so what it pins can be read off it.
+
+Capture = Struct.new(:match, :name, :line, :text)
+
+# A grammar that answers whatever a case handed it. What a real one answers for
+# a real document is pinned where the binding is, and this file is free of it.
+class Canned
+  def initialize(captures)
+    @captures = captures
+  end
+
+  def captures_in(grammar, path, query, where)
+    @captures
+  end
+end
+
+def title(line, text) = Capture.new(0, "title", line, text)
+def heading(line, text) = Capture.new(0, "heading", line, text)
+def paragraph(line, text) = Capture.new(0, "paragraph", line, text)
+def item(line, text) = Capture.new(0, "item", line, text)
+def cell(line, text) = Capture.new(0, "cell", line, text)
 
 # Spelled as a method rather than a block inside a block: an inner iteration
 # capturing an outer block's variable is a shape the compiler refuses.
@@ -20,9 +39,29 @@ def said(name, holding)
   holding.each { |one| puts "    #{name} #{one}" }
 end
 
-# @behavior MD-015
-feature = Sumitsubo::Parser::Markdown.new.behavior("test/fixtures/reading/init.md")
+def read(captures)
+  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).behavior("init.md")
+rescue Sumitsubo::Unreadable => e
+  puts "  refused: #{e.message}"
+  nil
+end
 
+# @behavior MD-001
+puts "--- a feature, its scope, and one scenario ---"
+feature = read([
+  title(1, "Init"),
+  paragraph(3, "What init lays down\nto start a reference line from."),
+  heading(5, "Includes"),
+  item(7, "`test/init_test.rb`"),
+  item(8, "`test/other_test.rb`"),
+  heading(10, "`I-001` The first run lays down an empty glossary"),
+  cell(14, "Given "),
+  cell(14, "a directory with no specification "),
+  cell(15, "When "),
+  cell(15, "`sumi init` runs "),
+  cell(16, "Then "),
+  cell(16, "an empty glossary is written ")
+])
 puts "#{feature.key} #{feature.includes.inspect}"
 puts "  #{feature.text}"
 feature.statements.each do |scenario|
@@ -30,46 +69,86 @@ feature.statements.each do |scenario|
   steps_of(scenario)
 end
 
+# A paragraph wrapped for a reader says what an unwrapped one says, which is
+# what lets the same words be written either way in either format.
+# @behavior MD-002
+puts "--- a soft line break is a space ---"
+puts read([title(1, "Init"), paragraph(3, "one\n  two\nthree")]).text
+
+# Two Given rows are two states, and a step nobody wrote is no step rather than
+# an empty one.
+# @behavior MD-003
+puts "--- a scenario stating two Givens and no Then ---"
+read([
+  title(1, "Init"),
+  heading(3, "`I-002` A second run"),
+  cell(5, "Given "), cell(5, "a directory "),
+  cell(6, "Given "), cell(6, "a glossary already there "),
+  cell(7, "When "), cell(7, "`sumi init` runs ")
+]).statements.each { |scenario| puts "  #{scenario.attributes.inspect}" }
+
+# The title is the whole heading, so a scenario's own title is whatever follows
+# its id — and a scenario with nothing after the id has none.
+# @behavior MD-004
+puts "--- an id with no title after it ---"
+read([title(1, "Init"), heading(3, "`I-003`")]).statements.each do |scenario|
+  puts "  #{scenario.key} #{scenario.text.inspect}"
+end
+
+# Prose under a scenario is prose. Only the paragraph under the title says what
+# the feature is for, so a note written further down does not replace it.
+# @behavior MD-005
+puts "--- a paragraph under a scenario is passed over ---"
+noted = read([
+  title(1, "Init"),
+  paragraph(3, "What init lays down."),
+  heading(5, "`I-004` A run"),
+  paragraph(7, "Something a reader wanted said.")
+])
+puts "  #{noted.text}"
+
+# @behavior MD-006
+puts "--- a heading that does not open with an id ---"
+read([title(1, "Init"), heading(3, "The first run")])
+
+# @behavior MD-007
+puts "--- an id in backticks that is empty ---"
+read([title(1, "Init"), heading(3, "`` the first run")])
+
+# @behavior MD-008
+puts "--- an include that is not a glob in backticks ---"
+read([title(1, "Init"), heading(3, "Includes"), item(5, "test/init_test.rb")])
+
+# @behavior MD-009
+puts "--- a step row that lost a separator ---"
+read([title(1, "Init"), heading(3, "`I-005` A run"), cell(5, "Given a directory ")])
+
+# @behavior MD-010
+puts "--- a step row carrying an unescaped separator ---"
+read([
+  title(1, "Init"), heading(3, "`I-006` A run"),
+  cell(5, "Given "), cell(5, "a directory "), cell(5, "and a glossary ")
+])
+
+# @behavior MD-011
+puts "--- a row naming something that is not a step ---"
+read([title(1, "Init"), heading(3, "`I-007` A run"), cell(5, "Where "), cell(5, "a directory ")])
+
+# @behavior MD-012
+puts "--- a step before any scenario ---"
+read([title(1, "Init"), cell(3, "Given "), cell(3, "a directory ")])
+
+# @behavior MD-013
+puts "--- a document with no title ---"
+read([paragraph(1, "What init lays down.")])
+
+# @behavior MD-014
+puts "--- a document with two titles ---"
+read([title(1, "Init"), title(3, "Verify")])
+
 # The extension is the whole of what says a file is written this way, so a
-# reading is asked rather than told.
+# parser is asked rather than told.
 # @behavior MD-016
-reading = Sumitsubo::Parser::Markdown.new
-p [reading.reads?("init.md"), reading.reads?("init.json"), reading.reads?(".spec/behavior/init.md")]
-
-# The same specification written both ways reads into the same shape. This is
-# what says the format changed and nothing else did: path and line are what a
-# document carries rather than what it says, so they are the only two fields
-# the two sides are allowed to differ in.
-require "sumitsubo/parser/json"
-
-def agree(said, one, other)
-  puts "  #{one == other ? "same" : "DIFFER"} #{said}#{one == other ? "" : " #{one.inspect} / #{other.inspect}"}"
-end
-
-def agree_on_steps(taken, given)
-  agree("#{taken.key} steps", taken.attributes, given.attributes)
-end
-
-# @behavior MD-017
-puts "--- the same specification, written both ways ---"
-written = Sumitsubo::Parser::Markdown.new.behavior("test/fixtures/reading/init.md")
-structured = Sumitsubo::Parser::Json.new.behavior("test/fixtures/reading/init.json")
-
-agree("key", written.key, structured.key)
-agree("text", written.text, structured.text)
-agree("includes", written.includes, structured.includes)
-agree("scenario count", written.statements.length, structured.statements.length)
-agree("ids", written.statements.map { |one| one.key }, structured.statements.map { |one| one.key })
-agree("titles", written.statements.map { |one| one.text }, structured.statements.map { |one| one.text })
-
-index = 0
-while index < written.statements.length
-  agree_on_steps(written.statements[index], structured.statements[index])
-  index += 1
-end
-
-# What they are allowed to differ in, said out loud so the exception is not a
-# silent one: a line is where a reader goes, and the two formats write the same
-# declaration in different places.
-puts "  path #{written.statements[0].path} / #{structured.statements[0].path}"
-puts "  line #{written.statements[0].line} / #{structured.statements[0].line}"
+puts "--- which files this parser answers for ---"
+parser = Sumitsubo::Parser::Markdown.new(Canned.new([]))
+p [parser.reads?("init.md"), parser.reads?("init.json"), parser.reads?(".spec/behavior/init.md")]

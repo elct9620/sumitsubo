@@ -1,4 +1,5 @@
-# Reading real Ruby through the grammar linked into this build.
+# Reading real source, and a real specification, through the grammars linked
+# into this build.
 #
 # This test crosses into the binding, so it can never be regenerated: `spin test
 # --regen` produces its snapshot by running the file under CRuby, which has no
@@ -76,3 +77,74 @@ end
 
 p markdown("(atx_heading (inline) @text)").map { |capture| "#{capture.line}:#{capture.text}" }
 p markdown("(pipe_table_row (pipe_table_cell) @cell)").map { |capture| capture.text }
+
+# What the grammar answers and what the parser makes of it meet here, because
+# this is the side that can ask a real one. The parser is handed the grammars
+# this build carries, the way a run of `sumi` hands them to it.
+require "sumitsubo/parser/markdown"
+
+# The query lives with the parser that writes it, and the name of the grammar
+# it is written against travels with it: a name the binding does not know
+# answers nothing rather than failing, so the two are pinned to each other.
+p Sumitsubo::Parser::Markdown::GRAMMAR == Sumitsubo::Grammar::MARKDOWN
+
+reading = Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)
+
+# Spelled as a method rather than a block inside a block: an inner iteration
+# capturing an outer block's variable is a shape the compiler refuses.
+def steps_of(scenario)
+  steps = scenario.attributes
+  steps.keys.each { |name| said(name, steps[name]) }
+end
+
+def said(name, holding)
+  holding.each { |one| puts "    #{name} #{one}" }
+end
+
+# @behavior MD-015
+feature = reading.behavior("test/fixtures/reading/init.md")
+
+puts "#{feature.key} #{feature.includes.inspect}"
+puts "  #{feature.text}"
+feature.statements.each do |scenario|
+  puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
+  steps_of(scenario)
+end
+
+# The same specification written both ways reads into the same shape. This is
+# what says the format changed and nothing else did: path and line are what a
+# document carries rather than what it says, so they are the only two fields
+# the two sides are allowed to differ in.
+require "sumitsubo/parser/json"
+
+def agree(said, one, other)
+  puts "  #{one == other ? "same" : "DIFFER"} #{said}#{one == other ? "" : " #{one.inspect} / #{other.inspect}"}"
+end
+
+def agree_on_steps(taken, given)
+  agree("#{taken.key} steps", taken.attributes, given.attributes)
+end
+
+# @behavior MD-017
+puts "--- the same specification, written both ways ---"
+written = reading.behavior("test/fixtures/reading/init.md")
+structured = Sumitsubo::Parser::Json.new.behavior("test/fixtures/reading/init.json")
+
+agree("key", written.key, structured.key)
+agree("text", written.text, structured.text)
+agree("includes", written.includes, structured.includes)
+agree("scenario count", written.statements.length, structured.statements.length)
+agree("ids", written.statements.map { |one| one.key }, structured.statements.map { |one| one.key })
+agree("titles", written.statements.map { |one| one.text }, structured.statements.map { |one| one.text })
+
+index = 0
+while index < written.statements.length
+  agree_on_steps(written.statements[index], structured.statements[index])
+  index += 1
+end
+
+# What they are allowed to differ in, said out loud so the exception is not a
+# silent one: a line is where a reader goes, and the two formats write the same
+# declaration in different places.
+puts "  path #{written.statements[0].path} / #{structured.statements[0].path}"
+puts "  line #{written.statements[0].line} / #{structured.statements[0].line}"

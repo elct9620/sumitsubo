@@ -31,6 +31,14 @@ module Sumitsubo
     # gives — sections, tables, fences — and from the text a block-level
     # `inline` node holds unparsed, which is what the tool takes verbatim.
     MARKDOWN = "markdown"
+
+    # What a query put to one of them captured in a file. Every query in this
+    # program is put through here, so what a caller handed this module can do
+    # is the whole of what a grammar answers — which is what lets a reading of
+    # source, or of a specification, be handed one instead of reaching for it.
+    def self.captures_in(grammar, path, query, where)
+      TreeSitter.capture(grammar, path.read, query, where)
+    end
   end
 end
 

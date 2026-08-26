@@ -1,37 +1,35 @@
-Init ["test/init_test.rb"]
-  Laying down an empty specification to start a reference line from.
-  test/fixtures/reading/init.md:9 I-001 The first run lays down what a reference line starts from
+--- a feature, its scope, and one scenario ---
+Init ["test/init_test.rb", "test/other_test.rb"]
+  What init lays down to start a reference line from.
+  init.md:10 I-001 The first run lays down an empty glossary
     given a directory with no specification
     when `sumi init` runs
-    then an empty glossary specification is created at the configured root
-  test/fixtures/reading/init.md:17 I-002 A second run leaves the reference line alone
-    given a directory `sumi init` has already run in
-    when `sumi init` runs again
-    then each specification is reported as already there rather than replaced
-  test/fixtures/reading/init.md:25 I-003 A configured root is created however deep it is
-    given a .sumi.json naming a root two directories down
-    when `sumi init` runs
-    then every directory on the way to that root is created
-  test/fixtures/reading/init.md:33 I-004 The first run lays down somewhere for behaviors to go
-    given a directory with no specification
-    when `sumi init` runs
-    then a behavior directory is created at the configured root
-  test/fixtures/reading/init.md:41 I-005 The first run lays down somewhere for contracts to go
-    given a directory with no specification
-    when `sumi init` runs
-    then a contract directory is created at the configured root
+    then an empty glossary is written
+--- a soft line break is a space ---
+one two three
+--- a scenario stating two Givens and no Then ---
+  {"given" => ["a directory", "a glossary already there"], "when" => ["`sumi init` runs"]}
+--- an id with no title after it ---
+  I-003 nil
+--- a paragraph under a scenario is passed over ---
+  What init lays down.
+--- a heading that does not open with an id ---
+  refused: init.md:3 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+--- an id in backticks that is empty ---
+  refused: init.md:3 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+--- an include that is not a glob in backticks ---
+  refused: init.md:5 writes an include that is not a glob in backticks; sumi help behavior has the form
+--- a step row that lost a separator ---
+  refused: init.md:5 writes a step row of 1 cell rather than two; sumi help behavior has the form
+--- a step row carrying an unescaped separator ---
+  refused: init.md:5 writes a step row of 3 cells rather than two; sumi help behavior has the form
+--- a row naming something that is not a step ---
+  refused: init.md:5 writes a step named Where rather than Given, When or Then; sumi help behavior has the form
+--- a step before any scenario ---
+  refused: init.md:3 writes a step outside any scenario; sumi help behavior has the form
+--- a document with no title ---
+  refused: init.md:1 declares no title; sumi help behavior has the form
+--- a document with two titles ---
+  refused: init.md:3 declares a second title; sumi help behavior has the form
+--- which files this parser answers for ---
 [true, false, true]
---- the same specification, written both ways ---
-  same key
-  same text
-  same includes
-  same scenario count
-  same ids
-  same titles
-  same I-001 steps
-  same I-002 steps
-  same I-003 steps
-  same I-004 steps
-  same I-005 steps
-  path test/fixtures/reading/init.md / test/fixtures/reading/init.json
-  line 9 / 9

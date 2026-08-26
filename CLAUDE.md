@@ -102,11 +102,11 @@ The command is `sumi`, shipped as a single native executable.
   CRuby. Anything reaching the tree-sitter binding cannot be regenerated —
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
   that way. A file reaching it through its requires counts, which is why
-  `sumitsubo/config.rb` names no mechanism, why no mechanism names a language,
-  and why `sumitsubo/definitions.rb` requires nothing at all — a reading brings
-  it captures rather than a path. `require "sumitsubo"` reaches no grammar, so
-  what is written by hand is the four tests that read source or ask for a
-  binding. Where no snapshot is committed the run is compared against CRuby
+  `sumitsubo/config.rb` names no mechanism, why no mechanism names a language
+  or a format, and why `sumitsubo/definitions.rb` requires nothing at all — a
+  reading brings it captures rather than a path. `require "sumitsubo"` reaches
+  no grammar, so what is written by hand is the three tests that read source or
+  ask for a binding. Where no snapshot is committed the run is compared against CRuby
   rather than failing, and a test that asserts nothing passes.
 - `--regen` takes the same file list, so name the test to rewrite. Given none
   it rewrites every snapshot including the hand-written ones, leaving a CRuby
@@ -138,12 +138,12 @@ AOT compiler for Ruby. Its constraints shape the design:
   compiling its C a second time as part of this application, since a package
   is scanned for the `.c` it carries. The runtime and the grammars are the
   application's to link in, which is why a grammar it does not carry fails at
-  link time rather than at run time. Two files reach the binding and no others
-  — `sumitsubo/language/grammar.rb` for source, `sumitsubo/parser/markdown.rb`
-  for a specification — and only `bin/sumi.rb` decides which of what is linked
-  in a build actually answers. What the number bounds is the blast radius: each
-  of those has a partner beside it holding the judgement, `definitions.rb` and
-  `parser/blocks.rb`, which is what keeps a snapshot regenerable.
+  link time rather than at run time. One file reaches the binding —
+  `sumitsubo/language/grammar.rb`, which every query in the program is put
+  through — and only `bin/sumi.rb` decides which of what is linked in a build
+  actually answers. What that bounds is the blast radius: a reading of source
+  or of a specification is handed a grammar rather than reaching for one, so it
+  names no grammar and its snapshot can still be regenerated.
 - `Exception#backtrace` and `Kernel#caller` return empty arrays, so an error
   carries whatever context it needs by itself.
 - String literals are frozen by default.

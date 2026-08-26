@@ -56,8 +56,12 @@
       "name": "Sumitsubo::Parser.of",
       "description": "The one place a file is matched to the parser that answers for it.",
       "params": [
-        { "name": "path" },
-        { "name": "parsers" }
+        {
+          "name": "path"
+        },
+        {
+          "name": "parsers"
+        }
       ]
     },
     {
@@ -142,11 +146,21 @@
       ]
     },
     {
-      "name": "Sumitsubo::Parser::Blocks.behavior",
-      "description": "The one place the blocks of a Markdown document become a feature and its scenarios.",
+      "name": "Sumitsubo::Grammar.captures_in",
+      "description": "The one place a query is put to a grammar.",
       "params": [
-        { "name": "captures" },
-        { "name": "path" }
+        {
+          "name": "grammar"
+        },
+        {
+          "name": "path"
+        },
+        {
+          "name": "query"
+        },
+        {
+          "name": "where"
+        }
       ]
     },
     {

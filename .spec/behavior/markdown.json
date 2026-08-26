@@ -22,14 +22,15 @@
     {
       "type": "paragraph",
       "text": [
-        "What names a grammar asks for those blocks and nothing else; what decides",
-        "the meaning of them names none. That is why the scenarios about meaning are",
-        "claimed from a test whose snapshot can still be regenerated."
+        "The grammar is handed to the reading rather than reached for, so the file",
+        "that decides what a block means names none. That is why the scenarios about",
+        "meaning are claimed from a test whose snapshot can still be regenerated, and",
+        "only the one reading a real document is claimed from a test that cannot."
       ]
     }
   ],
   "include": [
-    "test/blocks_test.rb",
+    "test/grammar_test.rb",
     "test/markdown_test.rb"
   ],
   "scenarios": [

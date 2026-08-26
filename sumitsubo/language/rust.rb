@@ -110,7 +110,7 @@ module Sumitsubo
       end
 
       def captured(path, query, where)
-        TreeSitter.capture(Grammar::RUST, path.read, query, where)
+        Grammar.captures_in(Grammar::RUST, path, query, where)
       rescue TreeSitter::ParseError => e
         # Source the grammar cannot read is not a difference between the two
         # sides either: half a file yields regions the rest of it never made.
