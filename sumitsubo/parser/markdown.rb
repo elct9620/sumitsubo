@@ -35,11 +35,18 @@ module Sumitsubo
       #
       # A heading arrives under a name for its level rather than with the level
       # to read, because the grammar spells each marker as a kind of its own.
+      #
+      # A table row is asked for as well as its cells, and arrives ahead of
+      # them, so where one row ends and the next begins is the grammar's answer
+      # rather than a comparison of line numbers. The cells stay the grammar's
+      # too: a separator a document escapes belongs to the cell holding it, and
+      # splitting the row's own text would take it for a separator.
       BLOCKS = <<~BLOCKS
         (atx_heading (atx_h1_marker) (inline) @title)
         (atx_heading (atx_h2_marker) (inline) @heading)
         (section (paragraph (inline) @paragraph))
         (section (list (list_item (paragraph (inline) @item))))
+        (pipe_table_row) @row
         (pipe_table_row (pipe_table_cell) @cell)
       BLOCKS
 
@@ -96,25 +103,20 @@ module Sumitsubo
 
         captures.each do |capture|
           name = capture.name
-          # A table row is one line, so the cells held so far are a row as soon
-          # as anything on another line arrives.
-          if !row.empty? && !(name == CELL && capture.line == row[0].line)
-            refuse(path, row[0].line, "writes a step outside any scenario") if scenarios.empty?
-            under = step_of(path, row[0].line, row.length, row[0].text.strip)
-            hold(scenarios[-1].attributes, under, row[1].text.strip)
+          # A row is closed by the first capture that is not one of its own
+          # cells. That is what the row itself is asked for: a heading or a
+          # paragraph after a table closes the last row on its own, and between
+          # two rows there would otherwise be nothing to tell them apart.
+          unless name == CELL
+            stated(path, scenarios, row)
             row = []
           end
 
           case name
           when TITLE
-            refuse(path, capture.line, "declares a second title") unless key.nil?
-
-            key = folded(capture.text)
+            key = titled(path, capture, key)
           when PARAGRAPH
-            # Only the paragraph under the title says what the feature is for.
-            # A scenario says it in its own heading, so a paragraph after one
-            # is prose this parser passes over.
-            text = folded(capture.text) if text.nil? && scenarios.empty?
+            text = described(capture, text, scenarios.empty?)
           when HEADING
             said = folded(capture.text)
             scoping = said == INCLUDES
@@ -125,15 +127,36 @@ module Sumitsubo
             row.push(capture)
           end
         end
-
-        unless row.empty?
-          refuse(path, row[0].line, "writes a step outside any scenario") if scenarios.empty?
-          under = step_of(path, row[0].line, row.length, row[0].text.strip)
-          hold(scenarios[-1].attributes, under, row[1].text.strip)
-        end
+        stated(path, scenarios, row)
 
         refuse(path, 1, "declares no title") if key.nil?
         Specification.new(key, text, includes, path, {}, scenarios)
+      end
+
+      # A title names the feature, and a file naming two says which of them it
+      # is nowhere.
+      def titled(path, capture, key)
+        refuse(path, capture.line, "declares a second title") unless key.nil?
+
+        folded(capture.text)
+      end
+
+      # Only the paragraph under the title says what the feature is for. A
+      # scenario says it in its own heading, so a paragraph after one is prose
+      # this parser passes over.
+      def described(capture, text, opening)
+        text.nil? && opening ? folded(capture.text) : text
+      end
+
+      # The cells held so far, stated as the step they make. A row is closed
+      # by what follows it, so the last row in a document is closed by the
+      # document ending — the one close nothing in the run announces.
+      def stated(path, scenarios, row)
+        return if row.empty?
+
+        refuse(path, row[0].line, "writes a step outside any scenario") if scenarios.empty?
+        under = step_of(path, row[0].line, row.length, row[0].text.strip)
+        hold(scenarios[-1].attributes, under, row[1].text.strip)
       end
 
       # A scenario's id is what a claim in the source names, so it is spelled

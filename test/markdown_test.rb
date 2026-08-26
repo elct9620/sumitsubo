@@ -26,6 +26,7 @@ def title(line, text) = Capture.new(0, "title", line, text)
 def heading(line, text) = Capture.new(0, "heading", line, text)
 def paragraph(line, text) = Capture.new(0, "paragraph", line, text)
 def item(line, text) = Capture.new(0, "item", line, text)
+def row(line, text) = Capture.new(0, "row", line, text)
 def cell(line, text) = Capture.new(0, "cell", line, text)
 
 # Spelled as a method rather than a block inside a block: an inner iteration
@@ -55,10 +56,13 @@ feature = read([
   item(7, "`test/init_test.rb`"),
   item(8, "`test/other_test.rb`"),
   heading(10, "`I-001` The first run lays down an empty glossary"),
+  row(14, "| Given | a directory with no specification |"),
   cell(14, "Given "),
   cell(14, "a directory with no specification "),
+  row(15, "| When | `sumi init` runs |"),
   cell(15, "When "),
   cell(15, "`sumi init` runs "),
+  row(16, "| Then | an empty glossary is written |"),
   cell(16, "Then "),
   cell(16, "an empty glossary is written ")
 ])
@@ -82,9 +86,10 @@ puts "--- a scenario stating two Givens and no Then ---"
 read([
   title(1, "Init"),
   heading(3, "`I-002` A second run"),
-  cell(5, "Given "), cell(5, "a directory "),
+  row(5, "| Given | a directory |"), cell(5, "Given "), cell(5, "a directory "),
+  row(6, "| Given | a glossary already there |"),
   cell(6, "Given "), cell(6, "a glossary already there "),
-  cell(7, "When "), cell(7, "`sumi init` runs ")
+  row(7, "| When | `sumi init` runs |"), cell(7, "When "), cell(7, "`sumi init` runs ")
 ]).statements.each { |scenario| puts "  #{scenario.attributes.inspect}" }
 
 # The title is the whole heading, so a scenario's own title is whatever follows
@@ -121,22 +126,32 @@ read([title(1, "Init"), heading(3, "Includes"), item(5, "test/init_test.rb")])
 
 # @behavior MD-009
 puts "--- a step row that lost a separator ---"
-read([title(1, "Init"), heading(3, "`I-005` A run"), cell(5, "Given a directory ")])
+read([
+  title(1, "Init"), heading(3, "`I-005` A run"),
+  row(5, "| Given a directory |"), cell(5, "Given a directory ")
+])
 
 # @behavior MD-010
 puts "--- a step row carrying an unescaped separator ---"
 read([
   title(1, "Init"), heading(3, "`I-006` A run"),
+  row(5, "| Given | a directory | and a glossary |"),
   cell(5, "Given "), cell(5, "a directory "), cell(5, "and a glossary ")
 ])
 
 # @behavior MD-011
 puts "--- a row naming something that is not a step ---"
-read([title(1, "Init"), heading(3, "`I-007` A run"), cell(5, "Where "), cell(5, "a directory ")])
+read([
+  title(1, "Init"), heading(3, "`I-007` A run"),
+  row(5, "| Where | a directory |"), cell(5, "Where "), cell(5, "a directory ")
+])
 
 # @behavior MD-012
 puts "--- a step before any scenario ---"
-read([title(1, "Init"), cell(3, "Given "), cell(3, "a directory ")])
+read([
+  title(1, "Init"),
+  row(3, "| Given | a directory |"), cell(3, "Given "), cell(3, "a directory ")
+])
 
 # @behavior MD-013
 puts "--- a document with no title ---"
