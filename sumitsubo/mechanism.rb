@@ -14,10 +14,11 @@ module Sumitsubo
   # executable carries when it is built, so there is no hook to register
   # through.
   #
-  # The languages are handed in rather than named here, the way the revision
-  # is: which ones a build carries is decided when it is built, so the one file
-  # a build has of its own is where it says so. Nothing in this graph reaches a
-  # grammar, which is what leaves a snapshot of it one `--regen` can write.
+  # The languages and the parsers are handed in rather than named here, the
+  # way the revision is: which ones a build carries is decided when it is
+  # built, so the one file a build has of its own is where it says so. Nothing
+  # in this graph reaches a grammar or names a format, which is what leaves a
+  # snapshot of it one `--regen` can write.
   module Mechanism
     # What a mechanism lays down to start a reference line from. A seed with no
     # content is a directory: a project keeps one specification per feature, so
@@ -34,9 +35,9 @@ module Sumitsubo
         Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::EMPTY)
       end
 
-      def verify(config, report, languages)
+      def verify(config, report, languages, parsers)
         path = Sumitsubo::Glossary.path_in(config.root)
-        sections = Sumitsubo::Glossary.load(path)
+        sections = Sumitsubo::Glossary.load(path, parsers)
         # An include reaching nothing is not a difference: what the words were
         # to be checked against was never read.
         Sumitsubo::Glossary.barren(sections, config.base, path, config.exclusion).each do |barren|
@@ -73,8 +74,10 @@ module Sumitsubo
         Seed.new(Sumitsubo::Contract.path_in(root), nil)
       end
 
-      def verify(config, report, languages)
-        definitions = Sumitsubo::Contract.load(Sumitsubo::Contract.path_in(config.root), languages)
+      def verify(config, report, languages, parsers)
+        definitions = Sumitsubo::Contract.load(
+          Sumitsubo::Contract.path_in(config.root), languages, parsers
+        )
         Sumitsubo::Contract.barren(definitions, config.base, config.exclusion).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end
@@ -168,8 +171,8 @@ module Sumitsubo
         Seed.new(Sumitsubo::Behavior.path_in(root), nil)
       end
 
-      def verify(config, report, languages)
-        features = Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root))
+      def verify(config, report, languages, parsers)
+        features = Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root), parsers)
         Sumitsubo::Behavior.barren(features, config.base, config.exclusion).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end

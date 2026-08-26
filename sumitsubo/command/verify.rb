@@ -11,7 +11,7 @@ module Sumitsubo
     # splitting them would leave their order unstable.
     # @command verify
     class Verify
-      def run(config, languages)
+      def run(config, languages, parsers)
         # With no root there is no reference line at all to verify from, which
         # is not a difference between the two sides either.
         unless config.root.directory?
@@ -29,7 +29,7 @@ module Sumitsubo
           # answer, the way a linter reports every file it managed to parse.
           # What it compares is its own, so what it could not compare is too.
           begin
-            mechanism.verify(config, report, languages)
+            mechanism.verify(config, report, languages, parsers)
           rescue Sumitsubo::Error => e
             report.unreadable(e.message)
           end

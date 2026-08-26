@@ -1,8 +1,11 @@
 require "pathname"
 require "sumitsubo"
 require "sumitsubo/language"
+require "sumitsubo/parser/json"
 
-cli = Sumitsubo::CLI.new(Sumitsubo::BUILD_REV, Sumitsubo::Language)
+cli = Sumitsubo::CLI.new(
+  Sumitsubo::BUILD_REV, Sumitsubo::Language, [Sumitsubo::Parser::Json.new]
+)
 back = Dir.pwd
 
 # @behavior V-001

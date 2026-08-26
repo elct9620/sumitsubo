@@ -8,20 +8,21 @@ require "sumitsubo/command/verify"
 
 module Sumitsubo
   class CLI
-    # The revision and the languages are handed in rather than read, because
-    # both are what a build says of itself and `spin test` never compiles
-    # bin/. The revision defaults to what a tree that reached here without a
-    # stamp answers; the languages have no such default, since reaching for
-    # one would pull a grammar into every run that never reads source.
-    def initialize(build_rev = Sumitsubo::BUILD_REV, languages = nil)
+    # The revision, the languages and the parsers are handed in rather than
+    # read, because all three are what a build says of itself and `spin test`
+    # never compiles bin/. The revision defaults to what a tree that reached
+    # here without a stamp answers; the other two have none, since reaching for
+    # one would name a grammar or a format in every run that reads neither.
+    def initialize(build_rev = Sumitsubo::BUILD_REV, languages = nil, parsers = nil)
       @build_rev = build_rev
       @languages = languages
+      @parsers = parsers
     end
 
     def run(argv)
       case argv.first
       when "init" then Command::Init.new.run(Config.load)
-      when "verify" then Command::Verify.new.run(Config.load, @languages)
+      when "verify" then Command::Verify.new.run(Config.load, @languages, @parsers)
       when "help" then Command::Help.new.run(argv[1])
       else unknown?(argv.first) ? refuse(argv.first) : flags(argv)
       end

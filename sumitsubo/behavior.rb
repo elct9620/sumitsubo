@@ -2,7 +2,6 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/parser"
-require "sumitsubo/parser/json"
 require "sumitsubo/scope"
 
 module Sumitsubo
@@ -52,10 +51,9 @@ module Sumitsubo
     # scenarios, and a project that has said nothing is not misconfigured, so
     # that answers empty rather than failing.
     #
-    # The parsers are handed in the way the languages are, and default to the
-    # one that opens no grammar: which formats a build carries is decided when
-    # it is built, and a caller with nothing to say about format says nothing.
-    def self.load(directory, parsers = [Parser::Json.new])
+    # The parsers are handed in the way the languages are: which formats a
+    # build carries is decided when it is built, so nothing here names one.
+    def self.load(directory, parsers)
       path = Pathname.new(directory)
       return [] unless path.directory?
 

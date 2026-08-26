@@ -1,5 +1,9 @@
 require "pathname"
 require "sumitsubo/contract"
+require "sumitsubo/parser/json"
+
+# Nothing under sumitsubo/ names a format, so a test says which it reads.
+PARSERS = [Sumitsubo::Parser::Json.new]
 
 # The loader answers where an interface sits as well as what it says. An
 # interface nothing claims is a finding about the specification, so the reader
@@ -25,7 +29,7 @@ module Spelling
 end
 
 def loaded(directory)
-  Sumitsubo::Contract.load(directory, Spelling)
+  Sumitsubo::Contract.load(directory, Spelling, PARSERS)
 end
 
 def claim(path, line, keyword, name)

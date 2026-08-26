@@ -2,7 +2,6 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/locations"
 require "sumitsubo/parser"
-require "sumitsubo/parser/json"
 require "sumitsubo/scope"
 require "sumitsubo/where"
 
@@ -45,10 +44,11 @@ module Sumitsubo
       Pathname.new(root) / FILE
     end
 
-    # The parsers are handed in the way the languages are, and default to the
-    # one that opens no grammar. What a mechanism could not read is its own to
-    # report, so the parser's refusal is answered under this mechanism's name.
-    def self.load(path, parsers = [Parser::Json.new])
+    # The parsers are handed in the way the languages are: which formats a
+    # build carries is decided when it is built, so nothing here names one.
+    # What a mechanism could not read is its own to report, so the parser's
+    # refusal is answered under this mechanism's name.
+    def self.load(path, parsers)
       Parser.of(path, parsers).glossary(path)
     rescue Sumitsubo::Unreadable => e
       raise Error, e.message
@@ -64,12 +64,18 @@ module Sumitsubo
       effective = {}
       sections.each do |section|
         paths_for(section, base, exclusion).each do |path|
-          terms = effective[path] || {}
-          section.statements.each { |term| terms[term.key] = term }
-          effective[path] = terms
+          effective[path] = laid_over(effective[path], section.statements)
         end
       end
       effective
+    end
+
+    # One section's terms laid over what a path already had, a later term of
+    # the same name replacing an earlier one outright.
+    def self.laid_over(terms, statements)
+      laid = terms.nil? ? {} : terms
+      statements.each { |term| laid[term.key] = term }
+      laid
     end
 
     # Whole words, case sensitive, over the regions the vocabulary reaches.

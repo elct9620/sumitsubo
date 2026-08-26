@@ -1,10 +1,14 @@
 require "pathname"
 require "sumitsubo/glossary"
+require "sumitsubo/parser/json"
+
+# Nothing under sumitsubo/ names a format, so a test says which it reads.
+PARSERS = [Sumitsubo::Parser::Json.new]
 
 back = Dir.pwd
 Dir.chdir("test/fixtures/glossary")
 
-sections = Sumitsubo::Glossary.load(".spec/glossary.json")
+sections = Sumitsubo::Glossary.load(".spec/glossary.json", PARSERS)
 
 # Which files an entry reaches is half of what the laying rule means, so the
 # scope is printed rather than inferred from the merged result.
@@ -50,7 +54,7 @@ end
 # as above: what is being shown is which of them the specification set aside.
 # @behavior G-009 G-010
 puts "--- a finding the specification set aside, and one it did not ---"
-ignored = Sumitsubo::Glossary.load("ignored.json")
+ignored = Sumitsubo::Glossary.load("ignored.json", PARSERS)
 aside = Sumitsubo::Glossary::Finding.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
 kept = Sumitsubo::Glossary::Finding.new("app/other.rb", 3, "Order", "Purchase", "Order is what the domain calls it.")
 Sumitsubo::Glossary.standing([aside, kept], ignored).each do |finding|
@@ -65,7 +69,7 @@ Dir.chdir(back)
 # @behavior G-003
 puts "--- a missing glossary is a broken reference line, not a difference ---"
 begin
-  Sumitsubo::Glossary.load("test/fixtures/glossary/absent.json")
+  Sumitsubo::Glossary.load("test/fixtures/glossary/absent.json", PARSERS)
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
@@ -73,7 +77,7 @@ end
 # @behavior G-004
 puts "--- so is one that will not parse ---"
 begin
-  Sumitsubo::Glossary.load("test/fixtures/glossary/broken.json")
+  Sumitsubo::Glossary.load("test/fixtures/glossary/broken.json", PARSERS)
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
@@ -81,7 +85,7 @@ end
 # @behavior G-005
 puts "--- and so is one with no glossary in it ---"
 begin
-  Sumitsubo::Glossary.load("test/fixtures/glossary/shapeless.json")
+  Sumitsubo::Glossary.load("test/fixtures/glossary/shapeless.json", PARSERS)
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
@@ -90,7 +94,7 @@ end
 puts "--- an ignore that could not be written down is a broken reference line ---"
 ["test/fixtures/glossary/noat.json", "test/fixtures/glossary/noreason.json"].each do |path|
   begin
-    Sumitsubo::Glossary.load(path)
+    Sumitsubo::Glossary.load(path, PARSERS)
   rescue Sumitsubo::Glossary::Error => e
     puts e.message
   end
@@ -101,7 +105,7 @@ end
 # @behavior G-006
 puts "--- and one named absolutely still answers where the run started ---"
 begin
-  Sumitsubo::Glossary.load(Pathname.new("test/fixtures/glossary/absent.json").expand_path.to_s)
+  Sumitsubo::Glossary.load(Pathname.new("test/fixtures/glossary/absent.json").expand_path.to_s, PARSERS)
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end

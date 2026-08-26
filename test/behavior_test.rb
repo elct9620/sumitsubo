@@ -1,5 +1,9 @@
 require "pathname"
 require "sumitsubo/behavior"
+require "sumitsubo/parser/json"
+
+# Nothing under sumitsubo/ names a format, so a test says which it reads.
+PARSERS = [Sumitsubo::Parser::Json.new]
 
 # The loader answers where a scenario sits as well as what it says. A scenario
 # nothing declares is a finding about the specification, so the reader has to
@@ -10,7 +14,7 @@ require "sumitsubo/behavior"
 
 # @behavior B-001
 puts "--- what the directory declares, and where ---"
-Sumitsubo::Behavior.load("test/fixtures/behavior/.spec/behavior").each do |feature|
+Sumitsubo::Behavior.load("test/fixtures/behavior/.spec/behavior", PARSERS).each do |feature|
   puts "#{feature.key} #{feature.includes.inspect}"
   feature.statements.each do |scenario|
     puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
@@ -23,12 +27,12 @@ end
 
 # @behavior B-002
 puts "--- a directory nobody wrote declares no scenarios ---"
-p Sumitsubo::Behavior.load("test/fixtures/behavior/.spec/absent")
+p Sumitsubo::Behavior.load("test/fixtures/behavior/.spec/absent", PARSERS)
 
 # @behavior B-004
 puts "--- one id under two scenarios leaves a marker nothing to resolve to ---"
 begin
-  Sumitsubo::Behavior.load("test/fixtures/behavior/duplicate")
+  Sumitsubo::Behavior.load("test/fixtures/behavior/duplicate", PARSERS)
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -36,7 +40,7 @@ end
 # @behavior B-003
 puts "--- the root arrives absolute, but a message answers where the run started ---"
 begin
-  Sumitsubo::Behavior.load(Pathname.pwd / "test/fixtures/behavior/duplicate")
+  Sumitsubo::Behavior.load(Pathname.pwd / "test/fixtures/behavior/duplicate", PARSERS)
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -44,7 +48,7 @@ end
 # @behavior B-005
 puts "--- a scenario with no id cannot be referenced at all ---"
 begin
-  Sumitsubo::Behavior.load("test/fixtures/behavior/anonymous")
+  Sumitsubo::Behavior.load("test/fixtures/behavior/anonymous", PARSERS)
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -52,7 +56,7 @@ end
 # @behavior B-006
 puts "--- and neither is a specification that will not parse ---"
 begin
-  Sumitsubo::Behavior.load("test/fixtures/behavior/broken")
+  Sumitsubo::Behavior.load("test/fixtures/behavior/broken", PARSERS)
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -67,7 +71,7 @@ p Sumitsubo::Behavior.ids_in("V-008 V-009")
 # answer at, which is what a finding about it needs.
 # @behavior B-008
 puts "--- two scenarios on one line ---"
-Sumitsubo::Behavior.load("test/fixtures/behavior/oneline").each do |feature|
+Sumitsubo::Behavior.load("test/fixtures/behavior/oneline", PARSERS).each do |feature|
   feature.statements.each { |scenario| puts "  #{scenario.line} #{scenario.key}" }
 end
 
@@ -77,7 +81,7 @@ end
 # @behavior B-011
 puts "--- what each feature's include reaches ---"
 base = Pathname.new("test/fixtures/behavior")
-features = Sumitsubo::Behavior.load(base / ".spec/behavior")
+features = Sumitsubo::Behavior.load(base / ".spec/behavior", PARSERS)
 reach = Sumitsubo::Behavior.reach(features, base, [])
 features.each { |feature| puts "  #{feature.key} #{reach[feature.path].keys.sort.inspect}" }
 puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
