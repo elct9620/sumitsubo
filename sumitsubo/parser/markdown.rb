@@ -89,10 +89,9 @@ module Sumitsubo
         @grammar.captures_in(GRAMMAR, file, BLOCKS, Where.of(file))
       end
 
-      # A feature and its scenarios. The title names the feature and the
-      # paragraph under it says what it is for; every other heading declares a
-      # scenario, whose id is the code span it opens with and whose title is
-      # the rest of that same heading.
+      # A feature and its scenarios. What this holds that no block carries is
+      # the order they arrived in — which scenario a row states its step under,
+      # and where one row ends.
       def read(captures, path)
         key = nil
         text = nil
@@ -118,11 +117,9 @@ module Sumitsubo
           when PARAGRAPH
             text = described(capture, text, scenarios.empty?)
           when HEADING
-            said = folded(capture.text)
-            scoping = said == INCLUDES
-            scenarios.push(scenario_from(path, said, capture.line)) unless scoping
+            scoping = heading(path, capture, scenarios)
           when ITEM
-            includes.push(spelled(path, capture.line, folded(capture.text))) if scoping
+            item(path, capture, includes) if scoping
           when CELL
             row.push(capture)
           end
@@ -131,6 +128,22 @@ module Sumitsubo
 
         refuse(path, 1, "declares no title") if key.nil?
         Specification.new(key, text, includes, path, {}, scenarios)
+      end
+
+      # Every heading but the reserved one declares a scenario. Which kind this
+      # was is answered rather than kept, because it is what the items after it
+      # are read as: under the reserved one they spell includes, and anywhere
+      # else a list is prose.
+      def heading(path, capture, scenarios)
+        said = folded(capture.text)
+        return true if said == INCLUDES
+
+        scenarios.push(scenario_from(path, said, capture.line))
+        false
+      end
+
+      def item(path, capture, includes)
+        includes.push(spelled(path, capture.line, folded(capture.text)))
       end
 
       # A title names the feature, and a file naming two says which of them it
