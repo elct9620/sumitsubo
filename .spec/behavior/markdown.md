@@ -4,18 +4,24 @@ Reading a specification written as Markdown into the shape every mechanism
 judges against.
 
 A specification written this way is the document a person reads as well as the
-reference line the tool compares against, so what the reading recovers is the
-structure a reader already sees: a title, the globs an Includes section lists,
-a scenario heading opening with its id, and the rows stating its steps.
+reference line the tool compares against, so what is recovered is the structure
+a reader already sees: a heading opening with the name a claim uses, the globs
+an Includes section lists, the rows stating a scenario's steps, the words a
+term turns down, and the fence saying how a contract is spelled.
+
+Three kinds of specification are written in this one syntax and each is a form
+of its own, so each asks the grammar for the blocks its own form is written in.
+The same level states a term in one and is prose in another, which is why a
+subheading in a description is passed over by never being captured.
 
 The grammar refuses nothing — every byte sequence is a legal document — so
-every shape rule below is the reading's own, and each answers at the line that
-broke it rather than at the file.
+every shape rule below belongs to the form it was written against, and each
+answers at the line that broke it rather than at the file.
 
-The grammar is handed to the reading rather than reached for, so the file that
-decides what a block means names none. That is why the scenarios about meaning
-are claimed from a test whose snapshot can still be regenerated, and only the
-one reading a real document is claimed from a test that cannot.
+The grammar is handed in rather than reached for, so the files deciding what a
+block means name none. That is why the scenarios about meaning are claimed from
+a test whose snapshot can still be regenerated, and only the ones reading a real
+document are claimed from a test that cannot.
 
 ## Includes
 
