@@ -18,7 +18,7 @@
         },
         {
           "term": "Structured Specification",
-          "definition": "The machine-readable file a mechanism reads: .spec/glossary.json, one file per kind of contract under .spec/contract/, and one file per feature under .spec/behavior/.",
+          "definition": "The files a mechanism reads a specification from: .spec/glossary.json, one file per kind of contract under .spec/contract/, and one file per feature under .spec/behavior/.",
           "not": []
         },
         {
