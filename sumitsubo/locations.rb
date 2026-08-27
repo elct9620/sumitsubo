@@ -4,10 +4,11 @@ module Sumitsubo
   # declares has to answer somewhere a reader can go and look — the line that
   # declares it.
   #
-  # Shared because every mechanism reading a structured specification needs it
-  # and none of them needs it differently: the pattern says which key to follow
-  # and the rest is the same reading. Nothing here reaches the grammar, so a
-  # mechanism using it keeps a snapshot that can be regenerated.
+  # Shared between the format that has to recover those lines and the one
+  # mechanism that reads a specification's own text to know where a word was
+  # spelled: the pattern says what to follow and the rest is the same reading.
+  # Nothing here reaches the grammar, so whoever uses it keeps a snapshot that
+  # can be regenerated.
   module Locations
     # One appearance of a captured value, and the line it was on.
     At = Struct.new(:text, :line)
