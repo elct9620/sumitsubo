@@ -115,12 +115,20 @@ module Sumitsubo
     end
 
     # Every include a definition writes that covers no file. Its interfaces
-    # are then compared against nothing, which answers as though every one of
-    # them were implemented.
-    def self.barren(definitions, base, exclusion)
+    # are then compared against nothing, and every one of them answers as
+    # claimed nowhere — which is why saying so is worth a finding of its own.
+    #
+    # Where an include was written is asked of the parser that read the
+    # specification, since only that one knows how its format spells a glob.
+    def self.barren(definitions, base, exclusion, parsers)
       found = []
       definitions.each do |definition|
-        Scope.barren(base, definition.includes, definition.path, exclusion).each { |one| found.push(one) }
+        empty = Scope.barren(base, definition.includes, exclusion)
+        next if empty.empty?
+
+        spelled = Parser.of(definition.path, parsers).spelled_in(definition.path)
+        where = Where.of(definition.path)
+        empty.each { |pattern| found.push(Scope::Barren.new(where, pattern, spelled[pattern])) }
       end
       found
     end

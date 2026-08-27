@@ -97,12 +97,20 @@ module Sumitsubo
     end
 
     # Every include a feature writes that covers no file. Its scenarios are
-    # then compared against nothing, which answers as though every one of them
-    # were claimed.
-    def self.barren(features, base, exclusion)
+    # then compared against nothing, and every one of them answers as claimed
+    # nowhere — which is why saying so is worth a finding of its own.
+    #
+    # Where an include was written is asked of the parser that read the
+    # specification, since only that one knows how its format spells a glob.
+    def self.barren(features, base, exclusion, parsers)
       found = []
       features.each do |feature|
-        Scope.barren(base, feature.includes, feature.path, exclusion).each { |one| found.push(one) }
+        empty = Scope.barren(base, feature.includes, exclusion)
+        next if empty.empty?
+
+        spelled = Parser.of(feature.path, parsers).spelled_in(feature.path)
+        where = Where.of(feature.path)
+        empty.each { |pattern| found.push(Scope::Barren.new(where, pattern, spelled[pattern])) }
       end
       found
     end

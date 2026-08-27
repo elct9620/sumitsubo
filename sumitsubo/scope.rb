@@ -1,7 +1,4 @@
-require "pathname"
-require "sumitsubo/locations"
 require "sumitsubo/patterns"
-require "sumitsubo/where"
 
 module Sumitsubo
   # The files a specification's `include` covers, less what the project
@@ -18,14 +15,10 @@ module Sumitsubo
   # which a workspace is written with, and one traversal answering every
   # pattern rather than one traversal each.
   module Scope
-    # Every quoted value in a structured specification, so an include can be
-    # looked up by what it says. First wins, as it does for every other
-    # reading: a glob is distinctive enough that the line carrying it is the
-    # line that wrote it.
-    SPELLED = /"([^"]*)"/
-
     # An include covering no file, and the line of the specification that
-    # wrote it.
+    # wrote it. Built by the mechanism rather than here: how a format spells
+    # an include is the parser's to answer, and the walk reads no
+    # specification.
     Barren = Struct.new(:path, :pattern, :line)
 
     def self.of(base, patterns, exclusion)
@@ -37,22 +30,23 @@ module Sumitsubo
       found
     end
 
+    # Which of these patterns covers no file. Only the patterns: where one was
+    # written is the specification's to answer, and the walk never opens one.
+    #
     # An excluded directory is never walked into, so a pattern reaching only
     # what the project excluded reaches nothing here. What tells the two apart
     # is whether any directory the walk refused stands on the pattern's own
     # path: a pattern nothing matches is one nobody can have meant, while one
     # whose files the project took away is the project getting what it asked
     # for.
-    def self.barren(base, patterns, path, exclusion)
-      lines = Locations.of(Pathname.new(path).read, SPELLED)
-      where = Where.of(path)
+    def self.barren(base, patterns, exclusion)
       walked = walk(base, patterns, exclusion)
       found = []
       patterns.each do |pattern|
         next unless selected(pattern, walked.paths).empty?
         next if refused?(walked.pruned, root_of(pattern))
 
-        found.push(Barren.new(where, pattern, lines[pattern]))
+        found.push(pattern)
       end
       found
     end

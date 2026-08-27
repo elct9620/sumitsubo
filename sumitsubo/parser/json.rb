@@ -24,6 +24,12 @@ module Sumitsubo
       NAME = /"name"\s*:\s*"([^"]*)"/
       AT = /"at"\s*:\s*"([^"]*)"/
 
+      # Every quoted value, since an include is written as one and this format
+      # gives it no key of its own to follow. First wins, as it does for every
+      # other reading here: a glob is distinctive enough that the line
+      # carrying it is the line that wrote it.
+      SPELLED = /"([^"]*)"/
+
       # What a vocabulary is called where it names no subdomain of its own.
       GLOBAL = "Global"
 
@@ -98,6 +104,13 @@ module Sumitsubo
           reading,
           interfaces
         )
+      end
+
+      # The line each include is written on. Asked only once one of them turned
+      # out to cover nothing, so a run whose includes all reach a file never
+      # reads a specification a second time.
+      def spelled_in(path)
+        Locations.of(File.read(path), SPELLED)
       end
 
       def glossary(path)

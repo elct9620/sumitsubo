@@ -79,6 +79,24 @@ module Sumitsubo
         read(blocks_in(path), path)
       end
 
+      # The line each include is written on. The reserved heading says which
+      # list items are includes, the same as the reading below; what a finding
+      # wants of them is the line rather than the glob. Asked only once one of
+      # them turned out to cover nothing, so a document whose includes all
+      # reach a file is never read a second time.
+      def spelled_in(path)
+        found = {}
+        scoping = false
+        blocks_in(path).each do |capture|
+          scoping = folded(capture.text) == INCLUDES if capture.name == HEADING
+          next unless capture.name == ITEM && scoping
+
+          glob = spelled(path, capture.line, folded(capture.text))
+          found[glob] = capture.line if found[glob].nil?
+        end
+        found
+      end
+
       private
 
       # Every byte sequence is a legal document, so the grammar refuses
