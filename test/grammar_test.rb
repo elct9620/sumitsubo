@@ -99,7 +99,11 @@ def said(name, holding)
   holding.each { |one| puts "    #{name} #{one}" }
 end
 
+# The document breaks its description up with a subheading. This form is not
+# written at that level, so the heading is never captured and no scenario comes
+# of it — which is what the count below says.
 # @behavior MD-015
+# @behavior MD-018
 feature = reading.behavior("test/fixtures/reading/init.md")
 
 puts "#{feature.key} #{feature.includes.inspect}"

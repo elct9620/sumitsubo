@@ -2,6 +2,12 @@
 
 Laying down an empty specification to start a reference line from.
 
+### What a run answers for
+
+A description long enough to want breaking up says so with a subheading. This
+form is not written at that level, so the heading is never captured and the
+paragraph under it is prose like any other.
+
 ## Includes
 
 - `test/init_test.rb`

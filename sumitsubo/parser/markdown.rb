@@ -1,8 +1,8 @@
 require "pathname"
 require "sumitsubo/error"
+require "sumitsubo/parser/markdown/builder/feature"
+require "sumitsubo/parser/markdown/builder/vocabulary"
 require "sumitsubo/parser/markdown/format"
-require "sumitsubo/parser/markdown/feature"
-require "sumitsubo/parser/markdown/vocabulary"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -15,19 +15,20 @@ module Sumitsubo
     # grammar answers, and this file can be read — and its test regenerated —
     # without one.
     #
-    # What is here is the format and the seam: the one place a document becomes
-    # blocks. What a project declares is each reading's, one for every kind of
-    # specification, because the three answer different questions and no caller
-    # ever chooses between them.
+    # This is the seam and nothing else: it hands a builder's query to the
+    # grammar and hands the captures back to that builder. Which blocks a
+    # question is answered from is the builder's, because a feature and a
+    # vocabulary are two forms sharing one syntax; what a block means is the
+    # builder's for the same reason.
     class Markdown
       # The extension is the whole of what says a file is written this way. A
       # specification is named by the project rather than found by its content,
       # so nothing here opens the file to decide.
       SUFFIX = ".md"
 
-      # The grammar the query is written against. Node names are that grammar's
-      # own and no two spell one alike, so the query and the name travel
-      # together rather than the name arriving from outside.
+      # The grammar every query here is written against. Node names are that
+      # grammar's own and no two spell one alike, so the name travels with the
+      # queries rather than arriving from outside.
       GRAMMAR = "markdown"
 
       def initialize(grammar)
@@ -39,7 +40,7 @@ module Sumitsubo
       end
 
       def behavior(path)
-        Feature.new(path).read(blocks_in(path))
+        built(Builder::Feature.new(path), path)
       end
 
       def glossary(path)
@@ -47,27 +48,27 @@ module Sumitsubo
         where = Where.of(file)
         raise Unreadable, "no glossary at #{where}; sumi init lays one down" unless file.exist?
 
-        Vocabulary.new(path, where).read(blocks_in(path))
+        built(Builder::Vocabulary.new(path, where), path)
       end
 
-      # The line each include is written on. The reserved heading says which
-      # list items are includes, the same as the reading does; what a finding
-      # wants of them is the line rather than the glob. Asked only once one of
-      # them turned out to cover nothing, so a document whose includes all
-      # reach a file is never read a second time.
+      # The line each include is written on. Every kind of specification lists
+      # them under the reserved heading and they differ only in which level
+      # that heading sits at, so this is asked of a document without being told
+      # which kind it is.
+      #
+      # Asked only once one of them turned out to cover nothing, so a document
+      # whose includes all reach a file is never read a second time.
       def spelled_in(path)
         found = {}
         scoping = false
-        blocks_in(path).each do |capture|
+        captured(Format::SPELLED, path).each do |capture|
           said = Format.folded(capture.text)
-          scoping = said == Format::INCLUDES if capture.name == Format::H2
+          scoping = said == Format::INCLUDES unless capture.name == Format::ITEM
           next unless capture.name == Format::ITEM && scoping
 
-          # The document was read before this is asked, so an item under the
+          # The document was built before this is asked, so an item under the
           # reserved heading is a code span already: one that is not was
-          # refused by the reading, and there is no second refusal to make
-          # here — nor a topic to name it under, since this is asked of every
-          # kind of specification alike.
+          # refused then, and there is no topic to name a second refusal under.
           glob = Format.code_span(said)
           found[glob[0]] = capture.line if !glob.nil? && found[glob[0]].nil?
         end
@@ -76,12 +77,16 @@ module Sumitsubo
 
       private
 
+      def built(builder, path)
+        builder.build(captured(builder.query, path))
+      end
+
       # Every byte sequence is a legal document, so the grammar refuses
       # nothing: what a specification written wrong loses is the shape the
-      # query matches, and saying so is a reading's rather than the grammar's.
-      def blocks_in(path)
+      # query matches, and saying so is a builder's rather than the grammar's.
+      def captured(query, path)
         file = Pathname.new(path)
-        @grammar.captures_in(GRAMMAR, file, Format::QUERY, Where.of(file))
+        @grammar.captures_in(GRAMMAR, file, query, Where.of(file))
       end
     end
   end

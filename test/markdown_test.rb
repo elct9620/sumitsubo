@@ -113,19 +113,6 @@ noted = read([
 ])
 puts "  #{noted.text}"
 
-# A level this reading has no use for is prose, the same as a paragraph under a
-# scenario. Three readings meet in one query, so a feature is handed the levels
-# a vocabulary states its terms at and passes over the ones it does not read.
-# @behavior MD-018
-puts "--- a level this reading does not read is prose ---"
-read([
-  h1(1, "Contract"),
-  paragraph(3, "What the mechanism establishes."),
-  h3(5, "Verification runs one way"),
-  paragraph(7, "An interface nothing claims is a difference."),
-  h2(9, "`T-001` An interface nothing claims")
-]).statements.each { |scenario| puts "  #{scenario.key} #{scenario.text}" }
-
 # @behavior MD-006
 puts "--- a heading that does not open with an id ---"
 read([h1(1, "Init"), h2(3, "The first run")])
