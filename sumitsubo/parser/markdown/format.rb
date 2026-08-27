@@ -14,7 +14,7 @@ module Sumitsubo
       # What a reading makes of a block is its own; what every reading does the
       # same way is here, because a code span means one thing across the three
       # and a document read two ways is a format with two definitions.
-      module Blocks
+      module Format
         # Every heading level is asked for, because six is all Markdown has and
         # a level nobody captures is a heading that vanishes with its section. A
         # heading arrives under a name for its level rather than with the level
@@ -70,25 +70,13 @@ module Sumitsubo
         CONTENT = "content"
         CELL = "cell"
 
-        # The headings that say what a specification answers for rather than
-        # declaring something. They are prose, so a scenario or a contract of
-        # the same name is written in a code span and does not collide with
-        # them; a term is prose too, which is what a vocabulary gives up to have
-        # them.
+        # The one heading every kind of specification spells alike, since every
+        # one of them says what it answers for. It is prose, so a scenario or a
+        # contract of the same name is written in a code span and does not
+        # collide with it; a term is prose too, which is what a vocabulary gives
+        # up to have it. A heading only one reading knows belongs to that
+        # reading.
         INCLUDES = "Includes"
-        REJECTED = "Rejected"
-
-        # The topic a refusal sends a reader to for the form it was written
-        # against, since one format answers for three of them.
-        BEHAVIOR = "behavior"
-        GLOSSARY = "glossary"
-
-        # What a reader puts between a word taken letter for letter and the
-        # prose saying why. Taken off where it is there and not asked for where
-        # it is not: a reason reads the same either way, so requiring it would
-        # refuse nothing a person could have meant differently. `fmt` is what
-        # puts it there.
-        DASH = "—"
 
         # What a pair of backticks opens the text with, and what follows it.
         # Found by the marks themselves rather than by a pattern: what is
@@ -103,13 +91,6 @@ module Sumitsubo
           [said[1, closed - 1], said[(closed + 1)..-1].strip]
         end
 
-        # What a list item says after the word it took letter for letter.
-        def self.reason(said)
-          return empty_to_nil(said) unless said.index(DASH) == 0
-
-          empty_to_nil(said[DASH.length..-1].strip)
-        end
-
         # A soft line break is a space, which is what lets a paragraph be
         # wrapped for a reader without the wrapping reaching what it says.
         def self.folded(said)
@@ -122,7 +103,8 @@ module Sumitsubo
 
         # A refusal names the topic that has the form it was written against,
         # because one format reads three of them and a reader sent to the wrong
-        # one is sent nowhere.
+        # one is sent nowhere. Which topic that is belongs to the reading, so it
+        # arrives from there.
         def self.refuse(path, line, said, topic)
           raise Unreadable, "#{Where.of(path)}:#{line} #{said}; sumi help #{topic} has the form"
         end

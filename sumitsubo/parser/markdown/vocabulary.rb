@@ -1,4 +1,4 @@
-require "sumitsubo/parser/markdown/blocks"
+require "sumitsubo/parser/markdown/format"
 require "sumitsubo/specification"
 
 module Sumitsubo
@@ -21,6 +21,19 @@ module Sumitsubo
       # standing for it, so the state a walk is in and the heading a reader
       # wrote are the same thing.
       class Vocabulary
+        # The one heading a term carries, which no other reading knows.
+        REJECTED = "Rejected"
+
+        # The topic a refusal from this reading sends a reader to.
+        TOPIC = "glossary"
+
+        # What a reader puts between a word taken letter for letter and the
+        # prose saying why. Taken off where it is there and not asked for where
+        # it is not: a reason reads the same either way, so requiring it would
+        # refuse nothing a person could have meant differently. `fmt` is what
+        # puts it there.
+        DASH = "—"
+
         def initialize(path, where)
           @path = path
           @where = where
@@ -40,14 +53,14 @@ module Sumitsubo
         private
 
         def arrived(capture)
-          said = Blocks.folded(capture.text)
+          said = Format.folded(capture.text)
           case capture.name
-          when Blocks::H2 then section(said)
-          when Blocks::H3 then term(said, capture.line)
-          when Blocks::H4 then rejects(said, capture.line)
-          when Blocks::PARAGRAPH then defines(said)
-          when Blocks::ITEM then listed(said, capture.line)
-          when Blocks::NESTED then set_aside(said, capture.line)
+          when Format::H2 then section(said)
+          when Format::H3 then term(said, capture.line)
+          when Format::H4 then rejects(said, capture.line)
+          when Format::PARAGRAPH then defines(said)
+          when Format::ITEM then listed(said, capture.line)
+          when Format::NESTED then set_aside(said, capture.line)
           end
         end
 
@@ -64,7 +77,7 @@ module Sumitsubo
         def term(said, line)
           refuse(line, "declares #{said} outside any section") if @sections.empty?
 
-          @holding = said == Blocks::INCLUDES ? Blocks::INCLUDES : nil
+          @holding = said == Format::INCLUDES ? Format::INCLUDES : nil
           @rejected = nil
           @term = nil
           return unless @holding.nil?
@@ -78,9 +91,9 @@ module Sumitsubo
         # every rejection under it out of the run without saying so.
         def rejects(said, line)
           refuse(line, "writes #{said} outside any term") if @term.nil?
-          refuse(line, "writes #{said} where only #{Blocks::REJECTED} is read") unless said == Blocks::REJECTED
+          refuse(line, "writes #{said} where only #{REJECTED} is read") unless said == REJECTED
 
-          @holding = Blocks::REJECTED
+          @holding = REJECTED
           @rejected = nil
         end
 
@@ -101,16 +114,16 @@ module Sumitsubo
         # glob where the section says what it covers, a rejected word where a
         # term says what it refuses, and prose anywhere else.
         def listed(said, line)
-          if @holding == Blocks::INCLUDES
+          if @holding == Format::INCLUDES
             @sections[-1].includes.push(spelled(line, said))
             return
           end
-          return unless @holding == Blocks::REJECTED
+          return unless @holding == REJECTED
 
-          opened = Blocks.code_span(said)
+          opened = Format.code_span(said)
           refuse(line, "rejects a word that is not in backticks") if opened.nil?
 
-          @rejected = Statement.new(opened[0], Blocks.reason(opened[1]), @where, line, {}, [])
+          @rejected = Statement.new(opened[0], reason(opened[1]), @where, line, {}, [])
           @term.statements.push(@rejected)
         end
 
@@ -119,28 +132,35 @@ module Sumitsubo
         # and reports itself, and one with no reason is the exception that
         # outlives whoever knew why.
         def set_aside(said, line)
-          return unless @holding == Blocks::REJECTED
+          return unless @holding == REJECTED
 
           refuse(line, "writes an ignore under no rejected word") if @rejected.nil?
 
-          opened = Blocks.code_span(said)
+          opened = Format.code_span(said)
           refuse(line, "writes an ignore that does not name a line in backticks") if opened.nil?
 
-          why = Blocks.reason(opened[1])
+          why = reason(opened[1])
           refuse(line, "writes an ignore at #{opened[0]} with no reason") if why.nil?
 
           @rejected.statements.push(Statement.new(opened[0], why, @where, line, {}, []))
         end
 
+        # What a list item says after the word it took letter for letter.
+        def reason(said)
+          return Format.empty_to_nil(said) unless said.index(DASH) == 0
+
+          Format.empty_to_nil(said[DASH.length..-1].strip)
+        end
+
         def spelled(line, said)
-          opened = Blocks.code_span(said)
+          opened = Format.code_span(said)
           refuse(line, "writes an include that is not a glob in backticks") if opened.nil?
 
           opened[0]
         end
 
         def refuse(line, said)
-          Blocks.refuse(@path, line, said, Blocks::GLOSSARY)
+          Format.refuse(@path, line, said, TOPIC)
         end
       end
     end

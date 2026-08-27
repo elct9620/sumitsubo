@@ -1,6 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/parser/markdown/blocks"
+require "sumitsubo/parser/markdown/format"
 require "sumitsubo/parser/markdown/feature"
 require "sumitsubo/parser/markdown/vocabulary"
 require "sumitsubo/where"
@@ -59,14 +59,17 @@ module Sumitsubo
         found = {}
         scoping = false
         blocks_in(path).each do |capture|
-          said = Blocks.folded(capture.text)
-          scoping = said == Blocks::INCLUDES if capture.name == Blocks::H2
-          next unless capture.name == Blocks::ITEM && scoping
+          said = Format.folded(capture.text)
+          scoping = said == Format::INCLUDES if capture.name == Format::H2
+          next unless capture.name == Format::ITEM && scoping
 
-          glob = Blocks.code_span(said)
-          Blocks.refuse(path, capture.line, "writes an include that is not a glob in backticks", Blocks::BEHAVIOR) if glob.nil?
-
-          found[glob[0]] = capture.line if found[glob[0]].nil?
+          # The document was read before this is asked, so an item under the
+          # reserved heading is a code span already: one that is not was
+          # refused by the reading, and there is no second refusal to make
+          # here — nor a topic to name it under, since this is asked of every
+          # kind of specification alike.
+          glob = Format.code_span(said)
+          found[glob[0]] = capture.line if !glob.nil? && found[glob[0]].nil?
         end
         found
       end
@@ -78,7 +81,7 @@ module Sumitsubo
       # query matches, and saying so is a reading's rather than the grammar's.
       def blocks_in(path)
         file = Pathname.new(path)
-        @grammar.captures_in(GRAMMAR, file, Blocks::QUERY, Where.of(file))
+        @grammar.captures_in(GRAMMAR, file, Format::QUERY, Where.of(file))
       end
     end
   end

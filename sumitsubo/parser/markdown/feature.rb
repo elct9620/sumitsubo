@@ -1,4 +1,4 @@
-require "sumitsubo/parser/markdown/blocks"
+require "sumitsubo/parser/markdown/format"
 require "sumitsubo/specification"
 
 module Sumitsubo
@@ -15,6 +15,9 @@ module Sumitsubo
         # refused rather than passed over: a step nobody reads is a promise
         # nobody keeps.
         STEPS = ["Given", "When", "Then"]
+
+        # The topic a refusal from this reading sends a reader to.
+        TOPIC = "behavior"
 
         def initialize(path)
           @path = path
@@ -42,17 +45,17 @@ module Sumitsubo
           # cells. That is what the row itself is asked for: a heading or a
           # paragraph after a table closes the last row on its own, and between
           # two rows there would otherwise be nothing to tell them apart.
-          unless name == Blocks::CELL
+          unless name == Format::CELL
             stated
             @row = []
           end
 
           case name
-          when Blocks::H1 then titled(capture)
-          when Blocks::PARAGRAPH then described(capture)
-          when Blocks::H2 then heading(capture)
-          when Blocks::ITEM then item(capture) if @scoping
-          when Blocks::CELL then @row.push(capture)
+          when Format::H1 then titled(capture)
+          when Format::PARAGRAPH then described(capture)
+          when Format::H2 then heading(capture)
+          when Format::ITEM then item(capture) if @scoping
+          when Format::CELL then @row.push(capture)
           end
         end
 
@@ -61,7 +64,7 @@ module Sumitsubo
         def titled(capture)
           refuse(capture.line, "declares a second title") unless @key.nil?
 
-          @key = Blocks.folded(capture.text)
+          @key = Format.folded(capture.text)
         end
 
         # Only the paragraph under the title says what the feature is for. A
@@ -70,15 +73,15 @@ module Sumitsubo
         def described(capture)
           return unless @text.nil? && @scenarios.empty?
 
-          @text = Blocks.folded(capture.text)
+          @text = Format.folded(capture.text)
         end
 
         # Every heading but the reserved one declares a scenario. Which kind
         # arrived is what the items after it are read as: under the reserved
         # one they spell includes, and anywhere else a list is prose.
         def heading(capture)
-          said = Blocks.folded(capture.text)
-          @scoping = said == Blocks::INCLUDES
+          said = Format.folded(capture.text)
+          @scoping = said == Format::INCLUDES
           return if @scoping
 
           @scenarios.push(scenario_from(said, capture.line))
@@ -87,7 +90,7 @@ module Sumitsubo
         # An include is taken letter for letter, so it is spelled in a code
         # span the way every other thing the tool consumes unread is.
         def item(capture)
-          @includes.push(spelled(capture.line, Blocks.folded(capture.text)))
+          @includes.push(spelled(capture.line, Format.folded(capture.text)))
         end
 
         # The cells held so far, stated as the step they make. A row is closed
@@ -105,12 +108,12 @@ module Sumitsubo
         # in a code span and taken from it letter for letter; what follows is
         # the title, which nothing has to match and so has no shape to keep.
         def scenario_from(said, line)
-          opened = Blocks.code_span(said)
+          opened = Format.code_span(said)
           if opened.nil? || opened[0].empty?
             refuse(line, "declares a scenario whose heading does not open with an id in backticks")
           end
 
-          Statement.new(opened[0], Blocks.empty_to_nil(opened[1]), @path, line, { "given" => [] }, [])
+          Statement.new(opened[0], Format.empty_to_nil(opened[1]), @path, line, { "given" => [] }, [])
         end
 
         # Which step a row states, given how many cells it turned out to have.
@@ -135,14 +138,14 @@ module Sumitsubo
         end
 
         def spelled(line, said)
-          opened = Blocks.code_span(said)
+          opened = Format.code_span(said)
           refuse(line, "writes an include that is not a glob in backticks") if opened.nil?
 
           opened[0]
         end
 
         def refuse(line, said)
-          Blocks.refuse(@path, line, said, Blocks::BEHAVIOR)
+          Format.refuse(@path, line, said, TOPIC)
         end
       end
     end
