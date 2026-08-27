@@ -365,3 +365,27 @@ one reading a real document is claimed from a test that cannot.
 | Given | a contract carrying two fences |
 | When | the blocks the document is made of are read |
 | Then | the first is the signature and the second is prose |
+
+## `MD-044` Includes written at the level a feature writes them
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature scoping itself under the second level, and a list elsewhere |
+| When | the line each include was written on is asked for |
+| Then | only the globs under the reserved heading answer |
+
+## `MD-045` Includes written at the level a vocabulary writes them
+
+| Step | Statement |
+| --- | --- |
+| Given | two sections each scoping itself under the third level, and a list elsewhere |
+| When | the line each include was written on is asked for |
+| Then | both sections' globs answer, since which level the heading sits at is not asked |
+
+## `MD-046` One glob written twice
+
+| Step | Statement |
+| --- | --- |
+| Given | two sections whose includes name one glob |
+| When | the line each include was written on is asked for |
+| Then | it answers at the line it was first written on |

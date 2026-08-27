@@ -98,3 +98,9 @@ Internal seams {} []
   refused: cli.md:1 declares no name; sumi help contract has the form
 --- a second fence under one contract ---
   Store.open {"language" => ["ruby"], "signature" => ["def self.open(path)\n"]}
+--- includes written at the level a feature writes them ---
+{"test/init_test.rb" => 5, "test/other_test.rb" => 6}
+--- includes written at the level a vocabulary writes them ---
+{"app/**/*.rb" => 5, "app/billing/*.rb" => 15}
+--- one glob written twice ---
+{"app/**/*.rb" => 5}

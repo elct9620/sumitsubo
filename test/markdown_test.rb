@@ -425,3 +425,37 @@ definition([
   fence(5, "```ruby\ndef self.open(path)\n```"), language(5, "ruby"), content(6, "def self.open(path)\n"),
   fence(9, "```ruby\nStore.open('a')\n```"), language(9, "ruby"), content(10, "Store.open('a')\n")
 ]).statements.each { |contract| puts "  #{contract.key} #{contract.attributes.inspect}" }
+
+# --- where an include was written ----------------------------------------
+#
+# Asked of a document without being told which kind it is, because every kind
+# lists its includes under the reserved heading and they differ only in which
+# level that heading sits at.
+
+def spelled_in(captures)
+  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).spelled_in("spec.md")
+end
+
+# @behavior MD-044
+puts "--- includes written at the level a feature writes them ---"
+p spelled_in([
+  h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"), item(6, "`test/other_test.rb`"),
+  h2(8, "`I-001` A run"), item(10, "`not an include`")
+])
+
+# @behavior MD-045
+puts "--- includes written at the level a vocabulary writes them ---"
+p spelled_in([
+  h2(1, "Everywhere"), h3(3, "Includes"), item(5, "`app/**/*.rb`"),
+  h3(7, "Order"), item(9, "`not an include`"),
+  h2(11, "Billing"), h3(13, "Includes"), item(15, "`app/billing/*.rb`")
+])
+
+# One glob written twice answers at the line it was first written on, since
+# that is where a reader goes to fix it.
+# @behavior MD-046
+puts "--- one glob written twice ---"
+p spelled_in([
+  h2(1, "Everywhere"), h3(3, "Includes"), item(5, "`app/**/*.rb`"),
+  h2(7, "Billing"), h3(9, "Includes"), item(11, "`app/**/*.rb`")
+])
