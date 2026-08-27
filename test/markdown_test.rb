@@ -25,8 +25,10 @@ end
 def h1(line, text) = Capture.new(0, "h1", line, text)
 def h2(line, text) = Capture.new(0, "h2", line, text)
 def h3(line, text) = Capture.new(0, "h3", line, text)
+def h4(line, text) = Capture.new(0, "h4", line, text)
 def paragraph(line, text) = Capture.new(0, "paragraph", line, text)
 def item(line, text) = Capture.new(0, "item", line, text)
+def nested(line, text) = Capture.new(0, "nested", line, text)
 def row(line, text) = Capture.new(0, "row", line, text)
 def cell(line, text) = Capture.new(0, "cell", line, text)
 
@@ -179,3 +181,131 @@ read([h1(1, "Init"), h1(3, "Verify")])
 puts "--- which files this parser answers for ---"
 parser = Sumitsubo::Parser::Markdown.new(Canned.new([]))
 p [parser.reads?("init.md"), parser.reads?("init.json"), parser.reads?(".spec/behavior/init.md")]
+
+# --- a vocabulary --------------------------------------------------------
+#
+# One document holds several sections, so this reading answers a list. The
+# path names a file that is really there, because a vocabulary nobody wrote is
+# refused before any block is read.
+
+VOCABULARY = "test/fixtures/reading/glossary.md"
+
+def vocabulary(captures)
+  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).glossary(VOCABULARY)
+rescue Sumitsubo::Unreadable => e
+  puts "  refused: #{e.message}"
+  nil
+end
+
+def said_of(section)
+  puts "#{section.key} #{section.includes.inspect} #{section.text.inspect}"
+  section.statements.each do |term|
+    puts "  #{term.path}:#{term.line} #{term.key} — #{term.text}"
+    term.statements.each do |word|
+      puts "    rejects #{word.key} — #{word.text}"
+      word.statements.each { |ignore| puts "      #{ignore.line} #{ignore.key} — #{ignore.text}" }
+    end
+  end
+end
+
+# @behavior MD-019
+puts "--- a vocabulary read into sections, terms and the words they reject ---"
+vocabulary([
+  h1(1, "Glossary"),
+  paragraph(3, "Prose above every section."),
+  h2(5, "Everywhere"),
+  paragraph(7, "What this section is for."),
+  h3(9, "Includes"),
+  item(11, "`app/**/*.rb`"),
+  h3(13, "Order"),
+  paragraph(15, "What a customer asks us to fulfil."),
+  h4(17, "Rejected"),
+  item(19, "`Purchase` — Order is what the domain calls it."),
+  nested(20, "`app/legacy_import.rb:88` — Quotes the upstream column name."),
+  h2(22, "Billing"),
+  h3(24, "Includes"),
+  item(26, "`app/billing/*.rb`"),
+  h3(28, "Order"),
+  paragraph(30, "The billable set of lines.")
+]).each { |section| said_of(section) }
+
+# A subdomain is a section like any other, so two of them declaring one term is
+# what the mechanism lays over rather than an ambiguity to refuse.
+# @behavior MD-020
+puts "--- two sections declaring one term ---"
+p vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"),
+  h2(7, "Billing"), h3(9, "Order")
+]).map { |section| [section.key, section.statements.map { |term| term.key }] }
+
+# The separator is what a reader puts there and `fmt` is what keeps it there,
+# so the reason reads the same whether or not it was written.
+# @behavior MD-021
+puts "--- a rejected word written with and without the separator ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
+  item(9, "`Purchase` — Order is what the domain calls it."),
+  item(10, "`Buy` Order is what the domain calls it."),
+  item(11, "`Acquire`")
+])[0].statements[0].statements.each { |word| puts "  #{word.key} #{word.text.inspect}" }
+
+# @behavior MD-022
+puts "--- a term written under no section ---"
+vocabulary([h1(1, "Glossary"), h3(3, "Order")])
+
+# @behavior MD-023
+puts "--- a document declaring no section at all ---"
+vocabulary([h1(1, "Glossary"), paragraph(3, "Prose and nothing else.")])
+
+# @behavior MD-024
+puts "--- a heading under a term that is not Rejected ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejcted")
+])
+
+# @behavior MD-025
+puts "--- Rejected written under no term ---"
+vocabulary([h1(1, "Glossary"), h2(3, "Everywhere"), h4(5, "Rejected")])
+
+# @behavior MD-026
+puts "--- a rejected word that is not in backticks ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
+  item(9, "Purchase — Order is what the domain calls it.")
+])
+
+# @behavior MD-027
+puts "--- an ignore written under no rejected word ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
+  nested(9, "`app/order.rb:2` — Quotes the upstream column name.")
+])
+
+# @behavior MD-028
+puts "--- an ignore with nothing to say why ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
+  item(9, "`Purchase` — Order is what the domain calls it."),
+  nested(10, "`app/order.rb:2`")
+])
+
+# A list under a term but above Rejected is prose, the same as a paragraph
+# under a scenario: only the reserved heading says a list declares something.
+# @behavior MD-029
+puts "--- a list a reserved heading does not open is prose ---"
+p vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"),
+  item(7, "one the definition wanted to list"),
+  nested(8, "and one under it")
+])[0].statements[0].statements
+
+# A vocabulary is refused before any block is read, because a file nobody
+# wrote is a reference line to compare against rather than a document out of
+# shape.
+# @behavior MD-030
+puts "--- a vocabulary nobody wrote ---"
+begin
+  Sumitsubo::Parser::Markdown.new(Canned.new([])).glossary("nowhere.md")
+rescue Sumitsubo::Unreadable => e
+  puts "  refused: #{e.message}"
+end
