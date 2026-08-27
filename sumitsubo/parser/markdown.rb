@@ -28,34 +28,65 @@ module Sumitsubo
       # travel together rather than the name arriving from outside.
       GRAMMAR = "markdown"
 
-      # The blocks a specification is written in. Every pattern is anchored at
-      # the section holding it, which is what tells a paragraph of its own from
-      # the paragraph a list item is made of — both are `(paragraph (inline))`,
-      # and only where they sit says which.
+      # The blocks a specification is written in — which is to say, the format.
+      # A block a specification may be written in is here; anything else a
+      # document holds is prose the readings walk past. So a mechanism never
+      # extends this: three of them share one query, and what a fourth needs is
+      # already captured. Adding a pattern is widening the format, which is a
+      # decision worth writing down rather than a line worth adding quietly.
       #
-      # A heading arrives under a name for its level rather than with the level
-      # to read, because the grammar spells each marker as a kind of its own.
+      # Every heading level is asked for, because six is all Markdown has and a
+      # level nobody captures is a heading that vanishes with its section. A
+      # heading arrives under a name for its level rather than with the level to
+      # read: the grammar spells each marker as a kind of its own, and no level
+      # means one thing across the readings — an h3 states a term in a
+      # vocabulary and is prose in a feature.
       #
-      # A table row is asked for as well as its cells, and arrives ahead of
-      # them, so where one row ends and the next begins is the grammar's answer
-      # rather than a comparison of line numbers. The cells stay the grammar's
-      # too: a separator a document escapes belongs to the cell holding it, and
+      # Every other pattern is anchored at the section holding it, which is what
+      # tells a paragraph of its own from the paragraph a list item is made of —
+      # both are `(paragraph (inline))`, and only where they sit says which. A
+      # nested item is anchored one level deeper for the same reason:
+      # unanchored, a third level would arrive spelled exactly like the second
+      # and be read as one. Two levels is what a list carries here, so a third
+      # is captured by nothing.
+      #
+      # A fence and a table row are each asked for as well as their parts, and
+      # arrive ahead of them, so where one ends is the grammar's answer rather
+      # than a comparison of line numbers — and a fence carrying no language is
+      # still a fence rather than nothing. The cells stay the grammar's too: a
+      # separator a document escapes belongs to the cell holding it, and
       # splitting the row's own text would take it for a separator.
       BLOCKS = <<~BLOCKS
-        (atx_heading (atx_h1_marker) (inline) @title)
-        (atx_heading (atx_h2_marker) (inline) @heading)
+        (atx_heading (atx_h1_marker) (inline) @h1)
+        (atx_heading (atx_h2_marker) (inline) @h2)
+        (atx_heading (atx_h3_marker) (inline) @h3)
+        (atx_heading (atx_h4_marker) (inline) @h4)
+        (atx_heading (atx_h5_marker) (inline) @h5)
+        (atx_heading (atx_h6_marker) (inline) @h6)
         (section (paragraph (inline) @paragraph))
         (section (list (list_item (paragraph (inline) @item))))
+        (section (list (list_item (list (list_item (paragraph (inline) @nested))))))
+        (section (fenced_code_block) @fence)
+        (section (fenced_code_block (info_string (language) @language)))
+        (section (fenced_code_block (code_fence_content) @content))
         (pipe_table_row) @row
         (pipe_table_row (pipe_table_cell) @cell)
       BLOCKS
 
       # What the query calls each thing it captures. A block says what it is by
       # the name it arrives under, so nothing here reads the text to decide.
-      TITLE = "title"
-      HEADING = "heading"
+      H1 = "h1"
+      H2 = "h2"
+      H3 = "h3"
+      H4 = "h4"
+      H5 = "h5"
+      H6 = "h6"
       PARAGRAPH = "paragraph"
       ITEM = "item"
+      NESTED = "nested"
+      FENCE = "fence"
+      LANGUAGE = "language"
+      CONTENT = "content"
       CELL = "cell"
 
       # The heading that says what a specification answers for rather than
@@ -88,7 +119,7 @@ module Sumitsubo
         found = {}
         scoping = false
         blocks_in(path).each do |capture|
-          scoping = folded(capture.text) == INCLUDES if capture.name == HEADING
+          scoping = folded(capture.text) == INCLUDES if capture.name == H2
           next unless capture.name == ITEM && scoping
 
           glob = spelled(path, capture.line, folded(capture.text))
@@ -130,11 +161,11 @@ module Sumitsubo
           end
 
           case name
-          when TITLE
+          when H1
             key = titled(path, capture, key)
           when PARAGRAPH
             text = described(capture, text, scenarios.empty?)
-          when HEADING
+          when H2
             scoping = heading(path, capture, scenarios)
           when ITEM
             item(path, capture, includes) if scoping

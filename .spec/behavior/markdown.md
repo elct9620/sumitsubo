@@ -157,3 +157,11 @@ one reading a real document is claimed from a test that cannot.
 | Given | one specification written as Markdown and as JSON |
 | When | each is read by the reading answering for it |
 | Then | the two answer alike in every field but the path and the line |
+
+## `MD-018` A level this reading has no use for is prose
+
+| Step | Statement |
+| --- | --- |
+| Given | a document whose feature description is broken up by subheadings |
+| When | the blocks the document is made of are read |
+| Then | the subheadings are passed over and the scenarios are the headings that state one |

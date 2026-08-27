@@ -13,6 +13,8 @@ one two three
   I-003 nil
 --- a paragraph under a scenario is passed over ---
   What init lays down.
+--- a level this reading does not read is prose ---
+  T-001 An interface nothing claims
 --- a heading that does not open with an id ---
   refused: init.md:3 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
 --- an id in backticks that is empty ---
