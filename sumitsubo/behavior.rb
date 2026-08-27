@@ -57,15 +57,22 @@ module Sumitsubo
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      features = files_in(path).map { |file| feature_from(file, parsers) }
+      features = files_in(path, parsers).map { |file| feature_from(file, parsers) }
       refuse_ambiguity(features)
       features
     end
 
     # A found path is a String: it is what a feature answers with, and what a
     # finding about one of its scenarios points at.
-    def self.files_in(path)
-      path.glob("*.json").map { |file| "#{file}" }.sort
+    #
+    # Which files are specifications is the parsers' to say rather than an
+    # extension written here: a project writes one feature per file and this
+    # build reads whichever formats it was built with. What no parser answers
+    # for is passed over, so a directory is still the project's to keep other
+    # things in.
+    def self.files_in(path, parsers)
+      path.glob("*").select { |file| file.file? && Parser.reads?(file, parsers) }
+          .map { |file| "#{file}" }.sort
     end
 
     # The files each feature reaches, held under the specification that wrote

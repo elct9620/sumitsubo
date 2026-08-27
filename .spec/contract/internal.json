@@ -65,6 +65,18 @@
       ]
     },
     {
+      "name": "Sumitsubo::Parser.reads?",
+      "description": "The one place a run answers whether this build reads the format a file is written in.",
+      "params": [
+        {
+          "name": "path"
+        },
+        {
+          "name": "parsers"
+        }
+      ]
+    },
+    {
       "name": "Sumitsubo::Language.comments_in",
       "description": "The reading of what a person wrote for another person, whatever the file is written in.",
       "internal": true,

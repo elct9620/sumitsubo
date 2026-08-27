@@ -27,5 +27,20 @@ module Sumitsubo
       end
       raise Unreadable, "#{Where.of(path)} is not a specification this sumi can read"
     end
+
+    # Whether this build carries a parser answering for the file, the way
+    # `Language.carries?` asks after a language. It is what lets a mechanism
+    # find its specifications without naming a format: a file no parser reads
+    # is one this build was never meant to read, rather than a specification
+    # written wrong.
+    def self.reads?(path, parsers)
+      index = 0
+      while index < parsers.length
+        return true if parsers[index].reads?(path)
+
+        index += 1
+      end
+      false
+    end
   end
 end
