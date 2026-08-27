@@ -261,3 +261,107 @@ one reading a real document is claimed from a test that cannot.
 | Given | a path where no vocabulary was written |
 | When | the vocabulary is asked for |
 | Then | the path is named as holding none, before any block is read |
+
+## `MD-031` A definition whose contracts source claims in a comment
+
+| Step | Statement |
+| --- | --- |
+| Given | a document naming a marker, and a contract with a fence under it |
+| When | the blocks the document is made of are read |
+| Then | the definition carries the marker and the fence is prose, since a claim needs no signature |
+
+## `MD-032` A definition whose contracts the syntax tree declares
+
+| Step | Statement |
+| --- | --- |
+| Given | a document with no marker whose two contracts carry fences in different languages |
+| When | the blocks the document is made of are read |
+| Then | each contract carries the language its own fence names, and the signature as it was written |
+
+## `MD-033` A contract heading naming nothing
+
+| Step | Statement |
+| --- | --- |
+| Given | a heading that is neither reserved nor opens with a name in backticks |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at that heading |
+
+## `MD-034` A flag a contract does not carry
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract heading carrying a flag outside the closed set |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, naming the word it was given |
+
+## `MD-035` Prose written where only a flag is read
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract heading carrying a sentence after its name |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since a heading carries a name and its flags and nothing else |
+
+## `MD-036` A marker named after a contract is already registered
+
+| Step | Statement |
+| --- | --- |
+| Given | the reserved heading written below the first contract |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since which reading applies has to be known before a fence arrives |
+
+## `MD-037` A marker heading with no word under it
+
+| Step | Statement |
+| --- | --- |
+| Given | the reserved heading with no code span following it |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since nothing says what source claims with |
+
+## `MD-038` A contract the syntax tree reading is given no signature for
+
+| Step | Statement |
+| --- | --- |
+| Given | a document with no marker whose contract carries no fence |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since the fence is what says how the name is spelled |
+
+## `MD-039` A signature whose fence names no language
+
+| Step | Statement |
+| --- | --- |
+| Given | a fence under a contract opened without a language |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at that fence |
+
+## `MD-040` A signature in a language this build does not carry
+
+| Step | Statement |
+| --- | --- |
+| Given | a fence whose language this build was not built with |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, naming the language it was given |
+
+## `MD-041` A name the language it is spelled in could carry no definition of
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract whose name that language can spell no definition of |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since the code is not what is wrong |
+
+## `MD-042` A definition that names nothing
+
+| Step | Statement |
+| --- | --- |
+| Given | a document with no title |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since nothing says what it answers for |
+
+## `MD-043` A second fence under one contract
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract carrying two fences |
+| When | the blocks the document is made of are read |
+| Then | the first is the signature and the second is prose |

@@ -140,11 +140,11 @@ module Sumitsubo
           # shape to keep.
           def scenario_from(said, line)
             opened = Format.code_span(said)
-            if opened.nil? || opened[0].empty?
+            if opened.nil? || opened.taken.empty?
               refuse(line, "declares a scenario whose heading does not open with an id in backticks")
             end
 
-            Statement.new(opened[0], Format.empty_to_nil(opened[1]), @path, line, { "given" => [] }, [])
+            Statement.new(opened.taken, Format.empty_to_nil(opened.after), @path, line, { "given" => [] }, [])
           end
 
           # Which step a row states, given how many cells it turned out to
@@ -172,7 +172,7 @@ module Sumitsubo
             opened = Format.code_span(said)
             refuse(line, "writes an include that is not a glob in backticks") if opened.nil?
 
-            opened[0]
+            opened.taken
           end
 
           def refuse(line, said)

@@ -143,7 +143,7 @@ module Sumitsubo
             opened = Format.code_span(said)
             refuse(line, "rejects a word that is not in backticks") if opened.nil?
 
-            @rejected = Statement.new(opened[0], reason(opened[1]), @where, line, {}, [])
+            @rejected = Statement.new(opened.taken, reason(opened.after), @where, line, {}, [])
             @term.statements.push(@rejected)
           end
 
@@ -159,10 +159,10 @@ module Sumitsubo
             opened = Format.code_span(said)
             refuse(line, "writes an ignore that does not name a line in backticks") if opened.nil?
 
-            why = reason(opened[1])
-            refuse(line, "writes an ignore at #{opened[0]} with no reason") if why.nil?
+            why = reason(opened.after)
+            refuse(line, "writes an ignore at #{opened.taken} with no reason") if why.nil?
 
-            @rejected.statements.push(Statement.new(opened[0], why, @where, line, {}, []))
+            @rejected.statements.push(Statement.new(opened.taken, why, @where, line, {}, []))
           end
 
           # What a list item says after the word it took letter for letter.
@@ -176,7 +176,7 @@ module Sumitsubo
             opened = Format.code_span(said)
             refuse(line, "writes an include that is not a glob in backticks") if opened.nil?
 
-            opened[0]
+            opened.taken
           end
 
           def refuse(line, said)

@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
+require "sumitsubo/parser/markdown/builder/definition"
 require "sumitsubo/parser/markdown/builder/feature"
 require "sumitsubo/parser/markdown/builder/vocabulary"
 require "sumitsubo/parser/markdown/format"
@@ -51,6 +52,14 @@ module Sumitsubo
         built(Builder::Vocabulary.new(path, where), path)
       end
 
+      # The languages arrive from outside the way they do for the other format:
+      # a contract read from the syntax tree says which language spells its
+      # name, and whether this build carries that one is not the format's to
+      # know.
+      def contract(path, languages)
+        built(Builder::Definition.new(path, languages), path)
+      end
+
       # The line each include is written on. Every kind of specification lists
       # them under the reserved heading and they differ only in which level
       # that heading sits at, so this is asked of a document without being told
@@ -70,7 +79,7 @@ module Sumitsubo
           # reserved heading is a code span already: one that is not was
           # refused then, and there is no topic to name a second refusal under.
           glob = Format.code_span(said)
-          found[glob[0]] = capture.line if !glob.nil? && found[glob[0]].nil?
+          found[glob.taken] = capture.line if !glob.nil? && found[glob.taken].nil?
         end
         found
       end

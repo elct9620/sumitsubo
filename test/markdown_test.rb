@@ -296,3 +296,132 @@ begin
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
 end
+
+# --- a definition --------------------------------------------------------
+#
+# A definition is read one of two ways and the reserved heading naming a marker
+# is the only thing telling them apart. What the languages answer is the kind
+# of specification's to ask, so a stand-in carries just enough to be asked.
+
+module Spelling
+  def self.carries?(language)
+    language == "ruby" || language == "rust"
+  end
+
+  def self.definable?(language, name)
+    carries?(language) && !name.include?(" ")
+  end
+end
+
+def fence(line, text) = Capture.new(0, "fence", line, text)
+def language(line, text) = Capture.new(0, "language", line, text)
+def content(line, text) = Capture.new(0, "content", line, text)
+
+def definition(captures)
+  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).contract("cli.md", Spelling)
+rescue Sumitsubo::Unreadable => e
+  puts "  refused: #{e.message}"
+  nil
+end
+
+def registered_by(spec)
+  puts "#{spec.key} #{spec.attributes.inspect} #{spec.includes.inspect}"
+  puts "  #{spec.text}"
+  spec.statements.each do |contract|
+    puts "  #{contract.path}:#{contract.line} #{contract.key} #{contract.attributes.inspect}"
+    puts "    #{contract.text}"
+  end
+end
+
+# @behavior MD-031
+puts "--- a definition whose contracts source claims in a comment ---"
+registered_by(definition([
+  h1(1, "CLI"),
+  paragraph(3, "The commands `sumi` answers."),
+  h2(5, "Includes"),
+  item(7, "`sumitsubo/command/*.rb`"),
+  h2(9, "Marker"),
+  paragraph(11, "`@command`"),
+  h2(13, "`init`"),
+  paragraph(15, "Lay down an empty specification."),
+  fence(17, "```console\n$ sumi init\n```"),
+  language(17, "console"),
+  content(18, "$ sumi init\n")
+]))
+
+# A signature says which language spells the name it registers, so one
+# definition may register contracts in two of them without either being wrong.
+# @behavior MD-032
+puts "--- a definition whose contracts the syntax tree declares ---"
+registered_by(definition([
+  h1(1, "Internal seams"),
+  paragraph(3, "The places this project keeps to one implementation."),
+  h2(5, "`Sumitsubo::Where.of` `internal`"),
+  paragraph(7, "The one place a path a reader is handed is made."),
+  fence(9, "```ruby\ndef self.of(path)\n```"),
+  language(9, "ruby"),
+  content(10, "def self.of(path)\n"),
+  h2(12, "`Store::Handle`"),
+  fence(14, "```rust\nfn of(path: &str) -> String;\n```"),
+  language(14, "rust"),
+  content(15, "fn of(path: &str) -> String;\n")
+]))
+
+# @behavior MD-033
+puts "--- a contract heading that does not open with a name ---"
+definition([h1(1, "CLI"), h2(3, "the first command")])
+
+# @behavior MD-034
+puts "--- a flag a contract does not carry ---"
+definition([h1(1, "CLI"), h2(3, "`init` `hidden`")])
+
+# @behavior MD-035
+puts "--- prose written after a name where only a flag is read ---"
+definition([h1(1, "CLI"), h2(3, "`init` lays down a specification")])
+
+# @behavior MD-036
+puts "--- a marker named after a contract has already been registered ---"
+definition([h1(1, "CLI"), h2(3, "`init`"), h2(5, "Marker"), paragraph(7, "`@command`")])
+
+# @behavior MD-037
+puts "--- a marker heading with no word under it ---"
+definition([h1(1, "CLI"), h2(3, "Marker"), h2(5, "`init`")])
+
+# @behavior MD-038
+puts "--- a contract the syntax tree reading is given no signature for ---"
+definition([h1(1, "Seams"), h2(3, "`Store.open`"), paragraph(5, "A seam.")])
+
+# @behavior MD-039
+puts "--- a signature whose fence names no language ---"
+definition([
+  h1(1, "Seams"), h2(3, "`Store.open`"),
+  fence(5, "```\ndef self.open(path)\n```"), content(6, "def self.open(path)\n")
+])
+
+# @behavior MD-040
+puts "--- a signature in a language this build does not carry ---"
+definition([
+  h1(1, "Seams"), h2(3, "`Store.open`"),
+  fence(5, "```cobol\nOPEN INPUT STORE.\n```"), language(5, "cobol"), content(6, "OPEN INPUT STORE.\n")
+])
+
+# @behavior MD-041
+puts "--- a name the language it is spelled in could carry no definition of ---"
+definition([
+  h1(1, "Seams"), h2(3, "`a name with spaces`"),
+  fence(5, "```ruby\ndef open(path)\n```"), language(5, "ruby"), content(6, "def open(path)\n")
+])
+
+# @behavior MD-042
+puts "--- a document that names nothing ---"
+definition([h2(1, "`init`")])
+
+# Under a marker every fence is prose, so a second one under a contract is too
+# — and under the other reading only the first is the signature.
+# @behavior MD-043
+puts "--- a second fence under one contract ---"
+definition([
+  h1(1, "Seams"), h2(3, "`Store.open`"),
+  fence(5, "```ruby\ndef self.open(path)\n```"), language(5, "ruby"), content(6, "def self.open(path)\n"),
+  fence(9, "```ruby\nStore.open('a')\n```"), language(9, "ruby"), content(10, "Store.open('a')\n")
+]).statements.each { |contract| puts "  #{contract.key} #{contract.attributes.inspect}" }

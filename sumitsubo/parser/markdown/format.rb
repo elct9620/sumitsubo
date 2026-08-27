@@ -49,6 +49,13 @@ module Sumitsubo
           (section (list (list_item (paragraph (inline) @item))))
         SPELLED
 
+        # What a pair of backticks opened the text with, and what followed it.
+        # Two runs of text that read alike and mean nothing alike, so each is
+        # named rather than reached for by position — a heading hands the rest
+        # of itself back to be opened again, and `said[1]` would say nothing
+        # about which of the two that is.
+        Span = Struct.new(:taken, :after)
+
         # What a pair of backticks opens the text with, and what follows it.
         # Found by the marks themselves rather than by a pattern: what is
         # wanted is the run between them, and taking it is not recognising a
@@ -59,7 +66,7 @@ module Sumitsubo
           closed = said.index("`", 1)
           return nil if closed.nil?
 
-          [said[1, closed - 1], said[(closed + 1)..-1].strip]
+          Span.new(said[1, closed - 1], said[(closed + 1)..-1].strip)
         end
 
         # A soft line break is a space, which is what lets a paragraph be
