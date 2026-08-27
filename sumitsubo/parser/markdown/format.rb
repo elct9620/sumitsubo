@@ -28,7 +28,6 @@ module Sumitsubo
         FENCE = "fence"
         LANGUAGE = "language"
         CONTENT = "content"
-        ROW = "row"
         CELL = "cell"
 
         # The one heading every kind of specification spells alike, since every
@@ -37,6 +36,16 @@ module Sumitsubo
         # collide with it; a term is prose too, which is what a vocabulary gives
         # up to have it. A heading only one kind knows belongs to that kind.
         INCLUDES = "Includes"
+
+        # A glob under the reserved heading, taken letter for letter. The
+        # heading is the one thing every form spells alike, so the rule for
+        # what sits under it is the format's rather than each form's.
+        def self.glob(path, line, said, topic)
+          opened = code_span(said)
+          refuse(path, line, "writes an include that is not a glob in backticks", topic) if opened.nil?
+
+          opened.taken
+        end
 
         # Where each include is written, asked of a document without being told
         # which kind it is: every kind lists them under the reserved heading,

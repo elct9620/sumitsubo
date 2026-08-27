@@ -135,7 +135,7 @@ module Sumitsubo
           # term says what it refuses, and prose anywhere else.
           def listed(said, line)
             if @holding == Format::INCLUDES
-              @sections[-1].includes.push(spelled(line, said))
+              @sections[-1].includes.push(Format.glob(@path, line, said, TOPIC))
               return
             end
             return unless @holding == REJECTED
@@ -170,13 +170,6 @@ module Sumitsubo
             return Format.empty_to_nil(said) unless said.index(DASH) == 0
 
             Format.empty_to_nil(said[DASH.length..-1].strip)
-          end
-
-          def spelled(line, said)
-            opened = Format.code_span(said)
-            refuse(line, "writes an include that is not a glob in backticks") if opened.nil?
-
-            opened.taken
           end
 
           def refuse(line, said)

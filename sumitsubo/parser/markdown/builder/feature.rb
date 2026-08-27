@@ -116,10 +116,8 @@ module Sumitsubo
             @scenarios.push(scenario_from(said, capture.line))
           end
 
-          # An include is taken letter for letter, so it is spelled in a code
-          # span the way every other thing the tool consumes unread is.
           def item(capture)
-            @includes.push(spelled(capture.line, Format.folded(capture.text)))
+            @includes.push(Format.glob(@path, capture.line, Format.folded(capture.text), TOPIC))
           end
 
           # The cells held so far, stated as the step they make. A row is
@@ -166,13 +164,6 @@ module Sumitsubo
             steps = @scenarios[-1].attributes
             holding = steps[under]
             steps[under] = holding.nil? ? [said] : holding + [said]
-          end
-
-          def spelled(line, said)
-            opened = Format.code_span(said)
-            refuse(line, "writes an include that is not a glob in backticks") if opened.nil?
-
-            opened.taken
           end
 
           def refuse(line, said)

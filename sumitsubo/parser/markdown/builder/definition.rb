@@ -174,11 +174,10 @@ module Sumitsubo
             return marked(said, capture.line) if @holding == MARKER
             return unless @holding.nil?
 
-            holder = @contract.nil? ? nil : @contract
-            return @text = said if holder.nil? && @text.nil? && @contracts.empty?
-            return if holder.nil?
+            return @contract.text = said if !@contract.nil? && @contract.text.nil?
+            return unless @contract.nil?
 
-            holder.text = said if holder.text.nil?
+            @text = said if @text.nil? && @contracts.empty?
           end
 
           # The word source claims with is consumed letter for letter, so it is
@@ -193,7 +192,7 @@ module Sumitsubo
           end
 
           def item(capture)
-            @includes.push(spelled(capture.line, Format.folded(capture.text)))
+            @includes.push(Format.glob(@path, capture.line, Format.folded(capture.text), TOPIC))
           end
 
           # The fence held so far, taken as the signature of the contract it sat
@@ -234,13 +233,6 @@ module Sumitsubo
             found = {}
             found["marker"] = [@marker] unless @marker.nil?
             found
-          end
-
-          def spelled(line, said)
-            opened = Format.code_span(said)
-            refuse(line, "writes an include that is not a glob in backticks") if opened.nil?
-
-            opened.taken
           end
 
           def refuse(line, said)
