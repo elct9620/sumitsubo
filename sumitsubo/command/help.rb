@@ -324,11 +324,6 @@ module Sumitsubo
                 One of the two has to be there: the marker says a claim carries
                 the name, and the language says how a definition spells it.
 
-            .spec/contract/api.json writes a note of type quote, which is none this document has   (exit 2)
-                A note whose type is not one of the three, whose text is not
-                lines, or whose heading sits deeper than 4, is a specification
-                that could not be read.
-
         What the reading cannot see
             The syntax tree reading finds a definition by its name in the tree.
             A contract naming one of these is answered as undefined however
@@ -364,65 +359,60 @@ module Sumitsubo
         implementation is right.
 
         Files
-            .spec/behavior/*.json - one file per feature, each carrying its own
-            include. Declaring no scenarios is what a fresh clone answers, since
-            git carries no empty directory.
+            .spec/behavior/*.md - one file per feature, each carrying its own
+            includes. Declaring no scenarios is what a fresh clone answers,
+            since git carries no empty directory.
 
         Form
-            {
-              "name": "Verify",
-              "description": "How a run answers what it was asked.",
-              "include": ["test/verify_test.rb"],
-              "scenarios": [
-                {
-                  "id": "V-001",
-                  "title": "Code that drifted from its glossary",
-                  "given": ["a glossary declaring a word one of its terms rejects"],
-                  "when": "`sumi verify` runs",
-                  "then": "one finding is reported for the line the word appears on"
-                }
-              ]
-            }
+            # Verify
+
+            How a run answers what it was asked.
+
+            ## Includes
+
+            - `test/verify_test.rb`
+
+            ## `V-001` Code that drifted from its glossary
+
+            | Step | Statement |
+            | --- | --- |
+            | Given | a glossary declaring a word one of its terms rejects |
+            | When | `sumi verify` runs |
+            | Then | one finding is answered for the line the word appears on |
+
+            The title names the feature and the paragraph under it says what
+            the feature is for. Every other block of prose is the feature's
+            own, carried for whoever reads it and read by nothing.
+
+            A scenario is an `##` heading opening with its id in backticks;
+            the rest of that line is the title. `Includes` is the one `##`
+            heading that is prose rather than a scenario, which is why a
+            heading of the feature's own starts at `###`.
 
             The model is Gherkin's, not its file format: these scenarios are
             read rather than executed.
 
-            `given` is a list with no limit. `when` and `then` are one sentence
-            each, which three disciplines make reachable rather than a cap that
-            turns work away:
+            The steps are a two-column table. `Given` may be written as many
+            times as the scenario stands on states; `When` and `Then` are one
+            row each, which three disciplines make reachable rather than a cap
+            that turns work away:
 
                 The operation under test is the last one; everything before it
-                is `given`.
+                is `Given`.
 
                 An outcome is what one observation settles. Two observations are
-                two scenarios, repeating their `given` and `when`.
+                two scenarios, repeating their `Given` and `When`.
 
-                `then` names the observable difference and stops - not the exit
+                `Then` names the observable difference and stops - not the exit
                 code, and not the reason, which belongs to the title.
+
+            A cell cannot wrap, which is where those three get their pressure.
+            A `|` inside one is written `\\|`.
 
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.
 
-        Notes
-            `"notes"` is the prose a feature carries for its document alone -
-            why these scenarios are the right ones, which no mechanism can
-            check. It hangs from the feature and not from a scenario, whose
-            reason belongs to its title.
-
-              "notes": [
-                { "type": "heading", "level": 1, "text": ["Why these are read"] },
-                { "type": "paragraph",
-                  "text": ["A scenario asserts a behavior was implemented.",
-                           "Whether the code under it is right is not read."] }
-              ]
-
-            A block is a `heading`, a `paragraph`, or a `code` fence, and its
-            text is written as lines. They close up by kind - prose with
-            spaces, code with newlines. A heading's `level` counts from what
-            its notes hang under: 1 is one level in, and 4 is as deep as it
-            goes. `sumi help contract` has the same form.
-
-        include
+        Includes
             The boundary of what a feature answers for, and not merely a list
             of files to read: a scenario is witnessed by the files its own
             feature covers, and a claim from anywhere else names it without
@@ -441,7 +431,7 @@ module Sumitsubo
             A behavior may be claimed by as many tests as exercise it.
 
         Findings
-            .spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere this specification includes
+            .spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
                 Declared, and no test this feature reaches claims it. Write the
                 claim the finding leads with, or drop the scenario.
 
@@ -449,7 +439,7 @@ module Sumitsubo
                 A claim naming no scenario is a comparison that could not be
                 made rather than a difference. Usually a renamed id.
 
-            test/other_test.rb:13 V-002 is claimed outside what .spec/behavior/verify.json includes   (exit 2)
+            test/other_test.rb:13 V-002 is claimed outside what .spec/behavior/verify.md includes   (exit 2)
                 The id resolves and the feature declaring it does not reach
                 this file, so nothing here can witness it. Widen that include,
                 or move the claim.
