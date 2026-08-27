@@ -159,38 +159,26 @@ module Sumitsubo
     # glob this replaces did, the second is what keeps a link back up the tree
     # from looping. A root nothing wrote answers empty rather than raising,
     # the way an include reaching nothing has always answered.
-    #
-    # Written against an explicit stack rather than recursing, the way
-    # Pathname#find is: a method that both yields and calls itself through a
-    # block is one Spinel has emitted as a walk that never descended.
     def self.under(base, root, exclusion, pruned)
       start = root == "" ? base : base / root
       found = []
       return found unless start.directory?
 
-      stack = [start]
-      until stack.empty?
-        here = stack.pop
-        kids = here.children
-        index = 0
-        while index < kids.length
-          child = kids[index]
-          index += 1
-          next if "#{child.basename}".start_with?(".")
+      start.children.each do |child|
+        next if "#{child.basename}".start_with?(".")
 
-          where = "#{child.relative_path_from(base)}"
-          if child.directory?
-            # Refusing the directory rather than its files is the whole of why
-            # this is cheap: a build tree is not walked at all rather than
-            # walked and then thrown away.
-            if Patterns.excludes_directory?(exclusion, where)
-              pruned.push(where)
-            elsif !child.symlink?
-              stack.push(child)
-            end
-          elsif !Patterns.excludes?(exclusion, where)
-            found.push(where)
+        where = "#{child.relative_path_from(base)}"
+        if child.directory?
+          # Refusing the directory rather than its files is the whole of why
+          # this is cheap: a build tree is not walked at all rather than
+          # walked and then thrown away.
+          if Patterns.excludes_directory?(exclusion, where)
+            pruned.push(where)
+          elsif !child.symlink?
+            found.concat(under(base, where, exclusion, pruned))
           end
+        elsif !Patterns.excludes?(exclusion, where)
+          found.push(where)
         end
       end
       found
