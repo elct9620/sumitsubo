@@ -1,0 +1,14 @@
+{
+  "name": "Structured",
+  "description": "A feature written as JSON, in the directory the Markdown ones sit in.",
+  "include": ["test/*_test.rb"],
+  "scenarios": [
+    {
+      "id": "M-003",
+      "title": "Two formats in one directory",
+      "given": ["a behavior directory holding both formats"],
+      "when": "`sumi verify` runs",
+      "then": "every specification some parser reads is loaded"
+    }
+  ]
+}

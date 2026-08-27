@@ -69,6 +69,11 @@ exit=1
 .spec/contract/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings
 0 differences
 exit=2
+--- a behavior directory holding both formats ---
+.spec/behavior/unreached.md:7 include nowhere/*.rb covers no file; the pattern is wrong or what it pointed at is gone
+.spec/behavior/unreached.md:9 @behavior M-002 is claimed nowhere this specification includes
+1 difference
+exit=2
 --- no specification at all ---
 no specification at .spec; sumi init lays one down
 exit=2

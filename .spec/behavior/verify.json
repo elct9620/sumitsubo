@@ -278,6 +278,23 @@
       ],
       "when": "the run verifies",
       "then": "nothing answers for it"
+    },
+    {
+      "id": "V-026",
+      "title": "A behavior directory holding both formats",
+      "given": [
+        "a build carrying more than one specification format",
+        "a behavior directory holding a feature written in each"
+      ],
+      "when": "`sumi verify` runs",
+      "then": "the scenarios of both are compared against the source"
+    },
+    {
+      "id": "V-027",
+      "title": "An include a Markdown specification writes that covers no file",
+      "given": ["a feature written as Markdown whose include covers no file"],
+      "when": "`sumi verify` runs",
+      "then": "the include answers at the line of the list item that wrote it"
     }
   ]
 }

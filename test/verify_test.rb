@@ -1,10 +1,18 @@
 require "pathname"
 require "sumitsubo"
 require "sumitsubo/language"
+require "sumitsubo/grammar"
 require "sumitsubo/parser/json"
+require "sumitsubo/parser/markdown"
 
+# A run is handed what this build carries, the way `bin/sumi.rb` hands it: both
+# formats, so a project part-way through writing its specifications one way
+# reads either. This file already crosses into the binding through the
+# languages, so the grammar the Markdown parser reads through costs it nothing
+# it had not already paid.
 cli = Sumitsubo::CLI.new(
-  Sumitsubo::BUILD_REV, Sumitsubo::Language, [Sumitsubo::Parser::Json.new]
+  Sumitsubo::BUILD_REV, Sumitsubo::Language,
+  [Sumitsubo::Parser::Json.new, Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
 )
 back = Dir.pwd
 
@@ -121,6 +129,16 @@ Dir.chdir(back)
 # @behavior V-016
 puts "--- a contract the language it named cannot spell ---"
 Dir.chdir("test/fixtures/unresolvable")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+# Both formats sit in one behavior directory and both are read, which is what
+# a project moving from one to the other stands on. The barren include answers
+# at the line that wrote it, in a document where that line is a list item in
+# backticks rather than a quoted value.
+# @behavior V-026 V-027
+puts "--- a behavior directory holding both formats ---"
+Dir.chdir("test/fixtures/markdown")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 

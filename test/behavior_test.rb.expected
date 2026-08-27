@@ -47,5 +47,10 @@ test/fixtures/behavior/broken/verify.json is not readable JSON
   test/fixtures/behavior/.spec/behavior/init.json:21 @behavior I-003 is claimed nowhere this specification includes
   test/fixtures/behavior/.spec/behavior/verify.json:7 @behavior G-001 is claimed nowhere this specification includes
   test/fixtures/behavior/.spec/behavior/verify.json:17 @behavior G-002 is claimed nowhere this specification includes
+--- which files a directory holds that this build can read ---
+  test/fixtures/behavior/formats/one.json One ["F-001"]
+  test/fixtures/behavior/formats/two.spec Other ["O-001"]
+--- an include covering no file answers at the line that wrote it ---
+  test/fixtures/behavior/nowhere/spec.json:4 include nowhere/*.rb covers no file; the pattern is wrong or what it pointed at is gone
 --- and the claim that could not witness it ---
   test/fixtures/behavior/test/verify_test.rb:9 I-001 is claimed outside what test/fixtures/behavior/.spec/behavior/init.json includes

@@ -1,9 +1,28 @@
 require "pathname"
 require "sumitsubo/behavior"
+require "sumitsubo/scope"
+require "sumitsubo/specification"
 require "sumitsubo/parser/json"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads.
 PARSERS = [Sumitsubo::Parser::Json.new]
+
+# A format this build does not really carry, so that what decides which files
+# are specifications is visibly the parsers rather than an extension written
+# into the mechanism. A real second format reaches a grammar; this one answers
+# what it was asked for, which is what keeps this file's snapshot writable.
+class Other
+  SUFFIX = ".spec"
+
+  def reads?(path) = "#{path}".end_with?(SUFFIX)
+
+  def behavior(path)
+    where = "#{path}"
+    Sumitsubo::Specification.new("Other", nil, [], where, {}, [
+      Sumitsubo::Statement.new("O-001", "What another format declares", where, 1, { "given" => [] }, [])
+    ])
+  end
+end
 
 # The loader answers where a scenario sits as well as what it says. A scenario
 # nothing declares is a finding about the specification, so the reader has to
@@ -96,6 +115,25 @@ puts "--- a scenario claimed only from outside its own feature ---"
 witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
 Sumitsubo::Behavior.uncovered(features, witnessing).each do |finding|
   puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Behavior.describe_uncovered(finding)}"
+end
+
+# Which files in the directory are specifications is the parsers' answer: the
+# build reads two formats here, so it loads the feature written in each, and
+# `notes.txt` is passed over rather than refused.
+# @behavior B-014
+puts "--- which files a directory holds that this build can read ---"
+Sumitsubo::Behavior.load("test/fixtures/behavior/formats", PARSERS + [Other.new]).each do |feature|
+  puts "  #{feature.path} #{feature.key} #{feature.statements.map { |one| one.key }.inspect}"
+end
+
+# The walk answers which pattern covered nothing; where that pattern was
+# written is asked of the parser that read the specification, so the reader
+# arrives at the word to edit rather than at the file holding it.
+# @behavior B-015
+puts "--- an include covering no file answers at the line that wrote it ---"
+unreached = Sumitsubo::Behavior.load("test/fixtures/behavior/nowhere", PARSERS)
+Sumitsubo::Behavior.barren(unreached, Pathname.new("test/fixtures/behavior"), [], PARSERS).each do |barren|
+  puts "  #{barren.path}:#{barren.line} #{Sumitsubo::Scope.describe(barren)}"
 end
 
 # @behavior B-013
