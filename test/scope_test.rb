@@ -78,6 +78,9 @@ puts "  nowhere/*.rb nobody could have meant: #{Sumitsubo::Scope.refused?(walked
 puts "--- what an include covers ---"
 puts "  #{Sumitsubo::Scope.of(base, ["**/*.rb"], []).sort.join(" ")}"
 puts "  #{Sumitsubo::Scope.of(base, ["**/*.rb"], Sumitsubo::Patterns.read(["billing/"])).sort.join(" ")}"
+# The glob this walk replaces cannot match a directory in the middle of a
+# path, which is how a workspace writes an include.
+# @behavior W-007
 puts "  #{Sumitsubo::Scope.of(base, ["app/*/*.rb"], []).sort.join(" ")}"
 
 Dir.chdir(back)

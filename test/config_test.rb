@@ -97,7 +97,9 @@ rules = Sumitsubo::Config.load.exclusion
 puts "  vendor/gem.rb: #{Sumitsubo::Patterns.excludes?(rules, "vendor/gem.rb")}"
 # .sumi.json is read after the .gitignore, so a `!` there is the last rule to
 # match and the path comes back.
+# @behavior C-013
 puts "  vendor/kept.rb, put back by .sumi.json: #{Sumitsubo::Patterns.excludes?(rules, "vendor/kept.rb")}"
+# @behavior C-014
 Dir.chdir(here / "switched")
 puts "  switched off: #{Sumitsubo::Patterns.excludes?(Sumitsubo::Config.load.exclusion, "vendor/gem.rb")}"
 

@@ -109,7 +109,27 @@
         "a project keeping a .gitignore"
       ],
       "when": "the configuration is loaded",
-      "then": "what git leaves out is excluded too, the configuration read after it so a `!` there puts a path back, and a switch takes the .gitignore out of it entirely"
+      "then": "what git leaves out is excluded too"
+    },
+    {
+      "id": "C-013",
+      "title": "A path put back, the configuration being read after the .gitignore",
+      "given": [
+        "a project keeping a .gitignore that leaves a path out",
+        "a .sumi.json whose exclude names that path with a `!`"
+      ],
+      "when": "the configuration is loaded",
+      "then": "the path is left in"
+    },
+    {
+      "id": "C-014",
+      "title": "The .gitignore switched off",
+      "given": [
+        "a project keeping a .gitignore",
+        "a .sumi.json switching the .gitignore off"
+      ],
+      "when": "the configuration is loaded",
+      "then": "what git leaves out is not excluded"
     }
   ]
 }
