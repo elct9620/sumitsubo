@@ -90,8 +90,6 @@ p Sumitsubo::Parser::Markdown::GRAMMAR == Sumitsubo::Grammar::MARKDOWN
 
 reading = Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)
 
-# Spelled as a method rather than a block inside a block: an inner iteration
-# capturing an outer block's variable is a shape the compiler refuses.
 def steps_of(scenario)
   steps = scenario.attributes
   steps.keys.each { |name| said(name, steps[name]) }

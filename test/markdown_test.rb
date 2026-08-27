@@ -29,8 +29,6 @@ def item(line, text) = Capture.new(0, "item", line, text)
 def row(line, text) = Capture.new(0, "row", line, text)
 def cell(line, text) = Capture.new(0, "cell", line, text)
 
-# Spelled as a method rather than a block inside a block: an inner iteration
-# capturing an outer block's variable is a shape the compiler refuses.
 def steps_of(scenario)
   steps = scenario.attributes
   steps.keys.each { |name| said(name, steps[name]) }
