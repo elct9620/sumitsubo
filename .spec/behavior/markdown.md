@@ -389,3 +389,43 @@ one reading a real document is claimed from a test that cannot.
 | Given | two sections whose includes name one glob |
 | When | the line each include was written on is asked for |
 | Then | it answers at the line it was first written on |
+
+## `MD-047` A vocabulary read through the grammar
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary file written as Markdown |
+| When | the reading is asked what it declares |
+| Then | each section answers its globs, its terms, the words they reject, and the lines set aside |
+
+## `MD-048` A definition read through the grammar under a marker
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition file naming a marker, with a fence under one of its contracts |
+| When | the reading is asked what it registers |
+| Then | the marker answers and the fence is prose |
+
+## `MD-049` A definition registering contracts in two languages
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition whose two contracts carry fences opened in different languages |
+| When | the reading is asked what it registers |
+| Then | each contract answers the language its own fence named |
+
+## `MD-050` The same vocabulary written both ways
+
+| Step | Statement |
+| --- | --- |
+| Given | one vocabulary written as Markdown and as JSON |
+| When | each is read by the reading answering for it |
+| Then | the two declare the same sections, terms, rejected words and lines set aside |
+
+## `MD-051` The same definition written both ways
+
+| Step | Statement |
+| --- | --- |
+| Given | one definition naming a marker, written as Markdown and as JSON |
+| When | each is read by the reading answering for it |
+| Then | the two register the same contracts, and differ only in the line each is written on |

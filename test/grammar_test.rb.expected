@@ -43,3 +43,33 @@ Init ["test/init_test.rb"]
   same I-005 steps
   path test/fixtures/reading/init.md / test/fixtures/reading/init.json
   line 15 / 9
+--- a vocabulary read through the grammar ---
+Everywhere ["app/**/*.rb", "docs/*.md"] nil
+  13 Order — What a customer asks us to fulfil.
+    rejects Purchase — Order is what the domain calls it.
+      20 app/legacy_import.rb:88 — Quotes the upstream column name.
+  22 Customer — Whoever the order is fulfilled for.
+    rejects User — Nobody logs in to place an order.
+Billing ["app/billing/*.rb"] nil
+  36 Order — The billable set of lines.
+    rejects Invoice — An invoice is issued later, from an order.
+--- a definition whose contracts source claims, read through the grammar ---
+CLI {"marker" => ["@command"]} ["sumitsubo/command/*.rb"]
+  The commands `sumi` answers, and what each one is for.
+  13 init {}
+    Lay down an empty specification to start a reference line from.
+  21 help glossary {}
+    The vocabulary a project means to use.
+--- a definition registering contracts in two languages ---
+Internal seams {} ["sumitsubo/**/*.rb"]
+  The places this project keeps to one implementation.
+  9 Sumitsubo::Where.of {"internal" => [], "language" => ["ruby"], "signature" => ["def self.of(path)\n"]}
+    The one place a path a reader is handed is made.
+  17 Store::Handle {"internal" => [], "language" => ["rust"], "signature" => ["fn of(path: &str) -> String;\n"]}
+    A handle a second language spells its own way.
+--- the same vocabulary, written both ways ---
+  same what the vocabulary declares
+  line 13 / nil
+--- the same definition, written both ways ---
+  same what the definition registers
+  line 13 / 8

@@ -1,0 +1,46 @@
+{
+  "glossary": [
+    {
+      "name": "Everywhere",
+      "include": ["app/**/*.rb", "docs/*.md"],
+      "terms": [
+        {
+          "term": "Order",
+          "definition": "What a customer asks us to fulfil.",
+          "not": [
+            {
+              "term": "Purchase",
+              "reason": "Order is what the domain calls it.",
+              "ignore": [
+                {
+                  "at": "app/legacy_import.rb:88",
+                  "reason": "Quotes the upstream column name."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "term": "Customer",
+          "definition": "Whoever the order is fulfilled for.",
+          "not": [
+            { "term": "User", "reason": "Nobody logs in to place an order." }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Billing",
+      "include": ["app/billing/*.rb"],
+      "terms": [
+        {
+          "term": "Order",
+          "definition": "The billable set of lines.",
+          "not": [
+            { "term": "Invoice", "reason": "An invoice is issued later, from an order." }
+          ]
+        }
+      ]
+    }
+  ]
+}
