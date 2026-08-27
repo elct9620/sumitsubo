@@ -6,7 +6,7 @@
         "README.md",
         ".spec/glossary.json",
         ".spec/contract/*.json",
-        ".spec/behavior/*.json",
+        ".spec/behavior/*.md",
         "sumitsubo/**/*.rb",
         "test/*.rb"
       ],

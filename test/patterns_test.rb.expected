@@ -29,7 +29,7 @@
   same  README.md -> README.md
   same  .spec/glossary.json -> .spec/glossary.json
   same  .spec/contract/*.json -> .spec/contract/cli.json
-  same  .spec/behavior/*.json -> .spec/behavior/verify.json
+  same  .spec/behavior/*.md -> .spec/behavior/verify.md
   same  sumitsubo/**/*.rb -> sumitsubo/command/help.rb sumitsubo/config.rb sumitsubo/language/ruby.rb
   same  sumitsubo/command/*.rb -> sumitsubo/command/help.rb
   same  test/*.rb -> test/verify_test.rb
@@ -42,4 +42,4 @@
   sumitsubo/**/**/*.rb -> sumitsubo/command/help.rb sumitsubo/config.rb sumitsubo/language/ruby.rb
   sumitsubo/** -> sumitsubo/command/help.rb sumitsubo/config.rb sumitsubo/language/ruby.rb
 --- inside a hidden directory, which the walk and not the matcher rules on ---
-  **/*.json -> .spec/behavior/verify.json .spec/contract/cli.json .spec/glossary.json
+  **/*.json -> .spec/contract/cli.json .spec/glossary.json
