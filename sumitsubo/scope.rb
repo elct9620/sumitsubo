@@ -10,10 +10,14 @@ module Sumitsubo
   # base: that is the coordinate an include and an exclusion are both written
   # in, and a caller renders or composes from it.
   #
-  # The walk is this tool's rather than the glob's. Two things it needs the
-  # glob cannot give: a `*` that matches a directory in the middle of a path,
-  # which a workspace is written with, and one traversal answering every
-  # pattern rather than one traversal each.
+  # The walk is this tool's rather than the glob's: one traversal answers
+  # every pattern rather than one traversal each, and a directory the project
+  # excluded is never looked inside.
+  #
+  # This compiler's glob would not have served either — a `*` between two
+  # separators, which a workspace pattern is written with, answers nothing and
+  # raises nothing. That is a defect rather than what a glob is, so it is a
+  # sentence to drop once it answers, not a second reason for the walk.
   module Scope
     # An include covering no file, and the line of the specification that
     # wrote it. Built by the mechanism rather than here: how a format spells
