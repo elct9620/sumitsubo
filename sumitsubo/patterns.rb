@@ -44,13 +44,7 @@ module Sumitsubo
     end
 
     def self.decided(rules, segments, directory)
-      matched = []
-      index = 0
-      while index < rules.length
-        rule = rules[index]
-        matched.push(rule) if covers?(rule, segments, directory)
-        index += 1
-      end
+      matched = rules.select { |rule| covers?(rule, segments, directory) }
       return false if matched.empty?
 
       !matched.last.negated

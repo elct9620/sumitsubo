@@ -310,13 +310,7 @@ module Sumitsubo
         group = declared[name]
         next if group.nil? || group.length < 2 || agreed?(group)
 
-        # Each definition answers once, naming the next one round, so two
-        # shapes read as two lines pointing at each other.
-        index = 0
-        while index < group.length
-          found.push([group[index], group[(index + 1) % group.length]])
-          index += 1
-        end
+        paired(group).each { |pair| found.push(pair) }
       end
       found
     end
@@ -380,19 +374,12 @@ module Sumitsubo
         group.push(claim)
       end
 
-      # Each claim answers once, naming the next one round, so a contract
-      # claimed twice reads as two lines pointing at each other rather than as
-      # every pairing of the places that claim it.
       found = []
       seen.keys.sort.each do |name|
         group = seen[name]
         next if group.length < 2
 
-        index = 0
-        while index < group.length
-          found.push([group[index], group[(index + 1) % group.length]])
-          index += 1
-        end
+        paired(group).each { |pair| found.push(pair) }
       end
       found
     end
@@ -514,15 +501,16 @@ module Sumitsubo
       found.uniq.sort
     end
 
+    # Each of a group answers once, naming the next one round, so two of them
+    # read as two lines pointing at each other rather than as every pairing of
+    # the places involved.
+    def self.paired(group)
+      group.zip(group.rotate)
+    end
+
     # Whether every definition of one name describes the same call.
     def self.agreed?(group)
-      index = 1
-      while index < group.length
-        return false unless agree?(group[0].params, group[index].params)
-
-        index += 1
-      end
-      true
+      group.all? { |definition| agree?(group[0].params, definition.params) }
     end
 
     # Whether two shapes ask a caller for the same thing. A scope carries no
@@ -531,13 +519,7 @@ module Sumitsubo
       return true if one.nil? && other.nil?
       return false if one.nil? || other.nil? || one.length != other.length
 
-      index = 0
-      while index < one.length
-        return false unless same?(one[index], other[index])
-
-        index += 1
-      end
-      true
+      one.zip(other).all? { |pair| same?(pair[0], pair[1]) }
     end
 
     # The kind is compared as text. This file never learns what any of those

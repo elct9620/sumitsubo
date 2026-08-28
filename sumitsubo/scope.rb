@@ -54,15 +54,9 @@ module Sumitsubo
     # Whether any directory the walk refused stands on this pattern's path,
     # either above its root or under it.
     def self.refused?(pruned, root)
-      index = 0
-      while index < pruned.length
-        gone = pruned[index]
-        return true if root == gone || root.start_with?("#{gone}/") || gone.start_with?("#{root}/")
-        return true if root == ""
-
-        index += 1
+      pruned.any? do |gone|
+        root == "" || root == gone || root.start_with?("#{gone}/") || gone.start_with?("#{root}/")
       end
-      false
     end
 
     # Nothing was read where the specification says something should have
@@ -115,37 +109,20 @@ module Sumitsubo
     # directory a match could sit under. A pattern beginning with one names
     # the base itself.
     def self.root_of(pattern)
-      segments = pattern.split("/")
-      taken = []
-      index = 0
-      while index < segments.length
-        break unless literal?(segments[index])
-
-        taken.push(segments[index])
-        index += 1
-      end
-      taken.join("/")
+      pattern.split("/").take_while { |segment| literal?(segment) }.join("/")
     end
 
+    # Answered against what has been kept rather than against every root, so
+    # a root under one already taken is passed over. The roots arrive sorted,
+    # which is what puts the one holding another ahead of it.
     def self.outermost(roots)
       found = []
-      index = 0
-      while index < roots.length
-        found.push(roots[index]) unless held?(found, roots[index])
-        index += 1
-      end
+      roots.each { |root| found.push(root) unless held?(found, root) }
       found
     end
 
     def self.held?(roots, path)
-      index = 0
-      while index < roots.length
-        root = roots[index]
-        return true if root == "" || path == root || path.start_with?("#{root}/")
-
-        index += 1
-      end
-      false
+      roots.any? { |root| root == "" || path == root || path.start_with?("#{root}/") }
     end
 
     # Every file under +root+, relative to the base. A hidden entry is passed
