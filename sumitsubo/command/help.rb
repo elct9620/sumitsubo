@@ -367,10 +367,8 @@ module Sumitsubo
             includes. Declaring no scenarios is what a fresh clone answers,
             since git carries no empty directory.
 
-            A build reads a feature written in any format it carries, so a
-            project moves one file at a time. One id declared twice is refused
-            however the two were written, which is what stops a feature left
-            in both from being read from both.
+            An id is what a claim in the source names, so one declared twice
+            is refused rather than resolved to either.
 
         Form
             # Verify

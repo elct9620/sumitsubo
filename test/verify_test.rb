@@ -132,12 +132,10 @@ Dir.chdir("test/fixtures/unresolvable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
-# Both formats sit in one behavior directory and both are read, which is what
-# a project moving from one to the other stands on. The barren include answers
-# at the line that wrote it, in a document where that line is a list item in
-# backticks rather than a quoted value.
-# @behavior V-026 V-027
-puts "--- a behavior directory holding both formats ---"
+# A barren include answers at the line that wrote it, which in this format is
+# a list item in backticks rather than a quoted value.
+# @behavior V-027
+puts "--- a feature whose include covers no file ---"
 Dir.chdir("test/fixtures/markdown")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)

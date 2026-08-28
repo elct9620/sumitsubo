@@ -237,15 +237,6 @@ the order they happened.
 | When | the run verifies |
 | Then | nothing answers for it |
 
-## `V-026` A behavior directory holding both formats
-
-| Step | Statement |
-| --- | --- |
-| Given | a build carrying more than one specification format |
-| Given | a behavior directory holding a feature written in each |
-| When | `sumi verify` runs |
-| Then | the scenarios of both are compared against the source |
-
 ## `V-027` An include a Markdown specification writes that covers no file
 
 | Step | Statement |

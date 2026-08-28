@@ -1,8 +1,0 @@
-{
-  "name": "Verify",
-  "include": ["test/*_test.rb"],
-  "scenarios": [
-    { "id": "V-001", "title": "This one is claimed", "given": [], "when": "`sumi verify` runs", "then": "the two sides agree about it" },
-    { "id": "V-002", "title": "This one nothing claims", "given": [], "when": "`sumi verify` runs", "then": "the difference is reported at the specification" }
-  ]
-}

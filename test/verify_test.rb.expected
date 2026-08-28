@@ -34,16 +34,16 @@ exit=0
 0 differences
 exit=0
 --- a scenario nothing claims answers at the specification ---
-.spec/behavior/verify.json:6 @behavior V-002 is claimed nowhere this specification includes
+.spec/behavior/verify.md:14 @behavior V-002 is claimed nowhere this specification includes
 1 difference
 exit=1
 --- claims that resolve to nothing a run can compare against ---
-test/verify_test.rb:10 I-001 is claimed outside what .spec/behavior/init.json includes
+test/verify_test.rb:10 I-001 is claimed outside what .spec/behavior/init.md includes
 test/verify_test.rb:13 G-404 resolves to no scenario
 0 differences
 exit=2
 --- a mechanism that cannot be read leaves the others still answering ---
-.spec/behavior/verify.json:5 @behavior U-001 is claimed nowhere this specification includes
+.spec/behavior/verify.md:7 @behavior U-001 is claimed nowhere this specification includes
 app/broken.rb: cannot be parsed by the ruby grammar
 1 difference
 exit=2
@@ -69,7 +69,7 @@ exit=1
 .spec/contract/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings
 0 differences
 exit=2
---- a behavior directory holding both formats ---
+--- a feature whose include covers no file ---
 .spec/behavior/unreached.md:7 include nowhere/*.rb covers no file; the pattern is wrong or what it pointed at is gone
 .spec/behavior/unreached.md:9 @behavior M-002 is claimed nowhere this specification includes
 1 difference

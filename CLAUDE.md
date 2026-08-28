@@ -105,7 +105,7 @@ The command is `sumi`, shipped as a single native executable.
   `sumitsubo/config.rb` names no mechanism, why no mechanism names a language
   or a format, and why `sumitsubo/definitions.rb` requires nothing at all — a
   reading brings it captures rather than a path. `require "sumitsubo"` reaches
-  no grammar, so what is written by hand is the four tests that read source or
+  no grammar, so what is written by hand is the five tests that read source or
   ask for a binding. Where no snapshot is committed the run is compared against CRuby
   rather than failing, and a test that asserts nothing passes.
 - `--regen` takes the same file list, so name the test to rewrite. Given none

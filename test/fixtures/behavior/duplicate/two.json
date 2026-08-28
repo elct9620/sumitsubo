@@ -1,7 +1,0 @@
-{
-  "name": "Two",
-  "include": ["test/*_test.rb"],
-  "scenarios": [
-    { "id": "G-001", "title": "And again here", "given": [], "when": "a run", "then": "an answer" }
-  ]
-}

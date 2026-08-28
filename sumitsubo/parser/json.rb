@@ -11,15 +11,14 @@ module Sumitsubo
     # has to be recovered from because JSON carries none, are this file's and
     # nowhere else's: a mechanism asks for a specification and is handed one.
     #
-    # The two questions left are answered here together rather than one file
-    # each because what they share is the format. A vocabulary is no longer one
-    # of them: it is written the way a person reads it, and this format has
-    # nothing to answer for it with.
+    # The one question left is what a contract registers. A vocabulary and a
+    # feature are written the way a person reads them, so this format has
+    # nothing to answer for either; what it still holds is the refusal a
+    # project is owed when it left a feature here.
     class Json
       # Where the specification spells the values a finding has to answer at.
       # A regular expression is enough because it is looking for a key this
       # format writes, not for the shape of what the key holds.
-      ID = /"id"\s*:\s*"([^"]*)"/
       NAME = /"name"\s*:\s*"([^"]*)"/
 
       # Every quoted value, since an include is written as one and this format
@@ -37,32 +36,16 @@ module Sumitsubo
         "#{path}".end_with?(SUFFIX)
       end
 
+      # A feature is written the way a person reads it, so this format has
+      # nothing to answer for one. It is still the format a contract is
+      # written in, which is why the refusal is here rather than the method
+      # being gone: a project with a feature left in JSON is told so instead
+      # of having the file passed over in silence.
+      #
+      # This goes when Contract moves too, and the whole of this parser with
+      # it.
       def behavior(path)
-        text = File.read(path)
-        document = parse(path, text)
-        lines = Locations.of(text, ID)
-
-        scenarios = []
-        (document["scenarios"] || []).each do |raw|
-          id = raw["id"]
-          # A scenario nothing can name is unreferenceable, which is the same
-          # ambiguity a duplicate is rather than a difference to report.
-          if id.nil?
-            raise Unreadable, "#{Where.of(path)} declares a scenario with no \"id\"; " \
-                              "sumi help behavior has the form"
-          end
-
-          scenarios.push(scenario_from(path, raw, lines[id]))
-        end
-
-        Specification.new(
-          document["name"],
-          document["description"],
-          document["include"] || [],
-          path,
-          {},
-          scenarios
-        )
+        raise Unreadable, "#{Where.of(path)} is JSON, which sumi reads a contract from and no longer a feature"
       end
 
       def contract(path, languages)
@@ -109,16 +92,6 @@ module Sumitsubo
       end
 
       private
-
-      # A step nobody wrote is no step rather than an empty one, which is what
-      # leaves a shape carrying one spelled no differently from one carrying
-      # several.
-      def scenario_from(path, raw, line)
-        steps = { "given" => raw["given"] || [] }
-        steps["when"] = [raw["when"]] unless raw["when"].nil?
-        steps["then"] = [raw["then"]] unless raw["then"].nil?
-        Statement.new(raw["id"], raw["title"], path, line, steps, [])
-      end
 
       def interface_from(path, raw, marker, language, languages, cursor)
         name = raw["name"]

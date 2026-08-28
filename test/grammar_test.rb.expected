@@ -29,20 +29,6 @@ Init ["test/init_test.rb"]
     given a directory with no specification
     when `sumi init` runs
     then a contract directory is created at the configured root
---- the same specification, written both ways ---
-  same key
-  same text
-  same includes
-  same scenario count
-  same ids
-  same titles
-  same I-001 steps
-  same I-002 steps
-  same I-003 steps
-  same I-004 steps
-  same I-005 steps
-  path test/fixtures/reading/init.md / test/fixtures/reading/init.json
-  line 15 / 9
 --- a vocabulary read through the grammar ---
 Glossary "The words this fixture keeps, and the ones it turns down. This paragraph is prose: nothing above a section declares anything."
   Everywhere ["app/**/*.rb", "docs/*.md"]

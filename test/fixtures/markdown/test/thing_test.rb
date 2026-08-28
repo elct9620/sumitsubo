@@ -1,2 +1,2 @@
-# @behavior M-001 M-003
+# @behavior M-001
 def thing = nil

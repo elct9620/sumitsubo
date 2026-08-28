@@ -64,14 +64,6 @@ is fixed in one pass.
 | When | the directory is loaded |
 | Then | the file is named as declaring a scenario nothing can reference |
 
-## `B-006` A specification that will not parse
-
-| Step | Statement |
-| --- | --- |
-| Given | a behavior specification that is not readable JSON |
-| When | the directory is loaded |
-| Then | the file is named as unreadable |
-
 ## `B-007` Several ids on one marker line
 
 | Step | Statement |
@@ -79,14 +71,6 @@ is fixed in one pass.
 | Given | the text a marker line carries after its keyword, naming more than one id |
 | When | the mechanism reads it |
 | Then | each id is answered on its own |
-
-## `B-008` Two scenarios on one line
-
-| Step | Statement |
-| --- | --- |
-| Given | a specification declaring two scenarios on the same line |
-| When | the directory is loaded |
-| Then | both answer at that line rather than the second answering at none |
 
 ## `B-011` What each feature's include reaches
 

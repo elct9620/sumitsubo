@@ -1,56 +1,51 @@
 --- what the directory declares, and where ---
 Init ["test/init_test.rb"]
-  test/fixtures/behavior/.spec/behavior/init.json:7 I-001 The first run lays down an empty glossary
+  test/fixtures/behavior/.spec/behavior/init.md:9 I-001 The first run lays down an empty glossary
     given a directory with no specification
     when  `sumi init` runs
     then  an empty glossary specification is written at the configured root
-  test/fixtures/behavior/.spec/behavior/init.json:14 I-002 A second run leaves what is there alone
+  test/fixtures/behavior/.spec/behavior/init.md:17 I-002 A second run leaves what is there alone
     given a directory init has already run in
     when  `sumi init` runs
     then  the existing specification is reported as already there
-  test/fixtures/behavior/.spec/behavior/init.json:21 I-003 A configured root is created however deep it is
+  test/fixtures/behavior/.spec/behavior/init.md:25 I-003 A configured root is created however deep it is
     given a .sumi.json naming a root two levels down
     when  `sumi init` runs
     then  every directory on the way to that root is created
 Glossary Verification ["test/*_test.rb"]
-  test/fixtures/behavior/.spec/behavior/verify.json:7 G-001 Code that drifted from its glossary
+  test/fixtures/behavior/.spec/behavior/verify.md:9 G-001 Code that drifted from its glossary
     given a glossary declaring a word its term rejects
     given a comment using that word
     when  `sumi verify` runs
     then  one finding is reported for the line the word appears on
-  test/fixtures/behavior/.spec/behavior/verify.json:17 G-002 A specification the configuration switched off
+  test/fixtures/behavior/.spec/behavior/verify.md:18 G-002 A specification the configuration switched off
     given a .sumi.json declaring glossary verify false
     when  `sumi verify` runs
     then  the glossary contributes no findings
 --- a directory nobody wrote declares no scenarios ---
 []
 --- one id under two scenarios leaves a marker nothing to resolve to ---
-G-001 is declared twice, at test/fixtures/behavior/duplicate/one.json:5 and test/fixtures/behavior/duplicate/two.json:5
+G-001 is declared twice, at test/fixtures/behavior/duplicate/one.md:7 and test/fixtures/behavior/duplicate/two.md:7
 --- the root arrives absolute, but a message answers where the run started ---
-G-001 is declared twice, at test/fixtures/behavior/duplicate/one.json:5 and test/fixtures/behavior/duplicate/two.json:5
+G-001 is declared twice, at test/fixtures/behavior/duplicate/one.md:7 and test/fixtures/behavior/duplicate/two.md:7
 --- a scenario with no id cannot be referenced at all ---
-test/fixtures/behavior/anonymous/verify.json declares a scenario with no "id"; sumi help behavior has the form
---- and neither is a specification that will not parse ---
-test/fixtures/behavior/broken/verify.json is not readable JSON
+test/fixtures/behavior/anonymous/verify.md:7 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
 --- several ids on one marker line ---
 ["V-008", "V-009"]
---- two scenarios on one line ---
-  1 L-001
-  1 L-002
 --- what each feature's include reaches ---
   Init ["test/fixtures/behavior/test/init_test.rb"]
   Glossary Verification ["test/fixtures/behavior/test/init_test.rb", "test/fixtures/behavior/test/verify_test.rb"]
   read once: ["test/fixtures/behavior/test/init_test.rb", "test/fixtures/behavior/test/verify_test.rb"]
 --- a scenario claimed only from outside its own feature ---
-  test/fixtures/behavior/.spec/behavior/init.json:7 @behavior I-001 is claimed nowhere this specification includes
-  test/fixtures/behavior/.spec/behavior/init.json:14 @behavior I-002 is claimed nowhere this specification includes
-  test/fixtures/behavior/.spec/behavior/init.json:21 @behavior I-003 is claimed nowhere this specification includes
-  test/fixtures/behavior/.spec/behavior/verify.json:7 @behavior G-001 is claimed nowhere this specification includes
-  test/fixtures/behavior/.spec/behavior/verify.json:17 @behavior G-002 is claimed nowhere this specification includes
+  test/fixtures/behavior/.spec/behavior/init.md:9 @behavior I-001 is claimed nowhere this specification includes
+  test/fixtures/behavior/.spec/behavior/init.md:17 @behavior I-002 is claimed nowhere this specification includes
+  test/fixtures/behavior/.spec/behavior/init.md:25 @behavior I-003 is claimed nowhere this specification includes
+  test/fixtures/behavior/.spec/behavior/verify.md:9 @behavior G-001 is claimed nowhere this specification includes
+  test/fixtures/behavior/.spec/behavior/verify.md:18 @behavior G-002 is claimed nowhere this specification includes
 --- which files a directory holds that this build can read ---
-  test/fixtures/behavior/formats/one.json One ["F-001"]
+  test/fixtures/behavior/formats/one.md One ["F-001"]
   test/fixtures/behavior/formats/two.spec Other ["O-001"]
 --- an include covering no file answers at the line that wrote it ---
-  test/fixtures/behavior/nowhere/spec.json:4 include nowhere/*.rb covers no file; the pattern is wrong or what it pointed at is gone
+  test/fixtures/behavior/nowhere/spec.md:7 include nowhere/*.rb covers no file; the pattern is wrong or what it pointed at is gone
 --- and the claim that could not witness it ---
-  test/fixtures/behavior/test/verify_test.rb:9 I-001 is claimed outside what test/fixtures/behavior/.spec/behavior/init.json includes
+  test/fixtures/behavior/test/verify_test.rb:9 I-001 is claimed outside what test/fixtures/behavior/.spec/behavior/init.md includes

@@ -2,15 +2,18 @@ require "pathname"
 require "sumitsubo/behavior"
 require "sumitsubo/scope"
 require "sumitsubo/specification"
-require "sumitsubo/parser/json"
+require "sumitsubo/grammar"
+require "sumitsubo/parser/markdown"
 
-# Nothing under sumitsubo/ names a format, so a test says which it reads.
-PARSERS = [Sumitsubo::Parser::Json.new]
+# Nothing under sumitsubo/ names a format, so a test says which it reads. This
+# one reads the format features are really written in, which is why its
+# snapshot is written by hand.
+PARSERS = [Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
 
 # A format this build does not really carry, so that what decides which files
 # are specifications is visibly the parsers rather than an extension written
-# into the mechanism. A real second format reaches a grammar; this one answers
-# what it was asked for, which is what keeps this file's snapshot writable.
+# into the mechanism. There is one real format left, so a second one has to be
+# stood in for.
 class Other
   SUFFIX = ".spec"
 
@@ -26,10 +29,7 @@ end
 
 # The loader answers where a scenario sits as well as what it says. A scenario
 # nothing declares is a finding about the specification, so the reader has to
-# be able to go to the line that declares it — which is why the raw text is
-# read alongside the parsed document.
-#
-# Nothing here reaches the grammar, so --regen can still write this snapshot.
+# be able to go to the line that declares it.
 
 # @behavior B-001
 puts "--- what the directory declares, and where ---"
@@ -72,27 +72,11 @@ rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
 
-# @behavior B-006
-puts "--- and neither is a specification that will not parse ---"
-begin
-  Sumitsubo::Behavior.load("test/fixtures/behavior/broken", PARSERS)
-rescue Sumitsubo::Behavior::Error => e
-  puts e.message
-end
-
 # Marker hands back the whole of the line after the keyword; what counts as an
 # id is this mechanism's to say.
 # @behavior B-007
 puts "--- several ids on one marker line ---"
 p Sumitsubo::Behavior.ids_in("V-008 V-009")
-
-# A scenario written on the same line as the one before it still has a line to
-# answer at, which is what a finding about it needs.
-# @behavior B-008
-puts "--- two scenarios on one line ---"
-Sumitsubo::Behavior.load("test/fixtures/behavior/oneline", PARSERS).each do |feature|
-  feature.statements.each { |scenario| puts "  #{scenario.line} #{scenario.key}" }
-end
 
 # An `include` is the boundary of what a feature answers for rather than a
 # list of files to read: two features over one directory reach different files,
