@@ -4,6 +4,7 @@ require "sumitsubo/scope"
 require "sumitsubo/specification"
 require "sumitsubo/grammar"
 require "sumitsubo/parser/markdown"
+require "sumitsubo/parser/json"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reads the format features are really written in, which is why its
@@ -68,6 +69,17 @@ end
 puts "--- a scenario with no id cannot be referenced at all ---"
 begin
   Sumitsubo::Behavior.load("test/fixtures/behavior/anonymous", PARSERS)
+rescue Sumitsubo::Behavior::Error => e
+  puts e.message
+end
+
+# A build still reads JSON, because that is what a contract is written in. A
+# feature left there is named rather than passed over, so a project part-way
+# through moving is told which file to write again.
+# @behavior B-016
+puts "--- a feature left in the format a contract is written in ---"
+begin
+  Sumitsubo::Behavior.load("test/fixtures/behavior/structured", PARSERS + [Sumitsubo::Parser::Json.new])
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
