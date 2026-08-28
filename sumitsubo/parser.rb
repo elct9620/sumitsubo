@@ -18,13 +18,9 @@ module Sumitsubo
     # reads it. A file no parser answers for is a comparison that cannot be
     # made rather than a specification read as something it is not.
     def self.of(path, parsers)
-      index = 0
-      while index < parsers.length
-        parser = parsers[index]
-        return parser if parser.reads?(path)
+      parser = parsers.find { |candidate| candidate.reads?(path) }
+      return parser unless parser.nil?
 
-        index += 1
-      end
       raise Unreadable, "#{Where.of(path)} is not a specification this sumi can read"
     end
 
@@ -34,13 +30,7 @@ module Sumitsubo
     # is one this build was never meant to read, rather than a specification
     # written wrong.
     def self.reads?(path, parsers)
-      index = 0
-      while index < parsers.length
-        return true if parsers[index].reads?(path)
-
-        index += 1
-      end
-      false
+      parsers.any? { |parser| parser.reads?(path) }
     end
   end
 end

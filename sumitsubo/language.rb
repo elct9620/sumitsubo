@@ -59,29 +59,15 @@ module Sumitsubo
     # this is for is that nobody outside has to.
     def self.comments_in(path, where)
       file = Pathname.new(path)
-      index = 0
-      while index < ALL.length
-        language = ALL[index]
-        return language.comments_in(file, where) if language.reads?(file)
-
-        index += 1
-      end
-      []
+      language = reading_of(file)
+      language.nil? ? [] : language.comments_in(file, where)
     end
 
-    # The comments a claim could sit in. Written out rather than folded in
-    # with the reading above: what they share is a loop, and a way to hand one
-    # question to the other is a mechanism where two of these are ten lines.
+    # The comments a claim could sit in.
     def self.attached_comments_in(path, where)
       file = Pathname.new(path)
-      index = 0
-      while index < ALL.length
-        language = ALL[index]
-        return language.attached_comments_in(file, where) if language.reads?(file)
-
-        index += 1
-      end
-      []
+      language = reading_of(file)
+      language.nil? ? [] : language.attached_comments_in(file, where)
     end
 
     # The names this file declares, read as the language named. A name is
@@ -90,41 +76,34 @@ module Sumitsubo
     # rather than the filename's to imply.
     def self.declarations_in(path, where, language)
       file = Pathname.new(path)
-      index = 0
-      while index < ALL.length
-        reading = ALL[index]
-        return reading.declarations_in(file, where) if reading.named?(language)
-
-        index += 1
-      end
-      []
+      reading = reading_named(language)
+      reading.nil? ? [] : reading.declarations_in(file, where)
     end
 
     # Whether this build carries the language a specification named. What an
     # executable can read is decided when it is built, so a name it does not
     # answer to is a run that cannot compare rather than one that guesses.
     def self.carries?(language)
-      index = 0
-      while index < ALL.length
-        return true if ALL[index].named?(language)
-
-        index += 1
-      end
-      false
+      ALL.any? { |reading| reading.named?(language) }
     end
 
     # Whether a definition written in that language could carry this name.
     # A shape judgement and nothing more: it says the name is spellable there,
     # never that anything defines it.
     def self.definable?(language, name)
-      index = 0
-      while index < ALL.length
-        reading = ALL[index]
-        return reading.definable?(name) if reading.named?(language)
+      reading = reading_named(language)
+      !reading.nil? && reading.definable?(name)
+    end
 
-        index += 1
-      end
-      false
+    # The reading that answers for a file, and the one answering to a name.
+    # Two questions rather than one: a comment is read by whichever reading
+    # claims the file, and a declaration by the one the specification named.
+    def self.reading_of(file)
+      ALL.find { |reading| reading.reads?(file) }
+    end
+
+    def self.reading_named(language)
+      ALL.find { |reading| reading.named?(language) }
     end
   end
 end
