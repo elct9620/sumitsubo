@@ -35,68 +35,72 @@ module Sumitsubo
         vocabulary the tool carries but cannot verify.
 
         File
-            .spec/glossary.json - one file, laid down by `sumi init`.
+            .spec/glossary.md - one file, laid down by `sumi init`.
 
         Form
-            {
-              "glossary": [
-                {
-                  "include": ["app/**/*.rb", "docs/*.md"],
-                  "terms": [
-                    {
-                      "term": "Order",
-                      "definition": "What a customer asks us to fulfil.",
-                      "not": [
-                        {
-                          "term": "Purchase",
-                          "reason": "Order is what the domain calls it.",
-                          "ignore": [
-                            {
-                              "at": "app/legacy_import.rb:88",
-                              "reason": "Quotes the upstream column name."
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "name": "Billing",
-                  "include": ["app/billing/**/*.rb"],
-                  "terms": [
-                    {
-                      "term": "Order",
-                      "definition": "The billable set of lines.",
-                      "not": []
-                    }
-                  ]
-                }
-              ]
-            }
+            # Glossary
 
-            An entry naming no subdomain carries Global - the words the project
-            keeps wherever nothing says otherwise. A named one carries that
-            subdomain's. Either is scoped by its `include` globs.
+            The words this project keeps, and the ones it turns down in
+            their place.
 
-            A file takes every entry covering it, in the order the file lists
-            them; a later term replaces an earlier one of the same name
-            outright, its rejected words included, because a term meaning
-            something else there rejects different words. Order is all that
-            decides which way that goes, so Global is written first.
+            ## Everywhere
 
-            A `reason` says why that word is wrong, not why the term is right -
-            what the term means is what `definition` carries. The reason is
-            what a reader is handed at the line they tripped on.
+            ### Includes
 
-            An `ignore` sets one finding aside: the line is right to say what
-            it says, and its own `reason` says why. Which term is rejecting
-            and which word it rejects come from where the ignore sits, so `at`
-            is the whole of what it names - `path:line`, against the same
-            place the `include` globs are, which is what a finding prints when
-            the run starts there. Both halves are required.
+            - `app/**/*.rb`
+            - `docs/*.md`
 
-            Fix the line and `at` names nothing, so the run stops until the
+            ### Order
+
+            What a customer asks us to fulfil.
+
+            #### Rejected
+
+            - `Purchase` — Order is what the domain calls it.
+              - `app/legacy_import.rb:88` — Quotes the upstream column name.
+
+            ## Billing
+
+            ### Includes
+
+            - `app/billing/**/*.rb`
+
+            ### Order
+
+            The billable set of lines.
+
+            The title says the document is a vocabulary, and one declaring
+            no section is a vocabulary that checks nothing - which is what
+            `sumi init` lays down. Every `##` opens a section, named by the
+            project: what it covers is its `Includes`, what it means is the
+            terms under it.
+
+            A file takes every section covering it, in the order the file
+            lists them; a later term replaces an earlier one of the same
+            name outright, its rejected words included, because a term
+            meaning something else there rejects different words. Order is
+            all that decides which way that goes, so the section a file falls
+            back to is written first.
+
+            A term is a `###` heading and the paragraph under it is the
+            definition. `Includes` is the one `###` heading that is reserved
+            rather than a term, which is why a heading of a term's own
+            starts at `####` - and `Rejected` is the one word read there.
+
+            A rejected word is a list item opening with that word in
+            backticks. What follows the dash says why the word is wrong, not
+            why the term is right - what the term means is what its
+            definition carries. The reason is what a reader is handed at the
+            line they tripped on.
+
+            An ignore is a list item under the word it sets aside, naming
+            `path:line` in backticks with its own reason after the dash.
+            Which term is rejecting and which word it rejects come from where
+            it sits, so the line is the whole of what it names - against the
+            same place the `Includes` globs are, which is what a finding
+            prints when the run starts there. Both halves are required.
+
+            Fix the line and it names nothing, so the run stops until the
             exception is looked at again. That is the opposite of what a
             fingerprint would do, and deliberate: an exception nobody is made
             to revisit outlives what it was written for.
@@ -109,9 +113,9 @@ module Sumitsubo
             Matching is whole-word and case sensitive.
 
             The glossary itself, where its own includes cover it: a word has
-            to be spelled to be declared rejected, so the line spelling one as
-            a `term` declares it rather than uses it, and nothing is reported
-            there.
+            to be spelled to be declared rejected, so the line a term or one
+            of its rejections is written on declares that word rather than
+            uses it, and nothing is reported there.
 
         Findings
             app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
@@ -120,13 +124,13 @@ module Sumitsubo
                 drop the rejected word from the specification - which side is
                 wrong is not the tool's to decide.
 
-            .spec/glossary.json:31 nothing at app/legacy_import.rb:88 has Order
+            .spec/glossary.md:19 nothing at app/legacy_import.rb:88 has Order
             rejecting Purchase; the line moved or the wording was fixed (exit 2)
                 An ignore names a finding that is no longer there. Point it at
                 where the line went, or drop it - nothing was set aside, so
                 nothing was compared either.
 
-            no glossary at .spec/glossary.json; sumi init lays one down (exit 2)
+            no glossary at .spec/glossary.md; sumi init lays one down (exit 2)
                 `sumi init` lays this file down, so a root without one is a root
                 something removed. Nothing was compared.
       TEXT
