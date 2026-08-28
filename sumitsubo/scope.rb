@@ -56,7 +56,9 @@ module Sumitsubo
     end
 
     # Whether any directory the walk refused stands on this pattern's path,
-    # either above its root or under it.
+    # either above its root or under it. A pattern beginning with a wildcard
+    # has the base for its root, so every refusal stands on it — which is why
+    # that case is asked inside the walk over them rather than ahead of it.
     def self.refused?(pruned, root)
       pruned.any? do |gone|
         root == "" || root == gone || root.start_with?("#{gone}/") || gone.start_with?("#{root}/")
