@@ -149,8 +149,10 @@ AOT compiler for Ruby. Its constraints shape the design:
 - String literals are frozen by default.
 - There is no RubyGems. The standard library is what Spinel's own packages
   provide: json, csv, erb, set, strscan, stringio, pathname, optparse, digest,
-  base64, forwardable, prelude. Structured specifications are JSON for that
-  reason; YAML is a direction, not a capability.
+  base64, forwardable, prelude. A configuration file is JSON for that reason,
+  and YAML is a direction rather than a capability. A specification is
+  Markdown, which no package answers for: it is read through a grammar this
+  build links in.
 - `spin` compiles with the compiler's require gate on, so a file naming one of
   those packages requires it first and a require nothing can satisfy fails the
   build. That is what keeps a source file reading the same here as under the
