@@ -7,21 +7,21 @@ place.
 
 - `test/glossary_test.rb`
 
-## `G-001` An entry reaches the files its includes cover, under the name it carries
+## `G-001` A section reaches the files its includes cover, under the name it carries
 
 | Step | Statement |
 | --- | --- |
-| Given | a glossary carrying Global and a named subdomain, each with include globs |
-| When | the entries are resolved against the base |
-| Then | each answers the files its globs cover, Global under that name and the subdomain under its own |
+| Given | a vocabulary carrying two sections, each with include globs |
+| When | the sections are resolved against the base |
+| Then | each answers the files its own globs cover, under the name it was written with |
 
-## `G-002` A subdomain stands in for Global where both name one term
+## `G-002` A later section stands in for an earlier one where both name a term
 
 | Step | Statement |
 | --- | --- |
-| Given | Global and a subdomain covering one file and declaring the same term |
+| Given | two sections covering one file and declaring the same term |
 | When | the effective vocabulary for that file is worked out |
-| Then | the subdomain's term replaces Global's outright, its rejected words included |
+| Then | the later section's term replaces the earlier one outright, its rejected words included |
 
 ## `G-003` A missing glossary is a broken reference line
 
@@ -31,21 +31,13 @@ place.
 | When | the glossary is loaded |
 | Then | the path is named as one holding no glossary |
 
-## `G-004` A glossary that will not parse
+## `G-005` A file that never says it is a vocabulary
 
 | Step | Statement |
 | --- | --- |
-| Given | a glossary file that is not readable JSON |
+| Given | a document with sections and terms but no title |
 | When | the glossary is loaded |
-| Then | the file is named as unreadable |
-
-## `G-005` A file declaring no glossary at all
-
-| Step | Statement |
-| --- | --- |
-| Given | readable JSON with no glossary in it |
-| When | the glossary is loaded |
-| Then | the file is named as declaring no glossary |
+| Then | the file is named as declaring no title |
 
 ## `G-006` The root arrives absolute
 
@@ -59,9 +51,9 @@ place.
 
 | Step | Statement |
 | --- | --- |
-| Given | Global and a subdomain covering one file and declaring the same term |
-| When | the entries are read in the reverse of the order the specification writes them |
-| Then | Global's term replaces the subdomain's, which is why Global is written first |
+| Given | two sections covering one file and declaring the same term |
+| When | the sections are read in the reverse of the order the specification writes them |
+| Then | the first section's term replaces the second's, which is why order is what a project writes its sections in |
 
 ## `G-008` The specification spelling a word is not a use of it
 

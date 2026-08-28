@@ -1,5 +1,4 @@
 require "json"
-require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/locations"
 require "sumitsubo/specification"
@@ -12,26 +11,22 @@ module Sumitsubo
     # has to be recovered from because JSON carries none, are this file's and
     # nowhere else's: a mechanism asks for a specification and is handed one.
     #
-    # The three questions are answered here together rather than one file each
-    # because what they share is the format. Glossary answers a list because a
-    # vocabulary writes its subdomains in one file, and the other two answer
-    # one specification per file.
+    # The two questions left are answered here together rather than one file
+    # each because what they share is the format. A vocabulary is no longer one
+    # of them: it is written the way a person reads it, and this format has
+    # nothing to answer for it with.
     class Json
       # Where the specification spells the values a finding has to answer at.
       # A regular expression is enough because it is looking for a key this
       # format writes, not for the shape of what the key holds.
       ID = /"id"\s*:\s*"([^"]*)"/
       NAME = /"name"\s*:\s*"([^"]*)"/
-      AT = /"at"\s*:\s*"([^"]*)"/
 
       # Every quoted value, since an include is written as one and this format
       # gives it no key of its own to follow. First wins, as it does for every
       # other reading here: a glob is distinctive enough that the line
       # carrying it is the line that wrote it.
       SPELLED = /"([^"]*)"/
-
-      # What a vocabulary is called where it names no subdomain of its own.
-      GLOBAL = "Global"
 
       # The extension is the whole of what says a file is written this way. A
       # specification is named by the project rather than found by its content,
@@ -113,25 +108,6 @@ module Sumitsubo
         Locations.of(File.read(path), SPELLED)
       end
 
-      def glossary(path)
-        file = Pathname.new(path)
-        where = Where.of(file)
-        raise Unreadable, "no glossary at #{where}; sumi init lays one down" unless file.exist?
-
-        text = file.read
-        sections = parse(path, text)["glossary"]
-        if sections.nil?
-          raise Unreadable, "#{where} declares no \"glossary\"; " \
-                            "sumi help glossary has the form"
-        end
-
-        # JSON carries no line numbers, and an ignore has to answer at the line
-        # it was written on, so where each sits is read off the text here
-        # rather than the file being opened a second time later.
-        lines = Locations.of(text, AT)
-        sections.map { |raw| section_from(raw, where, lines) }
-      end
-
       private
 
       # A step nobody wrote is no step rather than an empty one, which is what
@@ -211,61 +187,6 @@ module Sumitsubo
           found.push(Param.new(param["name"], kind.nil? ? POSITIONAL : kind, param["optional"] == true))
         end
         found
-      end
-
-      def section_from(raw, where, lines)
-        Specification.new(
-          raw["name"] || GLOBAL,
-          nil,
-          raw["include"] || [],
-          where,
-          {},
-          (raw["terms"] || []).map { |term| term_from(term, where, lines) }
-        )
-      end
-
-      # A term and a rejected word answer no line. Where each is spelled is
-      # read off the raw text when a finding needs it, and reading it twice to
-      # carry it here would be the second read for nothing. An ignore is the
-      # one that has to answer at its own line, so it is the one the line map
-      # is built for.
-      def term_from(raw, where, lines)
-        Statement.new(
-          raw["term"],
-          raw["definition"],
-          where,
-          nil,
-          {},
-          (raw["not"] || []).map { |entry| disallowed_from(entry, where, lines) }
-        )
-      end
-
-      def disallowed_from(raw, where, lines)
-        Statement.new(
-          raw["term"],
-          raw["reason"],
-          where,
-          nil,
-          {},
-          (raw["ignore"] || []).map { |entry| ignore_from(entry, where, lines) }
-        )
-      end
-
-      # Both halves are refused rather than carried empty: one with nowhere to
-      # point matches nothing and reports itself, and one with no reason is the
-      # exception that outlives whoever knew why.
-      def ignore_from(raw, where, lines)
-        at = raw["at"]
-        if at.nil?
-          raise Unreadable, "#{where} writes an ignore with no \"at\"; " \
-                            "sumi help glossary has the form"
-        end
-        if raw["reason"].nil?
-          raise Unreadable, "#{where} writes an ignore at #{at} with no \"reason\"; " \
-                            "sumi help glossary has the form"
-        end
-
-        Statement.new("#{at}", raw["reason"], where, lines["#{at}"], {}, [])
       end
 
       def parse(path, text)

@@ -5,21 +5,20 @@ module Sumitsubo
   module Parser
     class Markdown
       module Builder
-        # A vocabulary and the subdomains laid over it. This answers a list
-        # where the other builders answer one specification, because a project
-        # writes its whole vocabulary in one file and each heading at the second
-        # level opens another section of it.
+        # A vocabulary: the sections a project lays over one another, the terms
+        # each declares, and the words those terms reject.
         #
-        # The query asks for the levels this form is written at and no others,
-        # so the title a document opens with is prose by never being captured.
+        # The tree is deeper here than the other two builders answer, and that
+        # is the whole of the difference — one file is still one specification.
+        # A section is a container that asserts nothing itself; what asserts is
+        # the term under it. Which section holds where another says nothing is
+        # decided by what its globs cover and by the order they are written, so
+        # the sections share one specification for that order to be written in.
+        #
+        # The query asks for the levels this form is written at and no others.
         # A nested item is anchored one level deeper than a plain one: without
-        # that anchor a third level would arrive spelled exactly like the
-        # second and be read as one, and two levels is what a list carries here.
-        #
-        # No section name is reserved and none is supplied. Which vocabulary
-        # holds where another says nothing is decided by what its globs cover
-        # and by the order they are written, so a word for that role would name
-        # something this builder does not do.
+        # that anchor a third level would arrive spelled exactly like the second
+        # and be read as one, and two levels is what a list carries here.
         #
         # What a walk holds that no block carries is which heading a capture
         # arrived under: the reserved heading last seen says what the list items
@@ -29,6 +28,7 @@ module Sumitsubo
         # wrote are the same thing.
         class Vocabulary
           QUERY = <<~QUERY
+            (atx_heading (atx_h1_marker) (inline) @h1)
             (atx_heading (atx_h2_marker) (inline) @h2)
             (atx_heading (atx_h3_marker) (inline) @h3)
             (atx_heading (atx_h4_marker) (inline) @h4)
@@ -53,7 +53,10 @@ module Sumitsubo
           def initialize(path, where)
             @path = path
             @where = where
+            @key = nil
+            @text = nil
             @sections = []
+            @section = nil
             @term = nil
             @rejected = nil
             @holding = nil
@@ -66,8 +69,10 @@ module Sumitsubo
           def build(captures)
             captures.each { |capture| arrived(capture) }
 
-            refuse(1, "declares no section") if @sections.empty?
-            @sections
+            refuse(1, "declares no title") if @key.nil?
+            # The sections carry the boundaries here, so the container declares
+            # none. The shape allows one as their default; nothing needs it yet.
+            Specification.new(@key, @text, [], @where, {}, @sections)
           end
 
           private
@@ -75,7 +80,8 @@ module Sumitsubo
           def arrived(capture)
             said = Format.folded(capture.text)
             case capture.name
-            when Format::H2 then section(said)
+            when Format::H1 then titled(said, capture.line)
+            when Format::H2 then section(said, capture.line)
             when Format::H3 then term(said, capture.line)
             when Format::H4 then rejects(said, capture.line)
             when Format::PARAGRAPH then defines(said)
@@ -84,8 +90,27 @@ module Sumitsubo
             end
           end
 
-          def section(said)
-            @sections.push(Specification.new(said, nil, [], @where, {}, []))
+          # A title names the vocabulary, and a file naming two says which of
+          # them it is nowhere. It declares nothing by itself: it is what says
+          # this document is a vocabulary at all, which is what leaves one
+          # declaring no section a vocabulary that checks nothing rather than a
+          # document read as the wrong kind.
+          def titled(said, line)
+            refuse(line, "declares a second title") unless @key.nil?
+
+            @key = said
+          end
+
+          # No section name is reserved and none is supplied. Which vocabulary
+          # holds where another says nothing is decided by what its globs cover
+          # and by the order they are written, so a word for that role would
+          # name something this builder does not do.
+          def section(said, line)
+            # Every section answers a list of globs whether or not it wrote
+            # any, so what covers nothing is spelled the same as what covers
+            # something and no caller is made to ask which it got.
+            @section = Statement.new(said, nil, @where, line, { INCLUDE => [] }, [])
+            @sections.push(@section)
             @term = nil
             @rejected = nil
             @holding = nil
@@ -95,7 +120,7 @@ module Sumitsubo
           # whatever the one before it opened, so a rejected word never carries
           # past the term rejecting it.
           def term(said, line)
-            refuse(line, "declares #{said} outside any section") if @sections.empty?
+            refuse(line, "declares #{said} outside any section") if @section.nil?
 
             @holding = said == Format::INCLUDES ? Format::INCLUDES : nil
             @rejected = nil
@@ -103,7 +128,7 @@ module Sumitsubo
             return unless @holding.nil?
 
             @term = Statement.new(said, nil, @where, line, {}, [])
-            @sections[-1].statements.push(@term)
+            @section.statements.push(@term)
           end
 
           # The one heading a term carries. A word other than the reserved one
@@ -119,14 +144,17 @@ module Sumitsubo
 
           # The paragraph under a heading says what that heading declares. Only
           # the first does: a vocabulary wanting a second is writing prose, the
-          # same as a feature does under a scenario. A paragraph above every
-          # section is what the document says of itself, which nothing declares.
+          # same as a feature does under a scenario. The one above every section
+          # says what the document itself is for.
           def defines(said)
             return unless @holding.nil?
 
-            holder = @term.nil? ? @sections[-1] : @term
-            return if holder.nil?
+            if @section.nil?
+              @text = said if @text.nil?
+              return
+            end
 
+            holder = @term.nil? ? @section : @term
             holder.text = said if holder.text.nil?
           end
 
@@ -135,7 +163,7 @@ module Sumitsubo
           # term says what it refuses, and prose anywhere else.
           def listed(said, line)
             if @holding == Format::INCLUDES
-              @sections[-1].includes.push(Format.glob(@path, line, said, TOPIC))
+              scoped(Format.glob(@path, line, said, TOPIC))
               return
             end
             return unless @holding == REJECTED
@@ -145,6 +173,14 @@ module Sumitsubo
 
             @rejected = Statement.new(opened.taken, reason(opened.after), @where, line, {}, [])
             @term.statements.push(@rejected)
+          end
+
+          # One glob onto the section it was written under. A boundary is a
+          # section's rather than the document's, and nothing points at a glob,
+          # so it is an attribute of that section rather than a statement of
+          # its own.
+          def scoped(glob)
+            @section.attributes[INCLUDE] = @section.attributes[INCLUDE] + [glob]
           end
 
           # One line a rejection does not answer for. Both halves are refused

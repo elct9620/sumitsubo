@@ -34,12 +34,13 @@ one two three
 --- which files this parser answers for ---
 [true, false, true]
 --- a vocabulary read into sections, terms and the words they reject ---
-Everywhere ["app/**/*.rb"] "What this section is for."
-  test/fixtures/reading/glossary.md:13 Order — What a customer asks us to fulfil.
-    rejects Purchase — Order is what the domain calls it.
-      20 app/legacy_import.rb:88 — Quotes the upstream column name.
-Billing ["app/billing/*.rb"] nil
-  test/fixtures/reading/glossary.md:28 Order — The billable set of lines.
+Glossary "Prose above every section."
+  Everywhere ["app/**/*.rb"] "What this section is for."
+    test/fixtures/reading/glossary.md:13 Order — What a customer asks us to fulfil.
+      19 rejects Purchase — Order is what the domain calls it.
+        20 app/legacy_import.rb:88 — Quotes the upstream column name.
+  Billing ["app/billing/*.rb"] nil
+    test/fixtures/reading/glossary.md:28 Order — The billable set of lines.
 --- two sections declaring one term ---
 [["Everywhere", ["Order"]], ["Billing", ["Order"]]]
 --- a rejected word written with and without the separator ---
@@ -48,8 +49,10 @@ Billing ["app/billing/*.rb"] nil
   Acquire nil
 --- a term written under no section ---
   refused: test/fixtures/reading/glossary.md:3 declares Order outside any section; sumi help glossary has the form
---- a document declaring no section at all ---
-  refused: test/fixtures/reading/glossary.md:1 declares no section; sumi help glossary has the form
+--- a vocabulary declaring no section checks nothing ---
+Glossary "Prose and nothing else."
+--- a document that never says it is a vocabulary ---
+  refused: test/fixtures/reading/glossary.md:1 declares no title; sumi help glossary has the form
 --- a heading under a term that is not Rejected ---
   refused: test/fixtures/reading/glossary.md:7 writes Rejcted where only Rejected is read; sumi help glossary has the form
 --- Rejected written under no term ---

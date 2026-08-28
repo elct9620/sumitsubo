@@ -156,14 +156,15 @@ puts "  line #{written.statements[0].line} / #{structured.statements[0].line}"
 # be handed captures; what is pinned here is that a document a person wrote
 # arrives as those blocks at all.
 
-def vocabulary_of(sections)
-  sections.each do |section|
-    puts "#{section.key} #{section.includes.inspect} #{section.text.inspect}"
+def vocabulary_of(spec)
+  puts "#{spec.key} #{spec.text.inspect}"
+  spec.statements.each do |section|
+    puts "  #{section.key} #{section.attributes[Sumitsubo::INCLUDE].inspect}"
     section.statements.each do |term|
-      puts "  #{term.line} #{term.key} — #{term.text}"
+      puts "    #{term.line} #{term.key} — #{term.text}"
       term.statements.each do |word|
-        puts "    rejects #{word.key} — #{word.text}"
-        word.statements.each { |ignore| puts "      #{ignore.line} #{ignore.key} — #{ignore.text}" }
+        puts "      #{word.line} rejects #{word.key} — #{word.text}"
+        word.statements.each { |ignore| puts "        #{ignore.line} #{ignore.key} — #{ignore.text}" }
       end
     end
   end
@@ -196,34 +197,6 @@ definition_of(reading.contract("test/fixtures/reading/cli.md", Sumitsubo::Langua
 puts "--- a definition registering contracts in two languages ---"
 definition_of(reading.contract("test/fixtures/reading/seams.md", Sumitsubo::Language))
 
-# The same vocabulary written both ways reads into the same shape. A term
-# answers a line where Markdown was read and none where JSON was, which is the
-# same exception the feature above carries.
-# @behavior MD-050
-puts "--- the same vocabulary, written both ways ---"
-vocabulary_md = reading.glossary("test/fixtures/reading/glossary.md")
-vocabulary_json = Sumitsubo::Parser::Json.new.glossary("test/fixtures/reading/glossary.json")
-
-# Every section and every statement under it, spelled as one run of text. A
-# whole vocabulary compared in one go rather than field by field: what the two
-# formats may differ in is the line, and no line is written here.
-def vocabulary_said(sections)
-  said = []
-  sections.each do |section|
-    said.push("#{section.key} #{section.includes.inspect} #{section.text.inspect}")
-    section.statements.each do |term|
-      said.push("  #{term.key} — #{term.text}")
-      term.statements.each do |word|
-        said.push("    #{word.key} — #{word.text}")
-        word.statements.each { |ignore| said.push("      #{ignore.key} — #{ignore.text}") }
-      end
-    end
-  end
-  said.join("\n")
-end
-
-agree("what the vocabulary declares", vocabulary_said(vocabulary_md), vocabulary_said(vocabulary_json))
-puts "  line #{vocabulary_md[0].statements[0].line} / #{vocabulary_json[0].statements[0].line.inspect}"
 
 # A definition read through a marker compares the same way. The other reading
 # does not: a signature and a list of parameters are not the same thing said

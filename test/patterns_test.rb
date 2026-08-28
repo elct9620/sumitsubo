@@ -106,7 +106,7 @@ base = Pathname.pwd
 TREE = [
   "CLAUDE.md",
   "README.md",
-  ".spec/glossary.json",
+  ".spec/glossary.md",
   ".spec/contract/cli.json",
   ".spec/behavior/verify.md",
   "sumitsubo/config.rb",
@@ -140,7 +140,7 @@ puts "--- the shapes in use answer the same either way ---"
 [
   "CLAUDE.md",
   "README.md",
-  ".spec/glossary.json",
+  ".spec/glossary.md",
   ".spec/contract/*.json",
   ".spec/behavior/*.md",
   "sumitsubo/**/*.rb",

@@ -171,9 +171,10 @@ p [parser.reads?("init.md"), parser.reads?("init.json"), parser.reads?(".spec/be
 
 # --- a vocabulary --------------------------------------------------------
 #
-# One document holds several sections, so this reading answers a list. The
-# path names a file that is really there, because a vocabulary nobody wrote is
-# refused before any block is read.
+# One file is one specification here as it is for the other two forms; the
+# tree under it is deeper, which is the whole of the difference. The path names
+# a file that is really there, because a vocabulary nobody wrote is refused
+# before any block is read.
 
 VOCABULARY = "test/fixtures/reading/glossary.md"
 
@@ -184,20 +185,25 @@ rescue Sumitsubo::Unreadable => e
   nil
 end
 
-def said_of(section)
-  puts "#{section.key} #{section.includes.inspect} #{section.text.inspect}"
-  section.statements.each do |term|
-    puts "  #{term.path}:#{term.line} #{term.key} — #{term.text}"
-    term.statements.each do |word|
-      puts "    rejects #{word.key} — #{word.text}"
-      word.statements.each { |ignore| puts "      #{ignore.line} #{ignore.key} — #{ignore.text}" }
+# A rejected word answers a line of its own, which is what the mechanism sets
+# a finding aside by: the specification spelling a word is not a use of it.
+def said_of(spec)
+  puts "#{spec.key} #{spec.text.inspect}"
+  spec.statements.each do |section|
+    puts "  #{section.key} #{section.attributes[Sumitsubo::INCLUDE].inspect} #{section.text.inspect}"
+    section.statements.each do |term|
+      puts "    #{term.path}:#{term.line} #{term.key} — #{term.text}"
+      term.statements.each do |word|
+        puts "      #{word.line} rejects #{word.key} — #{word.text}"
+        word.statements.each { |ignore| puts "        #{ignore.line} #{ignore.key} — #{ignore.text}" }
+      end
     end
   end
 end
 
 # @behavior MD-019
 puts "--- a vocabulary read into sections, terms and the words they reject ---"
-vocabulary([
+said_of(vocabulary([
   h1(1, "Glossary"),
   paragraph(3, "Prose above every section."),
   h2(5, "Everywhere"),
@@ -214,7 +220,7 @@ vocabulary([
   item(26, "`app/billing/*.rb`"),
   h3(28, "Order"),
   paragraph(30, "The billable set of lines.")
-]).each { |section| said_of(section) }
+]))
 
 # A subdomain is a section like any other, so two of them declaring one term is
 # what the mechanism lays over rather than an ambiguity to refuse.
@@ -223,7 +229,7 @@ puts "--- two sections declaring one term ---"
 p vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"),
   h2(7, "Billing"), h3(9, "Order")
-]).map { |section| [section.key, section.statements.map { |term| term.key }] }
+]).statements.map { |section| [section.key, section.statements.map { |term| term.key }] }
 
 # The separator is what a reader puts there and `fmt` is what keeps it there,
 # so the reason reads the same whether or not it was written.
@@ -234,15 +240,22 @@ vocabulary([
   item(9, "`Purchase` — Order is what the domain calls it."),
   item(10, "`Buy` Order is what the domain calls it."),
   item(11, "`Acquire`")
-])[0].statements[0].statements.each { |word| puts "  #{word.key} #{word.text.inspect}" }
+]).statements[0].statements[0].statements.each { |word| puts "  #{word.key} #{word.text.inspect}" }
 
 # @behavior MD-022
 puts "--- a term written under no section ---"
 vocabulary([h1(1, "Glossary"), h3(3, "Order")])
 
+# A title is what says the document is a vocabulary at all, so one declaring
+# no section is a vocabulary that checks nothing rather than a document read
+# as the wrong kind.
+# @behavior MD-052
+puts "--- a vocabulary declaring no section checks nothing ---"
+said_of(vocabulary([h1(1, "Glossary"), paragraph(3, "Prose and nothing else.")]))
+
 # @behavior MD-023
-puts "--- a document declaring no section at all ---"
-vocabulary([h1(1, "Glossary"), paragraph(3, "Prose and nothing else.")])
+puts "--- a document that never says it is a vocabulary ---"
+vocabulary([h2(1, "Everywhere"), h3(3, "Order")])
 
 # @behavior MD-024
 puts "--- a heading under a term that is not Rejected ---"
@@ -284,7 +297,7 @@ p vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"),
   item(7, "one the definition wanted to list"),
   nested(8, "and one under it")
-])[0].statements[0].statements
+]).statements[0].statements[0].statements
 
 # A vocabulary is refused before any block is read, because a file nobody
 # wrote is a reference line to compare against rather than a document out of

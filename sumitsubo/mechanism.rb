@@ -32,22 +32,22 @@ module Sumitsubo
       end
 
       def seed(root)
-        Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::EMPTY)
+        Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::SEED)
       end
 
       def verify(config, report, languages, parsers)
         path = Sumitsubo::Glossary.path_in(config.root)
-        sections = Sumitsubo::Glossary.load(path, parsers)
+        vocabulary = Sumitsubo::Glossary.load(path, parsers)
         # An include reaching nothing is not a difference: what the words were
         # to be checked against was never read.
-        Sumitsubo::Glossary.barren(sections, config.base, path, config.exclusion, parsers).each do |barren|
+        Sumitsubo::Glossary.barren(vocabulary, config.base, path, config.exclusion, parsers).each do |barren|
           report.failure(barren.path, barren.line, Scope.describe(barren))
         end
-        scope = Sumitsubo::Glossary.scope(sections, config.base, config.exclusion)
+        scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
         findings = Sumitsubo::Glossary.uses(
-          Sumitsubo::Glossary.check(scope, config.base, languages), path, config.base
+          Sumitsubo::Glossary.check(scope, config.base, languages), vocabulary
         )
-        Sumitsubo::Glossary.standing(findings, sections).each do |finding|
+        Sumitsubo::Glossary.standing(findings, vocabulary).each do |finding|
           report.difference(
             Where.of(config.base / finding.path), finding.line,
             Sumitsubo::Glossary.describe(finding)
@@ -55,7 +55,7 @@ module Sumitsubo
         end
         # An ignore naming nothing is not a difference about the code: what it
         # was written against is gone, so there was nothing to compare.
-        Sumitsubo::Glossary.unresolved(findings, sections).each do |stale|
+        Sumitsubo::Glossary.unresolved(findings, vocabulary).each do |stale|
           report.failure(
             Where.of(path), stale.line, Sumitsubo::Glossary.describe_unresolved(stale)
           )

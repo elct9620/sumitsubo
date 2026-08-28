@@ -17,14 +17,14 @@ project means — and there is no unchecked promise in naming. A note is the
 same.
 
 `.spec/behavior/` therefore arrived with the Behavior mechanism and not before,
-`.spec/contract/` with Contract, and `.spec/glossary.json` stayed empty until
+`.spec/contract/` with Contract, and `.spec/glossary.md` stayed empty until
 this project had words worth rejecting. The vocabulary moved out of this file to sit beside them: a term
 written here is prose, and the same term written there is checked against every
 comment the project holds.
 
 ## Vocabulary
 
-The vocabulary lives in `.spec/glossary.json`, and its includes say what it
+The vocabulary lives in `.spec/glossary.md`, and its includes say what it
 reaches. A specification is checked at its source, which is where a finding's
 fix belongs; the fixtures stay out, since what they carry is deliberately
 wrong.
@@ -105,7 +105,7 @@ The command is `sumi`, shipped as a single native executable.
   `sumitsubo/config.rb` names no mechanism, why no mechanism names a language
   or a format, and why `sumitsubo/definitions.rb` requires nothing at all — a
   reading brings it captures rather than a path. `require "sumitsubo"` reaches
-  no grammar, so what is written by hand is the three tests that read source or
+  no grammar, so what is written by hand is the four tests that read source or
   ask for a binding. Where no snapshot is committed the run is compared against CRuby
   rather than failing, and a test that asserts nothing passes.
 - `--regen` takes the same file list, so name the test to rewrite. Given none

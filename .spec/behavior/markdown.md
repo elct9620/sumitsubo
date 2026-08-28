@@ -178,7 +178,7 @@ document are claimed from a test that cannot.
 | --- | --- |
 | Given | a document with two sections, each scoping itself and declaring a term |
 | When | the blocks the document is made of are read |
-| Then | each section answers its globs and its terms, and a rejected word carries the line it sets aside |
+| Then | one specification answers, its sections carrying their globs and terms, and each rejected word the line it is written on |
 
 ## `MD-020` Two sections declaring one term
 
@@ -204,13 +204,21 @@ document are claimed from a test that cannot.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that heading |
 
-## `MD-023` A vocabulary that declares no section
+## `MD-023` A document that never says it is a vocabulary
 
 | Step | Statement |
 | --- | --- |
-| Given | a document holding prose and no section heading |
+| Given | a document holding sections and terms but no title |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused, since a vocabulary checking nothing was never read |
+| Then | the specification is refused, since nothing said it was a vocabulary |
+
+## `MD-052` A vocabulary that declares no section
+
+| Step | Statement |
+| --- | --- |
+| Given | a document holding a title and prose and no section heading |
+| When | the blocks the document is made of are read |
+| Then | it answers a vocabulary declaring nothing, which is what a project that has written no words yet keeps |
 
 ## `MD-024` A heading under a term that does not open the rejected words
 
@@ -419,14 +427,6 @@ document are claimed from a test that cannot.
 | Given | a definition whose two contracts carry fences opened in different languages |
 | When | the reading is asked what it registers |
 | Then | each contract answers the language its own fence named |
-
-## `MD-050` The same vocabulary written both ways
-
-| Step | Statement |
-| --- | --- |
-| Given | one vocabulary written as Markdown and as JSON |
-| When | each is read by the reading answering for it |
-| Then | the two declare the same sections, terms, rejected words and lines set aside |
 
 ## `MD-051` The same definition written both ways
 

@@ -73,7 +73,7 @@ To build from source instead, see [Development](#development).
 
 ```console
 $ sumi init
-created .spec/glossary.json
+created .spec/glossary.md
 created .spec/contract
 created .spec/behavior
 ```
@@ -107,7 +107,7 @@ the reference line this project verifies against and its own documentation:
 |-------------|-------|
 | How to write each specification | `sumi help glossary` \| `contract` \| `behavior` \| `config` |
 | What each command reads and answers | [.spec/contract/cli.json](.spec/contract/cli.json) |
-| The vocabulary this project keeps | [.spec/glossary.json](.spec/glossary.json) |
+| The vocabulary this project keeps | [.spec/glossary.md](.spec/glossary.md) |
 | The behaviors it holds itself to | [.spec/behavior/](.spec/behavior) |
 
 ## Development

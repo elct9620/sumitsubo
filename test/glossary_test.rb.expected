@@ -1,5 +1,5 @@
---- what each entry covers ---
-Global ["app/**/*.rb", "docs/*.md"] -> ["app/billing/charge.rb", "app/order.rb", "docs/overview.md"]
+--- what each section covers ---
+Everywhere ["app/**/*.rb", "docs/*.md"] -> ["app/billing/charge.rb", "app/order.rb", "docs/overview.md"]
 Billing ["app/billing/*.rb"] -> ["app/billing/charge.rb"]
 --- effective vocabulary per file ---
 app/billing/charge.rb Customer: Whoever the order is fulfilled for.
@@ -14,21 +14,19 @@ docs/overview.md Customer: Whoever the order is fulfilled for.
 docs/overview.md Customer rejects User: Nobody logs in to place an order.
 docs/overview.md Order: What a customer asks us to fulfil.
 docs/overview.md Order rejects Purchase: Order is what the domain calls it.
---- read backwards, Global lands on top ---
+--- read backwards, the first section lands on top ---
 app/billing/charge.rb Order: What a customer asks us to fulfil.
 --- what the specification spells is not a use of it ---
 app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 --- a finding the specification set aside, and one it did not ---
 app/other.rb:3 Order rejects Purchase: Order is what the domain calls it.
-ignored.json:19 nothing at app/gone.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
+ignored.md:20 nothing at app/gone.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
 --- a missing glossary is a broken reference line, not a difference ---
-no glossary at test/fixtures/glossary/absent.json; sumi init lays one down
---- so is one that will not parse ---
-test/fixtures/glossary/broken.json is not readable JSON
---- and so is one with no glossary in it ---
-test/fixtures/glossary/shapeless.json declares no "glossary"; sumi help glossary has the form
+no glossary at test/fixtures/glossary/absent.md; sumi init lays one down
+--- and so is one that never says it is a vocabulary ---
+test/fixtures/glossary/titleless.md:1 declares no title; sumi help glossary has the form
 --- an ignore that could not be written down is a broken reference line ---
-test/fixtures/glossary/noat.json writes an ignore with no "at"; sumi help glossary has the form
-test/fixtures/glossary/noreason.json writes an ignore at app/order.rb:2 with no "reason"; sumi help glossary has the form
+test/fixtures/glossary/noat.md:12 writes an ignore that does not name a line in backticks; sumi help glossary has the form
+test/fixtures/glossary/noreason.md:12 writes an ignore at app/order.rb:2 with no reason; sumi help glossary has the form
 --- and one named absolutely still answers where the run started ---
-no glossary at test/fixtures/glossary/absent.json; sumi init lays one down
+no glossary at test/fixtures/glossary/absent.md; sumi init lays one down

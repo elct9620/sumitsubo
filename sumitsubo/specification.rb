@@ -25,6 +25,12 @@ module Sumitsubo
   # by being there.
   Statement = Struct.new(:key, :text, :path, :line, :attributes, :statements)
 
+  # The attribute a boundary is held under where a specification writes one
+  # deeper than its own container. It is spelled here rather than in either
+  # side because a parser writes it and a mechanism reads it, and the two have
+  # to mean the same word.
+  INCLUDE = "include"
+
   # The kind a parameter carries when the specification names none, and the one
   # kind word this tool owns rather than borrows: it names the parameter a
   # caller writes with no marking of any sort, which every language has one of.

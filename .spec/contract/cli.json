@@ -41,7 +41,7 @@
           "language": "console",
           "text": [
             "$ sumi init",
-            "created .spec/glossary.json",
+            "created .spec/glossary.md",
             "created .spec/contract",
             "exists .spec/behavior"
           ]

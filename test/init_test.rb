@@ -14,7 +14,7 @@ cli = Sumitsubo::CLI.new
 # @behavior I-001 I-004 I-005
 puts "--- first run ---"
 puts "exit=#{cli.run(["init"])}"
-print File.read(".spec/glossary.json")
+print File.read(".spec/glossary.md")
 # @behavior I-002
 puts "--- second run leaves it alone ---"
 puts "exit=#{cli.run(["init"])}"

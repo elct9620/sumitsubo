@@ -11,7 +11,7 @@ order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 3 differences
 exit=1
 --- a finding set aside by hand, and an ignore that no longer names one ---
-.spec/glossary.json:19 nothing at app/order.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
+.spec/glossary.md:17 nothing at app/order.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
 0 differences
 exit=2
 --- a build directory the project excludes ---
@@ -23,7 +23,7 @@ app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 1 difference
 exit=1
 --- an include covering no file, beside one whose files are excluded ---
-.spec/glossary.json:4 include nowhere/**/*.rb covers no file; the pattern is wrong or what it pointed at is gone
+.spec/glossary.md:8 include nowhere/**/*.rb covers no file; the pattern is wrong or what it pointed at is gone
 app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 1 difference
 exit=2
@@ -81,7 +81,7 @@ exit=2
 no specification at nope; sumi init lays one down
 exit=2
 --- what init lays down verifies clean ---
-created .spec/glossary.json
+created .spec/glossary.md
 created .spec/contract
 created .spec/behavior
 exit=0
