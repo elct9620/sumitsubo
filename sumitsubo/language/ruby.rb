@@ -104,7 +104,7 @@ module Sumitsubo
       # concept's name, so counting one would answer for every legitimate
       # class in the tree.
       def comments_in(path, where)
-        captured(path, COMMENTS, where).map do |capture|
+        captured(path.read, COMMENTS, where).map do |capture|
           Region.new(capture.line, capture.text)
         end
       end
@@ -112,7 +112,7 @@ module Sumitsubo
       # The comments with code after them. A claim sits in front of what
       # implements it, so a comment nothing follows claims nothing.
       def attached_comments_in(path, where)
-        captured(path, ATTACHED, where).map do |capture|
+        captured(path.read, ATTACHED, where).map do |capture|
           Region.new(capture.line, capture.text)
         end
       end
@@ -121,7 +121,15 @@ module Sumitsubo
       # the way Ruby spells them: `Sumitsubo::Where.of` for a singleton method,
       # `#` for an instance one, the bare path for a class or module.
       def declarations_in(path, where)
-        matches = Definitions.matches_in(captured(path, QUERY, where))
+        declarations_of(path.read, where)
+      end
+
+      # The same reading of a piece of text that was never a file. A
+      # specification registering a contract writes the declaration it means,
+      # and what it registers is then whatever this answers — so the names a
+      # specification can spell are exactly the names this can find.
+      def declarations_of(source, where)
+        matches = Definitions.matches_in(captured(source, QUERY, where))
         nodes = Definitions.nodes_in(matches)
         taken = params_in(matches)
 
@@ -149,8 +157,8 @@ module Sumitsubo
         !pattern.match(text).nil?
       end
 
-      def captured(path, query, where)
-        Grammar.captures_in(Grammar::RUBY, path, query, where)
+      def captured(source, query, where)
+        Grammar.captures_of(Grammar::RUBY, source, query, where)
       rescue TreeSitter::ParseError => e
         # Source the grammar cannot read is not a difference between the two
         # sides either: half a file yields regions the rest of it never made.

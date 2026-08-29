@@ -115,3 +115,19 @@ them.
 | Given | a Rust function taking a receiver and one taking none |
 | When | the file is read for what it declares |
 | Then | the receiver answers among the parameters, carrying the kind word that language uses |
+
+## `L-013` What a piece of text declares
+
+| Step | Statement |
+| --- | --- |
+| Given | a declaration written as text rather than to a file |
+| When | it is read as the language it is spelled in |
+| Then | it answers the same name and shape the file holding it would, at where the caller said |
+
+## `L-014` Text the grammar cannot read
+
+| Step | Statement |
+| --- | --- |
+| Given | a piece of text the language cannot parse |
+| When | it is read for what it declares |
+| Then | the reading refuses rather than answering what it recovered |

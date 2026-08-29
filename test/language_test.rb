@@ -142,3 +142,28 @@ begin
 rescue Sumitsubo::Language::Error => e
   puts "  #{e.message}"
 end
+
+# A specification registers a contract by writing the declaration it means, so
+# the same reading answers both sides and a shape no definition could have is a
+# shape no specification can register. The nesting is written out: it is what
+# makes the name `Sumitsubo::Where.of` rather than `of`.
+SIGNATURE = "module Sumitsubo::Where\n" \
+            "  def self.of(path)\n" \
+            "  end\n" \
+            "end\n"
+
+# @behavior L-013
+puts "--- what a piece of text declares ---"
+Sumitsubo::Language.declarations_of(SIGNATURE, ".spec/contract/internal.md", "ruby").each do |name|
+  puts "  #{name.path}:#{name.line} #{name.name}#{signature(name)}"
+end
+
+# It answers where the caller said rather than where a file sits, because the
+# text came out of a specification and that is where a reader has to be sent.
+# @behavior L-014
+puts "--- and text the grammar cannot read is refused ---"
+begin
+  Sumitsubo::Language.declarations_of("def of(path", ".spec/contract/internal.md", "ruby")
+rescue Sumitsubo::Language::Error => e
+  puts "  #{e.message}"
+end

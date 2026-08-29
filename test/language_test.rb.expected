@@ -66,3 +66,8 @@ broken.rb: cannot be parsed by the ruby grammar
   test/fixtures/definitions/sample.rb:70 Widget
 --- and the reading of what it declares refuses it too ---
   test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
+--- what a piece of text declares ---
+  .spec/contract/internal.md:1 Sumitsubo::Where
+  .spec/contract/internal.md:2 Sumitsubo::Where.of (path:positional)
+--- and text the grammar cannot read is refused ---
+  .spec/contract/internal.md: cannot be parsed by the ruby grammar

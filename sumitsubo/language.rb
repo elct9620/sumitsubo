@@ -80,6 +80,19 @@ module Sumitsubo
       reading.nil? ? [] : reading.declarations_in(file, where)
     end
 
+    # The same reading of a piece of text nobody wrote to a file. A
+    # specification registers a contract by writing the declaration it means,
+    # so the shape it registers is read by the very reading the source is read
+    # by — which is what keeps a specification from spelling a shape no
+    # definition could have.
+    #
+    # It answers where the caller says rather than where a file sits: the text
+    # came out of a specification, and that is where a reader has to be sent.
+    def self.declarations_of(source, where, language)
+      reading = reading_named(language)
+      reading.nil? ? [] : reading.declarations_of(source, where)
+    end
+
     # Whether this build carries the language a specification named. What an
     # executable can read is decided when it is built, so a name it does not
     # answer to is a run that cannot compare rather than one that guesses.

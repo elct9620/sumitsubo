@@ -77,15 +77,21 @@ module Sumitsubo
       end
 
       def comments_in(path, where)
-        regions(captured(path, COMMENTS, where))
+        regions(captured(path.read, COMMENTS, where))
       end
 
       def attached_comments_in(path, where)
-        regions(captured(path, ATTACHED, where))
+        regions(captured(path.read, ATTACHED, where))
       end
 
       def declarations_in(path, where)
-        matches = Definitions.matches_in(captured(path, QUERY, where))
+        declarations_of(path.read, where)
+      end
+
+      # The same reading of a piece of text that was never a file, which is what
+      # a specification registering a contract writes its declaration in.
+      def declarations_of(source, where)
+        matches = Definitions.matches_in(captured(source, QUERY, where))
         nodes = sorted(Definitions.nodes_in(matches))
         taken = params_in(matches)
 
@@ -109,8 +115,8 @@ module Sumitsubo
         captures.map { |capture| Region.new(capture.line, capture.text) }
       end
 
-      def captured(path, query, where)
-        Grammar.captures_in(Grammar::RUST, path, query, where)
+      def captured(source, query, where)
+        Grammar.captures_of(Grammar::RUST, source, query, where)
       rescue TreeSitter::ParseError => e
         # Source the grammar cannot read is not a difference between the two
         # sides either: half a file yields regions the rest of it never made.

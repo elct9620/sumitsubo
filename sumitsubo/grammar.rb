@@ -36,8 +36,18 @@ module Sumitsubo
     # program is put through here, so what a caller handed this module can do
     # is the whole of what a grammar answers — which is what lets a reading of
     # source, or of a specification, be handed one instead of reaching for it.
+    #
+    # Reaching the file is part of that: a parser handed this module opens
+    # nothing itself, so what it can be asked stays the whole of what it does.
     def self.captures_in(grammar, path, query, where)
-      TreeSitter.capture(grammar, path.read, query, where)
+      captures_of(grammar, path.read, query, where)
+    end
+
+    # The same query put to a piece of text nobody wrote to a file. A signature
+    # a specification registers is read by the query the source is read by, and
+    # there is no file to hand over.
+    def self.captures_of(grammar, source, query, where)
+      TreeSitter.capture(grammar, source, query, where)
     end
   end
 end

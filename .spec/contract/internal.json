@@ -119,6 +119,22 @@
       ]
     },
     {
+      "name": "Sumitsubo::Language.declarations_of",
+      "description": "The reading of what a piece of text declares, for a shape a specification wrote rather than a file.",
+      "internal": true,
+      "params": [
+        {
+          "name": "source"
+        },
+        {
+          "name": "where"
+        },
+        {
+          "name": "language"
+        }
+      ]
+    },
+    {
       "name": "Sumitsubo::Language.carries?",
       "description": "The one place a run answers whether this build reads the language a specification named.",
       "internal": true,
@@ -159,13 +175,31 @@
     },
     {
       "name": "Sumitsubo::Grammar.captures_in",
-      "description": "The one place a query is put to a grammar.",
+      "description": "The one place a query is put to a grammar for what a file holds.",
       "params": [
         {
           "name": "grammar"
         },
         {
           "name": "path"
+        },
+        {
+          "name": "query"
+        },
+        {
+          "name": "where"
+        }
+      ]
+    },
+    {
+      "name": "Sumitsubo::Grammar.captures_of",
+      "description": "The one place a query is put to a grammar for a piece of text no file holds.",
+      "params": [
+        {
+          "name": "grammar"
+        },
+        {
+          "name": "source"
         },
         {
           "name": "query"
