@@ -290,9 +290,11 @@ module Sumitsubo
                 Registered, and no source this definition reaches claims it.
                 Write the claim the finding leads with, or drop the contract.
 
-            .spec/contract/api.md:9 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+            .spec/contract/api.md:9 ruby Store.open is defined nowhere this specification includes, and one the reading cannot see never is
                 Registered, and the syntax tree finds no such definition among
-                the files this definition reaches. Read "What the reading
+                the files this definition reaches. The language leads, because
+                it is what the name was looked for as: a definition registering
+                one name in two of them answers twice. Read "What the reading
                 cannot see" before changing the code.
 
             .spec/contract/api.md:9 Store#read takes (id) where the specification registers (key)

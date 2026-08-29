@@ -56,7 +56,7 @@ src/commands.rb:12 @command render resolves to no contract
 3 differences
 exit=2
 --- an interface the syntax tree does not declare ---
-.spec/contract/api.md:31 Store#write is defined nowhere this specification includes, and one the reading cannot see never is
+.spec/contract/api.md:31 ruby Store#write is defined nowhere this specification includes, and one the reading cannot see never is
 1 difference
 exit=1
 --- source whose shape drifted from the contract ---

@@ -519,7 +519,7 @@ module Sumitsubo
     # nothing. Which constructs those are is each language's own, so the
     # message names the shape and `sumi help contract` names them.
     def self.describe_undefined(finding)
-      "#{finding.contract.bare} is defined nowhere this specification " \
+      "#{finding.contract.spoken} is defined nowhere this specification " \
         "includes, and one the reading cannot see never is"
     end
 

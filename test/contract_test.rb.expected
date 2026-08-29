@@ -34,8 +34,8 @@ test/fixtures/contract/nameless/cli.md:7 declares a contract whose heading does 
 --- one name twice with no marker ---
 Store.open is declared twice, at test/fixtures/contract/twice/one.md:7 and test/fixtures/contract/twice/two.md:7
 --- an interface the syntax tree does not define ---
-test/fixtures/contract/nomarker/cli.md:7 verify is defined nowhere this specification includes, and one the reading cannot see never is
-test/fixtures/contract/nomarker/cli.md:14 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+test/fixtures/contract/nomarker/cli.md:7 ruby verify is defined nowhere this specification includes, and one the reading cannot see never is
+test/fixtures/contract/nomarker/cli.md:14 ruby Store.open is defined nowhere this specification includes, and one the reading cannot see never is
 --- a declaration outside the definition registering its name ---
   ruby test/fixtures/contract/src/commands.rb:3 verify
 --- an interface nothing claims ---
@@ -71,4 +71,4 @@ src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) 
   test/fixtures/contract/src/commands.rb as ruby
   test/fixtures/contract/app/controller.rb as rust
 --- a declaration another language spells alike ---
-  test/fixtures/contract/spelled/handle.md:7 Store::Handle is defined nowhere this specification includes, and one the reading cannot see never is
+  test/fixtures/contract/spelled/handle.md:7 rust Store::Handle is defined nowhere this specification includes, and one the reading cannot see never is
