@@ -71,3 +71,6 @@ test/fixtures/contract/marked/cli.json gives verify parameters, which a marker l
   test/fixtures/contract/collide/store.json:6 Store.open
   test/fixtures/contract/collide/store.json:9 loose
   test/fixtures/contract/collide/store.json:10 Store
+--- which files a directory holds that this build can read ---
+  test/fixtures/contract/formats/cli.json CLI ["verify"]
+  test/fixtures/contract/formats/routes.spec Other ["what another format registers"]

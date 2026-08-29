@@ -1,6 +1,7 @@
 require "pathname"
 require "sumitsubo/contract"
 require "sumitsubo/parser/json"
+require "sumitsubo/specification"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads.
 PARSERS = [Sumitsubo::Parser::Json.new]
@@ -28,8 +29,25 @@ module Spelling
   end
 end
 
-def loaded(directory)
-  Sumitsubo::Contract.load(directory, Spelling, PARSERS)
+# A format this build does not really carry, so that what decides which files
+# are specifications is visibly the parsers rather than an extension written
+# into the mechanism. There is one real format left, so a second one has to be
+# stood in for.
+class Other
+  SUFFIX = ".spec"
+
+  def reads?(path) = "#{path}".end_with?(SUFFIX)
+
+  def contract(path, languages)
+    where = "#{path}"
+    Sumitsubo::Specification.new("Other", nil, [], where, { "marker" => ["@other"] }, [
+      Sumitsubo::Statement.new("what another format registers", nil, where, 1, {}, [])
+    ])
+  end
+end
+
+def loaded(directory, parsers = PARSERS)
+  Sumitsubo::Contract.load(directory, Spelling, parsers)
 end
 
 def claim(path, line, keyword, name)
@@ -250,4 +268,13 @@ fails { loaded("#{FIXTURE}/marked") }
 puts "--- a name the specification uses at more than one depth ---"
 loaded("#{FIXTURE}/collide")[0].statements.each do |interface|
   puts "  #{interface.path}:#{interface.line} #{interface.key}"
+end
+
+# Which files in the directory are specifications is the parsers' answer: the
+# build reads two formats here, so it registers what is written in each, and
+# `notes.txt` is passed over rather than refused.
+# @behavior T-039
+puts "--- which files a directory holds that this build can read ---"
+loaded("#{FIXTURE}/formats", PARSERS + [Other.new]).each do |definition|
+  puts "  #{definition.path} #{definition.key} #{definition.statements.map { |one| one.key }.inspect}"
 end

@@ -74,15 +74,22 @@ module Sumitsubo
       path = Pathname.new(directory)
       return [] unless path.directory?
 
-      definitions = files_in(path).map { |file| definition_from(file, languages, parsers) }
+      definitions = files_in(path, parsers).map { |file| definition_from(file, languages, parsers) }
       refuse_ambiguity(definitions)
       definitions
     end
 
     # A found path is a String: it is what a definition answers with, and what
     # a finding about one of its interfaces points at.
-    def self.files_in(path)
-      path.glob("*.json").map { |file| "#{file}" }.sort
+    #
+    # Which files are specifications is the parsers' to say rather than an
+    # extension written here: a project registers one kind of contract per file
+    # and this build reads whichever formats it was built with. What no parser
+    # answers for is passed over, so a directory is still the project's to keep
+    # other things in.
+    def self.files_in(path, parsers)
+      path.glob("*").select { |file| file.file? && Parser.reads?(file, parsers) }
+          .map { |file| "#{file}" }.sort
     end
 
     # The files each definition reaches, held under the specification that

@@ -329,3 +329,12 @@ guessed would compare against the wrong spelling.
 | Given | a definition naming a marker and a language |
 | When | the directory is loaded |
 | Then | the file is named as saying both, where a claim needs neither |
+
+## `T-039` Which files a directory holds that this build can read
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract directory holding a file in each format this build carries |
+| Given | a file no parser answers for |
+| When | the directory is loaded |
+| Then | a definition is read from each file some parser answers for, and no other |
