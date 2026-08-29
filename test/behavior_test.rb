@@ -116,8 +116,8 @@ end
 # @behavior B-015
 puts "--- an include covering no file answers at the line that wrote it ---"
 unreached = Sumitsubo::Behavior.load("test/fixtures/behavior/nowhere", PARSERS)
-Sumitsubo::Behavior.barren(unreached, Pathname.new("test/fixtures/behavior"), [], PARSERS).each do |barren|
-  puts "  #{barren.path}:#{barren.line} #{Sumitsubo::Scope.describe(barren)}"
+Sumitsubo::Behavior.barren(unreached, Pathname.new("test/fixtures/behavior"), [], PARSERS).each do |finding|
+  puts "  #{finding.path}:#{finding.line} #{finding.message}"
 end
 
 # @behavior B-013

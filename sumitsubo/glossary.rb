@@ -251,7 +251,7 @@ module Sumitsubo
 
       spelled = Parser.of(path, parsers).spelled_in(path)
       where = Where.of(path)
-      empty.map { |pattern| Scope::Barren.new(where, pattern, spelled[pattern]) }
+      empty.map { |pattern| Scope.barren_at(BARREN, where, pattern, spelled[pattern]) }
     end
 
     # A found path is a String relative to the base: these are the keys a

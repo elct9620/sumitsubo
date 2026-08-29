@@ -116,7 +116,7 @@ module Sumitsubo
 
         spelled = Parser.of(feature.path, parsers).spelled_in(feature.path)
         where = Where.of(feature.path)
-        empty.each { |pattern| found.push(Scope::Barren.new(where, pattern, spelled[pattern])) }
+        empty.each { |pattern| found.push(Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
       end
       found
     end
@@ -148,6 +148,9 @@ module Sumitsubo
     # id resolves, so neither side is wrong about the behavior; what could not
     # be made is the comparison, since nothing among the files that feature
     # answers for says the scenario was implemented.
+    #
+    # Saying nothing about it would leave the scenario reported as claimed
+    # nowhere with the claim in plain sight.
     def self.misplaced(features, claims, reach)
       declaring = declaring_in(features)
       found = []

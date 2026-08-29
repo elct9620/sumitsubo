@@ -1,3 +1,4 @@
+require "sumitsubo/finding"
 require "sumitsubo/patterns"
 
 module Sumitsubo
@@ -19,12 +20,6 @@ module Sumitsubo
   # raises nothing. That is a defect rather than what a glob is, so it is a
   # sentence to drop once it answers, not a second reason for the walk.
   module Scope
-    # An include covering no file, and the line of the specification that
-    # wrote it. Built by the mechanism rather than here: how a format spells
-    # an include is the parser's to answer, and the walk reads no
-    # specification.
-    Barren = Struct.new(:path, :pattern, :line)
-
     def self.of(base, patterns, exclusion)
       found = []
       candidates = walk(base, patterns, exclusion).paths
@@ -67,9 +62,18 @@ module Sumitsubo
 
     # Nothing was read where the specification says something should have
     # been, and a run that says nothing about it reads exactly like agreement.
-    def self.describe(barren)
-      "include #{barren.pattern} covers no file; " \
-      "the pattern is wrong or what it pointed at is gone"
+    # It is not a difference: what the specification was to be checked against
+    # was never read, so no comparison was made.
+    #
+    # Where the pattern was written is the parser's answer and which
+    # specification asked is its own, so both arrive from the mechanism: the
+    # walk opens no specification and knows of none.
+    def self.barren_at(rule, where, pattern, line)
+      Finding.new(
+        rule: rule, difference: false, path: where, line: line,
+        message: "include #{pattern} covers no file; " \
+                 "the pattern is wrong or what it pointed at is gone"
+      )
     end
 
     # What the walk found and what it refused to look inside. A pattern with

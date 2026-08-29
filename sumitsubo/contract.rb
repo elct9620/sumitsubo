@@ -168,7 +168,7 @@ module Sumitsubo
 
         spelled = Parser.of(definition.path, parsers).spelled_in(definition.path)
         where = Where.of(definition.path)
-        empty.each { |pattern| found.push(Scope::Barren.new(where, pattern, spelled[pattern])) }
+        empty.each { |pattern| found.push(Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
       end
       found
     end
@@ -273,6 +273,9 @@ module Sumitsubo
     # The name resolves, so neither side is wrong about the interface; what
     # could not be made is the comparison, since nothing among the files that
     # definition answers for says the interface was implemented.
+    #
+    # Saying nothing about it would leave the interface reported as claimed
+    # nowhere with the claim in plain sight.
     def self.misplaced(definitions, claims, reach)
       registering = registering_claims(definitions)
       found = []
