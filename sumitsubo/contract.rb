@@ -25,6 +25,12 @@ module Sumitsubo
   module Contract
     DIRECTORY = "contract"
 
+    # The one kind word this tool owns rather than borrows: it names the
+    # parameter a caller writes with no marking of any sort, which every
+    # language has one of. A finding leaves it out, because a bare name in a
+    # spelled shape already says it.
+    POSITIONAL = "positional"
+
     class Error < Sumitsubo::Error; end
 
     # A definition is a Specification and its contracts are Statements: a
@@ -499,7 +505,9 @@ module Sumitsubo
     def self.spelled_as(param)
       name = param.name.nil? ? "-" : param.name
       kind = param.kind == POSITIONAL ? "" : ":#{param.kind}"
-      "#{name}#{kind}#{param.optional ? "?" : ""}"
+      # Compared rather than asked: nothing this file requires declares the
+      # shape a reading answers with, so the flag arrives untyped.
+      "#{name}#{kind}#{param.optional == true ? "?" : ""}"
     end
 
     def self.describe_unresolved(claim)

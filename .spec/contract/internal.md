@@ -17,39 +17,6 @@ module Sumitsubo::Where
 end
 ```
 
-## `Sumitsubo::Locations.of` `internal`
-
-Where a name first appears, for a key that names one kind of thing.
-
-```ruby
-module Sumitsubo::Locations
-  def self.of(text, pattern)
-  end
-end
-```
-
-## `Sumitsubo::Locations.all_in` `internal`
-
-The one scan of a structured specification for where its names appear.
-
-```ruby
-module Sumitsubo::Locations
-  def self.all_in(text, pattern)
-  end
-end
-```
-
-## `Sumitsubo::Locations::Cursor#line_of` `internal`
-
-Taking each name in the order it was written, for a key that names more than one kind of thing.
-
-```ruby
-class Sumitsubo::Locations::Cursor
-  def line_of(value)
-  end
-end
-```
-
 ## `Sumitsubo::Parser.of`
 
 The one place a file is matched to the parser that answers for it.
@@ -123,17 +90,6 @@ The one place a run answers whether this build reads the language a specificatio
 ```ruby
 module Sumitsubo::Language
   def self.carries?(language)
-  end
-end
-```
-
-## `Sumitsubo::Language.definable?` `internal`
-
-The one place a name is judged against how a language spells what it defines.
-
-```ruby
-module Sumitsubo::Language
-  def self.definable?(language, name)
   end
 end
 ```

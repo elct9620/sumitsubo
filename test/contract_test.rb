@@ -3,17 +3,13 @@ require "sumitsubo/contract"
 require "sumitsubo/grammar"
 require "sumitsubo/language"
 require "sumitsubo/parser/markdown"
-require "sumitsubo/parser/json"
 require "sumitsubo/specification"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reads the format definitions are really written in, which is why its
 # snapshot is written by hand: the mechanism is checked against the shape a
 # person actually wrote rather than one assembled here.
-PARSERS = [
-  Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar),
-  Sumitsubo::Parser::Json.new
-]
+PARSERS = [Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
 
 # The loader answers where an interface sits as well as what it says. An
 # interface nothing claims is a finding about the specification, so the reader
@@ -128,19 +124,6 @@ p Sumitsubo::Contract.defined(loaded("#{FIXTURE}/nomarker")).length
 puts "--- one name twice with no marker ---"
 fails { loaded("#{FIXTURE}/twice") }
 
-# A shape judgement and nothing more: the name is one that language cannot
-# spell, which is a specification to fix rather than a difference to report.
-# @behavior T-015
-puts "--- a contract the named language cannot spell ---"
-fails { loaded("#{FIXTURE}/unresolvable") }
-
-# `include` says which files, never what they are written in, so the reading
-# that spells names says which language spells them.
-# @behavior T-032 T-033 T-034
-puts "--- a definition that says neither how to spell nor how to claim ---"
-fails { loaded("#{FIXTURE}/unsaid") }
-fails { loaded("#{FIXTURE}/unknown") }
-fails { loaded("#{FIXTURE}/both") }
 
 # `Store.open` is registered as internal and answers here all the same: what
 # internal keeps it out of is the document, not the comparison.
@@ -166,9 +149,6 @@ Sumitsubo::Contract.defining(
   Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
 ).each { |name| puts "  #{name.path}:#{name.line} #{name.name}" }
 
-# @behavior T-008
-puts "--- and neither is a specification that will not parse ---"
-fails { loaded("#{FIXTURE}/broken") }
 
 claims = [
   claim("src/commands.rb", 3, "@command", "verify"),
@@ -246,27 +226,17 @@ Sumitsubo::Contract.conflicting(registered, twice).each do |pair|
   puts "#{pair[0].path}:#{pair[0].line} #{Sumitsubo::Contract.describe_conflicting(pair)}"
 end
 
-# Nothing but the syntax tree answers what a definition takes, so parameters
-# under a marker would be a promise nobody holds.
-# @behavior T-024
-puts "--- parameters registered under a marker ---"
-fails { loaded("#{FIXTURE}/marked") }
 
-# `"name"` names three things here: the kind, each contract, and each
-# parameter. `loose` is spelled the same as a parameter of the contract before
-# it, and `Store` the same as the kind — both answer at their own line rather
-# than at the first one carrying the word.
-# @behavior T-025
-puts "--- a name the specification uses at more than one depth ---"
-loaded("#{FIXTURE}/collide")[0].statements.each do |interface|
-  puts "  #{interface.path}:#{interface.line} #{interface.key}"
-end
-
-# Which files in the directory are specifications is the parsers' answer: the
-# build reads two formats here, so it registers what is written in each, and
-# `notes.txt` is passed over rather than refused.
+# Which files in the directory are specifications is the parsers' answer, so
+# `notes.txt` and a definition left in a format this build no longer reads are
+# both passed over rather than refused: the directory is the project's to keep
+# other things in. There is one real format left, which is why the second has
+# to be stood in for.
 # @behavior T-039
 puts "--- which files a directory holds that this build can read ---"
+Pathname.new("#{FIXTURE}/formats").glob("*").map { |file| "#{file}" }.sort.each do |file|
+  puts "  holding #{file}"
+end
 loaded("#{FIXTURE}/formats", PARSERS + [Other.new]).each do |definition|
   puts "  #{definition.path} #{definition.key} #{definition.statements.map { |one| one.key }.inspect}"
 end

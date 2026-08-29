@@ -33,19 +33,11 @@ test/fixtures/contract/nameless/cli.md:7 declares a contract whose heading does 
 1
 --- one name twice with no marker ---
 Store.open is declared twice, at test/fixtures/contract/twice/one.md:7 and test/fixtures/contract/twice/two.md:7
---- a contract the named language cannot spell ---
-test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings
---- a definition that says neither how to spell nor how to claim ---
-test/fixtures/contract/unsaid/seams.json names no marker and no language, so nothing says how to spell what it registers; sumi help contract has the two readings
-test/fixtures/contract/unknown/seams.json names cobol, which this sumi does not carry
-test/fixtures/contract/both/routes.json names both a marker and a language, and a claim is a claim in whatever the file is written in; sumi help contract has the two readings
 --- an interface the syntax tree does not define ---
 test/fixtures/contract/nomarker/cli.md:7 verify is defined nowhere this specification includes, and one the reading cannot see never is
 test/fixtures/contract/nomarker/cli.md:14 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
 --- a declaration outside the definition registering its name ---
   test/fixtures/contract/src/commands.rb:3 verify
---- and neither is a specification that will not parse ---
-test/fixtures/contract/broken/cli.json is not readable JSON
 --- an interface nothing claims ---
 test/fixtures/contract/.spec/contract/admin.md:11 @route GET /admin is claimed nowhere this specification includes
 test/fixtures/contract/.spec/contract/cli.md:13 @command init is claimed nowhere this specification includes
@@ -65,14 +57,12 @@ test/fixtures/contract/params/api.md:16 Store.open takes (path) where the specif
 --- one name defined with two shapes ---
 src/store.rb:6 Store#read takes (key:keyword, -:block?) here and (key:keyword) at src/store.rb:24
 src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) at src/store.rb:6
---- parameters registered under a marker ---
-test/fixtures/contract/marked/cli.json gives verify parameters, which a marker leaves nothing to compare them against; sumi help contract has the form
---- a name the specification uses at more than one depth ---
-  test/fixtures/contract/collide/store.json:6 Store.open
-  test/fixtures/contract/collide/store.json:9 loose
-  test/fixtures/contract/collide/store.json:10 Store
 --- which files a directory holds that this build can read ---
-  test/fixtures/contract/formats/cli.json CLI ["verify"]
+  holding test/fixtures/contract/formats/cli.md
+  holding test/fixtures/contract/formats/notes.txt
+  holding test/fixtures/contract/formats/routes.json
+  holding test/fixtures/contract/formats/routes.spec
+  test/fixtures/contract/formats/cli.md CLI ["verify"]
   test/fixtures/contract/formats/routes.spec Other ["what another format registers"]
 --- the same name under two languages ---
   API ruby Store::Handle

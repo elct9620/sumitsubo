@@ -210,14 +210,14 @@ the order they happened.
 | When | the two sides are compared |
 | Then | it is answered at the line registering it, as defined nowhere it includes |
 
-## `V-016` A contract the language it named cannot spell
+## `V-016` A definition that lost the word its contracts were claimed with
 
 | Step | Statement |
 | --- | --- |
-| Given | a contract naming a language rather than a marker |
-| Given | an interface named the way a route is named |
+| Given | a definition naming no marker |
+| Given | contracts carrying no signature to say how their names are spelled |
 | When | the two sides are compared |
-| Then | the file is named as registering a name that language cannot spell |
+| Then | the run says the specification cannot be read rather than reporting every name in it |
 
 ## `V-017` Source whose shape drifted from the contract
 

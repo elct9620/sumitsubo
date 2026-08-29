@@ -40,13 +40,6 @@ puts "--- what this build carries ---"
 p Sumitsubo::Language.carries?("ruby")
 p Sumitsubo::Language.carries?("cobol")
 
-# A shape judgement and nothing more: it says the name is spellable there,
-# never that anything defines it.
-# @behavior L-009
-puts "--- and how that language spells what it defines ---"
-p Sumitsubo::Language.definable?("ruby", "Sumitsubo::Where.of")
-p Sumitsubo::Language.definable?("ruby", "GET /users/:id")
-
 # The claims sit in a class body, a method body and a block comment, and all
 # three are offered — while the comment at the end of `verify_test.rb`, with
 # nothing after it, is not.

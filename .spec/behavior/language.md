@@ -83,14 +83,6 @@ them.
 | When | the build is asked whether it carries that language |
 | Then | it answers that it does not, rather than reading the file some other way |
 
-## `L-009` How a language spells what it defines
-
-| Step | Statement |
-| --- | --- |
-| Given | a name a language spells and one named the way a route is named |
-| When | each is put to that language |
-| Then | only the one it could spell answers, and neither says anything is defined |
-
 ## `L-010` A second language reads its own comments
 
 | Step | Statement |

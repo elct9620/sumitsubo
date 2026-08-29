@@ -54,6 +54,3 @@ Internal seams {} ["sumitsubo/**/*.rb"]
     The one place a path a reader is handed is made.
   20 store::Handle {"internal" => [], "language" => ["rust"], "signature" => ["mod store {\n    pub struct Handle;\n}\n"]}
     A handle a second language spells its own way.
---- the same definition, written both ways ---
-  same what the definition registers
-  line 13 / 8

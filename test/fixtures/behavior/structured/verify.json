@@ -1,7 +1,0 @@
-{
-  "name": "Structured",
-  "include": ["test/*_test.rb"],
-  "scenarios": [
-    { "id": "S-001", "title": "Left behind in the format a contract is written in" }
-  ]
-}

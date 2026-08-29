@@ -105,14 +105,6 @@ module Sumitsubo
       ALL.any? { |reading| reading.named?(language) }
     end
 
-    # Whether a definition written in that language could carry this name.
-    # A shape judgement and nothing more: it says the name is spellable there,
-    # never that anything defines it.
-    def self.definable?(language, name)
-      reading = reading_named(language)
-      !reading.nil? && reading.definable?(name)
-    end
-
     # The reading that answers for a file, and the one answering to a name.
     # Two questions rather than one: a comment is read by whichever reading
     # claims the file, and a declaration by the one the specification named.

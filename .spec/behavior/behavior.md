@@ -115,10 +115,3 @@ is fixed in one pass.
 | When | the includes are asked what they cover |
 | Then | the include answers at the line of the specification that wrote it |
 
-## `B-016` A feature left in the format a contract is written in
-
-| Step | Statement |
-| --- | --- |
-| Given | a behavior directory holding a feature written as JSON |
-| When | the directory is loaded |
-| Then | the file is named as one this build reads a contract from and no longer a feature |

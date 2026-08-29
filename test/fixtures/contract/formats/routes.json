@@ -1,0 +1,1 @@
+{ "name": "Routes", "marker": "@route", "contracts": [{ "name": "GET /users/:id" }] }

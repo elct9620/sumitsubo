@@ -30,8 +30,6 @@ G-001 is declared twice, at test/fixtures/behavior/duplicate/one.md:7 and test/f
 G-001 is declared twice, at test/fixtures/behavior/duplicate/one.md:7 and test/fixtures/behavior/duplicate/two.md:7
 --- a scenario with no id cannot be referenced at all ---
 test/fixtures/behavior/anonymous/verify.md:7 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
---- a feature left in the format a contract is written in ---
-test/fixtures/behavior/structured/verify.json is JSON, which sumi reads a contract from and no longer a feature
 --- several ids on one marker line ---
 ["V-008", "V-009"]
 --- what each feature's include reaches ---

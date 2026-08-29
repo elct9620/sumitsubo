@@ -115,7 +115,11 @@ module Sumitsubo
     # directory a match could sit under. A pattern beginning with one names
     # the base itself.
     def self.root_of(pattern)
-      pattern.split("/").take_while { |segment| literal?(segment) }.join("/")
+      # Mapped through interpolation to settle the element type: a segment
+      # split out of a string is not the string every other caller of
+      # `literal?` hands it, and the compiler types the parameter from them.
+      segments = pattern.split("/").map { |segment| "#{segment}" }
+      segments.take_while { |segment| literal?(segment) }.join("/")
     end
 
     # Answered against what has been kept rather than against every root, so

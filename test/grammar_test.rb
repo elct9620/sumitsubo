@@ -113,16 +113,6 @@ feature.statements.each do |scenario|
   steps_of(scenario)
 end
 
-# A contract is the one specification still written both ways, and reading it
-# each way has to reach the same shape: that is what says the format is what
-# changed and nothing else did.
-require "sumitsubo/parser/json"
-
-def agree(said, one, other)
-  puts "  #{one == other ? "same" : "DIFFER"} #{said}#{one == other ? "" : " #{one.inspect} / #{other.inspect}"}"
-end
-
-
 # A vocabulary and a definition, read from real documents through a real
 # grammar. What each builder makes of a block is pinned where a canned one can
 # be handed captures; what is pinned here is that a document a person wrote
@@ -168,21 +158,3 @@ definition_of(reading.contract("test/fixtures/reading/cli.md", Sumitsubo::Langua
 # @behavior MD-049
 puts "--- a definition registering contracts in two languages ---"
 definition_of(reading.contract("test/fixtures/reading/seams.md", Sumitsubo::Language))
-
-
-# A definition read through a marker compares the same way. The other reading
-# does not: a signature and a list of parameters are not the same thing said
-# twice, which is what the coexisting formats differ in.
-# @behavior MD-051
-puts "--- the same definition, written both ways ---"
-definition_md = reading.contract("test/fixtures/reading/cli.md", Sumitsubo::Language)
-definition_json = Sumitsubo::Parser::Json.new.contract("test/fixtures/reading/cli.json", Sumitsubo::Language)
-
-def definition_said(spec)
-  said = ["#{spec.key} #{spec.attributes.inspect} #{spec.includes.inspect}", "  #{spec.text}"]
-  spec.statements.each { |contract| said.push("  #{contract.key} #{contract.attributes.inspect} — #{contract.text}") }
-  said.join("\n")
-end
-
-agree("what the definition registers", definition_said(definition_md), definition_said(definition_json))
-puts "  line #{definition_md.statements[0].line} / #{definition_json.statements[0].line}"

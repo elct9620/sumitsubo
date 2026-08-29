@@ -5,12 +5,11 @@ require "sumitsubo"
 # that only prints or lays down files.
 require "sumitsubo/language"
 require "sumitsubo/grammar"
-require "sumitsubo/parser/json"
 require "sumitsubo/parser/markdown"
 require "build_rev"
 
 exit Sumitsubo::CLI.new(
   Sumitsubo::STAMPED_REV,
   Sumitsubo::Language,
-  [Sumitsubo::Parser::Json.new, Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
+  [Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
 ).run(ARGV)

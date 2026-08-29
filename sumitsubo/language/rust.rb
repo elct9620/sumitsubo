@@ -24,11 +24,6 @@ module Sumitsubo
       # that implements it, so a comment nothing follows claims nothing.
       ATTACHED = "([(line_comment) (block_comment)] @text . (_))"
 
-      # A path, written the way Rust writes one. There is no spelling that
-      # tells a method from an associated function: both are reached through
-      # the type, and which it is shows in whether it takes `self`.
-      PATH = /\A[A-Za-z_][A-Za-z0-9_]*(::[A-Za-z_][A-Za-z0-9_]*)*\z/
-
       # What holds a name, what carries one of its own, and what does both.
       # An `impl` block is the first: it says how the functions inside it are
       # reached without declaring the type, which `struct` did.
@@ -67,13 +62,6 @@ module Sumitsubo
 
       def reads?(path)
         path.extname == ".rs"
-      end
-
-      # Every segment is an identifier and `::` is what joins them. A name a
-      # reader would have to write generics or a lifetime into is one this
-      # reading could not have found, so it is not a shape a contract offers.
-      def definable?(name)
-        !PATH.match(name).nil?
       end
 
       def comments_in(path, where)

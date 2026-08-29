@@ -19,10 +19,9 @@ A claim resolving to no contract belongs to the marker reading alone, since it
 is about a claim and the syntax tree makes none. It is a comparison that could
 not be made rather than a difference.
 
-A name the language it named could spell no definition of stops the mechanism
-rather than answering. Reporting it would blame the code for a specification
-that says how its names are spelled and then writes one that language cannot
-spell.
+A specification that could not be read stops the mechanism rather than
+answering. Reporting it would blame the code for a reference line nobody could
+draw.
 
 ### A second way in
 
@@ -78,11 +77,10 @@ ambiguous. Every file a definition reaches is therefore read once per language
 its contracts are spelled in.
 
 A marker needs none, because a claim is a claim in whatever the file is
-written in. Naming both says one thing twice, and naming neither leaves
-nothing to say how a name is spelled — each is a specification that cannot be
-read rather than a difference to report. So is a language this build was not
-given: what an executable can read is decided when it is built, and a run that
-guessed would compare against the wrong spelling.
+written in. A language this build was not given is a specification that cannot
+be read rather than a difference to report: what an executable can read is
+decided when it is built, and a run that guessed would compare against the
+wrong spelling.
 
 ## Includes
 
@@ -143,14 +141,6 @@ guessed would compare against the wrong spelling.
 | Given | a definition that does not say what word claims it |
 | When | the directory is loaded |
 | Then | it is registered as one the syntax tree answers rather than refused |
-
-## `T-008` A specification that will not parse
-
-| Step | Statement |
-| --- | --- |
-| Given | a contract definition that is not readable JSON |
-| When | the directory is loaded |
-| Then | the file is named as unreadable |
 
 ## `T-009` An interface nothing claims
 
@@ -227,15 +217,6 @@ guessed would compare against the wrong spelling.
 | When | the declarations that can define what they name are taken |
 | Then | that declaration is left out, and nothing answers for it |
 
-## `T-015` A contract the named language cannot spell
-
-| Step | Statement |
-| --- | --- |
-| Given | a definition naming a language rather than a marker |
-| Given | an interface named the way a route is named |
-| When | the directory is loaded |
-| Then | the file is named as registering a name that language cannot spell |
-
 ## `T-016` An interface the syntax tree does not define
 
 | Step | Statement |
@@ -303,52 +284,12 @@ guessed would compare against the wrong spelling.
 | When | the two are compared |
 | Then | nothing answers |
 
-## `T-024` Parameters registered under a marker
-
-| Step | Statement |
-| --- | --- |
-| Given | a contract file naming a marker and giving an interface parameters |
-| When | the directory is read |
-| Then | the file is named as one that cannot be read |
-
-## `T-025` A name the specification uses at more than one depth
-
-| Step | Statement |
-| --- | --- |
-| Given | a contract file whose kind, one contract and one parameter of another are spelled alike |
-| When | the directory is read |
-| Then | each contract answers at the line declaring it |
-
-## `T-032` A definition that says neither how to claim nor how to spell
-
-| Step | Statement |
-| --- | --- |
-| Given | a definition naming no marker and no language |
-| When | the directory is loaded |
-| Then | the file is named as leaving nothing to say how its names are spelled |
-
-## `T-033` A language this build does not carry
-
-| Step | Statement |
-| --- | --- |
-| Given | a definition naming a language the executable was not built with |
-| When | the directory is loaded |
-| Then | the file is named as asking for a language this sumi does not carry |
-
-## `T-034` A definition naming both a marker and a language
-
-| Step | Statement |
-| --- | --- |
-| Given | a definition naming a marker and a language |
-| When | the directory is loaded |
-| Then | the file is named as saying both, where a claim needs neither |
-
 ## `T-039` Which files a directory holds that this build can read
 
 | Step | Statement |
 | --- | --- |
 | Given | a contract directory holding a file in each format this build carries |
-| Given | a file no parser answers for |
+| Given | a file no parser answers for, and a definition left in a format this build no longer reads |
 | When | the directory is loaded |
 | Then | a definition is read from each file some parser answers for, and no other |
 

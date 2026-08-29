@@ -441,10 +441,3 @@ document are claimed from a test that cannot.
 | When | the reading is asked what it registers |
 | Then | each contract answers the language its own fence named |
 
-## `MD-051` The same definition written both ways
-
-| Step | Statement |
-| --- | --- |
-| Given | one definition naming a marker, written as Markdown and as JSON |
-| When | each is read by the reading answering for it |
-| Then | the two register the same contracts, and differ only in the line each is written on |

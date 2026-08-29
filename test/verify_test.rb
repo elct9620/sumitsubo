@@ -2,17 +2,14 @@ require "pathname"
 require "sumitsubo"
 require "sumitsubo/language"
 require "sumitsubo/grammar"
-require "sumitsubo/parser/json"
 require "sumitsubo/parser/markdown"
 
-# A run is handed what this build carries, the way `bin/sumi.rb` hands it: both
-# formats, so a project part-way through writing its specifications one way
-# reads either. This file already crosses into the binding through the
-# languages, so the grammar the Markdown parser reads through costs it nothing
-# it had not already paid.
+# A run is handed what this build carries, the way `bin/sumi.rb` hands it. This
+# file already crosses into the binding through the languages, so the grammar
+# the parser reads through costs it nothing it had not already paid.
 cli = Sumitsubo::CLI.new(
   Sumitsubo::BUILD_REV, Sumitsubo::Language,
-  [Sumitsubo::Parser::Json.new, Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
+  [Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
 )
 back = Dir.pwd
 
@@ -124,10 +121,11 @@ Dir.chdir("test/fixtures/shaped")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
-# Read as Ruby every name in the file would answer as undefined, so what the
-# run says is that the specification cannot be read.
+# The marker that made these claims went missing, and nothing was put in its
+# place, so what the run says is that the specification cannot be read rather
+# than reporting every name in it as undefined.
 # @behavior V-016
-puts "--- a contract the language it named cannot spell ---"
+puts "--- a definition that lost the word its contracts were claimed with ---"
 Dir.chdir("test/fixtures/unresolvable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
