@@ -62,6 +62,8 @@ A path the tool composes is a `Pathname` and reaches the file through that
 same object; a path it read off the filesystem, or rendered for a reader, is a
 String. The rendered ones are what findings carry, and they answer relative to
 where the run started, so `Where.of` is the one place that makes one.
+Composition is `#/`, which answers a `Pathname` on every branch, rather than
+the `join` the ecosystem writes.
 
 A seam normalises rather than refusing: `load` takes what it is handed and
 wraps it, the way `Config.load` does, so a caller composing a path itself is
@@ -158,13 +160,8 @@ AOT compiler for Ruby. Its constraints shape the design:
   build. That is what keeps a source file reading the same here as under the
   CRuby run that takes a snapshot.
 - Those packages are Spinel's own implementations, and some are subsets:
-  optparse drops option descriptions from `to_s` and lets an unknown flag
-  through instead of raising, and `erb` answers a template unchanged. Rendering
-  is built as strings for that reason: templates would let a project word its
-  own pages, and there is no engine to move the wording to. A snapshot taken from CRuby can therefore record
-  behavior the executable does not have.
-- A `join` whose receiver arrives untyped answers that receiver's string form
-  with the arguments dropped, so a `Pathname` reaching one answers `""`. An
-  Array is answered correctly, which is what every `join` here is; a path is
-  composed with `#/`, which answers a `Pathname` on every branch, rather than
-  with the `join` the ecosystem writes.
+  optparse answers nothing at all from `to_s` and lets an unknown flag through
+  instead of raising, and `erb` answers a template unchanged. Rendering is
+  built as strings for that reason: templates would let a project word its own
+  pages, and there is no engine to move the wording to. A snapshot taken from
+  CRuby can therefore record behavior the executable does not have.
