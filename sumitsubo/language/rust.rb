@@ -1,4 +1,5 @@
 require "sumitsubo/error"
+require "sumitsubo/source"
 require "sumitsubo/grammar"
 require "sumitsubo/definitions"
 
@@ -90,7 +91,7 @@ module Sumitsubo
         nodes.each do |node|
           next if node.kind == HOLDER
 
-          found.push(Name.new(
+          found.push(Source::Declaration.new(
             where, node.first, qualified(holders, node), params_for(taken, node)
           ))
         end
@@ -100,7 +101,7 @@ module Sumitsubo
       private
 
       def regions(captures)
-        captures.map { |capture| Region.new(capture.line, capture.text) }
+        captures.map { |capture| Source::Region.new(capture.line, capture.text) }
       end
 
       def captured(source, query, where)
@@ -157,7 +158,7 @@ module Sumitsubo
             holding = []
             found[key] = holding
           end
-          holding.push(Param.new(name, kind, false))
+          holding.push(Source::Param.new(name, kind, false))
         end
         found
       end

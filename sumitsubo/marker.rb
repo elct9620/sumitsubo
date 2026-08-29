@@ -1,4 +1,5 @@
 require "sumitsubo/error"
+require "sumitsubo/source"
 require "sumitsubo/where"
 
 module Sumitsubo
@@ -12,8 +13,6 @@ module Sumitsubo
   # reads a list of ids where Contract reads one name, and a name like
   # `GET /users/:id` carries the space a list would have split on.
   module Marker
-    Claim = Struct.new(:path, :line, :keyword, :text)
-
     # Where a claim could sit arrives from outside, so nothing here knows what
     # the file is written in: a language with no comment for code to follow
     # says so by offering none, which is how anything but source is passed
@@ -34,7 +33,7 @@ module Sumitsubo
         comment.text.split("\n").each do |text|
           keywords.each do |keyword|
             claimed = text_after(text, keyword)
-            claims.push(Claim.new(where, line, keyword, claimed)) unless claimed.nil?
+            claims.push(Source::Claim.new(where, line, keyword, claimed)) unless claimed.nil?
           end
           line += 1
         end

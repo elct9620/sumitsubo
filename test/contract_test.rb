@@ -2,6 +2,7 @@ require "pathname"
 require "sumitsubo/contract"
 require "sumitsubo/grammar"
 require "sumitsubo/language"
+require "sumitsubo/source"
 require "sumitsubo/parser/markdown"
 require "sumitsubo/specification"
 
@@ -130,7 +131,7 @@ fails { loaded("#{FIXTURE}/twice") }
 # @behavior T-016 T-018
 puts "--- an interface the syntax tree does not define ---"
 Sumitsubo::Contract.undefined(
-  loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Language::Name.new("src/commands.rb", 3, "init", [])] }
+  loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Source::Declaration.new("src/commands.rb", 3, "init", [])] }
 ).each do |finding|
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
@@ -144,8 +145,8 @@ puts "--- a declaration outside the definition registering its name ---"
 spelled = loaded("#{FIXTURE}/nomarker")
 Sumitsubo::Contract.defining(
   spelled,
-  { "ruby" => [Sumitsubo::Language::Name.new("#{FIXTURE}/src/commands.rb", 3, "verify", []),
-               Sumitsubo::Language::Name.new("#{FIXTURE}/app/controller.rb", 9, "verify", [])] },
+  { "ruby" => [Sumitsubo::Source::Declaration.new("#{FIXTURE}/src/commands.rb", 3, "verify", []),
+               Sumitsubo::Source::Declaration.new("#{FIXTURE}/app/controller.rb", 9, "verify", [])] },
   Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
 ).each do |language, names|
   names.each { |name| puts "  #{language} #{name.path}:#{name.line} #{name.name}" }
@@ -180,11 +181,11 @@ end
 
 # What a reading answers, since that is what the mechanism is really handed.
 def takes(name, kind = "positional", optional = false)
-  Sumitsubo::Language::Param.new(name, kind, optional)
+  Sumitsubo::Source::Param.new(name, kind, optional)
 end
 
 def declares(line, name, params)
-  Sumitsubo::Language::Name.new("src/store.rb", line, name, params)
+  Sumitsubo::Source::Declaration.new("src/store.rb", line, name, params)
 end
 
 registered = loaded("#{FIXTURE}/params")
@@ -267,7 +268,7 @@ Sumitsubo::Contract.readings_in(
 # @behavior T-041
 puts "--- a declaration another language spells alike ---"
 Sumitsubo::Contract.undefined(
-  spelling, { "ruby" => [Sumitsubo::Language::Name.new("src/store.rb", 2, "Store::Handle", nil)] }
+  spelling, { "ruby" => [Sumitsubo::Source::Declaration.new("src/store.rb", 2, "Store::Handle", nil)] }
 ).each do |finding|
   puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end

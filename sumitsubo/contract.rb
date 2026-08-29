@@ -3,6 +3,7 @@ require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/parser"
 require "sumitsubo/scope"
+require "sumitsubo/source"
 require "sumitsubo/specification"
 
 module Sumitsubo
@@ -417,7 +418,7 @@ module Sumitsubo
 
           group = grouped[key(language_of(definition, interface), interface.key)]
           next if group.nil? || !agreed?(group)
-          next if agree?(registered, group[0].params)
+          next if registered == group[0].params
 
           found.push(Mismatch.new(
             Where.of(interface.path), interface.line, interface.key,
@@ -518,9 +519,7 @@ module Sumitsubo
     def self.spelled_as(param)
       name = param.name.nil? ? "-" : param.name
       kind = param.kind == POSITIONAL ? "" : ":#{param.kind}"
-      # Compared rather than asked: nothing this file requires declares the
-      # shape a reading answers with, so the flag arrives untyped.
-      "#{name}#{kind}#{param.optional == true ? "?" : ""}"
+      "#{name}#{kind}#{param.optional ? "?" : ""}"
     end
 
     def self.describe_unresolved(claim)
@@ -603,25 +602,13 @@ module Sumitsubo
       group.zip(group.rotate)
     end
 
-    # Whether every definition of one name describes the same call.
+    # Whether every definition of one name describes the same call. What a
+    # reading answers is a value, so two shapes asking a caller for the same
+    # thing are the same shape — a scope carrying no parameters at all agrees
+    # with itself, and one taking none does not agree with it.
     def self.agreed?(group)
-      group.all? { |definition| agree?(group[0].params, definition.params) }
-    end
-
-    # Whether two shapes ask a caller for the same thing. A scope carries no
-    # parameters at all, so a class reopened agrees with itself.
-    def self.agree?(one, other)
-      return true if one.nil? && other.nil?
-      return false if one.nil? || other.nil? || one.length != other.length
-
-      one.zip(other).all? { |pair| same?(pair[0], pair[1]) }
-    end
-
-    # The kind is compared as text. This file never learns what any of those
-    # words means, which is what keeps the specification free of the language
-    # its included files happen to be written in.
-    def self.same?(one, other)
-      one.name == other.name && one.kind == other.kind && one.optional == other.optional
+      shape = group[0].params
+      group.all? { |declared| declared.params == shape }
     end
 
     # What a claim can resolve against. Only the marker reading makes claims,

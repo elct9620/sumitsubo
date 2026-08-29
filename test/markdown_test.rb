@@ -1,4 +1,5 @@
 require "sumitsubo/parser/markdown"
+require "sumitsubo/source"
 
 # Reading a Markdown specification into a feature and its scenarios: the part
 # of that work no grammar owns.
@@ -320,12 +321,11 @@ end
 # What a signature declares is a reading's answer, so it is handed in the way
 # the captures are: a real reading is put to a real fence where the binding is,
 # and what the rules below turn on is what came back.
-Named = Struct.new(:name, :params)
-
 # A scope carries no parameters at all, which is how a signature's nesting is
-# told from the contract it holds.
-def scope(name) = Named.new(name, nil)
-def declares(name) = Named.new(name, [])
+# told from the contract it holds. Where a fence's declaration sits is not
+# what these rules turn on, so the two the builder reads are the two written.
+def scope(name) = Sumitsubo::Source::Declaration.new(nil, nil, name, nil)
+def declares(name) = Sumitsubo::Source::Declaration.new(nil, nil, name, [])
 
 class Spelling
   def initialize(answers)

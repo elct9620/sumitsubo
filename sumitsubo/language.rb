@@ -26,30 +26,12 @@ module Sumitsubo
   # A caller that composed its path holds a Pathname and one that read it off
   # the filesystem holds a String, so this seam wraps what it is handed and a
   # language reaches the file through that object rather than through File.
+  #
+  # What a reading answers with is `Sumitsubo::Source`, which every mechanism
+  # comparing against source can name: a shape declared here would be one the
+  # comparison could not reach for without reaching a grammar.
   module Language
     class Error < Sumitsubo::Error; end
-
-    # A stretch of a file a person wrote, and the line it starts on.
-    Region = Struct.new(:line, :text)
-
-    # A declaration and, where it is one a caller writes arguments for, the
-    # parameters it takes. A scope carries none at all, which is not the same
-    # as one that takes none.
-    #
-    # Which language read it is not here. The caller said which, so an answer
-    # carrying it would be the answer repeating the question; a caller reading
-    # one file as two languages keeps the two apart by holding them apart.
-    Name = Struct.new(:path, :line, :name, :params)
-
-    # One parameter: what it is called, how a caller has to pass it, and
-    # whether it may be left out. A name is absent where the language lets the
-    # parameter go unnamed.
-    #
-    # The kind words are each language's own and they stay on this side. A
-    # contract compares them as text without knowing what any of them means,
-    # so a second language brings its own vocabulary in its own reading rather
-    # than negotiating a shared one with the specification.
-    Param = Struct.new(:name, :kind, :optional)
 
     # The order a file is offered to them, which is what puts Prose last.
     ALL = [Ruby.new, Rust.new, Prose.new]

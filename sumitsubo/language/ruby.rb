@@ -1,4 +1,5 @@
 require "sumitsubo/error"
+require "sumitsubo/source"
 require "sumitsubo/grammar"
 require "sumitsubo/definitions"
 
@@ -87,7 +88,7 @@ module Sumitsubo
       # class in the tree.
       def comments_in(path, where)
         captured(path.read, COMMENTS, where).map do |capture|
-          Region.new(capture.line, capture.text)
+          Source::Region.new(capture.line, capture.text)
         end
       end
 
@@ -95,7 +96,7 @@ module Sumitsubo
       # implements it, so a comment nothing follows claims nothing.
       def attached_comments_in(path, where)
         captured(path.read, ATTACHED, where).map do |capture|
-          Region.new(capture.line, capture.text)
+          Source::Region.new(capture.line, capture.text)
         end
       end
 
@@ -126,7 +127,7 @@ module Sumitsubo
         nodes.each do |node|
           next if node.kind == REOPENED
 
-          found.push(Name.new(
+          found.push(Source::Declaration.new(
             where, node.first, qualified(scopes, reopened, node), params_for(taken, node)
           ))
         end
@@ -213,7 +214,7 @@ module Sumitsubo
         end
         return nil if kind.nil?
 
-        Param.new(name, kind, defaulted || OMISSIBLE.include?(kind))
+        Source::Param.new(name, kind, defaulted || OMISSIBLE.include?(kind))
       end
 
       # What a declaration answers for its parameters: none at all for a scope,

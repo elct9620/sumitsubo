@@ -1,3 +1,5 @@
+require "sumitsubo/source"
+
 module Sumitsubo
   module Language
     # Whatever no language before it claimed. Prose is a comment for its whole
@@ -22,7 +24,7 @@ module Sumitsubo
         line = 0
         path.readlines.each do |text|
           line += 1
-          found.push(Region.new(line, text))
+          found.push(Source::Region.new(line, text))
         end
         found
       end

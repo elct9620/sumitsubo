@@ -1,6 +1,7 @@
 require "pathname"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
+require "sumitsubo/source"
 
 # What a piece of source claims to implement, read out of the comments a
 # language offers.
@@ -10,8 +11,6 @@ require "sumitsubo/marker"
 # real grammar here would only be answering a question this reading never asks.
 
 BEHAVIOR = [Sumitsubo::Behavior::MARKER]
-
-Region = Struct.new(:line, :text)
 
 # A language's answer, said outright.
 class Offered
@@ -34,8 +33,8 @@ end
 # @behavior M-001 M-005
 puts "--- a claim answers at the line its comment sits on ---"
 claims("src/verify.rb", BEHAVIOR, [
-  Region.new(7, "# @behavior G-001"),
-  Region.new(10, "# @behavior G-002 I-001")
+  Sumitsubo::Source::Region.new(7, "# @behavior G-001"),
+  Sumitsubo::Source::Region.new(10, "# @behavior G-002 I-001")
 ]).each { |line| puts line }
 
 # A comment spanning lines arrives whole, so the line is counted from where it
@@ -43,7 +42,7 @@ claims("src/verify.rb", BEHAVIOR, [
 # @behavior M-003
 puts "--- a claim in a block comment ---"
 claims("src/init.rb", BEHAVIOR, [
-  Region.new(9, "=begin\nWhat the next thing is for.\n@behavior I-003\n=end")
+  Sumitsubo::Source::Region.new(9, "=begin\nWhat the next thing is for.\n@behavior I-003\n=end")
 ]).each { |line| puts line }
 
 # A caller reaching a mechanism other than Behavior has no reason to have
@@ -51,7 +50,7 @@ claims("src/init.rb", BEHAVIOR, [
 # @behavior M-008
 puts "--- a path that arrives absolute still answers where the run started ---"
 claims(Pathname.new("src/commands.rb").expand_path.to_s, BEHAVIOR, [
-  Region.new(2, "# @behavior I-001")
+  Sumitsubo::Source::Region.new(2, "# @behavior I-001")
 ]).each { |line| puts line }
 
 # Parsing is the cost, so a whole set of keywords is read in one pass. The
@@ -60,7 +59,7 @@ claims(Pathname.new("src/commands.rb").expand_path.to_s, BEHAVIOR, [
 # @behavior M-009 M-010
 puts "--- two keywords in one pass, and one with nothing after it ---"
 claims("src/commands.rb", ["@command", "@route"], [
-  Region.new(4, "# @command verify"),
-  Region.new(5, "# @route GET /users/:id"),
-  Region.new(8, "# @command")
+  Sumitsubo::Source::Region.new(4, "# @command verify"),
+  Sumitsubo::Source::Region.new(5, "# @route GET /users/:id"),
+  Sumitsubo::Source::Region.new(8, "# @command")
 ]).each { |line| puts line }
