@@ -18,7 +18,7 @@ docs/overview.md Order rejects Purchase: Order is what the domain calls it.
 app/billing/charge.rb Order: What a customer asks us to fulfil.
 --- what the specification spells is not a use of it ---
 app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
---- a finding the specification set aside, and one it did not ---
+--- a mention the specification set aside, and one it did not ---
 app/other.rb:3 Order rejects Purchase: Order is what the domain calls it.
 ignored.md:20 nothing at app/gone.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
 --- a missing glossary is a broken reference line, not a difference ---

@@ -99,7 +99,7 @@ is kept for.
 ### Ignore
 
 One line a rejection does not answer for, and the reason that line is right to
-say what it says. It names a finding and nothing wider, so fixing the line
+say what it says. It names a mention and nothing wider, so fixing the line
 leaves it naming nothing and the run says so.
 
 ### Exclude

@@ -48,29 +48,29 @@ reversed = Sumitsubo::Specification.new(
 backwards = Sumitsubo::Glossary.scope(reversed, Pathname.pwd, [])
 puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].text}"
 
-# A finding is built here rather than read out of a run: what is being shown
+# A mention is built here rather than read out of a run: what is being shown
 # is which of two the rule sets aside, and the specification is what says
 # which line declares.
 # @behavior G-008
 puts "--- what the specification spells is not a use of it ---"
-spelled = Sumitsubo::Glossary::Finding.new(".spec/glossary.md", 18, "Order", "Purchase", "Order is what the domain calls it.")
-used = Sumitsubo::Glossary::Finding.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
-Sumitsubo::Glossary.uses([spelled, used], vocabulary).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{Sumitsubo::Glossary.describe(finding)}"
+spelled = Sumitsubo::Glossary::Mention.new(".spec/glossary.md", 18, "Order", "Purchase", "Order is what the domain calls it.")
+used = Sumitsubo::Glossary::Mention.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
+Sumitsubo::Glossary.uses([spelled, used], vocabulary).each do |mention|
+  puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}: #{mention.reason}"
 end
 
-# Findings are built here rather than read out of a run for the same reason
+# Mentions are built here rather than read out of a run for the same reason
 # as above: what is being shown is which of them the specification set aside.
 # @behavior G-009 G-010
-puts "--- a finding the specification set aside, and one it did not ---"
+puts "--- a mention the specification set aside, and one it did not ---"
 ignored = Sumitsubo::Glossary.load("ignored.md", PARSERS)
-aside = Sumitsubo::Glossary::Finding.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
-kept = Sumitsubo::Glossary::Finding.new("app/other.rb", 3, "Order", "Purchase", "Order is what the domain calls it.")
-Sumitsubo::Glossary.standing([aside, kept], ignored).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{Sumitsubo::Glossary.describe(finding)}"
+aside = Sumitsubo::Glossary::Mention.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
+kept = Sumitsubo::Glossary::Mention.new("app/other.rb", 3, "Order", "Purchase", "Order is what the domain calls it.")
+Sumitsubo::Glossary.standing([aside, kept], ignored, Pathname.pwd).each do |finding|
+  puts "#{finding.path}:#{finding.line} #{finding.message}"
 end
-Sumitsubo::Glossary.unresolved([aside, kept], ignored).each do |stale|
-  puts "ignored.md:#{stale.line} #{Sumitsubo::Glossary.describe_unresolved(stale)}"
+Sumitsubo::Glossary.unresolved([aside, kept], ignored).each do |finding|
+  puts "#{finding.path}:#{finding.line} #{finding.message}"
 end
 
 Dir.chdir(back)

@@ -49,25 +49,11 @@ module Sumitsubo
           ))
         end
         scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
-        findings = Sumitsubo::Glossary.uses(
+        mentions = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, languages), vocabulary
         )
-        Sumitsubo::Glossary.standing(findings, vocabulary).each do |finding|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Glossary::REJECTED, difference: true,
-            path: Where.of(config.base / finding.path), line: finding.line,
-            message: Sumitsubo::Glossary.describe(finding)
-          ))
-        end
-        # An ignore naming nothing is not a difference about the code: what it
-        # was written against is gone, so there was nothing to compare.
-        Sumitsubo::Glossary.unresolved(findings, vocabulary).each do |stale|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Glossary::UNRESOLVED, difference: false,
-            path: Where.of(path), line: stale.line,
-            message: Sumitsubo::Glossary.describe_unresolved(stale)
-          ))
-        end
+        Sumitsubo::Glossary.standing(mentions, vocabulary, config.base).each { |one| report.add(one) }
+        Sumitsubo::Glossary.unresolved(mentions, vocabulary).each { |one| report.add(one) }
       end
     end
 

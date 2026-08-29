@@ -1,6 +1,7 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/parser"
+require "sumitsubo/finding"
 require "sumitsubo/scope"
 require "sumitsubo/specification"
 require "sumitsubo/where"
@@ -36,14 +37,19 @@ module Sumitsubo
     # text, and a line set aside sits under that word.
     #
     # Each of them earns a statement of its own by being pointed at — an ignore
-    # names the rejection it is written under, and a finding names the word and
+    # names the rejection it is written under, and a mention names the word and
     # the term together. A section's boundary is not pointed at by anything, so
     # it is an attribute of that section rather than a statement.
-    Finding = Struct.new(:path, :line, :term, :used, :reason)
 
-    # An ignore that no longer names anything, carried with what it takes to
-    # say so where the specification wrote it.
-    Stale = Struct.new(:line, :at, :term, :used)
+    # A rejected word standing on a line, before anything has decided whether
+    # it is a use of the word or the specification spelling it, and before an
+    # ignore has been given the chance to set it aside. Its path is relative to
+    # the base, which is what an ignore names it by.
+    Mention = Struct.new(:path, :line, :term, :used, :reason)
+
+    # One line a rejection does not answer for, as the specification wrote it,
+    # with what it takes to say so where it sits.
+    Ignore = Struct.new(:line, :at, :term, :used)
 
     # The mechanism names its own file; where the root sits is the tool's to
     # say, so it arrives as an argument.
@@ -94,22 +100,22 @@ module Sumitsubo
     # this mechanism checks a vocabulary and names no language, which is what
     # leaves a second one to be carried without it being touched.
     def self.check(scope, base, languages)
-      findings = []
+      mentions = []
       scope.keys.sort.each do |path|
         file = base / path
         regions = languages.comments_in(file, Where.of(file))
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].statements.each do |entry|
-            findings.concat(findings_for(path, regions, name, entry))
+            mentions.concat(mentions_of(path, regions, name, entry))
           end
         end
       end
       # A key that leaves no ties, so two runs report the same order.
-      findings.sort_by { |f| [f.path, f.line, f.term, f.used] }
+      mentions.sort_by { |one| [one.path, one.line, one.term, one.used] }
     end
 
-    # The findings that are uses of a rejected word rather than the
+    # The mentions that are uses of a rejected word rather than the
     # specification spelling one. A word has to be spelled to be declared
     # rejected, so a glossary its own includes cover would report against
     # itself every rejection it declares.
@@ -117,13 +123,13 @@ module Sumitsubo
     # Which line declares is the reading's answer rather than a pattern's: the
     # specification says where each word was written, so nothing here opens the
     # file a second time or knows how a format spells a declaration.
-    def self.uses(findings, spec)
+    def self.uses(mentions, spec)
       spelled = declared_in(spec)
       found = []
-      findings.each do |finding|
-        next if finding.path == spec.path && spelled["#{finding.line} #{finding.used}"]
+      mentions.each do |mention|
+        next if mention.path == spec.path && spelled["#{mention.line} #{mention.used}"]
 
-        found.push(finding)
+        found.push(mention)
       end
       found
     end
@@ -142,8 +148,8 @@ module Sumitsubo
       term.statements.each { |word| spelled["#{word.line} #{word.key}"] = true }
     end
 
-    # Every finding the specification sets aside by hand, under the key that
-    # finding answers at. An ignore names one line and no more: which term is
+    # Every mention the specification sets aside by hand, under the key that
+    # mention answers at. An ignore names one line and no more: which term is
     # rejecting and which word it rejects come from where it sits, so neither
     # can be written wrong.
     def self.set_aside(spec)
@@ -152,66 +158,77 @@ module Sumitsubo
       found
     end
 
-    # Every line one term sets aside, under the key the finding it answers to
+    # Every line one term sets aside, under the key the mention it answers to
     # is held by.
     def self.sets_aside(term, found)
       term.statements.each do |entry|
         entry.statements.each do |ignore|
           found["#{term.key} #{entry.key} #{ignore.key}"] =
-            Stale.new(ignore.line, ignore.key, term.key, entry.key)
+            Ignore.new(ignore.line, ignore.key, term.key, entry.key)
         end
       end
     end
 
-    # The findings a run answers for. One the specification set aside is not
-    # reported: which side is wrong is not the tool's to decide, and here the
-    # project has decided.
-    def self.standing(findings, spec)
+    # The findings a run answers for. A mention the specification set aside is
+    # not reported: which side is wrong is not the tool's to decide, and here
+    # the project has decided.
+    #
+    # An ignore names a mention by its path under the base, and a finding
+    # answers at the path a reader started the run from. This is where a
+    # mention stops being a candidate, so this is where the two are told apart.
+    def self.standing(mentions, spec, base)
       aside = set_aside(spec)
       found = []
-      findings.each { |finding| found.push(finding) if aside[key_of(finding)].nil? }
+      mentions.each do |mention|
+        next unless aside[key_of(mention)].nil?
+
+        found.push(Finding.new(
+          rule: REJECTED, difference: true,
+          path: Where.of(base / mention.path), line: mention.line,
+          message: "#{mention.term} rejects #{mention.used}: #{mention.reason}"
+        ))
+      end
       found
     end
 
     # What was set aside and no longer names anything — the line moved, or the
     # wording was fixed. Nothing else notices, so an exception left behind
     # outlives what it was for; the run refuses to certify rather than pass.
-    def self.unresolved(findings, spec)
+    def self.unresolved(mentions, spec)
       met = {}
-      findings.each { |finding| met[key_of(finding)] = true }
+      mentions.each { |mention| met[key_of(mention)] = true }
       aside = set_aside(spec)
       found = []
-      aside.keys.sort.each { |key| found.push(aside[key]) if met[key].nil? }
+      aside.keys.sort.each do |key|
+        next unless met[key].nil?
+
+        ignore = aside[key]
+        found.push(Finding.new(
+          rule: UNRESOLVED, difference: false,
+          path: Where.of(spec.path), line: ignore.line,
+          message: "nothing at #{ignore.at} has #{ignore.term} rejecting " \
+                   "#{ignore.used}; the line moved or the wording was fixed"
+        ))
+      end
       found
     end
 
-    # What an ignore has to name to set a finding aside, which is a finding
+    # What an ignore has to name to set a mention aside, which is a mention
     # without its reason: the reason is the specification's own.
-    def self.key_of(finding)
-      "#{finding.term} #{finding.used} #{finding.path}:#{finding.line}"
+    def self.key_of(mention)
+      "#{mention.term} #{mention.used} #{mention.path}:#{mention.line}"
     end
 
-    # The mechanism words its own finding; where it points is the tool's to
-    # shape.
-    def self.describe(finding)
-      "#{finding.term} rejects #{finding.used}: #{finding.reason}"
-    end
-
-    def self.describe_unresolved(stale)
-      "nothing at #{stale.at} has #{stale.term} rejecting #{stale.used}; " \
-        "the line moved or the wording was fixed"
-    end
-
-    # One finding per line, however often the word appears on it: the line is
+    # One mention per line, however often the word appears on it: the line is
     # what a reader goes to, and what an exclusion would one day be written
     # against.
-    def self.findings_for(path, regions, name, entry)
+    def self.mentions_of(path, regions, name, entry)
       found = []
       pattern = Regexp.new("\\b" + Regexp.escape(entry.key) + "\\b")
       regions.each do |region|
         line = region.line
         region.text.split("\n").each do |text|
-          found.push(Finding.new(path, line, name, entry.key, entry.text)) unless pattern.match(text).nil?
+          found.push(Mention.new(path, line, name, entry.key, entry.text)) unless pattern.match(text).nil?
           line += 1
         end
       end
