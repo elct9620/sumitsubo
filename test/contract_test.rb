@@ -146,9 +146,8 @@ fails { loaded("#{FIXTURE}/both") }
 # internal keeps it out of is the document, not the comparison.
 # @behavior T-016 T-018
 puts "--- an interface the syntax tree does not define ---"
-Declared = Struct.new(:path, :line, :name, :params, :language)
 Sumitsubo::Contract.undefined(
-  loaded("#{FIXTURE}/nomarker"), [Declared.new("src/commands.rb", 3, "init", [], "ruby")]
+  loaded("#{FIXTURE}/nomarker"), [Sumitsubo::Language::Name.new("src/commands.rb", 3, "init", [], "ruby")]
 ).each do |finding|
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
@@ -162,8 +161,8 @@ puts "--- a declaration outside the definition registering its name ---"
 spelled = loaded("#{FIXTURE}/nomarker")
 Sumitsubo::Contract.defining(
   spelled,
-  [Declared.new("#{FIXTURE}/src/commands.rb", 3, "verify", [], "ruby"),
-   Declared.new("#{FIXTURE}/app/controller.rb", 9, "verify", [], "ruby")],
+  [Sumitsubo::Language::Name.new("#{FIXTURE}/src/commands.rb", 3, "verify", [], "ruby"),
+   Sumitsubo::Language::Name.new("#{FIXTURE}/app/controller.rb", 9, "verify", [], "ruby")],
   Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
 ).each { |name| puts "  #{name.path}:#{name.line} #{name.name}" }
 
@@ -197,39 +196,39 @@ Sumitsubo::Contract.duplicated(definitions, claims).each do |pair|
   puts "#{pair[0].path}:#{pair[0].line} #{Sumitsubo::Contract.describe_duplicated(pair)}"
 end
 
-Takes = Struct.new(:name, :kind, :optional)
-
+# What a reading answers, since that is what the mechanism is really handed.
 def takes(name, kind = "positional", optional = false)
-  Takes.new(name, kind, optional)
+  Sumitsubo::Language::Param.new(name, kind, optional)
 end
 
 def declares(line, name, params)
-  Declared.new("src/store.rb", line, name, params, "ruby")
+  Sumitsubo::Language::Name.new("src/store.rb", line, name, params, "ruby")
 end
 
 registered = loaded("#{FIXTURE}/params")
 
-# A kind nobody named is the one a bare name says, and `Store#touch` registers
-# no shape at all — which is not the same as `Store#write` registering that it
-# takes none.
+# The shape is whatever the signature declares, so a kind nobody wrote is the
+# one that spelling gives it and `Store` registers no shape at all — which is
+# not the same as `Store#write` registering that it takes none.
 # @behavior T-019
 puts "--- the shape a contract registers ---"
-registered[0].statements.each do |interface|
-  params = interface.attributes["params"]
+definition = registered[0]
+definition.statements.each do |interface|
+  params = Sumitsubo::Contract.shape_of(definition, interface, Sumitsubo::Language)
   shape = params.nil? ? "registers no shape" : Sumitsubo::Contract.spell(params)
   puts "  #{interface.key} #{shape}"
 end
 
-# `Store#read` and `Store#write` are defined as registered, and `Store#touch`
-# registers no shape, so only `Store.open` answers.
+# `Store#read` and `Store#write` are defined as registered, and `Store` is a
+# scope with no call to describe, so only `Store.open` answers.
 # @behavior T-020 T-021
 puts "--- an interface defined with another shape ---"
 Sumitsubo::Contract.mismatched(registered, [
   declares(2, "Store.open", [takes("path")]),
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(9, "Store#write", []),
-  declares(12, "Store#touch", [takes("at")])
-]).each do |mismatch|
+  declares(12, "Store", nil)
+], Sumitsubo::Language).each do |mismatch|
   puts "#{mismatch.path}:#{mismatch.line} #{Sumitsubo::Contract.describe_mismatched(mismatch)}"
 end
 
@@ -296,7 +295,7 @@ Sumitsubo::Contract.readings_in(
 # @behavior T-041
 puts "--- a declaration another language spells alike ---"
 Sumitsubo::Contract.undefined(
-  spelling, [Declared.new("src/store.rb", 2, "Store::Handle", nil, "ruby")]
+  spelling, [Sumitsubo::Language::Name.new("src/store.rb", 2, "Store::Handle", nil, "ruby")]
 ).each do |finding|
   puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end

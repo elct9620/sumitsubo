@@ -56,12 +56,12 @@ src/commands.rb:24 @command names no contract
 app/controller.rb:5 @route GET /users/:id is claimed at app/legacy.rb:9 as well
 app/legacy.rb:9 @route GET /users/:id is claimed at app/controller.rb:5 as well
 --- the shape a contract registers ---
+  Store registers no shape
   Store.open (path, mode?)
   Store#read (key:keyword, -:block?)
   Store#write ()
-  Store#touch registers no shape
 --- an interface defined with another shape ---
-test/fixtures/contract/params/api.json:6 Store.open takes (path) where the specification registers (path, mode?)
+test/fixtures/contract/params/api.md:16 Store.open takes (path) where the specification registers (path, mode?)
 --- one name defined with two shapes ---
 src/store.rb:6 Store#read takes (key:keyword, -:block?) here and (key:keyword) at src/store.rb:24
 src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) at src/store.rb:6

@@ -366,16 +366,34 @@ module Sumitsubo
       found
     end
 
+    # The shape a contract registers, read out of the signature it was written
+    # with. The reading that answers what source declares is the one that
+    # answers this, so a shape no definition could have is a shape no
+    # specification can register.
+    #
+    # A scope registers no shape at all, which is not the same as a call taking
+    # nothing: `class Store` says how the name is reached and describes no call.
+    def self.shape_of(definition, interface, languages)
+      signature = interface.attributes["signature"]
+      return nil if signature.nil?
+
+      found = languages.declarations_of(
+        signature[0], interface.path, language_of(definition, interface)
+      )
+      declared = found.find { |name| name.name == interface.key }
+      declared.nil? ? nil : declared.params
+    end
+
     # An interface defined with a shape other than the one registered. Where
     # the definitions disagree among themselves that is already answered, and
     # comparing the contract against one of them would add nothing.
-    def self.mismatched(definitions, names)
+    def self.mismatched(definitions, names, languages)
       declared = declared_in(names)
 
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          registered = interface.attributes["params"]
+          registered = shape_of(definition, interface, languages)
           next if registered.nil?
 
           group = declared[key(language_of(definition, interface), interface.key)]

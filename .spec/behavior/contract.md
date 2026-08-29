@@ -39,18 +39,23 @@ deciding which to keep means comparing them.
 
 ### What is compared, and what stays out
 
-A shape half-registered would let the rest drift, which is why a registered
-shape is compared entire and an unregistered one asks for nothing. Where the
-definitions disagree among themselves the contract is not also compared
+The shape a contract registers is read out of the signature it was written
+with, by the reading that answers what source declares. Both sides come from
+one reading, so a shape no definition could have is a shape no specification
+can register — and every contract read this way is compared, since the
+signature that says how its name is spelled is the same text that says what a
+caller writes.
+
+A shape is compared entire: half-registered would let the rest drift. A scope
+registers none at all, which is not the same as a call taking nothing. Where
+the definitions disagree among themselves the contract is not also compared
 against one of them: two entrances are already the answer.
 
 `positional` is the one kind word this tool owns. It names the parameter a
 caller writes with no marking of any sort, which every language has one of,
-and it is what a contract leaving `kind` out is compared as — so a reading
-answers it for that parameter and names the rest itself. Every other kind word
-belongs to the language and lives in the reading that answers it. Contract
-compares them as text without learning what any of them means, so a
-specification writes the words its own language uses.
+and a finding leaves it out because a bare name already says it. Every other
+kind word belongs to the language and lives in the reading that answers it.
+Contract compares them as text without learning what any of them means.
 
 `internal` is a fact about the interface rather than a preference about pages,
 which is what separates it from a configuration switching a whole
@@ -260,9 +265,9 @@ guessed would compare against the wrong spelling.
 
 | Step | Statement |
 | --- | --- |
-| Given | a contract registering parameters, one of them naming no kind |
-| When | the directory is read |
-| Then | the parameter naming no kind answers the one a bare name says |
+| Given | contracts whose signatures declare a call, and one whose signature declares a scope |
+| When | the shape each registers is asked for |
+| Then | each call answers the parameters its signature declares, and the scope answers no shape at all |
 
 ## `T-020` An interface defined with another shape
 
@@ -273,14 +278,14 @@ guessed would compare against the wrong spelling.
 | When | the two are compared |
 | Then | the interface answers at the line registering it, naming both shapes |
 
-## `T-021` A contract registering no shape
+## `T-021` A contract whose signature describes no call
 
 | Step | Statement |
 | --- | --- |
-| Given | a contract naming an interface and no parameters |
-| Given | source defining it with parameters |
+| Given | a contract whose signature declares a scope |
+| Given | source declaring that scope |
 | When | the two are compared |
-| Then | nothing answers |
+| Then | nothing answers, since a scope has no call to describe |
 
 ## `T-022` One name defined with two shapes
 

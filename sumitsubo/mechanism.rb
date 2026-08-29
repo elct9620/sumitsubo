@@ -123,7 +123,7 @@ module Sumitsubo
         Sumitsubo::Contract.conflicting(definitions, names).each do |pair|
           report.difference(pair[0].path, pair[0].line, Sumitsubo::Contract.describe_conflicting(pair))
         end
-        Sumitsubo::Contract.mismatched(definitions, names).each do |mismatch|
+        Sumitsubo::Contract.mismatched(definitions, names, languages).each do |mismatch|
           report.difference(mismatch.path, mismatch.line, Sumitsubo::Contract.describe_mismatched(mismatch))
         end
       end
