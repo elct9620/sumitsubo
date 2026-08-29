@@ -92,8 +92,8 @@ end
 
 # @behavior T-037
 puts "--- and the claim that could not implement it ---"
-Sumitsubo::Contract.misplaced(definitions, astray, reach).each do |claim|
-  puts "  #{claim.path}:#{claim.line} #{claim.message}"
+Sumitsubo::Contract.misplaced(definitions, astray, reach).each do |finding|
+  puts "  #{finding.path}:#{finding.line} #{finding.message}"
 end
 
 # @behavior T-002
@@ -169,8 +169,8 @@ end
 
 # @behavior T-010 T-011
 puts "--- a claim resolving to no contract, and one naming none at all ---"
-Sumitsubo::Contract.unresolved(definitions, claims).each do |unresolved|
-  puts "#{unresolved.path}:#{unresolved.line} #{unresolved.message}"
+Sumitsubo::Contract.unresolved(definitions, claims).each do |finding|
+  puts "#{finding.path}:#{finding.line} #{finding.message}"
 end
 
 # @behavior T-012
@@ -211,8 +211,8 @@ Sumitsubo::Contract.mismatched(registered, { "ruby" => [
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(9, "Store#write", []),
   declares(12, "Store", nil)
-] }, Sumitsubo::Language).each do |mismatch|
-  puts "#{mismatch.path}:#{mismatch.line} #{mismatch.message}"
+] }, Sumitsubo::Language).each do |finding|
+  puts "#{finding.path}:#{finding.line} #{finding.message}"
 end
 
 # `Store.open` is defined twice with one shape, which is one way in; `Store#read`
