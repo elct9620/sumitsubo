@@ -42,7 +42,7 @@ end
 
 def claim(path, line, keyword, name)
   Sumitsubo::Contract::Claim.new(
-    path, line, Sumitsubo::Contract::Referent.new(keyword, name)
+    path, line, Sumitsubo::Contract::Name.new(keyword, name)
   )
 end
 

@@ -140,7 +140,7 @@ module Sumitsubo
           Marker.claims_in(path, keywords, languages).each do |claim|
             claims.push(Sumitsubo::Contract::Claim.new(
               claim.path, claim.line,
-              Sumitsubo::Contract::Referent.new(claim.keyword, claim.text)
+              Sumitsubo::Contract::Name.new(claim.keyword, claim.text)
             ))
           end
         end

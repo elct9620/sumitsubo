@@ -52,45 +52,47 @@ module Sumitsubo
     # language for the one that declares, since two languages may spell one
     # name and mean nothing alike.
     #
-    # Two of them saying the same thing are the same referent, which is what
+    # Two of them saying the same thing are the same name, which is what
     # lets the two sides find each other without a key being spelled out at
     # every place they meet. Spoken to a reader it is the pair, except that the
     # reading which declares has no word: a message should not read as though
     # one were missing.
-    Referent = Data.define(:namespace, :name) do
+    Name = Data.define(:namespace, :bare) do
       include Comparable
 
       # Ordered so a run answers in the same order twice, which is all this is
       # for: what the order means to a reader is nothing.
       def <=>(other)
-        [namespace.to_s, name] <=> [other.namespace.to_s, other.name]
+        [namespace.to_s, bare] <=> [other.namespace.to_s, other.bare]
       end
 
       # Said to a reader. Named rather than left to `to_s`, because what a
       # message shows is this mechanism's to decide and not a conversion
       # anything may reach for.
       def spoken
-        namespace.nil? ? name : "#{namespace} #{name}"
+        namespace.nil? ? bare : "#{namespace} #{bare}"
       end
     end
 
     # An interface its reading did not find. It answers at the specification
     # that registers it, which is also where the include that bounded the
     # search is written, so the finding names neither.
-    Finding = Data.define(:path, :line, :referent)
+    Finding = Data.define(:path, :line, :contract)
     # An interface defined with a shape other than the one registered. Both
-    # are carried, because what a reader chooses between is the two of them.
+    # shapes are carried, because what a reader chooses between is the two of
+    # them; the name is spelled alone, since the reading this comes from shows
+    # no word in front of it.
     Mismatch = Data.define(:path, :line, :name, :registered, :taken)
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, and a contract is named by the interface itself, so the
-    # whole of it is the name.
-    Claim = Data.define(:path, :line, :referent)
+    # whole of that is the name it carries.
+    Claim = Data.define(:path, :line, :contract)
     # A claim naming a contract that is really registered, from a file the
     # definition registering it does not include. What it carries is that
     # definition rather than its includes: the fix is written there, and a
     # definition reaching dozens of files would otherwise spell all of them
     # at the reader.
-    Misplaced = Data.define(:path, :line, :referent, :spec)
+    Misplaced = Data.define(:path, :line, :contract, :spec)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -261,7 +263,7 @@ module Sumitsubo
       registering = registering_claims(definitions)
       found = []
       claims.each do |claim|
-        spec = registering[claim.referent]
+        spec = registering[claim.contract]
         next if spec.nil?
         next if reach[spec][claim.path].nil?
 
@@ -278,11 +280,11 @@ module Sumitsubo
       registering = registering_claims(definitions)
       found = []
       claims.each do |claim|
-        spec = registering[claim.referent]
+        spec = registering[claim.contract]
         next if spec.nil?
         next unless reach[spec][claim.path].nil?
 
-        found.push(Misplaced.new(claim.path, claim.line, claim.referent, Where.of(spec)))
+        found.push(Misplaced.new(claim.path, claim.line, claim.contract, Where.of(spec)))
       end
       found
     end
@@ -294,7 +296,7 @@ module Sumitsubo
       found = {}
       claimed(definitions).each do |definition|
         spec = definition.path
-        definition.statements.each { |interface| found[Referent.new(marker_of(definition), interface.key)] = spec }
+        definition.statements.each { |interface| found[Name.new(marker_of(definition), interface.key)] = spec }
       end
       found
     end
@@ -304,16 +306,16 @@ module Sumitsubo
     # between the two sides.
     def self.unclaimed(definitions, claims)
       made = {}
-      claims.each { |claim| made[claim.referent] = true }
+      claims.each { |claim| made[claim.contract] = true }
 
       found = []
       claimed(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless made[Referent.new(marker_of(definition), interface.key)].nil?
+          next unless made[Name.new(marker_of(definition), interface.key)].nil?
 
           found.push(Finding.new(
             Where.of(interface.path), interface.line,
-            Referent.new(marker_of(definition), interface.key)
+            Name.new(marker_of(definition), interface.key)
           ))
         end
       end
@@ -341,14 +343,14 @@ module Sumitsubo
     # from the group holding them rather than from each of them: what a file
     # read twice answers twice is told apart by which reading it came back
     # from, so nothing has to be carried on the answers themselves.
-    def self.defining_in(names, language, registering, reach)
+    def self.defining_in(declarations, language, registering, reach)
       found = []
-      names.each do |name|
-        spec = registering[Referent.new(language, name.name)]
+      declarations.each do |declared|
+        spec = registering[Name.new(language, declared.name)]
         next if spec.nil?
-        next if reach[spec][name.path].nil?
+        next if reach[spec][declared.path].nil?
 
-        found.push(name)
+        found.push(declared)
       end
       found
     end
@@ -361,7 +363,7 @@ module Sumitsubo
       defined(definitions).each do |definition|
         spec = definition.path
         definition.statements.each do |interface|
-          found[Referent.new(language_of(definition, interface), interface.key)] = spec
+          found[Name.new(language_of(definition, interface), interface.key)] = spec
         end
       end
       found
@@ -381,11 +383,11 @@ module Sumitsubo
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless grouped[Referent.new(language_of(definition, interface), interface.key)].nil?
+          next unless grouped[Name.new(language_of(definition, interface), interface.key)].nil?
 
           found.push(Finding.new(
             Where.of(interface.path), interface.line,
-            Referent.new(language_of(definition, interface), interface.key)
+            Name.new(language_of(definition, interface), interface.key)
           ))
         end
       end
@@ -405,8 +407,8 @@ module Sumitsubo
       grouped = declared_in(declared)
 
       found = []
-      spelled_names(definitions).each do |name|
-        group = grouped[name]
+      spelled_names(definitions).each do |spelled|
+        group = grouped[spelled]
         next if group.nil? || group.length < 2 || agreed?(group)
 
         paired(group).each { |pair| found.push(pair) }
@@ -428,7 +430,7 @@ module Sumitsubo
       found = languages.declarations_of(
         signature[0], interface.path, language_of(definition, interface)
       )
-      declared = found.find { |name| name.name == interface.key }
+      declared = found.find { |one| one.name == interface.key }
       declared.nil? ? nil : declared.params
     end
 
@@ -444,7 +446,7 @@ module Sumitsubo
           registered = shape_of(definition, interface, languages)
           next if registered.nil?
 
-          group = grouped[Referent.new(language_of(definition, interface), interface.key)]
+          group = grouped[Name.new(language_of(definition, interface), interface.key)]
           next if group.nil? || !agreed?(group)
           next if registered == group[0].params
 
@@ -464,7 +466,7 @@ module Sumitsubo
       registered = registered_in(definitions)
 
       found = []
-      claims.each { |claim| found.push(claim) if registered[claim.referent].nil? }
+      claims.each { |claim| found.push(claim) if registered[claim.contract].nil? }
       found
     end
 
@@ -480,20 +482,20 @@ module Sumitsubo
 
       seen = {}
       claims.each do |claim|
-        name = claim.referent
-        next if registered[name].nil?
+        spelled = claim.contract
+        next if registered[spelled].nil?
 
-        group = seen[name]
+        group = seen[spelled]
         if group.nil?
           group = []
-          seen[name] = group
+          seen[spelled] = group
         end
         group.push(claim)
       end
 
       found = []
-      seen.keys.sort.each do |name|
-        group = seen[name]
+      seen.keys.sort.each do |spelled|
+        group = seen[spelled]
         next if group.length < 2
 
         paired(group).each { |pair| found.push(pair) }
@@ -502,13 +504,13 @@ module Sumitsubo
     end
 
     def self.describe_misplaced(claim)
-      "#{claim.referent.spoken} is claimed outside what #{claim.spec} includes"
+      "#{claim.contract.spoken} is claimed outside what #{claim.spec} includes"
     end
 
     # The mechanism words its own findings; where each points is the tool's to
     # shape.
     def self.describe_unclaimed(finding)
-      "#{finding.referent.spoken} is claimed nowhere this specification includes"
+      "#{finding.contract.spoken} is claimed nowhere this specification includes"
     end
 
     # The caveat rides every one of these because the tree cannot tell the two
@@ -517,7 +519,7 @@ module Sumitsubo
     # nothing. Which constructs those are is each language's own, so the
     # message names the shape and `sumi help contract` names them.
     def self.describe_undefined(finding)
-      "#{finding.referent.name} is defined nowhere this specification " \
+      "#{finding.contract.bare} is defined nowhere this specification " \
         "includes, and one the reading cannot see never is"
     end
 
@@ -551,15 +553,15 @@ module Sumitsubo
     end
 
     def self.describe_unresolved(claim)
-      return "#{claim.referent.namespace} names no contract" if claim.referent.name.empty?
+      return "#{claim.contract.namespace} names no contract" if claim.contract.bare.empty?
 
-      "#{claim.referent.spoken} resolves to no contract"
+      "#{claim.contract.spoken} resolves to no contract"
     end
 
     def self.describe_duplicated(pair)
       claim = pair[0]
       other = pair[1]
-      "#{claim.referent.spoken} is claimed at #{other.path}:#{other.line} as well"
+      "#{claim.contract.spoken} is claimed at #{other.path}:#{other.line} as well"
     end
 
     # What a mechanism could not read is its own to report, so the parser's
@@ -572,24 +574,24 @@ module Sumitsubo
 
     # The marker is the namespace, so two files may share one word and one
     # name may sit under two words. What cannot happen is the same name twice
-    # under the same word: a claim carries only those two, and a referent that
+    # under the same word: a claim carries only those two, and a name that
     # is not unique resolves to nothing.
     def self.refuse_ambiguity(definitions)
       seen = {}
       definitions.each do |definition|
         definition.statements.each do |interface|
-          referent = Referent.new(namespace_of(definition, interface), interface.key)
-          where = seen[referent]
+          name = Name.new(namespace_of(definition, interface), interface.key)
+          where = seen[name]
           unless where.nil?
             # Spoken under the marker rather than under what it was told apart
             # by: a reader is being sent to two places that spell one name, and
             # the language it was read as is not what they have to choose
             # between.
-            said = Referent.new(marker_of(definition), interface.key).spoken
+            said = Name.new(marker_of(definition), interface.key).spoken
             raise Error, "#{said} is declared twice, at #{where} and #{at(interface)}"
           end
 
-          seen[referent] = at(interface)
+          seen[name] = at(interface)
         end
       end
     end
@@ -602,14 +604,14 @@ module Sumitsubo
     def self.declared_in(declared)
       found = {}
       declared.keys.each do |language|
-        declared[language].each do |name|
-          spelled = Referent.new(language, name.name)
+        declared[language].each do |one|
+          spelled = Name.new(language, one.name)
           holding = found[spelled]
           if holding.nil?
             holding = []
             found[spelled] = holding
           end
-          holding.push(name)
+          holding.push(one)
         end
       end
       found
@@ -621,7 +623,7 @@ module Sumitsubo
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          found.push(Referent.new(language_of(definition, interface), interface.key))
+          found.push(Name.new(language_of(definition, interface), interface.key))
         end
       end
       found.uniq.sort
@@ -648,7 +650,7 @@ module Sumitsubo
     def self.registered_in(definitions)
       registered = {}
       claimed(definitions).each do |definition|
-        definition.statements.each { |interface| registered[Referent.new(marker_of(definition), interface.key)] = true }
+        definition.statements.each { |interface| registered[Name.new(marker_of(definition), interface.key)] = true }
       end
       registered
     end
