@@ -11,13 +11,18 @@ The places this project keeps to one implementation.
 The one place a path a reader is handed is made.
 
 ```ruby
-def self.of(path)
+module Sumitsubo::Where
+  def self.of(path)
+  end
+end
 ```
 
-## `Store::Handle` `internal`
+## `store::Handle` `internal`
 
 A handle a second language spells its own way.
 
 ```rust
-fn of(path: &str) -> String;
+mod store {
+    pub struct Handle;
+}
 ```

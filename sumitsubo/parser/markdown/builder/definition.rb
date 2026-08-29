@@ -53,6 +53,13 @@ module Sumitsubo
           # The topic a refusal from this builder sends a reader to.
           TOPIC = "contract"
 
+          # What stands between a scope and what it holds. Every language
+          # spelling a nested name uses one of them, and which means what is
+          # that language's own — all this asks is whether a name ended where
+          # another began, so that a scope sharing a prefix with the contract
+          # is not read as holding it.
+          SEPARATORS = [":", ".", "#"]
+
           # A fence being read: where it opened, and the two parts that may or
           # may not follow it.
           Fence = Struct.new(:line, :language, :content)
@@ -81,7 +88,7 @@ module Sumitsubo
 
             refuse(1, "declares no name") if @key.nil?
             refuse(@marker_at, "names #{MARKER} and gives no word to claim with") if @marker.nil? && !@marker_at.nil?
-            @contracts.each { |contract| spellable(contract) }
+            @contracts.each { |contract| declared(contract) }
 
             Specification.new(@key, @text, @includes, @path, attributes, @contracts)
           end
@@ -214,7 +221,7 @@ module Sumitsubo
           # What every contract has to answer once the document is read. The
           # marker reading asks nothing of a name — a claim is a claim in
           # whatever the file is written in — so this is the other one's alone.
-          def spellable(contract)
+          def declared(contract)
             return unless @marker.nil?
 
             named = contract.attributes[LANGUAGE]
@@ -224,9 +231,54 @@ module Sumitsubo
 
             language = named[0]
             refuse(contract.line, "names #{language}, which this sumi does not carry") unless @languages.carries?(language)
-            unless @languages.definable?(language, contract.key)
-              refuse(contract.line, "names #{contract.key}, which no #{language} definition can be spelled")
+            registering(contract, language)
+          end
+
+          # The signature read as the language it names. Asking the reading
+          # rather than the spelling of the name is what makes the two sides
+          # one: what a contract can register is what that reading finds.
+          #
+          # What comes back is thrown away. The shape is read again when the
+          # two sides are compared, because a value derived here would be a
+          # second place the specification says something.
+          def registering(contract, language)
+            found = declarations_of(contract, language)
+            holding = found.reject { |name| name.name == contract.key }
+            # Nothing was taken out, so nothing declared what the heading names.
+            if holding.length == found.length
+              refuse(contract.line, "writes a signature declaring #{spelled(found)}, and not #{contract.key}")
             end
+
+            holding.each do |name|
+              next if name.params.nil? && encloses?(name.name, contract.key)
+
+              refuse(contract.line, "writes a signature declaring #{name.name} as well, " \
+                                    "where a signature declares the one contract and what holds it")
+            end
+          end
+
+          def declarations_of(contract, language)
+            @languages.declarations_of(contract.attributes[SIGNATURE][0], @path, language)
+          rescue Sumitsubo::Error
+            # Named rather than passed on: the reading's message is about a
+            # piece of source, and what a reader has is a specification. Caught
+            # as the error every reading answers with, so nothing here reaches
+            # for the one that names a grammar.
+            refuse(contract.line, "writes a signature the #{language} reading cannot read")
+          end
+
+          # Whether a declaration is one of the scopes the contract's own name
+          # is written inside. A signature carries the nesting because that is
+          # what makes the name what it is, so the scopes are declarations too
+          # and registering none of them.
+          def encloses?(name, key)
+            key.start_with?(name) && SEPARATORS.include?("#{key[name.length]}")
+          end
+
+          def spelled(found)
+            return "nothing" if found.empty?
+
+            found.map { |name| name.name }.join(", ")
           end
 
           def attributes

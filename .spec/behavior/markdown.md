@@ -18,6 +18,11 @@ The grammar refuses nothing — every byte sequence is a legal document — so
 every shape rule below belongs to the form it was written against, and each
 answers at the line that broke it rather than at the file.
 
+A contract's fence is read by the reading that reads the source it describes,
+so the shapes a specification can register are the shapes that reading can
+find. The heading and the fence name one thing written twice, and a fence
+declaring anything else is a contract nobody registered.
+
 The grammar is handed in rather than reached for, so the files deciding what a
 block means name none. That is why the scenarios about meaning are claimed from
 a test whose snapshot can still be regenerated, and only the ones reading a real
@@ -348,13 +353,29 @@ document are claimed from a test that cannot.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, naming the language it was given |
 
-## `MD-041` A name the language it is spelled in could carry no definition of
+## `MD-041` A signature declaring a name other than the contract's
 
 | Step | Statement |
 | --- | --- |
-| Given | a contract whose name that language can spell no definition of |
+| Given | a contract whose fence does not declare the name its heading registers |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused, since the code is not what is wrong |
+| Then | the specification is refused, since what a contract registers is what its signature declares |
+
+## `MD-053` A signature declaring a second contract
+
+| Step | Statement |
+| --- | --- |
+| Given | a fence declaring the contract's name and another name beside it |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since a signature declares one contract and the scopes holding it |
+
+## `MD-054` A signature the reading cannot read
+
+| Step | Statement |
+| --- | --- |
+| Given | a fence whose content the language it names cannot parse |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused under the name of the document rather than of the source |
 
 ## `MD-042` A definition that names nothing
 

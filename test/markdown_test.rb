@@ -316,13 +316,31 @@ end
 # is the only thing telling them apart. What the languages answer is the kind
 # of specification's to ask, so a stand-in carries just enough to be asked.
 
-module Spelling
-  def self.carries?(language)
+#
+# What a signature declares is a reading's answer, so it is handed in the way
+# the captures are: a real reading is put to a real fence where the binding is,
+# and what the rules below turn on is what came back.
+Named = Struct.new(:name, :params)
+
+# A scope carries no parameters at all, which is how a signature's nesting is
+# told from the contract it holds.
+def scope(name) = Named.new(name, nil)
+def declares(name) = Named.new(name, [])
+
+class Spelling
+  def initialize(answers)
+    @answers = answers
+  end
+
+  def carries?(language)
     language == "ruby" || language == "rust"
   end
 
-  def self.definable?(language, name)
-    carries?(language) && !name.include?(" ")
+  def declarations_of(source, where, language)
+    found = @answers[source]
+    raise Sumitsubo::Error, "#{where}: cannot be parsed by the #{language} grammar" if found == :unreadable
+
+    found.nil? ? [] : found
   end
 end
 
@@ -330,8 +348,8 @@ def fence(line, text) = Capture.new(0, "fence", line, text)
 def language(line, text) = Capture.new(0, "language", line, text)
 def content(line, text) = Capture.new(0, "content", line, text)
 
-def definition(captures)
-  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).contract("cli.md", Spelling)
+def definition(captures, answers = {})
+  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).contract("cli.md", Spelling.new(answers))
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil
@@ -366,19 +384,25 @@ registered_by(definition([
 # definition may register contracts in two of them without either being wrong.
 # @behavior MD-032
 puts "--- a definition whose contracts the syntax tree declares ---"
+WHERE = "module Sumitsubo::Where\n  def self.of(path)\n  end\nend\n"
+HANDLE = "mod store {\n    pub struct Handle;\n}\n"
+
 registered_by(definition([
   h1(1, "Internal seams"),
   paragraph(3, "The places this project keeps to one implementation."),
   h2(5, "`Sumitsubo::Where.of` `internal`"),
   paragraph(7, "The one place a path a reader is handed is made."),
-  fence(9, "```ruby\ndef self.of(path)\n```"),
+  fence(9, "```ruby\n#{WHERE}```"),
   language(9, "ruby"),
-  content(10, "def self.of(path)\n"),
-  h2(12, "`Store::Handle`"),
-  fence(14, "```rust\nfn of(path: &str) -> String;\n```"),
-  language(14, "rust"),
-  content(15, "fn of(path: &str) -> String;\n")
-]))
+  content(10, WHERE),
+  h2(14, "`store::Handle`"),
+  fence(16, "```rust\n#{HANDLE}```"),
+  language(16, "rust"),
+  content(17, HANDLE)
+], {
+  WHERE => [scope("Sumitsubo::Where"), declares("Sumitsubo::Where.of")],
+  HANDLE => [scope("store"), declares("store::Handle")]
+}))
 
 # @behavior MD-033
 puts "--- a contract heading that does not open with a name ---"
@@ -418,12 +442,42 @@ definition([
   fence(5, "```cobol\nOPEN INPUT STORE.\n```"), language(5, "cobol"), content(6, "OPEN INPUT STORE.\n")
 ])
 
+# The signature is what says the name is one a definition could carry, so the
+# name it declares is the name being registered. A fence writing its nesting out
+# is what makes `Store.open` that name rather than `open`.
 # @behavior MD-041
-puts "--- a name the language it is spelled in could carry no definition of ---"
+puts "--- a signature declaring another name ---"
 definition([
-  h1(1, "Seams"), h2(3, "`a name with spaces`"),
-  fence(5, "```ruby\ndef open(path)\n```"), language(5, "ruby"), content(6, "def open(path)\n")
-])
+  h1(1, "Seams"), h2(3, "`Store.open`"),
+  fence(5, "```ruby\ndef open(path)\nend\n```"), language(5, "ruby"),
+  content(6, "def open(path)\nend\n")
+], { "def open(path)\nend\n" => [declares("open")] })
+
+# A signature declares the one contract and the scopes holding it, so anything
+# else in the fence is a second contract nothing registers.
+# @behavior MD-053
+puts "--- a signature declaring a second contract ---"
+TWO = "module Store\n  def self.open(path)\n  end\n\n  def self.close(dir)\n  end\nend\n"
+definition([
+  h1(1, "Seams"), h2(3, "`Store.open`"),
+  fence(5, "```ruby\n#{TWO}```"), language(5, "ruby"), content(6, TWO)
+], { TWO => [scope("Store"), declares("Store.open"), declares("Store.close")] })
+
+# A scope only sharing the start of the name does not hold it, so the name has
+# to end where the contract's own goes on.
+NEAR = "module Store\nend\n\nmodule StoreAdmin\n  def self.open(path)\n  end\nend\n"
+definition([
+  h1(1, "Seams"), h2(3, "`StoreAdmin.open`"),
+  fence(5, "```ruby\n#{NEAR}```"), language(5, "ruby"), content(6, NEAR)
+], { NEAR => [scope("Store"), scope("StoreAdmin"), declares("StoreAdmin.open")] })
+
+# @behavior MD-054
+puts "--- a signature the reading cannot read ---"
+definition([
+  h1(1, "Seams"), h2(3, "`Store.open`"),
+  fence(5, "```ruby\ndef self.open(path\n```"), language(5, "ruby"),
+  content(6, "def self.open(path\n")
+], { "def self.open(path\n" => :unreadable })
 
 # @behavior MD-042
 puts "--- a document that names nothing ---"
@@ -433,11 +487,13 @@ definition([h2(1, "`init`")])
 # — and under the other reading only the first is the signature.
 # @behavior MD-043
 puts "--- a second fence under one contract ---"
+OPEN = "module Store\n  def self.open(path)\n  end\nend\n"
 definition([
   h1(1, "Seams"), h2(3, "`Store.open`"),
-  fence(5, "```ruby\ndef self.open(path)\n```"), language(5, "ruby"), content(6, "def self.open(path)\n"),
-  fence(9, "```ruby\nStore.open('a')\n```"), language(9, "ruby"), content(10, "Store.open('a')\n")
-]).statements.each { |contract| puts "  #{contract.key} #{contract.attributes.inspect}" }
+  fence(5, "```ruby\n#{OPEN}```"), language(5, "ruby"), content(6, OPEN),
+  fence(12, "```ruby\nStore.open('a')\n```"), language(12, "ruby"), content(13, "Store.open('a')\n")
+], { OPEN => [scope("Store"), declares("Store.open")] })
+  .statements.each { |contract| puts "  #{contract.key} #{contract.attributes.inspect}" }
 
 # --- where an include was written ----------------------------------------
 #

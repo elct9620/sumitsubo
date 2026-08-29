@@ -50,9 +50,9 @@ CLI {"marker" => ["@command"]} ["sumitsubo/command/*.rb"]
 --- a definition registering contracts in two languages ---
 Internal seams {} ["sumitsubo/**/*.rb"]
   The places this project keeps to one implementation.
-  9 Sumitsubo::Where.of {"internal" => [], "language" => ["ruby"], "signature" => ["def self.of(path)\n"]}
+  9 Sumitsubo::Where.of {"internal" => [], "language" => ["ruby"], "signature" => ["module Sumitsubo::Where\n  def self.of(path)\n  end\nend\n"]}
     The one place a path a reader is handed is made.
-  17 Store::Handle {"internal" => [], "language" => ["rust"], "signature" => ["fn of(path: &str) -> String;\n"]}
+  20 store::Handle {"internal" => [], "language" => ["rust"], "signature" => ["mod store {\n    pub struct Handle;\n}\n"]}
     A handle a second language spells its own way.
 --- the same definition, written both ways ---
   same what the definition registers

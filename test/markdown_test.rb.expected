@@ -75,9 +75,9 @@ CLI {"marker" => ["@command"]} ["sumitsubo/command/*.rb"]
 --- a definition whose contracts the syntax tree declares ---
 Internal seams {} []
   The places this project keeps to one implementation.
-  cli.md:5 Sumitsubo::Where.of {"internal" => [], "language" => ["ruby"], "signature" => ["def self.of(path)\n"]}
+  cli.md:5 Sumitsubo::Where.of {"internal" => [], "language" => ["ruby"], "signature" => ["module Sumitsubo::Where\n  def self.of(path)\n  end\nend\n"]}
     The one place a path a reader is handed is made.
-  cli.md:12 Store::Handle {"language" => ["rust"], "signature" => ["fn of(path: &str) -> String;\n"]}
+  cli.md:14 store::Handle {"language" => ["rust"], "signature" => ["mod store {\n    pub struct Handle;\n}\n"]}
     
 --- a contract heading that does not open with a name ---
   refused: cli.md:3 declares a contract whose heading does not open with a name in backticks; sumi help contract has the form
@@ -95,12 +95,17 @@ Internal seams {} []
   refused: cli.md:5 writes a signature with no language, which is what says how Store.open is spelled; sumi help contract has the form
 --- a signature in a language this build does not carry ---
   refused: cli.md:3 names cobol, which this sumi does not carry; sumi help contract has the form
---- a name the language it is spelled in could carry no definition of ---
-  refused: cli.md:3 names a name with spaces, which no ruby definition can be spelled; sumi help contract has the form
+--- a signature declaring another name ---
+  refused: cli.md:3 writes a signature declaring open, and not Store.open; sumi help contract has the form
+--- a signature declaring a second contract ---
+  refused: cli.md:3 writes a signature declaring Store.close as well, where a signature declares the one contract and what holds it; sumi help contract has the form
+  refused: cli.md:3 writes a signature declaring Store as well, where a signature declares the one contract and what holds it; sumi help contract has the form
+--- a signature the reading cannot read ---
+  refused: cli.md:3 writes a signature the ruby reading cannot read; sumi help contract has the form
 --- a document that names nothing ---
   refused: cli.md:1 declares no name; sumi help contract has the form
 --- a second fence under one contract ---
-  Store.open {"language" => ["ruby"], "signature" => ["def self.open(path)\n"]}
+  Store.open {"language" => ["ruby"], "signature" => ["module Store\n  def self.open(path)\n  end\nend\n"]}
 --- includes written at the level a feature writes them ---
 {"test/init_test.rb" => 5, "test/other_test.rb" => 6}
 --- includes written at the level a vocabulary writes them ---
