@@ -64,6 +64,14 @@ name, though, is spelled the way one language spells it and two of them can
 spell one name differently, so the reading that compares names says which
 language it means.
 
+Which language is the contract's own rather than the file's, so one definition
+may register contracts in two of them. It is also the namespace that reading
+registers under, the way the marker is for the other: two languages can spell
+one name and mean nothing alike, so a declaration in one does not define a
+contract spelled in the other, and one name registered under each is not
+ambiguous. Every file a definition reaches is therefore read once per language
+its contracts are spelled in.
+
 A marker needs none, because a claim is a claim in whatever the file is
 written in. Naming both says one thing twice, and naming neither leaves
 nothing to say how a name is spelled — each is a specification that cannot be
@@ -338,3 +346,20 @@ guessed would compare against the wrong spelling.
 | Given | a file no parser answers for |
 | When | the directory is loaded |
 | Then | a definition is read from each file some parser answers for, and no other |
+
+## `T-040` The same name under two languages
+
+| Step | Statement |
+| --- | --- |
+| Given | two definitions registering one name, each spelled in a different language |
+| When | the directory is loaded |
+| Then | both are registered, because the language is the namespace that reading uses |
+
+## `T-041` A declaration another language spells alike
+
+| Step | Statement |
+| --- | --- |
+| Given | a name registered by definitions in two languages |
+| Given | source declaring it in one of them |
+| When | the two sides are compared |
+| Then | only the contract spelled in that language is defined, and the other answers as defined nowhere |

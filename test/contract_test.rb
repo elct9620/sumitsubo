@@ -21,7 +21,7 @@ FIXTURE = "test/fixtures/contract"
 # enough to tell a method from the way a route is written.
 module Spelling
   def self.carries?(language)
-    language == "ruby"
+    language == "ruby" || language == "rust"
   end
 
   def self.definable?(language, name)
@@ -153,9 +153,9 @@ fails { loaded("#{FIXTURE}/both") }
 # internal keeps it out of is the document, not the comparison.
 # @behavior T-016 T-018
 puts "--- an interface the syntax tree does not define ---"
-Declared = Struct.new(:path, :line, :name, :params)
+Declared = Struct.new(:path, :line, :name, :params, :language)
 Sumitsubo::Contract.undefined(
-  loaded("#{FIXTURE}/nomarker"), [Declared.new("src/commands.rb", 3, "init", [])]
+  loaded("#{FIXTURE}/nomarker"), [Declared.new("src/commands.rb", 3, "init", [], "ruby")]
 ).each do |finding|
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
@@ -169,8 +169,8 @@ puts "--- a declaration outside the definition registering its name ---"
 spelled = loaded("#{FIXTURE}/nomarker")
 Sumitsubo::Contract.defining(
   spelled,
-  [Declared.new("#{FIXTURE}/src/commands.rb", 3, "verify", []),
-   Declared.new("#{FIXTURE}/app/controller.rb", 9, "verify", [])],
+  [Declared.new("#{FIXTURE}/src/commands.rb", 3, "verify", [], "ruby"),
+   Declared.new("#{FIXTURE}/app/controller.rb", 9, "verify", [], "ruby")],
   Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
 ).each { |name| puts "  #{name.path}:#{name.line} #{name.name}" }
 
@@ -211,7 +211,7 @@ def takes(name, kind = "positional", optional = false)
 end
 
 def declares(line, name, params)
-  Declared.new("src/store.rb", line, name, params)
+  Declared.new("src/store.rb", line, name, params, "ruby")
 end
 
 registered = loaded("#{FIXTURE}/params")
@@ -277,4 +277,33 @@ end
 puts "--- which files a directory holds that this build can read ---"
 loaded("#{FIXTURE}/formats", PARSERS + [Other.new]).each do |definition|
   puts "  #{definition.path} #{definition.key} #{definition.statements.map { |one| one.key }.inspect}"
+end
+
+# A name is spelled the way one language spells it, so the language is the
+# namespace the other reading registers under: two of them may spell one name
+# and mean nothing alike, and neither definition is ambiguous.
+# @behavior T-040
+puts "--- the same name under two languages ---"
+spelling = loaded("#{FIXTURE}/spelled")
+spelling.each do |definition|
+  definition.statements.each do |interface|
+    puts "  #{definition.key} #{Sumitsubo::Contract.language_of(definition, interface)} #{interface.key}"
+  end
+end
+
+# Each definition's files are read as the language its own contracts are
+# spelled in, so a file under two of them is read once for each.
+puts "--- and each definition's files are read as its own language ---"
+Sumitsubo::Contract.readings_in(
+  spelling, Sumitsubo::Contract.reach(spelling, Pathname.new(FIXTURE), [])
+).each { |reading| puts "  #{reading.path} as #{reading.language}" }
+
+# The Ruby contract is defined in Ruby and the Rust one is not: a declaration
+# the other language answered does not define it, however alike they spell.
+# @behavior T-041
+puts "--- a declaration another language spells alike ---"
+Sumitsubo::Contract.undefined(
+  spelling, [Declared.new("src/store.rb", 2, "Store.open", [], "ruby")]
+).each do |finding|
+  puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end

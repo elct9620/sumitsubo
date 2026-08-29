@@ -1,0 +1,8 @@
+{
+  "name": "Handle",
+  "language": "rust",
+  "include": ["app/*.rb"],
+  "contracts": [
+    { "name": "Store.open", "description": "The same name, spelled by another language." }
+  ]
+}

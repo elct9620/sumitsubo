@@ -146,16 +146,14 @@ module Sumitsubo
       end
 
       # What the source in scope defines, for the definitions read that way.
-      # Each is read as the language it named, so a definition scanned for two
-      # of them is scanned once per language rather than once.
+      # A definition registering contracts in two languages has its files read
+      # once per language, since a name is spelled the way one of them spells
+      # it and a file may declare it in only one.
       def names_in(reach, definitions, languages)
         names = []
-        Sumitsubo::Contract.defined(definitions).each do |definition|
-          Sumitsubo::Contract.reached(reach, definition).each do |path|
-            language = Sumitsubo::Contract.language_named(definition)
-            languages.declarations_in(path, Where.of(path), language).each do |name|
-              names.push(name)
-            end
+        Sumitsubo::Contract.readings_in(definitions, reach).each do |reading|
+          languages.declarations_in(reading.path, Where.of(reading.path), reading.language).each do |name|
+            names.push(name)
           end
         end
         names

@@ -149,10 +149,53 @@ module Sumitsubo
       words.nil? ? nil : words[0]
     end
 
-    # The language the other reading spells names in, under the same rule.
-    def self.language_named(definition)
+    # The language one contract's name is spelled in. A signature says it on the
+    # contract itself, which is what lets one definition register contracts in
+    # two languages; where a specification says it once for the whole file,
+    # that is what every contract under it answers.
+    def self.language_of(definition, interface)
+      named = interface.attributes["language"]
+      return named[0] unless named.nil?
+
       named = definition.attributes["language"]
       named.nil? ? nil : named[0]
+    end
+
+    # Every language one definition registers contracts in, which is once per
+    # language its files are read as.
+    def self.languages_of(definition)
+      found = []
+      definition.statements.each do |interface|
+        language = language_of(definition, interface)
+        found.push(language) unless language.nil?
+      end
+      found.uniq.sort
+    end
+
+    # What a name is registered under. The marker is the namespace for the
+    # reading that claims — `@command verify` and `@route verify` name
+    # different things — and the language is the namespace for the other,
+    # because a name is spelled the way one language spells it and a Rust
+    # declaration does not implement a Ruby contract.
+    def self.namespace_of(definition, interface)
+      marker = marker_of(definition)
+      marker.nil? ? language_of(definition, interface) : marker
+    end
+
+    # Every file to read and the language to read it as. A definition
+    # registering contracts in two languages has each of its files read once
+    # per language, since one file may declare a name in only one of them.
+    Reading = Struct.new(:path, :language)
+
+    def self.readings_in(definitions, reach)
+      found = []
+      defined(definitions).each do |definition|
+        paths = reached(reach, definition)
+        languages_of(definition).each do |language|
+          paths.each { |path| found.push(Reading.new(path, language)) }
+        end
+      end
+      found
     end
 
     # The definitions whose interfaces source claims in a comment, and the ones
@@ -254,7 +297,7 @@ module Sumitsubo
       registering = registering_names(definitions)
       found = []
       names.each do |name|
-        spec = registering[name.name]
+        spec = registering[key(name.language, name.name)]
         next if spec.nil?
         next if reach[spec][name.path].nil?
 
@@ -264,14 +307,15 @@ module Sumitsubo
     end
 
     # Which specification registers each name the syntax tree answers for.
-    # The reading has one namespace, the source's, so the name is the whole
-    # key; one of them belongs to one definition, which refuse_ambiguity is
-    # what guarantees.
+    # The language is part of the key, so one of them belongs to one
+    # definition — which refuse_ambiguity is what guarantees.
     def self.registering_names(definitions)
       found = {}
       defined(definitions).each do |definition|
         spec = definition.path
-        definition.statements.each { |interface| found[interface.key] = spec }
+        definition.statements.each do |interface|
+          found[key(language_of(definition, interface), interface.key)] = spec
+        end
       end
       found
     end
@@ -290,7 +334,7 @@ module Sumitsubo
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless declared[interface.key].nil?
+          next unless declared[key(language_of(definition, interface), interface.key)].nil?
 
           found.push(Finding.new(
             Where.of(interface.path), interface.line, marker_of(definition), interface.key
@@ -334,7 +378,7 @@ module Sumitsubo
           registered = interface.attributes["params"]
           next if registered.nil?
 
-          group = declared[interface.key]
+          group = declared[key(language_of(definition, interface), interface.key)]
           next if group.nil? || !agreed?(group)
           next if agree?(registered, group[0].params)
 
@@ -468,7 +512,7 @@ module Sumitsubo
       seen = {}
       definitions.each do |definition|
         definition.statements.each do |interface|
-          name = key(marker_of(definition), interface.key)
+          name = key(namespace_of(definition, interface), interface.key)
           where = seen[name]
           unless where.nil?
             raise Error, "#{spoken(marker_of(definition), interface.key)} is declared twice, " \
@@ -488,22 +532,25 @@ module Sumitsubo
     def self.declared_in(names)
       found = {}
       names.each do |name|
-        holding = found[name.name]
+        spelled = key(name.language, name.name)
+        holding = found[spelled]
         if holding.nil?
           holding = []
-          found[name.name] = holding
+          found[spelled] = holding
         end
         holding.push(name)
       end
       found
     end
 
-    # The names the syntax tree reading registers, in an order that leaves no
-    # ties.
+    # The names the syntax tree reading registers, each under the language
+    # spelling it, in an order that leaves no ties.
     def self.spelled_names(definitions)
       found = []
       defined(definitions).each do |definition|
-        definition.statements.each { |interface| found.push(interface.key) }
+        definition.statements.each do |interface|
+          found.push(key(language_of(definition, interface), interface.key))
+        end
       end
       found.uniq.sort
     end
