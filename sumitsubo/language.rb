@@ -36,11 +36,10 @@ module Sumitsubo
     # parameters it takes. A scope carries none at all, which is not the same
     # as one that takes none.
     #
-    # It carries the language that read it because a name is spelled the way
-    # one language spells it: two of them can spell one name alike and mean
-    # nothing alike, so what a name is compared against is the language it
-    # was read as together with the name.
-    Name = Struct.new(:path, :line, :name, :params, :language)
+    # Which language read it is not here. The caller said which, so an answer
+    # carrying it would be the answer repeating the question; a caller reading
+    # one file as two languages keeps the two apart by holding them apart.
+    Name = Struct.new(:path, :line, :name, :params)
 
     # One parameter: what it is called, how a caller has to pass it, and
     # whether it may be left out. A name is absent where the language lets the

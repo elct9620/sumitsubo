@@ -127,8 +127,7 @@ module Sumitsubo
           next if node.kind == REOPENED
 
           found.push(Name.new(
-            where, node.first, qualified(scopes, reopened, node), params_for(taken, node),
-            Grammar::RUBY
+            where, node.first, qualified(scopes, reopened, node), params_for(taken, node)
           ))
         end
         found

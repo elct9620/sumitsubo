@@ -2,8 +2,8 @@
 
 The interfaces a project registers, and what source claims to implement them.
 
-What this establishes is that a registered interface is implemented somewhere
-in scope, and reached the way the specification says — never that what it does
+What this establishes is that a registered interface is implemented among the
+files its own definition reaches, and reached the way the specification says — never that what it does
 behind that is right. It is the same sentence Behavior turns on, and it
 licenses everything the mechanism cannot check.
 

@@ -8,7 +8,8 @@ module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
   # checked against, which is why Behavior meets Marker here and not in its own
   # file: keeping the specification side clear of the side that reads source is
-  # what leaves each of those tests able to keep a snapshot.
+  # what leaves `require "sumitsubo"` reaching no grammar, and the tests that
+  # ask for nothing more able to keep a snapshot `--regen` can write.
   #
   # A mechanism registers by being in the list: Spinel decides what an
   # executable carries when it is built, so there is no hook to register
@@ -112,18 +113,18 @@ module Sumitsubo
         spelled = Sumitsubo::Contract.reach(
           Sumitsubo::Contract.defined(definitions), config.base, config.exclusion
         )
-        names = Sumitsubo::Contract.defining(
+        declared = Sumitsubo::Contract.defining(
           definitions, names_in(spelled, definitions, languages), spelled
         )
-        Sumitsubo::Contract.undefined(definitions, names).each do |finding|
+        Sumitsubo::Contract.undefined(definitions, declared).each do |finding|
           report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_undefined(finding))
         end
         # Two shapes under one name are two ways in, answered where they sit
         # rather than at the specification: what a reader compares is them.
-        Sumitsubo::Contract.conflicting(definitions, names).each do |pair|
+        Sumitsubo::Contract.conflicting(definitions, declared).each do |pair|
           report.difference(pair[0].path, pair[0].line, Sumitsubo::Contract.describe_conflicting(pair))
         end
-        Sumitsubo::Contract.mismatched(definitions, names, languages).each do |mismatch|
+        Sumitsubo::Contract.mismatched(definitions, declared, languages).each do |mismatch|
           report.difference(mismatch.path, mismatch.line, Sumitsubo::Contract.describe_mismatched(mismatch))
         end
       end
@@ -145,18 +146,25 @@ module Sumitsubo
         claims
       end
 
-      # What the source in scope defines, for the definitions read that way.
-      # A definition registering contracts in two languages has its files read
-      # once per language, since a name is spelled the way one of them spells
-      # it and a file may declare it in only one.
+      # What the source in scope defines, for the definitions read that way,
+      # held under the language it was read as. A definition registering
+      # contracts in two languages has its files read once per language, and
+      # one file read twice answers twice: which reading each came back from
+      # is what tells the two apart, so it is the answers that are held apart
+      # rather than each answer that says which.
       def names_in(reach, definitions, languages)
-        names = []
+        found = {}
         Sumitsubo::Contract.readings_in(definitions, reach).each do |reading|
+          holding = found[reading.language]
+          if holding.nil?
+            holding = []
+            found[reading.language] = holding
+          end
           languages.declarations_in(reading.path, Where.of(reading.path), reading.language).each do |name|
-            names.push(name)
+            holding.push(name)
           end
         end
-        names
+        found
       end
     end
 

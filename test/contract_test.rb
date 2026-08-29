@@ -130,7 +130,7 @@ fails { loaded("#{FIXTURE}/twice") }
 # @behavior T-016 T-018
 puts "--- an interface the syntax tree does not define ---"
 Sumitsubo::Contract.undefined(
-  loaded("#{FIXTURE}/nomarker"), [Sumitsubo::Language::Name.new("src/commands.rb", 3, "init", [], "ruby")]
+  loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Language::Name.new("src/commands.rb", 3, "init", [])] }
 ).each do |finding|
   puts "#{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
@@ -144,10 +144,12 @@ puts "--- a declaration outside the definition registering its name ---"
 spelled = loaded("#{FIXTURE}/nomarker")
 Sumitsubo::Contract.defining(
   spelled,
-  [Sumitsubo::Language::Name.new("#{FIXTURE}/src/commands.rb", 3, "verify", [], "ruby"),
-   Sumitsubo::Language::Name.new("#{FIXTURE}/app/controller.rb", 9, "verify", [], "ruby")],
+  { "ruby" => [Sumitsubo::Language::Name.new("#{FIXTURE}/src/commands.rb", 3, "verify", []),
+               Sumitsubo::Language::Name.new("#{FIXTURE}/app/controller.rb", 9, "verify", [])] },
   Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
-).each { |name| puts "  #{name.path}:#{name.line} #{name.name}" }
+).each do |language, names|
+  names.each { |name| puts "  #{language} #{name.path}:#{name.line} #{name.name}" }
+end
 
 
 claims = [
@@ -182,7 +184,7 @@ def takes(name, kind = "positional", optional = false)
 end
 
 def declares(line, name, params)
-  Sumitsubo::Language::Name.new("src/store.rb", line, name, params, "ruby")
+  Sumitsubo::Language::Name.new("src/store.rb", line, name, params)
 end
 
 registered = loaded("#{FIXTURE}/params")
@@ -203,12 +205,12 @@ end
 # scope with no call to describe, so only `Store.open` answers.
 # @behavior T-020 T-021
 puts "--- an interface defined with another shape ---"
-Sumitsubo::Contract.mismatched(registered, [
+Sumitsubo::Contract.mismatched(registered, { "ruby" => [
   declares(2, "Store.open", [takes("path")]),
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(9, "Store#write", []),
   declares(12, "Store", nil)
-], Sumitsubo::Language).each do |mismatch|
+] }, Sumitsubo::Language).each do |mismatch|
   puts "#{mismatch.path}:#{mismatch.line} #{Sumitsubo::Contract.describe_mismatched(mismatch)}"
 end
 
@@ -216,12 +218,12 @@ end
 # is defined with two, which is an entrance the specification does not describe.
 # @behavior T-022 T-023
 puts "--- one name defined with two shapes ---"
-twice = [
+twice = { "ruby" => [
   declares(2, "Store.open", [takes("path")]),
   declares(20, "Store.open", [takes("path")]),
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(24, "Store#read", [takes("key", "keyword")])
-]
+] }
 Sumitsubo::Contract.conflicting(registered, twice).each do |pair|
   puts "#{pair[0].path}:#{pair[0].line} #{Sumitsubo::Contract.describe_conflicting(pair)}"
 end
@@ -265,7 +267,7 @@ Sumitsubo::Contract.readings_in(
 # @behavior T-041
 puts "--- a declaration another language spells alike ---"
 Sumitsubo::Contract.undefined(
-  spelling, [Sumitsubo::Language::Name.new("src/store.rb", 2, "Store::Handle", nil, "ruby")]
+  spelling, { "ruby" => [Sumitsubo::Language::Name.new("src/store.rb", 2, "Store::Handle", nil)] }
 ).each do |finding|
   puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end

@@ -91,8 +91,7 @@ module Sumitsubo
           next if node.kind == HOLDER
 
           found.push(Name.new(
-            where, node.first, qualified(holders, node), params_for(taken, node),
-            Grammar::RUST
+            where, node.first, qualified(holders, node), params_for(taken, node)
           ))
         end
         found

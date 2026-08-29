@@ -20,8 +20,9 @@ module Sumitsubo
   # language points at one; a method is a construct, so which of the two a
   # definition names is what says which reading applies.
   #
-  # Nothing here names the grammar, which is what keeps this file's test on the
-  # side that --regen can still write a snapshot for.
+  # Nothing here names the grammar. What that keeps regenerable is no longer
+  # this file's own test, which reads real documents now, but the three that
+  # reach this file through `require "sumitsubo"` alone.
   module Contract
     DIRECTORY = "contract"
 
@@ -299,11 +300,23 @@ module Sumitsubo
     # parts from the other: a claim asserts that a contract was implemented
     # and is wrong where it cannot be, while a class merely sharing a
     # registered name asserts nothing at all.
-    def self.defining(definitions, names, reach)
+    def self.defining(definitions, declared, reach)
       registering = registering_names(definitions)
+      found = {}
+      declared.keys.each do |language|
+        found[language] = defining_in(declared[language], language, registering, reach)
+      end
+      found
+    end
+
+    # One language's declarations, filtered the same way. The language comes
+    # from the group holding them rather than from each of them: what a file
+    # read twice answers twice is told apart by which reading it came back
+    # from, so nothing has to be carried on the answers themselves.
+    def self.defining_in(names, language, registering, reach)
       found = []
       names.each do |name|
-        spec = registering[key(name.language, name.name)]
+        spec = registering[key(language, name.name)]
         next if spec.nil?
         next if reach[spec][name.path].nil?
 
@@ -334,13 +347,13 @@ module Sumitsubo
     # An interface the syntax tree does not define. The specification
     # registers it and no source that definition reaches defines it, which is
     # the same difference an unclaimed interface is — the other reading of it.
-    def self.undefined(definitions, names)
-      declared = declared_in(names)
+    def self.undefined(definitions, declared)
+      grouped = declared_in(declared)
 
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless declared[key(language_of(definition, interface), interface.key)].nil?
+          next unless grouped[key(language_of(definition, interface), interface.key)].nil?
 
           found.push(Finding.new(
             Where.of(interface.path), interface.line, marker_of(definition), interface.key
@@ -359,12 +372,12 @@ module Sumitsubo
     #
     # Definitions agreeing on their shape are one way in, which is what leaves
     # ordinary reopening saying nothing still.
-    def self.conflicting(definitions, names)
-      declared = declared_in(names)
+    def self.conflicting(definitions, declared)
+      grouped = declared_in(declared)
 
       found = []
       spelled_names(definitions).each do |name|
-        group = declared[name]
+        group = grouped[name]
         next if group.nil? || group.length < 2 || agreed?(group)
 
         paired(group).each { |pair| found.push(pair) }
@@ -393,8 +406,8 @@ module Sumitsubo
     # An interface defined with a shape other than the one registered. Where
     # the definitions disagree among themselves that is already answered, and
     # comparing the contract against one of them would add nothing.
-    def self.mismatched(definitions, names, languages)
-      declared = declared_in(names)
+    def self.mismatched(definitions, declared, languages)
+      grouped = declared_in(declared)
 
       found = []
       defined(definitions).each do |definition|
@@ -402,7 +415,7 @@ module Sumitsubo
           registered = shape_of(definition, interface, languages)
           next if registered.nil?
 
-          group = declared[key(language_of(definition, interface), interface.key)]
+          group = grouped[key(language_of(definition, interface), interface.key)]
           next if group.nil? || !agreed?(group)
           next if agree?(registered, group[0].params)
 
@@ -555,16 +568,18 @@ module Sumitsubo
     # Every definition of each name, kept in the order source declared them. A
     # name may be defined more than once, and which of those a contract
     # describes is not this reading's to decide.
-    def self.declared_in(names)
+    def self.declared_in(declared)
       found = {}
-      names.each do |name|
-        spelled = key(name.language, name.name)
-        holding = found[spelled]
-        if holding.nil?
-          holding = []
-          found[spelled] = holding
+      declared.keys.each do |language|
+        declared[language].each do |name|
+          spelled = key(language, name.name)
+          holding = found[spelled]
+          if holding.nil?
+            holding = []
+            found[spelled] = holding
+          end
+          holding.push(name)
         end
-        holding.push(name)
       end
       found
     end
