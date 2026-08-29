@@ -16,8 +16,8 @@ mechanism and no other, the way a linter reports every file it managed to
 parse, and arguments the run cannot act on answer the same 2: a run that
 compared nothing has nothing to certify.
 
-Findings and failures share one stream, so whoever reads them reads them in
-the order they happened.
+Differences and failures share one stream, so whoever reads them reads them
+in the order they happened.
 
 ## Includes
 

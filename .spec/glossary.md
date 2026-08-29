@@ -78,6 +78,12 @@ it registers; source declares the classes, modules and methods it defines. One
 relation, and the subject is what changes — which is why both sides use the
 word.
 
+### Finding
+
+One thing a comparison has to say about one place, answered as `path:line`. It
+is a difference where the comparison was made and the two sides disagree, and a
+failure where it could not be made at all.
+
 ### Marker
 
 The word source claims a contract or behavior with, written in the comment in

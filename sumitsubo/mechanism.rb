@@ -3,6 +3,7 @@ require "sumitsubo/contract"
 require "sumitsubo/behavior"
 require "sumitsubo/marker"
 require "sumitsubo/scope"
+require "sumitsubo/finding"
 
 module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
@@ -42,24 +43,30 @@ module Sumitsubo
         # An include reaching nothing is not a difference: what the words were
         # to be checked against was never read.
         Sumitsubo::Glossary.barren(vocabulary, config.base, path, config.exclusion, parsers).each do |barren|
-          report.failure(barren.path, barren.line, Scope.describe(barren))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Glossary::BARREN, difference: false,
+            path: barren.path, line: barren.line, message: Scope.describe(barren)
+          ))
         end
         scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
         findings = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, languages), vocabulary
         )
         Sumitsubo::Glossary.standing(findings, vocabulary).each do |finding|
-          report.difference(
-            Where.of(config.base / finding.path), finding.line,
-            Sumitsubo::Glossary.describe(finding)
-          )
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Glossary::REJECTED, difference: true,
+            path: Where.of(config.base / finding.path), line: finding.line,
+            message: Sumitsubo::Glossary.describe(finding)
+          ))
         end
         # An ignore naming nothing is not a difference about the code: what it
         # was written against is gone, so there was nothing to compare.
         Sumitsubo::Glossary.unresolved(findings, vocabulary).each do |stale|
-          report.failure(
-            Where.of(path), stale.line, Sumitsubo::Glossary.describe_unresolved(stale)
-          )
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Glossary::UNRESOLVED, difference: false,
+            path: Where.of(path), line: stale.line,
+            message: Sumitsubo::Glossary.describe_unresolved(stale)
+          ))
         end
       end
     end
@@ -80,7 +87,10 @@ module Sumitsubo
           Sumitsubo::Contract.path_in(config.root), languages, parsers
         )
         Sumitsubo::Contract.barren(definitions, config.base, config.exclusion, parsers).each do |barren|
-          report.failure(barren.path, barren.line, Scope.describe(barren))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::BARREN, difference: false,
+            path: barren.path, line: barren.line, message: Scope.describe(barren)
+          ))
         end
         claimed = Sumitsubo::Contract.claimed(definitions)
         reach = Sumitsubo::Contract.reach(claimed, config.base, config.exclusion)
@@ -90,23 +100,39 @@ module Sumitsubo
         witnessing = Sumitsubo::Contract.witnessing(definitions, claims, reach)
 
         Sumitsubo::Contract.unclaimed(definitions, witnessing).each do |finding|
-          report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_unclaimed(finding))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::UNCLAIMED, difference: true,
+            path: finding.path, line: finding.line,
+            message: Sumitsubo::Contract.describe_unclaimed(finding)
+          ))
         end
         # A contract is the way in, so a second way in is a difference about
         # the code rather than a specification that could not be read.
         Sumitsubo::Contract.duplicated(definitions, witnessing).each do |pair|
-          report.difference(pair[0].path, pair[0].line, Sumitsubo::Contract.describe_duplicated(pair))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::DUPLICATED, difference: true,
+            path: pair[0].path, line: pair[0].line,
+            message: Sumitsubo::Contract.describe_duplicated(pair)
+          ))
         end
         # A claim the registering definition does not reach implements nothing,
         # and saying nothing about it would leave the interface reported as
         # claimed nowhere with the claim in plain sight.
         Sumitsubo::Contract.misplaced(definitions, claims, reach).each do |claim|
-          report.failure(claim.path, claim.line, Sumitsubo::Contract.describe_misplaced(claim))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::MISPLACED, difference: false,
+            path: claim.path, line: claim.line,
+            message: Sumitsubo::Contract.describe_misplaced(claim)
+          ))
         end
         # A claim resolving to no contract is not a difference: there is
         # nothing on the specification side to compare it against.
         Sumitsubo::Contract.unresolved(definitions, claims).each do |claim|
-          report.failure(claim.path, claim.line, Sumitsubo::Contract.describe_unresolved(claim))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::UNRESOLVED, difference: false,
+            path: claim.path, line: claim.line,
+            message: Sumitsubo::Contract.describe_unresolved(claim)
+          ))
         end
         # The other reading makes no claims, so what it compares is what the
         # source defines and the shape a caller would have to call it with.
@@ -117,15 +143,27 @@ module Sumitsubo
           definitions, names_in(spelled, definitions, languages), spelled
         )
         Sumitsubo::Contract.undefined(definitions, declared).each do |finding|
-          report.difference(finding.path, finding.line, Sumitsubo::Contract.describe_undefined(finding))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::UNDEFINED, difference: true,
+            path: finding.path, line: finding.line,
+            message: Sumitsubo::Contract.describe_undefined(finding)
+          ))
         end
         # Two shapes under one name are two ways in, answered where they sit
         # rather than at the specification: what a reader compares is them.
         Sumitsubo::Contract.conflicting(definitions, declared).each do |pair|
-          report.difference(pair[0].path, pair[0].line, Sumitsubo::Contract.describe_conflicting(pair))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::CONFLICTING, difference: true,
+            path: pair[0].path, line: pair[0].line,
+            message: Sumitsubo::Contract.describe_conflicting(pair)
+          ))
         end
         Sumitsubo::Contract.mismatched(definitions, declared, languages).each do |mismatch|
-          report.difference(mismatch.path, mismatch.line, Sumitsubo::Contract.describe_mismatched(mismatch))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Contract::MISMATCHED, difference: true,
+            path: mismatch.path, line: mismatch.line,
+            message: Sumitsubo::Contract.describe_mismatched(mismatch)
+          ))
         end
       end
 
@@ -181,7 +219,10 @@ module Sumitsubo
       def verify(config, report, languages, parsers)
         features = Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root), parsers)
         Sumitsubo::Behavior.barren(features, config.base, config.exclusion, parsers).each do |barren|
-          report.failure(barren.path, barren.line, Scope.describe(barren))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Behavior::BARREN, difference: false,
+            path: barren.path, line: barren.line, message: Scope.describe(barren)
+          ))
         end
         reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
         claims = claims_in(reach, languages)
@@ -190,18 +231,30 @@ module Sumitsubo
         witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
 
         Sumitsubo::Behavior.uncovered(features, witnessing).each do |finding|
-          report.difference(finding.path, finding.line, Sumitsubo::Behavior.describe_uncovered(finding))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Behavior::UNCOVERED, difference: true,
+            path: finding.path, line: finding.line,
+            message: Sumitsubo::Behavior.describe_uncovered(finding)
+          ))
         end
         # A claim the declaring feature does not reach witnesses nothing, and
         # saying nothing about it would leave the scenario reported as claimed
         # nowhere with the claim in plain sight.
         Sumitsubo::Behavior.misplaced(features, claims, reach).each do |claim|
-          report.failure(claim.path, claim.line, Sumitsubo::Behavior.describe_misplaced(claim))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Behavior::MISPLACED, difference: false,
+            path: claim.path, line: claim.line,
+            message: Sumitsubo::Behavior.describe_misplaced(claim)
+          ))
         end
         # A claim resolving to no scenario is not a difference: there is nothing
         # on the specification side to compare it against.
         Sumitsubo::Behavior.unresolved(features, claims).each do |claim|
-          report.failure(claim.path, claim.line, Sumitsubo::Behavior.describe_unresolved(claim))
+          report.add(Sumitsubo::Finding.new(
+            rule: Sumitsubo::Behavior::UNRESOLVED, difference: false,
+            path: claim.path, line: claim.line,
+            message: Sumitsubo::Behavior.describe_unresolved(claim)
+          ))
         end
       end
 

@@ -1,3 +1,5 @@
+require "sumitsubo/finding"
+
 module Sumitsubo
   # What a run has to say and the answer it leaves with, kept in one place
   # rather than spread across the commands. Two mechanisms can answer about the
@@ -10,15 +12,12 @@ module Sumitsubo
       @unreadable = []
     end
 
-    # The two sides disagree, and the disagreement is about the code.
-    def difference(path, line, message)
-      @differences.push([path, line, message])
-    end
+    # A finding says which of the two it is, so nothing here decides: the rule
+    # that found it is the one that knew whether a comparison was made.
+    def add(finding)
+      return @differences.push(finding) if finding.difference?
 
-    # The comparison could not be made — whatever had to be read first was
-    # absent, unreadable, or ambiguous.
-    def failure(path, line, message)
-      @failures.push([path, line, message])
+      @failures.push(finding)
     end
 
     # A mechanism nothing could be read from. It answers at no line: what was
@@ -28,8 +27,9 @@ module Sumitsubo
     end
 
     def answer
-      rows = @differences + @failures
-      rows.sort_by { |row| row }.each { |row| puts "#{row[0]}:#{row[1]} #{row[2]}" }
+      found = @differences + @failures
+      found.sort_by { |one| [one.path, one.line, one.message] }
+           .each { |one| puts "#{one.path}:#{one.line} #{one.message}" }
       @unreadable.sort.each { |message| puts message }
       puts "#{@differences.length} #{@differences.length == 1 ? "difference" : "differences"}"
       return 2 unless @failures.empty? && @unreadable.empty?

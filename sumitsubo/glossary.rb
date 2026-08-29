@@ -13,6 +13,12 @@ module Sumitsubo
   module Glossary
     FILE = "glossary.md"
 
+    # The checks this specification answers for, so a finding is told apart by
+    # which one found it rather than by its wording.
+    BARREN = "glossary/barren"
+    REJECTED = "glossary/rejected"
+    UNRESOLVED = "glossary/unresolved"
+
     # What a project starts a vocabulary from. A title and nothing else is a
     # vocabulary that checks nothing, which is what a root nobody has written
     # words for should say.

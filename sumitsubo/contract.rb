@@ -33,6 +33,17 @@ module Sumitsubo
     # spelled shape already says it.
     POSITIONAL = "positional"
 
+    # The checks this specification answers for, so a finding is told apart by
+    # which one found it rather than by its wording.
+    BARREN = "contract/barren"
+    UNCLAIMED = "contract/unclaimed"
+    UNDEFINED = "contract/undefined"
+    DUPLICATED = "contract/duplicated"
+    CONFLICTING = "contract/conflicting"
+    MISMATCHED = "contract/mismatched"
+    MISPLACED = "contract/misplaced"
+    UNRESOLVED = "contract/unresolved"
+
     class Error < Sumitsubo::Error; end
 
     # A definition is a Specification and its contracts are Statements: a

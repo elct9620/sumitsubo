@@ -19,6 +19,13 @@ module Sumitsubo
     # later mechanism claims its own word rather than sharing this one.
     MARKER = "@behavior"
 
+    # The checks this specification answers for, so a finding is told apart by
+    # which one found it rather than by its wording.
+    BARREN = "behavior/barren"
+    UNCOVERED = "behavior/uncovered"
+    MISPLACED = "behavior/misplaced"
+    UNRESOLVED = "behavior/unresolved"
+
     class Error < Sumitsubo::Error; end
 
     # A feature is a Specification and its scenarios are Statements: an id is
