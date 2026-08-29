@@ -143,27 +143,33 @@ module Sumitsubo
         right.
 
         Files
-            .spec/contract/*.json - one file per kind of interface: the commands
+            .spec/contract/*.md - one file per kind of interface: the commands
             an executable answers, the routes an application serves, the methods
             a package exposes.
 
         Two readings
-            A file says which by naming a `marker` or not.
+            A definition says which by writing a `## Marker` section or not.
 
-            WITH A MARKER, source claims each interface in the comment in front
-            of the code implementing it. That is what an interface needs when no
+            WITH ONE, source claims each interface in the comment in front of
+            the code implementing it. That is what an interface needs when no
             construct of the language points at one - nothing in a file *is* a
-            route.
+            route. Every fence in such a document is prose.
 
-            {
-              "name": "Routes",
-              "description": "The routes this application serves.",
-              "marker": "@route",
-              "include": ["app/**/*.rb"],
-              "contracts": [
-                { "name": "GET /users/:id", "description": "One user." }
-              ]
-            }
+            # Routes
+
+            The routes this application serves.
+
+            ## Includes
+
+            - `app/**/*.rb`
+
+            ## Marker
+
+            `@route`
+
+            ## `GET /users/:id`
+
+            One user.
 
                 # @route GET /users/:id
                 def show
@@ -172,102 +178,97 @@ module Sumitsubo
             a name need not be a name in any language at all.
 
             WITHOUT ONE, the interfaces are read from the syntax tree and
-            nothing is written in front of the code. The name is how that
-            language spells it - in Ruby, `.` for a singleton method, `#` for an
-            instance one, a bare path for a class or module; in Rust, the path
-            the file itself carries, `Charge::settle` for a method in an `impl`
-            and `audit::Entry` for a struct in a `mod`. A crate name and the
-            module a file becomes live outside the file, so a name stops where
-            the file does.
+            nothing is written in front of the code. Each contract carries a
+            fenced signature, and the fence's language is what says how its
+            name is spelled - so one definition may register contracts in two
+            languages.
 
-            Such a file names its `language`. `include` says which files a
-            reading reaches and never what they are written in, and a name is
-            spelled the way one language spells it, so the file says which
-            rather than leaving the filename to imply it. A marker needs none:
-            a claim is a claim in whatever the file is written in.
+            # Internal seams
 
-            {
-              "name": "Internal seams",
-              "description": "The places this project keeps to one shape.",
-              "language": "ruby",
-              "include": ["lib/**/*.rb"],
-              "contracts": [
-                {
-                  "name": "Store.open",
-                  "description": "Open the store.",
-                  "params": [
-                    { "name": "path" },
-                    { "name": "mode", "optional": true },
-                    { "kind": "block", "optional": true }
-                  ]
-                },
-                { "name": "Store#read", "description": "Read one.", "internal": true }
-              ]
-            }
+            The places this project keeps to one implementation.
 
-        Parameters
-            Only the syntax tree reading carries them: a name registered under a
-            marker with parameters is refused, since only the tree says what a
-            definition takes.
+            ## Includes
 
-            A parameter is what it is called, its `kind`, and whether a caller
-            may leave it out. A parameter the language lets go unnamed registers
-            a kind alone.
+            - `lib/**/*.rb`
+
+            ## `Store.open`
+
+            Open the store.
+
+            ```ruby
+            class Store
+              def self.open(path, mode = "r")
+              end
+            end
+            ```
+
+            ## `Store#read` `internal`
+
+            Read one.
+
+            ```ruby
+            class Store
+              def read(key)
+              end
+            end
+            ```
+
+        Signatures
+            The signature is the code the contract means, written out. It is
+            read by the very reading that reads the source, so what a
+            specification can register is what that reading can find - a shape
+            no definition could have is a shape nobody can write down here.
+
+            It carries its nesting, because that is what makes the name what
+            it is: `def self.of(path)` on its own declares `of`, where
+            `module Sumitsubo::Where` around it declares `Sumitsubo::Where.of`.
+            The name it declares has to be the name in the heading, and the
+            only other things it may declare are the scopes holding that name.
+
+            Registering a scope is written as the scope: `class Store` with
+            nothing in it. A scope describes no call, so nothing is compared
+            about the shape - which is not the same as a call taking nothing.
+
+            Types are not compared. A specification says the shape a caller
+            writes, and no further.
+
+            In a finding the shape is spelled as a call - the name, then
+            `:kind` unless it is the plain one, then `?` where the caller may
+            leave it out, and `-` where the language gave the parameter no
+            name:
+
+                (path, mode?, encoding:keyword, rest:splat?, block:block?)
 
             `positional` is the one kind word sumi owns: it names the parameter
             a caller writes with no marking of any sort, which every language
-            has, and it is what `kind` defaults to when a contract leaves it
-            out. Every other kind word belongs to the language and is compared
+            has, and a finding leaves it out because a bare name already says
+            it. Every other kind word belongs to the language and is compared
             as text, sumi knowing nothing of what it means:
 
                 ruby  keyword  splat  hash_splat  block  destructured  forward
                 rust  self
 
-            A contract registering parameters is compared against them entire;
-            one registering none asks for none to be compared. In a finding the
-            shape is spelled as a call - the name, then `:kind` unless it is
-            positional, then `?` where the caller may leave it out, and `-`
-            where the language gave the parameter no name:
+        Names
+            A name is how the language spells it - in Ruby, `.` for a singleton
+            method, `#` for an instance one, a bare path for a class or module;
+            in Rust, the path the file itself carries, `Charge::settle` for a
+            method in an `impl` and `audit::Entry` for a struct in a `mod`. A
+            crate name and the module a file becomes live outside the file, so
+            a name stops where the file does.
 
-                (path, mode?, encoding:keyword, rest:splat?, block:block?)
-
-            Types are not compared. A specification says the shape a caller
-            writes, and no further.
+            The language is the namespace, the way the marker is for the other
+            reading. Two languages may spell one name and mean nothing alike,
+            so a Rust declaration does not define a Ruby contract, and one name
+            registered under each is not ambiguous.
 
         internal
-            `"internal": true` says the project means to keep the interface but
-            not to publish it. It is verified like any other; what it says is
-            that a reader outside the project is not the one it is kept for.
+            A contract heading may carry `internal` after its name, in
+            backticks of its own. It says the project means to keep the
+            interface but not to publish it. It is verified like any other;
+            what it says is that a reader outside the project is not the one it
+            is kept for.
 
-        Notes
-            `"notes"` is the prose a specification carries for its document
-            alone. A structured field says what a project declares; nothing in
-            one says why the declaration is right, and that is the half this
-            holds. Nothing compares it against source.
-
-            Notes sit under the kind and under each contract:
-
-              "notes": [
-                { "type": "paragraph",
-                  "text": ["The store keeps one entry per key.",
-                           "Nothing here says how it is stored."] },
-                { "type": "heading", "level": 1, "text": ["Example"] },
-                { "type": "code", "language": "ruby",
-                  "text": ["store = Store.open(path)"] }
-              ]
-
-            A block is a `heading`, a `paragraph`, or a `code` fence, and its
-            text is written as lines. They close up by kind - prose with
-            spaces, code with newlines - so a paragraph reworded a word at a
-            time shows which sentence moved.
-
-            A heading's `level` counts from what its notes hang under rather
-            than from the top of the page: 1 is one level in. It defaults to 1
-            and goes no deeper than 4.
-
-            An internal interface takes its notes out of the document with it.
-
-        include
+        Includes
             The boundary of what a definition answers for, and not merely a
             list of files to read. With a marker, a contract is implemented by
             the files its own definition covers, and a claim from anywhere else
@@ -285,18 +286,18 @@ module Sumitsubo
             happen is one name twice under one word.
 
         Findings
-            .spec/contract/routes.json:6 @route GET /users/:id is claimed nowhere this specification includes
+            .spec/contract/routes.md:11 @route GET /users/:id is claimed nowhere this specification includes
                 Registered, and no source this definition reaches claims it.
                 Write the claim the finding leads with, or drop the contract.
 
-            .spec/contract/api.json:5 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+            .spec/contract/api.md:9 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
                 Registered, and the syntax tree finds no such definition among
                 the files this definition reaches. Read "What the reading
                 cannot see" before changing the code.
 
-            .spec/contract/api.json:5 Store#read takes (id) where the specification registers (key)
-                The shape differs from the one registered, answered at the line
-                registering it.
+            .spec/contract/api.md:9 Store#read takes (id) where the specification registers (key)
+                The signature and the code describe different calls, answered
+                at the line registering it.
 
             lib/store.rb:4 Store#read takes (id) here and (key) at lib/other.rb:9
                 One name defined with two shapes is a second way in. Both places
@@ -312,7 +313,7 @@ module Sumitsubo
                 A claim nothing registers is a comparison that could not be made
                 rather than a difference. Usually a renamed name.
 
-            app/show.rb:1 @route GET /users/:id is claimed outside what .spec/contract/routes.json includes   (exit 2)
+            app/show.rb:1 @route GET /users/:id is claimed outside what .spec/contract/routes.md includes   (exit 2)
                 The name resolves and the definition registering it does not
                 reach this file, so nothing here can implement it. Widen that
                 include, or move the claim. A definition merely spelling a
@@ -320,13 +321,13 @@ module Sumitsubo
                 contract was implemented, where a class of that name asserts
                 nothing at all.
 
-            .spec/contract/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings   (exit 2)
-                The file registers a name the language it named cannot spell.
-                Usually a marker that went missing.
+            .spec/contract/api.md:9 writes a signature declaring open, and not Store.open   (exit 2)
+                The heading and the signature name one thing written twice.
+                Usually a signature written without the scopes around it.
 
-            .spec/contract/seams.json names no marker and no language, so nothing says how to spell what it registers; sumi help contract has the two readings   (exit 2)
-                One of the two has to be there: the marker says a claim carries
-                the name, and the language says how a definition spells it.
+            .spec/contract/api.md:9 registers Store.open with no signature, so nothing says how its name is spelled   (exit 2)
+                Every contract read from the syntax tree carries one. Usually a
+                `## Marker` section that went missing.
 
         What the reading cannot see
             The syntax tree reading finds a definition by its name in the tree.
@@ -341,6 +342,9 @@ module Sumitsubo
                 include Helper                 Helper#helped is declared;
                                                Widget#helped never is
                 def Other.oddball              only a receiver of `self` is read
+                MAX = 100                      a constant is not read at all,
+                                               so a signature declaring one is
+                                               refused rather than registered
 
             And in Rust:
 
@@ -350,6 +354,11 @@ module Sumitsubo
                                                under any one type's name
                 pub use inner::Store           a re-export names it here and
                                                defines it elsewhere
+
+            Two things it sees without telling them apart: `module` and `class`
+            spell one name, and a signature may say either. Visibility is read
+            only where it is written on the definition itself, so a bare
+            `private` above a method says nothing about it.
 
             A project leaning on these registers the contracts it can check and
             leaves the rest unregistered: an interface nobody registered is not
