@@ -2,6 +2,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/parser"
+require "sumitsubo/finding"
 require "sumitsubo/scope"
 
 module Sumitsubo
@@ -35,18 +36,9 @@ module Sumitsubo
     # them with. `when` and `then` could not be members — one is a keyword and
     # the other is Kernel's — and as keys they need no second spelling.
 
-    # A scenario nothing claims. It answers at the specification that declares
-    # it, which is also where the include that bounded the search is written,
-    # so the finding names neither.
-    Finding = Struct.new(:path, :line, :id)
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.
     Claim = Struct.new(:path, :line, :id)
-    # A claim naming a scenario that is really there, from a file the feature
-    # declaring it does not include. What it carries is that feature rather
-    # than its includes: the fix is written there, and a feature reaching
-    # dozens of files would otherwise spell all of them at the reader.
-    Misplaced = Struct.new(:path, :line, :id, :spec)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -164,7 +156,14 @@ module Sumitsubo
         next if spec.nil?
         next unless reach[spec][claim.path].nil?
 
-        found.push(Misplaced.new(claim.path, claim.line, claim.id, Where.of(spec)))
+        # Named by the feature that declares the scenario rather than by its
+        # includes: the fix is written there, and a feature reaching dozens of
+        # files would otherwise spell all of them at the reader.
+        found.push(Finding.new(
+          rule: MISPLACED, difference: false,
+          path: claim.path, line: claim.line,
+          message: "#{claim.id} is claimed outside what #{Where.of(spec)} includes"
+        ))
       end
       found
     end
@@ -192,7 +191,14 @@ module Sumitsubo
         feature.statements.each do |scenario|
           next unless claimed[scenario.key].nil?
 
-          found.push(Finding.new(Where.of(scenario.path), scenario.line, scenario.key))
+          # It answers at the specification that declares it, which is also
+          # where the include that bounded the search is written, so the
+          # message names neither.
+          found.push(Finding.new(
+            rule: UNCOVERED, difference: true,
+            path: Where.of(scenario.path), line: scenario.line,
+            message: "#{MARKER} #{scenario.key} is claimed nowhere this specification includes"
+          ))
         end
       end
       found
@@ -209,22 +215,16 @@ module Sumitsubo
       end
 
       found = []
-      claims.each { |claim| found.push(claim) if declared[claim.id].nil? }
+      claims.each do |claim|
+        next unless declared[claim.id].nil?
+
+        found.push(Finding.new(
+          rule: UNRESOLVED, difference: false,
+          path: claim.path, line: claim.line,
+          message: "#{claim.id} resolves to no scenario"
+        ))
+      end
       found
-    end
-
-    # The mechanism words its own findings; where each points is the tool's to
-    # shape.
-    def self.describe_uncovered(finding)
-      "#{MARKER} #{finding.id} is claimed nowhere this specification includes"
-    end
-
-    def self.describe_unresolved(claim)
-      "#{claim.id} resolves to no scenario"
-    end
-
-    def self.describe_misplaced(claim)
-      "#{claim.id} is claimed outside what #{claim.spec} includes"
     end
 
     # What a mechanism could not read is its own to report, so the parser's

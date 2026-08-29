@@ -216,32 +216,12 @@ module Sumitsubo
         # rest answer for themselves further down.
         witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
 
-        Sumitsubo::Behavior.uncovered(features, witnessing).each do |finding|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Behavior::UNCOVERED, difference: true,
-            path: finding.path, line: finding.line,
-            message: Sumitsubo::Behavior.describe_uncovered(finding)
-          ))
-        end
+        Sumitsubo::Behavior.uncovered(features, witnessing).each { |one| report.add(one) }
         # A claim the declaring feature does not reach witnesses nothing, and
         # saying nothing about it would leave the scenario reported as claimed
         # nowhere with the claim in plain sight.
-        Sumitsubo::Behavior.misplaced(features, claims, reach).each do |claim|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Behavior::MISPLACED, difference: false,
-            path: claim.path, line: claim.line,
-            message: Sumitsubo::Behavior.describe_misplaced(claim)
-          ))
-        end
-        # A claim resolving to no scenario is not a difference: there is nothing
-        # on the specification side to compare it against.
-        Sumitsubo::Behavior.unresolved(features, claims).each do |claim|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Behavior::UNRESOLVED, difference: false,
-            path: claim.path, line: claim.line,
-            message: Sumitsubo::Behavior.describe_unresolved(claim)
-          ))
-        end
+        Sumitsubo::Behavior.misplaced(features, claims, reach).each { |one| report.add(one) }
+        Sumitsubo::Behavior.unresolved(features, claims).each { |one| report.add(one) }
       end
 
       private
