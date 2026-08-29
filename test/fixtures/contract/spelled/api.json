@@ -1,8 +1,0 @@
-{
-  "name": "API",
-  "language": "ruby",
-  "include": ["src/*.rb"],
-  "contracts": [
-    { "name": "Store.open", "description": "Open the store.", "params": [{ "name": "path" }] }
-  ]
-}

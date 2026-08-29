@@ -106,7 +106,7 @@ the reference line this project verifies against and its own documentation:
 | Looking for | Where |
 |-------------|-------|
 | How to write each specification | `sumi help glossary` \| `contract` \| `behavior` \| `config` |
-| What each command reads and answers | [.spec/contract/cli.json](.spec/contract/cli.json) |
+| What each command reads and answers | [.spec/contract/cli.md](.spec/contract/cli.md) |
 | The vocabulary this project keeps | [.spec/glossary.md](.spec/glossary.md) |
 | The behaviors it holds itself to | [.spec/behavior/](.spec/behavior) |
 

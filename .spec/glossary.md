@@ -10,6 +10,7 @@ The words this project keeps, and the ones it turns down in their place.
 - `README.md`
 - `.spec/glossary.md`
 - `.spec/contract/*.json`
+- `.spec/contract/*.md`
 - `.spec/behavior/*.md`
 - `sumitsubo/**/*.rb`
 - `test/*.rb`

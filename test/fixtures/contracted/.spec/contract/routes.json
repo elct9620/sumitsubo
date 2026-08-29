@@ -1,9 +1,0 @@
-{
-  "name": "Routes",
-  "description": "The routes this application serves.",
-  "marker": "@route",
-  "include": ["app/*.rb"],
-  "contracts": [
-    { "name": "GET /users/:id", "description": "One user." }
-  ]
-}

@@ -1,11 +1,11 @@
 --- what the directory registers, and where ---
 Admin routes @route ["app/*.rb"]
-  test/fixtures/contract/.spec/contract/admin.json:6 GET /admin — The console.
+  test/fixtures/contract/.spec/contract/admin.md:11 GET /admin — The console.
 CLI @command ["src/*.rb"]
-  test/fixtures/contract/.spec/contract/cli.json:7 init — Lay down an empty specification.
-  test/fixtures/contract/.spec/contract/cli.json:8 verify — Check the source against the specification.
+  test/fixtures/contract/.spec/contract/cli.md:13 init — Lay down an empty specification.
+  test/fixtures/contract/.spec/contract/cli.md:17 verify — Check the source against the specification.
 Routes @route ["app/*.rb"]
-  test/fixtures/contract/.spec/contract/routes.json:7 GET /users/:id — One user.
+  test/fixtures/contract/.spec/contract/routes.md:13 GET /users/:id — One user.
 --- the words to look for ---
 ["@command", "@route"]
 --- what each definition's include reaches ---
@@ -15,24 +15,24 @@ Routes @route ["app/*.rb"]
 --- the files to look in ---
 ["test/fixtures/contract/app/controller.rb", "test/fixtures/contract/src/commands.rb"]
 --- a contract claimed only from outside its own definition ---
-  test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere this specification includes
-  test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere this specification includes
-  test/fixtures/contract/.spec/contract/cli.json:8 @command verify is claimed nowhere this specification includes
-  test/fixtures/contract/.spec/contract/routes.json:7 @route GET /users/:id is claimed nowhere this specification includes
+  test/fixtures/contract/.spec/contract/admin.md:11 @route GET /admin is claimed nowhere this specification includes
+  test/fixtures/contract/.spec/contract/cli.md:13 @command init is claimed nowhere this specification includes
+  test/fixtures/contract/.spec/contract/cli.md:17 @command verify is claimed nowhere this specification includes
+  test/fixtures/contract/.spec/contract/routes.md:13 @route GET /users/:id is claimed nowhere this specification includes
 --- and the claim that could not implement it ---
-  test/fixtures/contract/app/controller.rb:4 @command init is claimed outside what test/fixtures/contract/.spec/contract/cli.json includes
+  test/fixtures/contract/app/controller.rb:4 @command init is claimed outside what test/fixtures/contract/.spec/contract/cli.md includes
 --- a directory nobody wrote registers no contracts ---
 []
 --- the same name under two markers is two contracts ---
 2
 --- one name twice under one marker leaves a claim nothing to resolve to ---
-@command verify is declared twice, at test/fixtures/contract/duplicate/one.json:1 and test/fixtures/contract/duplicate/two.json:1
+@command verify is declared twice, at test/fixtures/contract/duplicate/one.md:7 and test/fixtures/contract/duplicate/two.md:7
 --- a contract with no name cannot be claimed at all ---
-test/fixtures/contract/nameless/cli.json declares a contract with no "name"; sumi help contract has the form
+test/fixtures/contract/nameless/cli.md:7 declares a contract whose heading does not open with a name in backticks; sumi help contract has the form
 --- a definition with no marker is read from the syntax tree ---
 1
 --- one name twice with no marker ---
-Store.open is declared twice, at test/fixtures/contract/twice/one.json:1 and test/fixtures/contract/twice/two.json:1
+Store.open is declared twice, at test/fixtures/contract/twice/one.md:7 and test/fixtures/contract/twice/two.md:7
 --- a contract the named language cannot spell ---
 test/fixtures/contract/unresolvable/routes.json names GET /users/:id, which no ruby definition can be spelled; sumi help contract has the two readings
 --- a definition that says neither how to spell nor how to claim ---
@@ -40,15 +40,15 @@ test/fixtures/contract/unsaid/seams.json names no marker and no language, so not
 test/fixtures/contract/unknown/seams.json names cobol, which this sumi does not carry
 test/fixtures/contract/both/routes.json names both a marker and a language, and a claim is a claim in whatever the file is written in; sumi help contract has the two readings
 --- an interface the syntax tree does not define ---
-test/fixtures/contract/nomarker/cli.json:5 verify is defined nowhere this specification includes, and one the reading cannot see never is
-test/fixtures/contract/nomarker/cli.json:6 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+test/fixtures/contract/nomarker/cli.md:7 verify is defined nowhere this specification includes, and one the reading cannot see never is
+test/fixtures/contract/nomarker/cli.md:14 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
 --- a declaration outside the definition registering its name ---
   test/fixtures/contract/src/commands.rb:3 verify
 --- and neither is a specification that will not parse ---
 test/fixtures/contract/broken/cli.json is not readable JSON
 --- an interface nothing claims ---
-test/fixtures/contract/.spec/contract/admin.json:6 @route GET /admin is claimed nowhere this specification includes
-test/fixtures/contract/.spec/contract/cli.json:7 @command init is claimed nowhere this specification includes
+test/fixtures/contract/.spec/contract/admin.md:11 @route GET /admin is claimed nowhere this specification includes
+test/fixtures/contract/.spec/contract/cli.md:13 @command init is claimed nowhere this specification includes
 --- a claim resolving to no contract, and one naming none at all ---
 src/commands.rb:20 @command render resolves to no contract
 src/commands.rb:24 @command names no contract
@@ -75,10 +75,10 @@ test/fixtures/contract/marked/cli.json gives verify parameters, which a marker l
   test/fixtures/contract/formats/cli.json CLI ["verify"]
   test/fixtures/contract/formats/routes.spec Other ["what another format registers"]
 --- the same name under two languages ---
-  API ruby Store.open
-  Handle rust Store.open
+  API ruby Store::Handle
+  Handle rust Store::Handle
 --- and each definition's files are read as its own language ---
   test/fixtures/contract/src/commands.rb as ruby
   test/fixtures/contract/app/controller.rb as rust
 --- a declaration another language spells alike ---
-  test/fixtures/contract/spelled/handle.json:6 Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+  test/fixtures/contract/spelled/handle.md:7 Store::Handle is defined nowhere this specification includes, and one the reading cannot see never is

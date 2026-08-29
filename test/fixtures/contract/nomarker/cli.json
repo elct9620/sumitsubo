@@ -1,8 +1,0 @@
-{
-  "language": "ruby", "name": "CLI",
-  "include": ["src/*.rb"],
-  "contracts": [
-    { "name": "verify" },
-    { "name": "Store.open", "internal": true }
-  ]
-}

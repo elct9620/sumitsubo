@@ -1,38 +1,29 @@
 require "pathname"
 require "sumitsubo/contract"
+require "sumitsubo/grammar"
+require "sumitsubo/language"
+require "sumitsubo/parser/markdown"
 require "sumitsubo/parser/json"
 require "sumitsubo/specification"
 
-# Nothing under sumitsubo/ names a format, so a test says which it reads.
-PARSERS = [Sumitsubo::Parser::Json.new]
+# Nothing under sumitsubo/ names a format, so a test says which it reads. This
+# one reads the format definitions are really written in, which is why its
+# snapshot is written by hand: the mechanism is checked against the shape a
+# person actually wrote rather than one assembled here.
+PARSERS = [
+  Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar),
+  Sumitsubo::Parser::Json.new
+]
 
 # The loader answers where an interface sits as well as what it says. An
 # interface nothing claims is a finding about the specification, so the reader
 # has to be able to go to the line that registers it.
-#
-# Nothing here reaches the grammar, so --regen can still write this snapshot.
 
 FIXTURE = "test/fixtures/contract"
 
-# The languages arrive from outside, and a stand-in is what keeps the grammar
-# out of this file's requires. What the loader needs of one is which names it
-# carries and which of them could spell a given name; the spelling rule a
-# language actually uses is that language's to pin, so this one holds only
-# enough to tell a method from the way a route is written.
-module Spelling
-  def self.carries?(language)
-    language == "ruby" || language == "rust"
-  end
-
-  def self.definable?(language, name)
-    carries?(language) && !name.include?(" ")
-  end
-end
-
 # A format this build does not really carry, so that what decides which files
 # are specifications is visibly the parsers rather than an extension written
-# into the mechanism. There is one real format left, so a second one has to be
-# stood in for.
+# into the mechanism.
 class Other
   SUFFIX = ".spec"
 
@@ -47,7 +38,9 @@ class Other
 end
 
 def loaded(directory, parsers = PARSERS)
-  Sumitsubo::Contract.load(directory, Spelling, parsers)
+  # A signature is read by the reading that reads the source, so what a
+  # definition is checked against is the languages this build carries.
+  Sumitsubo::Contract.load(directory, Sumitsubo::Language, parsers)
 end
 
 def claim(path, line, keyword, name)
@@ -303,7 +296,7 @@ Sumitsubo::Contract.readings_in(
 # @behavior T-041
 puts "--- a declaration another language spells alike ---"
 Sumitsubo::Contract.undefined(
-  spelling, [Declared.new("src/store.rb", 2, "Store.open", [], "ruby")]
+  spelling, [Declared.new("src/store.rb", 2, "Store::Handle", nil, "ruby")]
 ).each do |finding|
   puts "  #{finding.path}:#{finding.line} #{Sumitsubo::Contract.describe_undefined(finding)}"
 end
