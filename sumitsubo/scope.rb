@@ -115,11 +115,7 @@ module Sumitsubo
     # directory a match could sit under. A pattern beginning with one names
     # the base itself.
     def self.root_of(pattern)
-      # Mapped through interpolation so the block parameter and the loop it is
-      # inlined into agree on one type: without it `take_while` hands the
-      # loop's form to `literal?`, which takes the other, and the C build stops.
-      segments = pattern.split("/").map { |segment| "#{segment}" }
-      segments.take_while { |segment| literal?(segment) }.join("/")
+      pattern.split("/").take_while { |segment| literal?(segment) }.join("/")
     end
 
     # Answered against what has been kept rather than against every root, so
