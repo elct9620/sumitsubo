@@ -46,25 +46,51 @@ module Sumitsubo
     # the same as registering that it takes none, and `internal` is the empty
     # list — it says its one thing by being there.
 
+    # What a claim, or a declaration, refers to: a name and the word it is
+    # registered under. The marker is that word for the reading that claims —
+    # `@command verify` and `@route verify` name different things — and the
+    # language for the one that declares, since two languages may spell one
+    # name and mean nothing alike.
+    #
+    # Two of them saying the same thing are the same referent, which is what
+    # lets the two sides find each other without a key being spelled out at
+    # every place they meet. Spoken to a reader it is the pair, except that the
+    # reading which declares has no word: a message should not read as though
+    # one were missing.
+    Referent = Data.define(:namespace, :name) do
+      include Comparable
+
+      # Ordered so a run answers in the same order twice, which is all this is
+      # for: what the order means to a reader is nothing.
+      def <=>(other)
+        [namespace.to_s, name] <=> [other.namespace.to_s, other.name]
+      end
+
+      # Said to a reader. Named rather than left to `to_s`, because what a
+      # message shows is this mechanism's to decide and not a conversion
+      # anything may reach for.
+      def spoken
+        namespace.nil? ? name : "#{namespace} #{name}"
+      end
+    end
+
     # An interface its reading did not find. It answers at the specification
     # that registers it, which is also where the include that bounded the
-    # search is written, so the finding names neither. The marker is carried so
-    # it can say the word to claim it with; the syntax tree reading has none,
-    # so its wording carries the name alone.
-    Finding = Struct.new(:path, :line, :marker, :name)
+    # search is written, so the finding names neither.
+    Finding = Data.define(:path, :line, :referent)
     # An interface defined with a shape other than the one registered. Both
     # are carried, because what a reader chooses between is the two of them.
-    Mismatch = Struct.new(:path, :line, :name, :registered, :taken)
+    Mismatch = Data.define(:path, :line, :name, :registered, :taken)
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, and a contract is named by the interface itself, so the
     # whole of it is the name.
-    Claim = Struct.new(:path, :line, :keyword, :name)
+    Claim = Data.define(:path, :line, :referent)
     # A claim naming a contract that is really registered, from a file the
     # definition registering it does not include. What it carries is that
     # definition rather than its includes: the fix is written there, and a
     # definition reaching dozens of files would otherwise spell all of them
     # at the reader.
-    Misplaced = Struct.new(:path, :line, :marker, :name, :spec)
+    Misplaced = Data.define(:path, :line, :referent, :spec)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -193,7 +219,7 @@ module Sumitsubo
     # Every file to read and the language to read it as. A definition
     # registering contracts in two languages has each of its files read once
     # per language, since one file may declare a name in only one of them.
-    Reading = Struct.new(:path, :language)
+    Reading = Data.define(:path, :language)
 
     def self.readings_in(definitions, reach)
       found = []
@@ -235,7 +261,7 @@ module Sumitsubo
       registering = registering_claims(definitions)
       found = []
       claims.each do |claim|
-        spec = registering[key(claim.keyword, claim.name)]
+        spec = registering[claim.referent]
         next if spec.nil?
         next if reach[spec][claim.path].nil?
 
@@ -252,11 +278,11 @@ module Sumitsubo
       registering = registering_claims(definitions)
       found = []
       claims.each do |claim|
-        spec = registering[key(claim.keyword, claim.name)]
+        spec = registering[claim.referent]
         next if spec.nil?
         next unless reach[spec][claim.path].nil?
 
-        found.push(Misplaced.new(claim.path, claim.line, claim.keyword, claim.name, Where.of(spec)))
+        found.push(Misplaced.new(claim.path, claim.line, claim.referent, Where.of(spec)))
       end
       found
     end
@@ -268,7 +294,7 @@ module Sumitsubo
       found = {}
       claimed(definitions).each do |definition|
         spec = definition.path
-        definition.statements.each { |interface| found[key(marker_of(definition), interface.key)] = spec }
+        definition.statements.each { |interface| found[Referent.new(marker_of(definition), interface.key)] = spec }
       end
       found
     end
@@ -278,15 +304,16 @@ module Sumitsubo
     # between the two sides.
     def self.unclaimed(definitions, claims)
       made = {}
-      claims.each { |claim| made[key(claim.keyword, claim.name)] = true }
+      claims.each { |claim| made[claim.referent] = true }
 
       found = []
       claimed(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless made[key(marker_of(definition), interface.key)].nil?
+          next unless made[Referent.new(marker_of(definition), interface.key)].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line, marker_of(definition), interface.key
+            Where.of(interface.path), interface.line,
+            Referent.new(marker_of(definition), interface.key)
           ))
         end
       end
@@ -317,7 +344,7 @@ module Sumitsubo
     def self.defining_in(names, language, registering, reach)
       found = []
       names.each do |name|
-        spec = registering[key(language, name.name)]
+        spec = registering[Referent.new(language, name.name)]
         next if spec.nil?
         next if reach[spec][name.path].nil?
 
@@ -334,7 +361,7 @@ module Sumitsubo
       defined(definitions).each do |definition|
         spec = definition.path
         definition.statements.each do |interface|
-          found[key(language_of(definition, interface), interface.key)] = spec
+          found[Referent.new(language_of(definition, interface), interface.key)] = spec
         end
       end
       found
@@ -354,10 +381,11 @@ module Sumitsubo
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless grouped[key(language_of(definition, interface), interface.key)].nil?
+          next unless grouped[Referent.new(language_of(definition, interface), interface.key)].nil?
 
           found.push(Finding.new(
-            Where.of(interface.path), interface.line, marker_of(definition), interface.key
+            Where.of(interface.path), interface.line,
+            Referent.new(language_of(definition, interface), interface.key)
           ))
         end
       end
@@ -416,7 +444,7 @@ module Sumitsubo
           registered = shape_of(definition, interface, languages)
           next if registered.nil?
 
-          group = grouped[key(language_of(definition, interface), interface.key)]
+          group = grouped[Referent.new(language_of(definition, interface), interface.key)]
           next if group.nil? || !agreed?(group)
           next if registered == group[0].params
 
@@ -436,7 +464,7 @@ module Sumitsubo
       registered = registered_in(definitions)
 
       found = []
-      claims.each { |claim| found.push(claim) if registered[key(claim.keyword, claim.name)].nil? }
+      claims.each { |claim| found.push(claim) if registered[claim.referent].nil? }
       found
     end
 
@@ -452,7 +480,7 @@ module Sumitsubo
 
       seen = {}
       claims.each do |claim|
-        name = key(claim.keyword, claim.name)
+        name = claim.referent
         next if registered[name].nil?
 
         group = seen[name]
@@ -474,13 +502,13 @@ module Sumitsubo
     end
 
     def self.describe_misplaced(claim)
-      "#{spoken(claim.marker, claim.name)} is claimed outside what #{claim.spec} includes"
+      "#{claim.referent.spoken} is claimed outside what #{claim.spec} includes"
     end
 
     # The mechanism words its own findings; where each points is the tool's to
     # shape.
     def self.describe_unclaimed(finding)
-      "#{spoken(finding.marker, finding.name)} is claimed nowhere this specification includes"
+      "#{finding.referent.spoken} is claimed nowhere this specification includes"
     end
 
     # The caveat rides every one of these because the tree cannot tell the two
@@ -489,7 +517,7 @@ module Sumitsubo
     # nothing. Which constructs those are is each language's own, so the
     # message names the shape and `sumi help contract` names them.
     def self.describe_undefined(finding)
-      "#{spoken(finding.marker, finding.name)} is defined nowhere this specification " \
+      "#{finding.referent.name} is defined nowhere this specification " \
         "includes, and one the reading cannot see never is"
     end
 
@@ -523,15 +551,15 @@ module Sumitsubo
     end
 
     def self.describe_unresolved(claim)
-      return "#{claim.keyword} names no contract" if claim.name.empty?
+      return "#{claim.referent.namespace} names no contract" if claim.referent.name.empty?
 
-      "#{claim.keyword} #{claim.name} resolves to no contract"
+      "#{claim.referent.spoken} resolves to no contract"
     end
 
     def self.describe_duplicated(pair)
       claim = pair[0]
       other = pair[1]
-      "#{claim.keyword} #{claim.name} is claimed at #{other.path}:#{other.line} as well"
+      "#{claim.referent.spoken} is claimed at #{other.path}:#{other.line} as well"
     end
 
     # What a mechanism could not read is its own to report, so the parser's
@@ -550,14 +578,18 @@ module Sumitsubo
       seen = {}
       definitions.each do |definition|
         definition.statements.each do |interface|
-          name = key(namespace_of(definition, interface), interface.key)
-          where = seen[name]
+          referent = Referent.new(namespace_of(definition, interface), interface.key)
+          where = seen[referent]
           unless where.nil?
-            raise Error, "#{spoken(marker_of(definition), interface.key)} is declared twice, " \
-                         "at #{where} and #{at(interface)}"
+            # Spoken under the marker rather than under what it was told apart
+            # by: a reader is being sent to two places that spell one name, and
+            # the language it was read as is not what they have to choose
+            # between.
+            said = Referent.new(marker_of(definition), interface.key).spoken
+            raise Error, "#{said} is declared twice, at #{where} and #{at(interface)}"
           end
 
-          seen[name] = at(interface)
+          seen[referent] = at(interface)
         end
       end
     end
@@ -571,7 +603,7 @@ module Sumitsubo
       found = {}
       declared.keys.each do |language|
         declared[language].each do |name|
-          spelled = key(language, name.name)
+          spelled = Referent.new(language, name.name)
           holding = found[spelled]
           if holding.nil?
             holding = []
@@ -589,7 +621,7 @@ module Sumitsubo
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          found.push(key(language_of(definition, interface), interface.key))
+          found.push(Referent.new(language_of(definition, interface), interface.key))
         end
       end
       found.uniq.sort
@@ -616,24 +648,9 @@ module Sumitsubo
     def self.registered_in(definitions)
       registered = {}
       claimed(definitions).each do |definition|
-        definition.statements.each { |interface| registered[key(marker_of(definition), interface.key)] = true }
+        definition.statements.each { |interface| registered[Referent.new(marker_of(definition), interface.key)] = true }
       end
       registered
-    end
-
-    # What a claim resolves against. The marker is part of it because it is the
-    # namespace: `@command verify` and `@route verify` name different things.
-    # The syntax tree reading has one namespace, the source's, which is what a
-    # definition naming no marker shares with every other one.
-    def self.key(marker, name)
-      "#{marker} #{name}"
-    end
-
-    # The same pair said to a reader. A key carries the empty namespace the
-    # syntax tree reading shares, and a message should not read as though a
-    # word were missing from it.
-    def self.spoken(marker, name)
-      marker.nil? ? name : key(marker, name)
     end
 
     def self.at(interface)

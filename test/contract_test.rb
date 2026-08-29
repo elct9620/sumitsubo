@@ -41,7 +41,9 @@ def loaded(directory, parsers = PARSERS)
 end
 
 def claim(path, line, keyword, name)
-  Sumitsubo::Contract::Claim.new(path, line, keyword, name)
+  Sumitsubo::Contract::Claim.new(
+    path, line, Sumitsubo::Contract::Referent.new(keyword, name)
+  )
 end
 
 def fails
@@ -79,9 +81,7 @@ puts Sumitsubo::Contract.scope(reach).inspect
 # `init` is registered by the CLI definition, whose include reaches only src.
 # A claim of it from the controller names the contract without being able to
 # implement it, so the contract stands unclaimed.
-astray = [Sumitsubo::Contract::Claim.new(
-  "test/fixtures/contract/app/controller.rb", 4, "@command", "init"
-)]
+astray = [claim("test/fixtures/contract/app/controller.rb", 4, "@command", "init")]
 
 # @behavior T-036
 puts "--- a contract claimed only from outside its own definition ---"
