@@ -2,6 +2,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
 require "sumitsubo/parser"
+require "sumitsubo/finding"
 require "sumitsubo/scope"
 require "sumitsubo/source"
 require "sumitsubo/specification"
@@ -85,25 +86,10 @@ module Sumitsubo
       end
     end
 
-    # An interface its reading did not find. It answers at the specification
-    # that registers it, which is also where the include that bounded the
-    # search is written, so the finding names neither.
-    Finding = Data.define(:path, :line, :contract)
-    # An interface defined with a shape other than the one registered. Both
-    # shapes are carried, because what a reader chooses between is the two of
-    # them; the name is spelled alone, since the reading this comes from shows
-    # no word in front of it.
-    Mismatch = Data.define(:path, :line, :name, :registered, :taken)
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, and a contract is named by the interface itself, so the
     # whole of that is the name it carries.
     Claim = Data.define(:path, :line, :contract)
-    # A claim naming a contract that is really registered, from a file the
-    # definition registering it does not include. What it carries is that
-    # definition rather than its includes: the fix is written there, and a
-    # definition reaching dozens of files would otherwise spell all of them
-    # at the reader.
-    Misplaced = Data.define(:path, :line, :contract, :spec)
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -295,7 +281,14 @@ module Sumitsubo
         next if spec.nil?
         next unless reach[spec][claim.path].nil?
 
-        found.push(Misplaced.new(claim.path, claim.line, claim.contract, Where.of(spec)))
+        # Named by the definition that registers the contract rather than by
+        # its includes: the fix is written there, and a definition reaching
+        # dozens of files would otherwise spell all of them at the reader.
+        found.push(Finding.new(
+          rule: MISPLACED, difference: false,
+          path: claim.path, line: claim.line,
+          message: "#{claim.contract.spoken} is claimed outside what #{Where.of(spec)} includes"
+        ))
       end
       found
     end
@@ -322,11 +315,16 @@ module Sumitsubo
       found = []
       claimed(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless made[Name.new(marker_of(definition), interface.key)].nil?
+          name = Name.new(marker_of(definition), interface.key)
+          next unless made[name].nil?
 
+          # It answers at the specification that registers it, which is also
+          # where the include that bounded the search is written, so the
+          # message names neither.
           found.push(Finding.new(
-            Where.of(interface.path), interface.line,
-            Name.new(marker_of(definition), interface.key)
+            rule: UNCLAIMED, difference: true,
+            path: Where.of(interface.path), line: interface.line,
+            message: "#{name.spoken} is claimed nowhere this specification includes"
           ))
         end
       end
@@ -394,11 +392,20 @@ module Sumitsubo
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          next unless grouped[Name.new(language_of(definition, interface), interface.key)].nil?
+          name = Name.new(language_of(definition, interface), interface.key)
+          next unless grouped[name].nil?
 
+          # The caveat rides every one of these because the tree cannot tell
+          # two cases apart: a definition a macro or a mixin brings into being
+          # is missing from it exactly as an unwritten one is, and rewriting
+          # that one fixes nothing. Which constructs those are is each
+          # language's own, so this names the shape and `sumi help contract`
+          # names them.
           found.push(Finding.new(
-            Where.of(interface.path), interface.line,
-            Name.new(language_of(definition, interface), interface.key)
+            rule: UNDEFINED, difference: true,
+            path: Where.of(interface.path), line: interface.line,
+            message: "#{name.spoken} is defined nowhere this specification " \
+                     "includes, and one the reading cannot see never is"
           ))
         end
       end
@@ -422,7 +429,14 @@ module Sumitsubo
         group = grouped[spelled]
         next if group.nil? || group.length < 2 || agreed?(group)
 
-        paired(group).each { |pair| found.push(pair) }
+        paired(group).each do |pair|
+          found.push(Finding.new(
+            rule: CONFLICTING, difference: true,
+            path: pair[0].path, line: pair[0].line,
+            message: "#{pair[0].name} takes #{spell(pair[0].params)} here and " \
+                     "#{spell(pair[1].params)} at #{pair[1].path}:#{pair[1].line}"
+          ))
+        end
       end
       found
     end
@@ -461,9 +475,14 @@ module Sumitsubo
           next if group.nil? || !agreed?(group)
           next if registered == group[0].params
 
-          found.push(Mismatch.new(
-            Where.of(interface.path), interface.line, interface.key,
-            registered, group[0].params
+          # Both shapes are said, because what a reader chooses between is the
+          # two of them; the name is spelled alone, since the reading this
+          # comes from shows no word in front of it.
+          found.push(Finding.new(
+            rule: MISMATCHED, difference: true,
+            path: Where.of(interface.path), line: interface.line,
+            message: "#{interface.key} takes #{spell(group[0].params)} " \
+                     "where the specification registers #{spell(registered)}"
           ))
         end
       end
@@ -477,8 +496,24 @@ module Sumitsubo
       registered = registered_in(definitions)
 
       found = []
-      claims.each { |claim| found.push(claim) if registered[claim.contract].nil? }
+      claims.each do |claim|
+        next unless registered[claim.contract].nil?
+
+        found.push(Finding.new(
+          rule: UNRESOLVED, difference: false,
+          path: claim.path, line: claim.line,
+          message: unresolved_message(claim.contract)
+        ))
+      end
       found
+    end
+
+    # A claim carrying nothing after the marker names no contract at all,
+    # which is a different thing to say than a name that resolves to none.
+    def self.unresolved_message(contract)
+      return "#{contract.namespace} names no contract" if contract.bare.empty?
+
+      "#{contract.spoken} resolves to no contract"
     end
 
     # One interface claimed in two places. A contract is the way in, so a
@@ -509,41 +544,16 @@ module Sumitsubo
         group = seen[spelled]
         next if group.length < 2
 
-        paired(group).each { |pair| found.push(pair) }
+        paired(group).each do |pair|
+          found.push(Finding.new(
+            rule: DUPLICATED, difference: true,
+            path: pair[0].path, line: pair[0].line,
+            message: "#{pair[0].contract.spoken} is claimed at " \
+                     "#{pair[1].path}:#{pair[1].line} as well"
+          ))
+        end
       end
       found
-    end
-
-    def self.describe_misplaced(claim)
-      "#{claim.contract.spoken} is claimed outside what #{claim.spec} includes"
-    end
-
-    # The mechanism words its own findings; where each points is the tool's to
-    # shape.
-    def self.describe_unclaimed(finding)
-      "#{finding.contract.spoken} is claimed nowhere this specification includes"
-    end
-
-    # The caveat rides every one of these because the tree cannot tell the two
-    # cases apart: a definition a macro or a mixin brings into being is missing
-    # from it exactly as an unwritten one is, and rewriting that one fixes
-    # nothing. Which constructs those are is each language's own, so the
-    # message names the shape and `sumi help contract` names them.
-    def self.describe_undefined(finding)
-      "#{finding.contract.spoken} is defined nowhere this specification " \
-        "includes, and one the reading cannot see never is"
-    end
-
-    def self.describe_conflicting(pair)
-      one = pair[0]
-      other = pair[1]
-      "#{one.name} takes #{spell(one.params)} here and " \
-        "#{spell(other.params)} at #{other.path}:#{other.line}"
-    end
-
-    def self.describe_mismatched(mismatch)
-      "#{mismatch.name} takes #{spell(mismatch.taken)} " \
-        "where the specification registers #{spell(mismatch.registered)}"
     end
 
     # What a caller would have to write. The kind is left out where a bare
@@ -561,18 +571,6 @@ module Sumitsubo
       name = param.name.nil? ? "-" : param.name
       kind = param.kind == POSITIONAL ? "" : ":#{param.kind}"
       "#{name}#{kind}#{param.optional ? "?" : ""}"
-    end
-
-    def self.describe_unresolved(claim)
-      return "#{claim.contract.namespace} names no contract" if claim.contract.bare.empty?
-
-      "#{claim.contract.spoken} resolves to no contract"
-    end
-
-    def self.describe_duplicated(pair)
-      claim = pair[0]
-      other = pair[1]
-      "#{claim.contract.spoken} is claimed at #{other.path}:#{other.line} as well"
     end
 
     # What a mechanism could not read is its own to report, so the parser's

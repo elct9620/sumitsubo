@@ -85,41 +85,17 @@ module Sumitsubo
         # what they name; the rest answer for themselves further down.
         witnessing = Sumitsubo::Contract.witnessing(definitions, claims, reach)
 
-        Sumitsubo::Contract.unclaimed(definitions, witnessing).each do |finding|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Contract::UNCLAIMED, difference: true,
-            path: finding.path, line: finding.line,
-            message: Sumitsubo::Contract.describe_unclaimed(finding)
-          ))
-        end
+        Sumitsubo::Contract.unclaimed(definitions, witnessing).each { |one| report.add(one) }
         # A contract is the way in, so a second way in is a difference about
         # the code rather than a specification that could not be read.
-        Sumitsubo::Contract.duplicated(definitions, witnessing).each do |pair|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Contract::DUPLICATED, difference: true,
-            path: pair[0].path, line: pair[0].line,
-            message: Sumitsubo::Contract.describe_duplicated(pair)
-          ))
-        end
+        Sumitsubo::Contract.duplicated(definitions, witnessing).each { |one| report.add(one) }
         # A claim the registering definition does not reach implements nothing,
         # and saying nothing about it would leave the interface reported as
         # claimed nowhere with the claim in plain sight.
-        Sumitsubo::Contract.misplaced(definitions, claims, reach).each do |claim|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Contract::MISPLACED, difference: false,
-            path: claim.path, line: claim.line,
-            message: Sumitsubo::Contract.describe_misplaced(claim)
-          ))
-        end
+        Sumitsubo::Contract.misplaced(definitions, claims, reach).each { |one| report.add(one) }
         # A claim resolving to no contract is not a difference: there is
         # nothing on the specification side to compare it against.
-        Sumitsubo::Contract.unresolved(definitions, claims).each do |claim|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Contract::UNRESOLVED, difference: false,
-            path: claim.path, line: claim.line,
-            message: Sumitsubo::Contract.describe_unresolved(claim)
-          ))
-        end
+        Sumitsubo::Contract.unresolved(definitions, claims).each { |one| report.add(one) }
         # The other reading makes no claims, so what it compares is what the
         # source defines and the shape a caller would have to call it with.
         spelled = Sumitsubo::Contract.reach(
@@ -128,29 +104,11 @@ module Sumitsubo
         declared = Sumitsubo::Contract.defining(
           definitions, names_in(spelled, definitions, languages), spelled
         )
-        Sumitsubo::Contract.undefined(definitions, declared).each do |finding|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Contract::UNDEFINED, difference: true,
-            path: finding.path, line: finding.line,
-            message: Sumitsubo::Contract.describe_undefined(finding)
-          ))
-        end
+        Sumitsubo::Contract.undefined(definitions, declared).each { |one| report.add(one) }
         # Two shapes under one name are two ways in, answered where they sit
         # rather than at the specification: what a reader compares is them.
-        Sumitsubo::Contract.conflicting(definitions, declared).each do |pair|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Contract::CONFLICTING, difference: true,
-            path: pair[0].path, line: pair[0].line,
-            message: Sumitsubo::Contract.describe_conflicting(pair)
-          ))
-        end
-        Sumitsubo::Contract.mismatched(definitions, declared, languages).each do |mismatch|
-          report.add(Sumitsubo::Finding.new(
-            rule: Sumitsubo::Contract::MISMATCHED, difference: true,
-            path: mismatch.path, line: mismatch.line,
-            message: Sumitsubo::Contract.describe_mismatched(mismatch)
-          ))
-        end
+        Sumitsubo::Contract.conflicting(definitions, declared).each { |one| report.add(one) }
+        Sumitsubo::Contract.mismatched(definitions, declared, languages).each { |one| report.add(one) }
       end
 
       private
