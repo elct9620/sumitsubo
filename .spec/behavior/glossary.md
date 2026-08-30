@@ -76,7 +76,7 @@ place.
 | Step | Statement |
 | --- | --- |
 | Given | a rejection carrying an ignore that no mention answers to |
-| When | the unresolved ignores are worked out |
+| When | the ignores that have gone stale are worked out |
 | Then | it answers at the line the specification wrote it on, saying what it no longer names |
 
 ## `G-011` An ignore missing either half is refused where it is written

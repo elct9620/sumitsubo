@@ -18,7 +18,7 @@ module Sumitsubo
     # which one found it rather than by its wording.
     BARREN = "glossary/barren"
     REJECTED = "glossary/rejected"
-    UNRESOLVED = "glossary/unresolved"
+    STALE = "glossary/stale"
 
     # What a project starts a vocabulary from. A title and nothing else is a
     # vocabulary that checks nothing, which is what a root nobody has written
@@ -194,7 +194,7 @@ module Sumitsubo
     # What was set aside and no longer names anything — the line moved, or the
     # wording was fixed. Nothing else notices, so an exception left behind
     # outlives what it was for; the run refuses to certify rather than pass.
-    def self.unresolved(mentions, spec)
+    def self.stale(mentions, spec)
       met = {}
       mentions.each { |mention| met[key_of(mention)] = true }
       aside = set_aside(spec)
@@ -204,7 +204,7 @@ module Sumitsubo
 
         ignore = aside[key]
         found.push(Finding.new(
-          rule: UNRESOLVED, difference: false,
+          rule: STALE, difference: false,
           path: Where.of(spec.path), line: ignore.line,
           message: "nothing at #{ignore.at} has #{ignore.term} rejecting " \
                    "#{ignore.used}; the line moved or the wording was fixed"

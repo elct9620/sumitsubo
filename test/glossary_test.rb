@@ -69,7 +69,7 @@ kept = Sumitsubo::Glossary::Mention.new("app/other.rb", 3, "Order", "Purchase", 
 Sumitsubo::Glossary.standing([aside, kept], ignored, Pathname.pwd).each do |finding|
   puts "#{finding.path}:#{finding.line} #{finding.message}"
 end
-Sumitsubo::Glossary.unresolved([aside, kept], ignored).each do |finding|
+Sumitsubo::Glossary.stale([aside, kept], ignored).each do |finding|
   puts "#{finding.path}:#{finding.line} #{finding.message}"
 end
 

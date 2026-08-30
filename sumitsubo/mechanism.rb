@@ -46,7 +46,7 @@ module Sumitsubo
           Sumitsubo::Glossary.check(scope, config.base, languages), vocabulary
         )
         Sumitsubo::Glossary.standing(mentions, vocabulary, config.base).each { |one| report.add(one) }
-        Sumitsubo::Glossary.unresolved(mentions, vocabulary).each { |one| report.add(one) }
+        Sumitsubo::Glossary.stale(mentions, vocabulary).each { |one| report.add(one) }
       end
     end
 
