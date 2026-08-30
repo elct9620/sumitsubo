@@ -14,10 +14,6 @@ module Sumitsubo
   # place carrying no line. An absent line would be nil, and this compiler
   # holds a member to one type across the program: the same member cannot be a
   # line here and nothing there.
-  #
-  # It is written as a class rather than assigned, because a contract is
-  # registered against what the syntax tree declares and a shape a block builds
-  # declares nothing the reading can see.
   class Place < Data.define(:path, :line)
     def self.of(path, line)
       new(path: file(path), line: line)
