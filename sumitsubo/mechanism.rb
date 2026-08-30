@@ -4,6 +4,7 @@ require "sumitsubo/behavior"
 require "sumitsubo/source/marker"
 require "sumitsubo/source/scope"
 require "sumitsubo/finding"
+require "sumitsubo/specification/repository"
 
 module Sumitsubo
   # A mechanism is a specification paired with the reading of source it is
@@ -37,16 +38,24 @@ module Sumitsubo
         Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::SEED)
       end
 
-      def verify(config, repository, languages, parsers)
+      # What a mechanism could not read is its own to report, so the parser's
+      # refusal is answered under this mechanism's name.
+      def read(parser, path, languages)
+        parser.glossary(path)
+      rescue Sumitsubo::Unreadable => e
+        raise Sumitsubo::Glossary::Error, e.message
+      end
+
+      def verify(config, findings, specifications, languages)
         path = Sumitsubo::Glossary.path_in(config.root)
-        vocabulary = Sumitsubo::Glossary.load(path, parsers)
-        Sumitsubo::Glossary.barren(vocabulary, config.base, path, config.exclusion, parsers).each { |one| repository.add(one) }
+        vocabulary = specifications.one(path, self)
+        Sumitsubo::Glossary.barren(vocabulary, config.base, path, config.exclusion, specifications).each { |one| findings.add(one) }
         scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
         mentions = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, languages), vocabulary
         )
-        Sumitsubo::Glossary.standing(mentions, vocabulary, config.base).each { |one| repository.add(one) }
-        Sumitsubo::Glossary.stale(mentions, vocabulary).each { |one| repository.add(one) }
+        Sumitsubo::Glossary.standing(mentions, vocabulary, config.base).each { |one| findings.add(one) }
+        Sumitsubo::Glossary.stale(mentions, vocabulary).each { |one| findings.add(one) }
       end
     end
 
@@ -61,11 +70,18 @@ module Sumitsubo
         Seed.new(Sumitsubo::Contract.path_in(root), nil)
       end
 
-      def verify(config, repository, languages, parsers)
-        definitions = Sumitsubo::Contract.load(
-          Sumitsubo::Contract.path_in(config.root), languages, parsers
-        )
-        Sumitsubo::Contract.barren(definitions, config.base, config.exclusion, parsers).each { |one| repository.add(one) }
+      # The languages arrive with the parser because a contract's signature is
+      # read by the very reading that reads the source it describes.
+      def read(parser, path, languages)
+        parser.contract(path, languages)
+      rescue Sumitsubo::Unreadable => e
+        raise Sumitsubo::Contract::Error, e.message
+      end
+
+      def verify(config, findings, specifications, languages)
+        definitions = specifications.all(Sumitsubo::Contract.path_in(config.root), self)
+        Sumitsubo::Contract.refuse_ambiguity(definitions)
+        Sumitsubo::Contract.barren(definitions, config.base, config.exclusion, specifications).each { |one| findings.add(one) }
         claimed = Sumitsubo::Contract.claimed(definitions)
         reach = Sumitsubo::Contract.reach(claimed, config.base, config.exclusion)
         claims = claims_in(reach, definitions, languages)
@@ -73,10 +89,10 @@ module Sumitsubo
         # what they name; the rest answer for themselves further down.
         witnessing = Sumitsubo::Contract.witnessing(definitions, claims, reach)
 
-        Sumitsubo::Contract.unclaimed(definitions, witnessing).each { |one| repository.add(one) }
-        Sumitsubo::Contract.duplicated(definitions, witnessing).each { |one| repository.add(one) }
-        Sumitsubo::Contract.misplaced(definitions, claims, reach).each { |one| repository.add(one) }
-        Sumitsubo::Contract.unresolved(definitions, claims).each { |one| repository.add(one) }
+        Sumitsubo::Contract.unclaimed(definitions, witnessing).each { |one| findings.add(one) }
+        Sumitsubo::Contract.duplicated(definitions, witnessing).each { |one| findings.add(one) }
+        Sumitsubo::Contract.misplaced(definitions, claims, reach).each { |one| findings.add(one) }
+        Sumitsubo::Contract.unresolved(definitions, claims).each { |one| findings.add(one) }
         # The other reading makes no claims, so what it compares is what the
         # source defines and the shape a caller would have to call it with.
         spelled = Sumitsubo::Contract.reach(
@@ -85,9 +101,9 @@ module Sumitsubo
         declared = Sumitsubo::Contract.defining(
           definitions, names_in(spelled, definitions, languages), spelled
         )
-        Sumitsubo::Contract.undefined(definitions, declared).each { |one| repository.add(one) }
-        Sumitsubo::Contract.conflicting(definitions, declared).each { |one| repository.add(one) }
-        Sumitsubo::Contract.mismatched(definitions, declared, languages).each { |one| repository.add(one) }
+        Sumitsubo::Contract.undefined(definitions, declared).each { |one| findings.add(one) }
+        Sumitsubo::Contract.conflicting(definitions, declared).each { |one| findings.add(one) }
+        Sumitsubo::Contract.mismatched(definitions, declared, languages).each { |one| findings.add(one) }
       end
 
       private
@@ -139,18 +155,25 @@ module Sumitsubo
         Seed.new(Sumitsubo::Behavior.path_in(root), nil)
       end
 
-      def verify(config, repository, languages, parsers)
-        features = Sumitsubo::Behavior.load(Sumitsubo::Behavior.path_in(config.root), parsers)
-        Sumitsubo::Behavior.barren(features, config.base, config.exclusion, parsers).each { |one| repository.add(one) }
+      def read(parser, path, languages)
+        parser.behavior(path)
+      rescue Sumitsubo::Unreadable => e
+        raise Sumitsubo::Behavior::Error, e.message
+      end
+
+      def verify(config, findings, specifications, languages)
+        features = specifications.all(Sumitsubo::Behavior.path_in(config.root), self)
+        Sumitsubo::Behavior.refuse_ambiguity(features)
+        Sumitsubo::Behavior.barren(features, config.base, config.exclusion, specifications).each { |one| findings.add(one) }
         reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
         claims = claims_in(reach, languages)
         # What the reading below compares is the claims that can witness; the
         # rest answer for themselves further down.
         witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
 
-        Sumitsubo::Behavior.uncovered(features, witnessing).each { |one| repository.add(one) }
-        Sumitsubo::Behavior.misplaced(features, claims, reach).each { |one| repository.add(one) }
-        Sumitsubo::Behavior.unresolved(features, claims).each { |one| repository.add(one) }
+        Sumitsubo::Behavior.uncovered(features, witnessing).each { |one| findings.add(one) }
+        Sumitsubo::Behavior.misplaced(features, claims, reach).each { |one| findings.add(one) }
+        Sumitsubo::Behavior.unresolved(features, claims).each { |one| findings.add(one) }
       end
 
       private

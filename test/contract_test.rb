@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/contract"
+require "sumitsubo/mechanism"
+require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
 require "sumitsubo/source/language"
 require "sumitsubo/source"
@@ -41,7 +43,10 @@ end
 def loaded(directory, parsers = PARSERS)
   # A signature is read by the reading that reads the source, so what a
   # definition is checked against is the languages this build carries.
-  Sumitsubo::Contract.load(directory, Sumitsubo::Source::Language, parsers)
+  definitions = Sumitsubo::Specification::Repository.new(parsers, Sumitsubo::Source::Language)
+                  .all(directory, Sumitsubo::Mechanism::Contract.new)
+  Sumitsubo::Contract.refuse_ambiguity(definitions)
+  definitions
 end
 
 def claim(path, line, keyword, name)

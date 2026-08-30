@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/behavior"
+require "sumitsubo/mechanism"
+require "sumitsubo/specification/repository"
 require "sumitsubo/source/scope"
 require "sumitsubo/specification"
 require "sumitsubo/grammar"
@@ -14,6 +16,19 @@ PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
 # are specifications is visibly the parsers rather than an extension written
 # into the mechanism. There is one real format left, so a second one has to be
 # stood in for.
+# Features come from the repository the way a run's do, and one id twice is
+# refused before anything is compared, which is what the mechanism does.
+def reads(directory)
+  taken(directory, PARSERS)
+end
+
+def taken(directory, parsers)
+  features = Sumitsubo::Specification::Repository.new(parsers, nil)
+               .all(directory, Sumitsubo::Mechanism::Behavior.new)
+  Sumitsubo::Behavior.refuse_ambiguity(features)
+  features
+end
+
 class Other
   SUFFIX = ".spec"
 
@@ -33,7 +48,7 @@ end
 
 # @behavior B-001
 puts "--- what the directory declares, and where ---"
-Sumitsubo::Behavior.load("test/fixtures/behavior/.spec/behavior", PARSERS).each do |feature|
+reads("test/fixtures/behavior/.spec/behavior").each do |feature|
   puts "#{feature.key} #{feature.includes.inspect}"
   feature.statements.each do |scenario|
     puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
@@ -46,12 +61,12 @@ end
 
 # @behavior B-002
 puts "--- a directory nobody wrote declares no scenarios ---"
-p Sumitsubo::Behavior.load("test/fixtures/behavior/.spec/absent", PARSERS)
+p reads("test/fixtures/behavior/.spec/absent")
 
 # @behavior B-004
 puts "--- one id under two scenarios leaves a marker nothing to resolve to ---"
 begin
-  Sumitsubo::Behavior.load("test/fixtures/behavior/duplicate", PARSERS)
+  reads("test/fixtures/behavior/duplicate")
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -59,7 +74,7 @@ end
 # @behavior B-003
 puts "--- the root arrives absolute, but a message answers where the run started ---"
 begin
-  Sumitsubo::Behavior.load(Pathname.pwd / "test/fixtures/behavior/duplicate", PARSERS)
+  reads(Pathname.pwd / "test/fixtures/behavior/duplicate")
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -67,7 +82,7 @@ end
 # @behavior B-005
 puts "--- a scenario with no id cannot be referenced at all ---"
 begin
-  Sumitsubo::Behavior.load("test/fixtures/behavior/anonymous", PARSERS)
+  reads("test/fixtures/behavior/anonymous")
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -84,7 +99,7 @@ p Sumitsubo::Behavior.ids_in("V-008 V-009")
 # @behavior B-011
 puts "--- what each feature's include reaches ---"
 base = Pathname.new("test/fixtures/behavior")
-features = Sumitsubo::Behavior.load(base / ".spec/behavior", PARSERS)
+features = reads(base / ".spec/behavior")
 reach = Sumitsubo::Behavior.reach(features, base, [])
 features.each { |feature| puts "  #{feature.key} #{reach[feature.path].keys.sort.inspect}" }
 puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
@@ -106,7 +121,7 @@ end
 # `notes.txt` is passed over rather than refused.
 # @behavior B-014
 puts "--- which files a directory holds that this build can read ---"
-Sumitsubo::Behavior.load("test/fixtures/behavior/formats", PARSERS + [Other.new]).each do |feature|
+taken("test/fixtures/behavior/formats", PARSERS + [Other.new]).each do |feature|
   puts "  #{feature.path} #{feature.key} #{feature.statements.map { |one| one.key }.inspect}"
 end
 
@@ -115,8 +130,9 @@ end
 # arrives at the word to edit rather than at the file holding it.
 # @behavior B-015
 puts "--- an include covering no file answers at the line that wrote it ---"
-unreached = Sumitsubo::Behavior.load("test/fixtures/behavior/nowhere", PARSERS)
-Sumitsubo::Behavior.barren(unreached, Pathname.new("test/fixtures/behavior"), [], PARSERS).each do |finding|
+unreached = reads("test/fixtures/behavior/nowhere")
+Sumitsubo::Behavior.barren(unreached, Pathname.new("test/fixtures/behavior"), [],
+                           Sumitsubo::Specification::Repository.new(PARSERS, nil)).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 

@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/glossary"
+require "sumitsubo/mechanism"
+require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
 require "sumitsubo/specification/markdown"
 
@@ -9,10 +11,17 @@ require "sumitsubo/specification/markdown"
 # actually wrote rather than one assembled here.
 PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
 
+# A vocabulary comes from the repository the way a run's does, read as the
+# mechanism that keeps it reads it.
+def reads(path)
+  Sumitsubo::Specification::Repository.new(PARSERS, nil)
+    .one(path, Sumitsubo::Mechanism::Glossary.new)
+end
+
 back = Dir.pwd
 Dir.chdir("test/fixtures/glossary")
 
-vocabulary = Sumitsubo::Glossary.load(".spec/glossary.md", PARSERS)
+vocabulary = reads(".spec/glossary.md")
 
 # Which files a section reaches is half of what the laying rule means, so the
 # scope is printed rather than inferred from the merged result.
@@ -63,7 +72,7 @@ end
 # as above: what is being shown is which of them the specification set aside.
 # @behavior G-009 G-010
 puts "--- a mention the specification set aside, and one it did not ---"
-ignored = Sumitsubo::Glossary.load("ignored.md", PARSERS)
+ignored = reads("ignored.md")
 aside = Sumitsubo::Glossary::Mention.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
 kept = Sumitsubo::Glossary::Mention.new("app/other.rb", 3, "Order", "Purchase", "Order is what the domain calls it.")
 Sumitsubo::Glossary.standing([aside, kept], ignored, Pathname.pwd).each do |finding|
@@ -78,7 +87,7 @@ Dir.chdir(back)
 # @behavior G-003
 puts "--- a missing glossary is a broken reference line, not a difference ---"
 begin
-  Sumitsubo::Glossary.load("test/fixtures/glossary/absent.md", PARSERS)
+  reads("test/fixtures/glossary/absent.md")
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
@@ -88,7 +97,7 @@ end
 # @behavior G-005
 puts "--- and so is one that never says it is a vocabulary ---"
 begin
-  Sumitsubo::Glossary.load("test/fixtures/glossary/titleless.md", PARSERS)
+  reads("test/fixtures/glossary/titleless.md")
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
@@ -97,7 +106,7 @@ end
 puts "--- an ignore that could not be written down is a broken reference line ---"
 ["test/fixtures/glossary/noat.md", "test/fixtures/glossary/noreason.md"].each do |path|
   begin
-    Sumitsubo::Glossary.load(path, PARSERS)
+    reads(path)
   rescue Sumitsubo::Glossary::Error => e
     puts e.message
   end
@@ -108,7 +117,7 @@ end
 # @behavior G-006
 puts "--- and one named absolutely still answers where the run started ---"
 begin
-  Sumitsubo::Glossary.load(Pathname.new("test/fixtures/glossary/absent.md").expand_path.to_s, PARSERS)
+  reads(Pathname.new("test/fixtures/glossary/absent.md").expand_path.to_s)
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end

@@ -1,6 +1,5 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
 require "sumitsubo/specification"
@@ -55,16 +54,6 @@ module Sumitsubo
     # say, so it arrives as an argument.
     def self.path_in(root)
       Pathname.new(root) / FILE
-    end
-
-    # The parsers are handed in the way the languages are: which formats a
-    # build carries is decided when it is built, so nothing here names one.
-    # What a mechanism could not read is its own to report, so the parser's
-    # refusal is answered under this mechanism's name.
-    def self.load(path, parsers)
-      Specification::Parser.of(path, parsers).glossary(path)
-    rescue Sumitsubo::Unreadable => e
-      raise Error, e.message
     end
 
     # A file's effective vocabulary is every section covering it laid over the
@@ -241,13 +230,13 @@ module Sumitsubo
     #
     # Where an include was written is asked of the parser that read the
     # specification, since only that one knows how its format spells a glob.
-    def self.barren(spec, base, path, exclusion, parsers)
+    def self.barren(spec, base, path, exclusion, specifications)
       patterns = []
       spec.statements.each { |section| patterns.concat(section.attributes[INCLUDE]) }
       empty = Source::Scope.barren(base, patterns.uniq, exclusion)
       return [] if empty.empty?
 
-      spelled = Specification::Parser.of(path, parsers).spelled_in(path)
+      spelled = specifications.spelling(path)
       empty.map { |pattern| Source::Scope.barren_at(BARREN, path, pattern, spelled[pattern]) }
     end
 

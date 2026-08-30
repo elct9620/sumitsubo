@@ -1,7 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/place"
-require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
 require "sumitsubo/source"
@@ -91,34 +90,6 @@ module Sumitsubo
       Pathname.new(root) / DIRECTORY
     end
 
-    # Every definition the directory holds. A directory nobody wrote registers
-    # no contracts, and a project that has said nothing is not misconfigured,
-    # so that answers empty rather than failing.
-    #
-    # The parsers are handed in the way the languages are: which formats a
-    # build carries is decided when it is built, so nothing here names one.
-    def self.load(directory, languages, parsers)
-      path = Pathname.new(directory)
-      return [] unless path.directory?
-
-      definitions = files_in(path, parsers).map { |file| definition_from(file, languages, parsers) }
-      refuse_ambiguity(definitions)
-      definitions
-    end
-
-    # A found path is a String: it is what a definition answers with, and what
-    # a finding about one of its interfaces points at.
-    #
-    # Which files are specifications is the parsers' to say rather than an
-    # extension written here: a project registers one kind of contract per file
-    # and this build reads whichever formats it was built with. What no parser
-    # answers for is passed over, so a directory is still the project's to keep
-    # other things in.
-    def self.files_in(path, parsers)
-      path.glob("*").select { |file| file.file? && Specification::Parser.reads?(file, parsers) }
-          .map { |file| "#{file}" }.sort
-    end
-
     # The files each definition reaches, held under the specification that
     # wrote them. As with Behavior, an `include` is the boundary of what a
     # definition answers for: a contract is implemented by the files its own
@@ -154,13 +125,13 @@ module Sumitsubo
     #
     # Where an include was written is asked of the parser that read the
     # specification, since only that one knows how its format spells a glob.
-    def self.barren(definitions, base, exclusion, parsers)
+    def self.barren(definitions, base, exclusion, specifications)
       found = []
       definitions.each do |definition|
         empty = Source::Scope.barren(base, definition.includes, exclusion)
         next if empty.empty?
 
-        spelled = Specification::Parser.of(definition.path, parsers).spelled_in(definition.path)
+        spelled = specifications.spelling(definition.path)
         empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, definition.path, pattern, spelled[pattern])) }
       end
       found
@@ -560,12 +531,6 @@ module Sumitsubo
 
     # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
-    def self.definition_from(path, languages, parsers)
-      Specification::Parser.of(path, parsers).contract(path, languages)
-    rescue Sumitsubo::Unreadable => e
-      raise Error, e.message
-    end
-
     # The marker is the namespace, so two files may share one word and one
     # name may sit under two words. What cannot happen is the same name twice
     # under the same word: a claim carries only those two, and a name that

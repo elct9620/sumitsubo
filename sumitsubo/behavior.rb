@@ -1,7 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/place"
-require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
 
@@ -46,34 +45,6 @@ module Sumitsubo
       Pathname.new(root) / DIRECTORY
     end
 
-    # Every feature the directory holds. A directory nobody wrote declares no
-    # scenarios, and a project that has said nothing is not misconfigured, so
-    # that answers empty rather than failing.
-    #
-    # The parsers are handed in the way the languages are: which formats a
-    # build carries is decided when it is built, so nothing here names one.
-    def self.load(directory, parsers)
-      path = Pathname.new(directory)
-      return [] unless path.directory?
-
-      features = files_in(path, parsers).map { |file| feature_from(file, parsers) }
-      refuse_ambiguity(features)
-      features
-    end
-
-    # A found path is a String: it is what a feature answers with, and what a
-    # finding about one of its scenarios points at.
-    #
-    # Which files are specifications is the parsers' to say rather than an
-    # extension written here: a project writes one feature per file and this
-    # build reads whichever formats it was built with. What no parser answers
-    # for is passed over, so a directory is still the project's to keep other
-    # things in.
-    def self.files_in(path, parsers)
-      path.glob("*").select { |file| file.file? && Specification::Parser.reads?(file, parsers) }
-          .map { |file| "#{file}" }.sort
-    end
-
     # The files each feature reaches, held under the specification that wrote
     # them. An `include` is the boundary of what a feature answers for: a
     # scenario is witnessed by the files its own feature covers, and a claim
@@ -108,13 +79,13 @@ module Sumitsubo
     #
     # Where an include was written is asked of the parser that read the
     # specification, since only that one knows how its format spells a glob.
-    def self.barren(features, base, exclusion, parsers)
+    def self.barren(features, base, exclusion, specifications)
       found = []
       features.each do |feature|
         empty = Source::Scope.barren(base, feature.includes, exclusion)
         next if empty.empty?
 
-        spelled = Specification::Parser.of(feature.path, parsers).spelled_in(feature.path)
+        spelled = specifications.spelling(feature.path)
         empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, feature.path, pattern, spelled[pattern])) }
       end
       found
@@ -231,12 +202,6 @@ module Sumitsubo
 
     # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
-    def self.feature_from(path, parsers)
-      Specification::Parser.of(path, parsers).behavior(path)
-    rescue Sumitsubo::Unreadable => e
-      raise Error, e.message
-    end
-
     # Two scenarios under one id leave a marker with nothing to resolve to,
     # which is a comparison that could not be made rather than a difference.
     def self.refuse_ambiguity(features)
