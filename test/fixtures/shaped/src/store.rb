@@ -17,3 +17,9 @@ class Store
     default
   end
 end
+
+Store::Held = Data.define(:held) do
+  def unwrapped(fallback)
+    fallback
+  end
+end

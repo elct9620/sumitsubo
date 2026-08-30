@@ -115,7 +115,11 @@ Dir.chdir(back)
 # is defined twice with two shapes — the second of which the specification does
 # not describe. `Store#write` is defined as registered, and `Store` is a class
 # reopened without changing what it is: both say nothing.
-# @behavior V-017 V-018
+#
+# `Store::Held` is registered through the class body a call writes, which the
+# signature spells as the source does. It is compared like any other: the
+# constant is the scope holding the contract, and the method inside it drifted.
+# @behavior V-017 V-018 V-028
 puts "--- source whose shape drifted from the contract ---"
 Dir.chdir("test/fixtures/shaped")
 puts "exit=#{cli.run(["verify"])}"

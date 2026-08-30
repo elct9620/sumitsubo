@@ -237,6 +237,15 @@ in the order they happened.
 | When | the run verifies |
 | Then | nothing answers for it |
 
+## `V-028` A contract registered through a class body a call writes
+
+| Step | Statement |
+| --- | --- |
+| Given | a project whose signature writes a constant assigned a call carrying a block |
+| Given | source declaring the method inside it with another shape |
+| When | the run verifies |
+| Then | it answers as a difference, the way one written with a class body would |
+
 ## `V-027` An include a Markdown specification writes that covers no file
 
 | Step | Statement |

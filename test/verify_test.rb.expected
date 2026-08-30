@@ -61,9 +61,10 @@ exit=2
 exit=1
 --- source whose shape drifted from the contract ---
 .spec/contract/api.md:14 Store.open takes (path, mode?) where the specification registers (path)
+.spec/contract/api.md:41 Store::Held#unwrapped takes (fallback) where the specification registers ()
 src/store.rb:6 Store#read takes (key) here and (key, default) at src/store.rb:16
 src/store.rb:16 Store#read takes (key, default) here and (key) at src/store.rb:6
-3 differences
+4 differences
 exit=1
 --- a definition that lost the word its contracts were claimed with ---
 .spec/contract/routes.md:9 registers GET /users/:id with no signature, so nothing says how its name is spelled; sumi help contract has the form

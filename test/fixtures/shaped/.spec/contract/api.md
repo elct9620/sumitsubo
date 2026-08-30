@@ -37,3 +37,12 @@ class Store
   end
 end
 ```
+
+## `Store::Held#unwrapped`
+
+```ruby
+Store::Held = Data.define(:held) do
+  def unwrapped
+  end
+end
+```
