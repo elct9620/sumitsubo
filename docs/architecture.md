@@ -1,7 +1,11 @@
 # Architecture
 
-Where sumitsubo is going: a specification is read into one place, source into
-another, and what the comparison says into a third.
+A specification is read into one place, source into another, and what the
+comparison says into a third.
+
+Revisit this when a fourth stage appears — anything a run does that is not
+reading a specification, scanning source, or answering — or when a mechanism
+needs a source none of the three below can be read as.
 
 ## Layers
 
@@ -25,8 +29,8 @@ edge and handed in.
 │          │  │ Prose readings │─►│         │          │  │              │
 └──────────┘  │ + node shaping │  │ ╔═══════▼════════╗ │  │              │
               ├────────────────┤  │ ║    Source      ║─┼─►│  Source::*   │
-┌──────────┐  │ walk (reach)   │─►│ ║  Repository    ║ │  │  Place/Shape │
-│filesystem│◄─┤                │  │ ╚═══════╤════════╝ │  │              │
+┌──────────┐  │ walk (reach)   │─►│ ║  Repository    ║ │  │              │
+│filesystem│◄─┤                │  │ ╚═══════╤════════╝ │  │  Place       │
 └──────────┘  └────────────────┘  │         │          │  │              │
                                   │ Mechanism×3        │  │              │
 ┌──────────┐  ┌────────────────┐  │   └► the checks    │  │              │
@@ -116,16 +120,15 @@ Glossary and Contract answer for the implementation, Behavior for the tests.
  behavior/glossary.md ────────────────────►   test/glossary_test.rb
  behavior/markdown.md ────────────────────►   test/{grammar,markdown}_test.rb
  behavior/…            ────────────────────►  test/…_test.rb
-   twelve features, reaching fourteen of       never the implementation
-   the fifteen tests                           test/patterns_test.rb is
-                                               declared by no feature, and
-                                               no check can say so
+   thirteen features, reaching all             never the implementation
+   fifteen tests
 ```
 
 ## The checks, grouped by the Source they consume
 
 A check is named for what it finds, so one word is one check and one check is
-one word however many mechanisms run it.
+one word however many mechanisms run it. The mechanism running it puts its own
+word in front, which is the whole of `<mechanism>/<check>`.
 
 ```
                               │ Source::   │ Source::    │ Source::
@@ -142,6 +145,9 @@ one word however many mechanisms run it.
 ──────────────────────────────┼────────────┼─────────────┼─────────────
  the source points at         │     —      │ unresolved  │     —
  nothing                      │            │ (C, B) ✕    │
+──────────────────────────────┼────────────┼─────────────┼─────────────
+ the source names nothing     │     —      │ nameless    │     —
+ at all                       │            │ (C) ✕       │
 ──────────────────────────────┼────────────┼─────────────┼─────────────
  it points at something,      │     —      │ misplaced   │     —
  outside the boundary         │            │ (C, B) ✕    │
@@ -169,8 +175,9 @@ Every file has one place, and where it sits is what says what it is.
 ├─ sumitsubo.rb            what `require "sumitsubo"` reaches, which is the
 │                          inner layer and nothing else
 ├─ sumitsubo/
-│  ├─ the words            entities; they require nothing
-│  │  specification.rb  source.rb  finding.rb  error.rb  version.rb
+│  ├─ the words            entities; they reach nothing outward
+│  │  specification.rb  source.rb  finding.rb  check.rb
+│  │  error.rb          version.rb
 │  │  place.rb            the one place a path a reader is handed is made:
 │  │                      a place in a file, or the file alone
 │  │
@@ -192,10 +199,14 @@ Every file has one place, and where it sits is what says what it is.
 │  │  source/marker.rb                             answers Source::Claim
 │  │  source/scope.rb  source/patterns.rb          reach
 │  │
+│  ├─ what a specification means to its own mechanism
+│  │  glossary.rb  contract.rb  behavior.rb
+│  │
 │  ├─ the comparison
 │  │  mechanism.rb                                 the register
+│  │  mechanism/seed.rb
 │  │  mechanism/{glossary,contract,behavior}.rb    name, seed, checks, wording
-│  │  check/{region,claim,declaration,reach}.rb    ten checks
+│  │  check/{region,claim,declaration,reach}.rb    eleven checks
 │  │
 │  ├─ (3) the answer leaves
 │  │  finding/repository.rb                        collect, order, count, code
