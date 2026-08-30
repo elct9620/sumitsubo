@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo/glossary"
+require "sumitsubo/check/region"
 require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
@@ -62,8 +63,8 @@ puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"]
 # which line declares.
 # @behavior G-008
 puts "--- what the specification spells is not a use of it ---"
-spelled = Sumitsubo::Glossary::Mention.new(".spec/glossary.md", 18, "Order", "Purchase", "Order is what the domain calls it.")
-used = Sumitsubo::Glossary::Mention.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
+spelled = Sumitsubo::Glossary::Mention.new(path: ".spec/glossary.md", line: 18, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
+used = Sumitsubo::Glossary::Mention.new(path: "app/order.rb", line: 2, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
 Sumitsubo::Glossary.uses([spelled, used], vocabulary).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}: #{mention.reason}"
 end
@@ -73,12 +74,15 @@ end
 # @behavior G-009 G-010
 puts "--- a mention the specification set aside, and one it did not ---"
 ignored = reads("ignored.md")
-aside = Sumitsubo::Glossary::Mention.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
-kept = Sumitsubo::Glossary::Mention.new("app/other.rb", 3, "Order", "Purchase", "Order is what the domain calls it.")
-Sumitsubo::Glossary.standing([aside, kept], ignored, Pathname.pwd).each do |finding|
+aside = Sumitsubo::Glossary::Mention.new(path: "app/order.rb", line: 2, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
+kept = Sumitsubo::Glossary::Mention.new(path: "app/other.rb", line: 3, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
+set_aside = Sumitsubo::Glossary.set_aside(ignored)
+Sumitsubo::Check::Region::Rejected.new(Sumitsubo::Mechanism::Glossary::REJECTED)
+  .run([aside, kept], set_aside, Pathname.pwd).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
-Sumitsubo::Glossary.stale([aside, kept], ignored).each do |finding|
+Sumitsubo::Check::Region::Stale.new(Sumitsubo::Mechanism::Glossary::STALE)
+  .run([aside, kept], set_aside, ignored.path).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 

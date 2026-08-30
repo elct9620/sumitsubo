@@ -2,6 +2,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/place"
 require "sumitsubo/finding"
+require "sumitsubo/check"
 require "sumitsubo/source/scope"
 require "sumitsubo/source/repository"
 
@@ -20,13 +21,6 @@ module Sumitsubo
     # later mechanism claims its own word rather than sharing this one.
     MARKER = "@behavior"
 
-    # The checks this specification answers for, so a finding is told apart by
-    # which one found it rather than by its wording.
-    BARREN = "behavior/barren"
-    UNCOVERED = "behavior/uncovered"
-    MISPLACED = "behavior/misplaced"
-    UNRESOLVED = "behavior/unresolved"
-
     class Error < Sumitsubo::Error; end
 
     # A feature is a Specification and its scenarios are Statements: an id is
@@ -38,7 +32,19 @@ module Sumitsubo
 
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.
-    Claim = Struct.new(:path, :line, :id)
+    class Claim < Data.define(:path, :line, :id)
+      def key
+        id
+      end
+
+      def place
+        Place.new(path: path, line: line)
+      end
+
+      def said
+        id
+      end
+    end
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -74,22 +80,10 @@ module Sumitsubo
       found.uniq.sort
     end
 
-    # Every include a feature writes that covers no file. Its scenarios are
-    # then compared against nothing, and every one of them answers as claimed
-    # nowhere — which is why saying so is worth a finding of its own.
-    #
-    # Where an include was written is asked of the parser that read the
-    # specification, since only that one knows how its format spells a glob.
-    def self.barren(features, base, exclusion, specifications)
-      found = []
-      features.each do |feature|
-        empty = Source::Scope.barren(base, feature.includes, exclusion)
-        next if empty.empty?
-
-        spelled = specifications.spelling(feature.path)
-        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, feature.path, pattern, spelled[pattern])) }
-      end
-      found
+    # What each feature's includes cover, each answering at the feature that
+    # wrote them.
+    def self.covers(features)
+      features.map { |feature| Check::Covers.new(path: feature.path, patterns: feature.includes) }
     end
 
     # The ids one marker line carries. A claim is data rather than prose, so a
@@ -105,7 +99,22 @@ module Sumitsubo
     def self.claimed_in(reach, source)
       found = []
       source.claims(scope(reach), [MARKER]).each do |claim|
-        ids_in(claim.text).each { |id| found.push(Claim.new(claim.path, claim.line, id)) }
+        ids_in(claim.text).each { |id| found.push(Claim.new(path: claim.path, line: claim.line, id: id)) }
+      end
+      found
+    end
+
+    # Every scenario a claim could name, said the way a claim says it.
+    def self.stated_in(features)
+      found = []
+      features.each do |feature|
+        feature.statements.each do |scenario|
+          found.push(Check::Stated.new(
+            key: scenario.key,
+            place: Place.of(scenario.path, scenario.line),
+            said: "#{MARKER} #{scenario.key}"
+          ))
+        end
       end
       found
     end
@@ -113,19 +122,6 @@ module Sumitsubo
     # The claims that can witness: each sitting among the files the feature
     # declaring its scenario answers for. Filtering once is what leaves the
     # reading below unchanged — a scenario is claimed by the claims that count.
-    def self.witnessing(features, claims, reach)
-      declaring = declaring_in(features)
-      found = []
-      claims.each do |claim|
-        spec = declaring[claim.id]
-        next if spec.nil?
-        next if reach[spec][claim.path].nil?
-
-        found.push(claim)
-      end
-      found
-    end
-
     # A claim naming a scenario the feature declaring it does not reach. The
     # id resolves, so neither side is wrong about the behavior; what could not
     # be made is the comparison, since nothing among the files that feature
@@ -133,26 +129,6 @@ module Sumitsubo
     #
     # Saying nothing about it would leave the scenario reported as claimed
     # nowhere with the claim in plain sight.
-    def self.misplaced(features, claims, reach)
-      declaring = declaring_in(features)
-      found = []
-      claims.each do |claim|
-        spec = declaring[claim.id]
-        next if spec.nil?
-        next unless reach[spec][claim.path].nil?
-
-        # Named by the feature that declares the scenario rather than by its
-        # includes: the fix is written there, and a feature reaching dozens of
-        # files would otherwise spell all of them at the reader.
-        found.push(Finding.new(
-          rule: MISPLACED, difference: false,
-          place: Place.new(path: claim.path, line: claim.line),
-          message: "#{claim.id} is claimed outside what #{Place.file(spec)} includes"
-        ))
-      end
-      found
-    end
-
     # Which specification declares each scenario, so a claim can be asked
     # whether it sits where that specification can see it. One id belongs to
     # one feature, which is what refuse_ambiguity guarantees.
@@ -167,51 +143,10 @@ module Sumitsubo
     # A scenario nothing claims: the specification says a behavior should be
     # implemented and no claim that could witness it does, which is a
     # difference between the two sides.
-    def self.uncovered(features, claims)
-      claimed = {}
-      claims.each { |claim| claimed[claim.id] = true }
-
-      found = []
-      features.each do |feature|
-        feature.statements.each do |scenario|
-          next unless claimed[scenario.key].nil?
-
-          # It answers at the specification that declares it, which is also
-          # where the include that bounded the search is written, so the
-          # message names neither.
-          found.push(Finding.new(
-            rule: UNCOVERED, difference: true,
-            place: Place.of(scenario.path, scenario.line),
-            message: "#{MARKER} #{scenario.key} is claimed nowhere this specification includes"
-          ))
-        end
-      end
-      found
-    end
-
     # A claim resolving to no scenario. Nothing on the specification side can
     # confirm it — either the specification is not there to confirm against, or
     # the behavior was removed and this claim should have gone with it. Both
     # are comparisons that could not be made rather than differences.
-    def self.unresolved(features, claims)
-      declared = {}
-      features.each do |feature|
-        feature.statements.each { |scenario| declared[scenario.key] = true }
-      end
-
-      found = []
-      claims.each do |claim|
-        next unless declared[claim.id].nil?
-
-        found.push(Finding.new(
-          rule: UNRESOLVED, difference: false,
-          place: Place.new(path: claim.path, line: claim.line),
-          message: "#{claim.id} resolves to no scenario"
-        ))
-      end
-      found
-    end
-
     # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
     # Two scenarios under one id leave a marker with nothing to resolve to,

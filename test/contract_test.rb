@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/contract"
+require "sumitsubo/check/claim"
+require "sumitsubo/check/declaration"
 require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
@@ -53,9 +55,19 @@ def loaded(directory, parsers = PARSERS)
   definitions
 end
 
+def undefined(definitions, declared)
+  Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::Defined::UNDEFINED)
+    .run(Sumitsubo::Contract.stated_names(definitions), Sumitsubo::Contract.declared_in(declared))
+end
+
+def unclaimed(definitions, claims)
+  Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Contract::Claimed::UNCLAIMED)
+    .run(Sumitsubo::Contract.stated_in(definitions), claims)
+end
+
 def claim(path, line, keyword, name)
   Sumitsubo::Contract::Claim.new(
-    path, line, Sumitsubo::Contract::Name.new(keyword, name)
+    path: path, line: line, contract: Sumitsubo::Contract::Name.new(keyword, name)
   )
 end
 
@@ -98,14 +110,16 @@ astray = [claim("test/fixtures/contract/app/controller.rb", 4, "@command", "init
 
 # @behavior T-036
 puts "--- a contract claimed only from outside its own definition ---"
-witnessing = Sumitsubo::Contract.witnessing(definitions, astray, reach)
-Sumitsubo::Contract.unclaimed(definitions, witnessing).each do |finding|
+registering = Sumitsubo::Contract.registering_claims(definitions)
+witnessing = Sumitsubo::Check::Claim.witnessing(astray, registering, reach)
+unclaimed(definitions, witnessing).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-037
 puts "--- and the claim that could not implement it ---"
-Sumitsubo::Contract.misplaced(definitions, astray, reach).each do |finding|
+Sumitsubo::Check::Claim::Misplaced.new(Sumitsubo::Mechanism::Contract::Claimed::MISPLACED)
+  .run(astray, registering, reach).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
@@ -143,8 +157,8 @@ fails { loaded("#{FIXTURE}/twice") }
 # internal keeps it out of is the document, not the comparison.
 # @behavior T-016 T-018
 puts "--- an interface the syntax tree does not define ---"
-Sumitsubo::Contract.undefined(
-  loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Source::Declaration.new("src/commands.rb", 3, "init", shaped)] }
+undefined(
+  loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Source::Declaration.new(path: "src/commands.rb", line: 3, name: "init", shape: shaped)] }
 ).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
@@ -158,8 +172,8 @@ puts "--- a declaration outside the definition registering its name ---"
 spelled = loaded("#{FIXTURE}/nomarker")
 Sumitsubo::Contract.defining(
   spelled,
-  { "ruby" => [Sumitsubo::Source::Declaration.new("#{FIXTURE}/src/commands.rb", 3, "verify", shaped),
-               Sumitsubo::Source::Declaration.new("#{FIXTURE}/app/controller.rb", 9, "verify", shaped)] },
+  { "ruby" => [Sumitsubo::Source::Declaration.new(path: "#{FIXTURE}/src/commands.rb", line: 3, name: "verify", shape: shaped),
+               Sumitsubo::Source::Declaration.new(path: "#{FIXTURE}/app/controller.rb", line: 9, name: "verify", shape: shaped)] },
   Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
 ).each do |language, names|
   names.each { |name| puts "  #{language} #{name.path}:#{name.line} #{name.name}" }
@@ -176,19 +190,23 @@ claims = [
 
 # @behavior T-009
 puts "--- an interface nothing claims ---"
-Sumitsubo::Contract.unclaimed(definitions, claims).each do |finding|
+unclaimed(definitions, claims).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-010 T-011
 puts "--- a claim resolving to no contract, and one naming none at all ---"
-Sumitsubo::Contract.unresolved(definitions, claims).each do |finding|
+(Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Contract::Claimed::UNRESOLVED, "contract")
+   .run(Sumitsubo::Contract.named(claims), Sumitsubo::Contract.stated_in(definitions)) +
+ Sumitsubo::Check::Claim::Nameless.new(Sumitsubo::Mechanism::Contract::Claimed::NAMELESS, "contract")
+   .run(Sumitsubo::Contract.nameless(claims))).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-012
 puts "--- one contract claimed in two places ---"
-Sumitsubo::Contract.duplicated(definitions, claims).each do |finding|
+Sumitsubo::Check::Claim::Duplicated.new(Sumitsubo::Mechanism::Contract::Claimed::DUPLICATED)
+  .run(claims, Sumitsubo::Contract.stated_in(definitions)).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
@@ -199,7 +217,7 @@ end
 
 def declares(line, name, params)
   shape = params.nil? ? nil : Sumitsubo::Source::Shape.new(params: params)
-  Sumitsubo::Source::Declaration.new("src/store.rb", line, name, shape)
+  Sumitsubo::Source::Declaration.new(path: "src/store.rb", line: line, name: name, shape: shape)
 end
 
 registered = loaded("#{FIXTURE}/params")
@@ -220,12 +238,14 @@ end
 # scope with no call to describe, so only `Store.open` answers.
 # @behavior T-020 T-021
 puts "--- an interface defined with another shape ---"
-Sumitsubo::Contract.mismatched(registered, { "ruby" => [
+Sumitsubo::Check::Declaration::Mismatched.new(Sumitsubo::Mechanism::Contract::Defined::MISMATCHED)
+  .run(Sumitsubo::Contract.registered_in(registered, SOURCE),
+       Sumitsubo::Contract.declared_in({ "ruby" => [
   declares(2, "Store.open", [takes("path")]),
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(9, "Store#write", []),
   declares(12, "Store", nil)
-] }, SOURCE).each do |finding|
+] })).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
@@ -239,7 +259,9 @@ twice = { "ruby" => [
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(24, "Store#read", [takes("key", "keyword")])
 ] }
-Sumitsubo::Contract.conflicting(registered, twice).each do |finding|
+Sumitsubo::Check::Declaration::Conflicting.new(Sumitsubo::Mechanism::Contract::Defined::CONFLICTING)
+  .run(Sumitsubo::Contract.spelled_names(registered), Sumitsubo::Contract.declared_in(twice))
+  .each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
@@ -281,8 +303,8 @@ Sumitsubo::Contract.readings_in(
 # the other language answered does not define it, however alike they spell.
 # @behavior T-041
 puts "--- a declaration another language spells alike ---"
-Sumitsubo::Contract.undefined(
-  spelling, { "ruby" => [Sumitsubo::Source::Declaration.new("src/store.rb", 2, "Store::Handle", nil)] }
+undefined(
+  spelling, { "ruby" => [Sumitsubo::Source::Declaration.new(path: "src/store.rb", line: 2, name: "Store::Handle", shape: nil)] }
 ).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end

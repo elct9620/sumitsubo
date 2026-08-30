@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/behavior"
+require "sumitsubo/check/claim"
+require "sumitsubo/check/reach"
 require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/source/scope"
@@ -107,12 +109,14 @@ puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
 # I-001 is declared by Init, whose include reaches only its own test. A claim
 # of it from the file next door names the scenario without being able to
 # witness it, so the scenario stands unclaimed.
-claims = [Sumitsubo::Behavior::Claim.new("test/fixtures/behavior/test/verify_test.rb", 9, "I-001")]
+claims = [Sumitsubo::Behavior::Claim.new(path: "test/fixtures/behavior/test/verify_test.rb", line: 9, id: "I-001")]
 
 # @behavior B-012
 puts "--- a scenario claimed only from outside its own feature ---"
-witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
-Sumitsubo::Behavior.uncovered(features, witnessing).each do |finding|
+declaring = Sumitsubo::Behavior.declaring_in(features)
+witnessing = Sumitsubo::Check::Claim.witnessing(claims, declaring, reach)
+Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Behavior::UNCLAIMED)
+  .run(Sumitsubo::Behavior.stated_in(features), witnessing).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
@@ -131,13 +135,15 @@ end
 # @behavior B-015
 puts "--- an include covering no file answers at the line that wrote it ---"
 unreached = reads("test/fixtures/behavior/nowhere")
-Sumitsubo::Behavior.barren(unreached, Pathname.new("test/fixtures/behavior"), [],
-                           Sumitsubo::Specification::Repository.new(PARSERS, nil)).each do |finding|
+Sumitsubo::Check::Reach::Barren.new(Sumitsubo::Mechanism::Behavior::BARREN)
+  .run(Sumitsubo::Behavior.covers(unreached), Pathname.new("test/fixtures/behavior"), [],
+       Sumitsubo::Specification::Repository.new(PARSERS, nil)).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior B-013
 puts "--- and the claim that could not witness it ---"
-Sumitsubo::Behavior.misplaced(features, claims, reach).each do |finding|
+Sumitsubo::Check::Claim::Misplaced.new(Sumitsubo::Mechanism::Behavior::MISPLACED)
+  .run(claims, declaring, reach).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end

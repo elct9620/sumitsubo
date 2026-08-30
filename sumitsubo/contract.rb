@@ -3,6 +3,7 @@ require "sumitsubo/error"
 require "sumitsubo/place"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
+require "sumitsubo/check"
 require "sumitsubo/source"
 require "sumitsubo/source/repository"
 require "sumitsubo/specification"
@@ -27,17 +28,6 @@ module Sumitsubo
   # reach this file through `require "sumitsubo"` alone.
   module Contract
     DIRECTORY = "contract"
-
-    # The checks this specification answers for, so a finding is told apart by
-    # which one found it rather than by its wording.
-    BARREN = "contract/barren"
-    UNCLAIMED = "contract/unclaimed"
-    UNDEFINED = "contract/undefined"
-    DUPLICATED = "contract/duplicated"
-    CONFLICTING = "contract/conflicting"
-    MISMATCHED = "contract/mismatched"
-    MISPLACED = "contract/misplaced"
-    UNRESOLVED = "contract/unresolved"
 
     class Error < Sumitsubo::Error; end
 
@@ -83,7 +73,19 @@ module Sumitsubo
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, and a contract is named by the interface itself, so the
     # whole of that is the name it carries.
-    Claim = Data.define(:path, :line, :contract)
+    class Claim < Data.define(:path, :line, :contract)
+      def key
+        contract
+      end
+
+      def place
+        Place.new(path: path, line: line)
+      end
+
+      def said
+        contract.spoken
+      end
+    end
 
     # The mechanism names its own directory; where the root sits is the tool's
     # to say, so it arrives as an argument.
@@ -120,22 +122,10 @@ module Sumitsubo
       found.uniq.sort
     end
 
-    # Every include a definition writes that covers no file. Its interfaces
-    # are then compared against nothing, and every one of them answers as
-    # claimed nowhere — which is why saying so is worth a finding of its own.
-    #
-    # Where an include was written is asked of the parser that read the
-    # specification, since only that one knows how its format spells a glob.
-    def self.barren(definitions, base, exclusion, specifications)
-      found = []
-      definitions.each do |definition|
-        empty = Source::Scope.barren(base, definition.includes, exclusion)
-        next if empty.empty?
-
-        spelled = specifications.spelling(definition.path)
-        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, definition.path, pattern, spelled[pattern])) }
-      end
-      found
+    # What each definition's includes cover, each answering at the definition
+    # that wrote them.
+    def self.covers(definitions)
+      definitions.map { |one| Check::Covers.new(path: one.path, patterns: one.includes) }
     end
 
     # The word source claims this definition's contracts with, or nil where
@@ -206,7 +196,7 @@ module Sumitsubo
     def self.claimed_in(definitions, reach, source)
       found = []
       source.claims(scope(reach), keywords(definitions)).each do |claim|
-        found.push(Claim.new(claim.path, claim.line, Name.new(claim.keyword, claim.text)))
+        found.push(Claim.new(path: claim.path, line: claim.line, contract: Name.new(claim.keyword, claim.text)))
       end
       found
     end
@@ -246,23 +236,46 @@ module Sumitsubo
       claimed(definitions).map { |definition| marker_of(definition) }.uniq.sort
     end
 
-    # The claims that can implement what they name: each sitting among the
-    # files the definition registering it answers for. Filtering once is what
-    # leaves the readings below unchanged — an interface is claimed, or
-    # claimed twice, by the claims that count.
-    def self.witnessing(definitions, claims, reach)
-      registering = registering_claims(definitions)
+    # Every contract a claim could name, said the way a claim says it. Only
+    # the definitions source claims are here: the other reading makes none.
+    def self.stated_in(definitions)
       found = []
-      claims.each do |claim|
-        spec = registering[claim.contract]
-        next if spec.nil?
-        next if reach[spec][claim.path].nil?
-
-        found.push(claim)
+      claimed(definitions).each do |definition|
+        definition.statements.each do |interface|
+          name = Name.new(marker_of(definition), interface.key)
+          found.push(Check::Stated.new(
+            key: name, place: Place.of(interface.path, interface.line), said: name.spoken
+          ))
+        end
       end
       found
     end
 
+    # A claim carrying nothing after the marker names nothing at all, which is
+    # a different thing to say than a name that resolves to none, so the two
+    # are answered apart.
+    def self.nameless(claims)
+      found = []
+      claims.each do |claim|
+        next unless claim.contract.bare.empty?
+
+        found.push(Check::Made.new(
+          key: claim.key, place: claim.place, said: claim.contract.namespace
+        ))
+      end
+      found
+    end
+
+    def self.named(claims)
+      found = []
+      claims.each { |claim| found.push(claim) unless claim.contract.bare.empty? }
+      found
+    end
+
+    # The claims that can implement what they name: each sitting among the
+    # files the definition registering it answers for. Filtering once is what
+    # leaves the readings below unchanged — an interface is claimed, or
+    # claimed twice, by the claims that count.
     # A claim naming a contract the definition registering it does not reach.
     # The name resolves, so neither side is wrong about the interface; what
     # could not be made is the comparison, since nothing among the files that
@@ -270,26 +283,6 @@ module Sumitsubo
     #
     # Saying nothing about it would leave the interface reported as claimed
     # nowhere with the claim in plain sight.
-    def self.misplaced(definitions, claims, reach)
-      registering = registering_claims(definitions)
-      found = []
-      claims.each do |claim|
-        spec = registering[claim.contract]
-        next if spec.nil?
-        next unless reach[spec][claim.path].nil?
-
-        # Named by the definition that registers the contract rather than by
-        # its includes: the fix is written there, and a definition reaching
-        # dozens of files would otherwise spell all of them at the reader.
-        found.push(Finding.new(
-          rule: MISPLACED, difference: false,
-          place: Place.new(path: claim.path, line: claim.line),
-          message: "#{claim.contract.spoken} is claimed outside what #{Place.file(spec)} includes"
-        ))
-      end
-      found
-    end
-
     # Which specification registers each contract, so a claim can be asked
     # whether it sits where that specification can see it. One pair belongs to
     # one definition, which is what refuse_ambiguity guarantees.
@@ -305,29 +298,6 @@ module Sumitsubo
     # An interface nothing claims: the specification registers it and no source
     # the definition reaches says it was implemented, which is a difference
     # between the two sides.
-    def self.unclaimed(definitions, claims)
-      made = {}
-      claims.each { |claim| made[claim.contract] = true }
-
-      found = []
-      claimed(definitions).each do |definition|
-        definition.statements.each do |interface|
-          name = Name.new(marker_of(definition), interface.key)
-          next unless made[name].nil?
-
-          # It answers at the specification that registers it, which is also
-          # where the include that bounded the search is written, so the
-          # message names neither.
-          found.push(Finding.new(
-            rule: UNCLAIMED, difference: true,
-            place: Place.of(interface.path, interface.line),
-            message: "#{name.spoken} is claimed nowhere this specification includes"
-          ))
-        end
-      end
-      found
-    end
-
     # The declarations that can define what they name: each sitting among the
     # files the definition registering that name answers for. Filtering once
     # is what leaves the three readings below unchanged.
@@ -383,32 +353,6 @@ module Sumitsubo
     # An interface the syntax tree does not define. The specification
     # registers it and no source that definition reaches defines it, which is
     # the same difference an unclaimed interface is — the other reading of it.
-    def self.undefined(definitions, declared)
-      grouped = declared_in(declared)
-
-      found = []
-      defined(definitions).each do |definition|
-        definition.statements.each do |interface|
-          name = Name.new(language_of(definition, interface), interface.key)
-          next unless grouped[name].nil?
-
-          # The caveat rides every one of these because the tree cannot tell
-          # two cases apart: a definition a macro or a mixin brings into being
-          # is missing from it exactly as an unwritten one is, and rewriting
-          # that one fixes nothing. Which constructs those are is each
-          # language's own, so this names the shape and `sumi help contract`
-          # names them.
-          found.push(Finding.new(
-            rule: UNDEFINED, difference: true,
-            place: Place.of(interface.path, interface.line),
-            message: "#{name.spoken} is defined nowhere this specification " \
-                     "includes, and one the reading cannot see never is"
-          ))
-        end
-      end
-      found
-    end
-
     # A registered interface defined twice with two shapes. A language that
     # lets a type be reopened or implemented in pieces says nothing while only
     # the name is compared: the
@@ -418,26 +362,6 @@ module Sumitsubo
     #
     # Definitions agreeing on their shape are one way in, which is what leaves
     # ordinary reopening saying nothing still.
-    def self.conflicting(definitions, declared)
-      grouped = declared_in(declared)
-
-      found = []
-      spelled_names(definitions).each do |spelled|
-        group = grouped[spelled]
-        next if group.nil? || group.length < 2 || agreed?(group)
-
-        paired(group).each do |pair|
-          found.push(Finding.new(
-            rule: CONFLICTING, difference: true,
-            place: Place.new(path: pair[0].path, line: pair[0].line),
-            message: "#{pair[0].name} takes #{spelled(pair[0].shape)} here and " \
-                     "#{spelled(pair[1].shape)} at #{pair[1].path}:#{pair[1].line}"
-          ))
-        end
-      end
-      found
-    end
-
     # The shape a contract registers, read out of the signature it was written
     # with. The reading that answers what source declares is the one that
     # answers this, so a shape no definition could have is a shape no
@@ -459,60 +383,11 @@ module Sumitsubo
     # An interface defined with a shape other than the one registered. Where
     # the definitions disagree among themselves that is already answered, and
     # comparing the contract against one of them would add nothing.
-    def self.mismatched(definitions, declared, source)
-      grouped = declared_in(declared)
-
-      found = []
-      defined(definitions).each do |definition|
-        definition.statements.each do |interface|
-          registered = shape_of(definition, interface, source)
-          next if registered.nil?
-
-          group = grouped[Name.new(language_of(definition, interface), interface.key)]
-          next if group.nil? || !agreed?(group)
-          next if registered == group[0].shape
-
-          # Both shapes are said, because what a reader chooses between is the
-          # two of them; the name is spelled alone, since the reading this
-          # comes from shows no word in front of it.
-          found.push(Finding.new(
-            rule: MISMATCHED, difference: true,
-            place: Place.of(interface.path, interface.line),
-            message: "#{interface.key} takes #{spelled(group[0].shape)} " \
-                     "where the specification registers #{spelled(registered)}"
-          ))
-        end
-      end
-      found
-    end
-
     # A claim resolving to no interface. Nothing on the specification side can
     # confirm it, which is a comparison that could not be made rather than a
     # difference.
-    def self.unresolved(definitions, claims)
-      registered = registered_in(definitions)
-
-      found = []
-      claims.each do |claim|
-        next unless registered[claim.contract].nil?
-
-        found.push(Finding.new(
-          rule: UNRESOLVED, difference: false,
-          place: Place.new(path: claim.path, line: claim.line),
-          message: unresolved_message(claim.contract)
-        ))
-      end
-      found
-    end
-
     # A claim carrying nothing after the marker names no contract at all,
     # which is a different thing to say than a name that resolves to none.
-    def self.unresolved_message(contract)
-      return "#{contract.namespace} names no contract" if contract.bare.empty?
-
-      "#{contract.spoken} resolves to no contract"
-    end
-
     # One interface claimed in two places. A contract is the way in, so a
     # second way in is a difference about the code: the specification is
     # unambiguous and the code grew an entrance it does not describe.
@@ -520,45 +395,8 @@ module Sumitsubo
     # Only resolved claims are compared. Two claims on a name nothing declares
     # are already two findings, and saying they agree with each other adds
     # nothing.
-    def self.duplicated(definitions, claims)
-      registered = registered_in(definitions)
-
-      seen = {}
-      claims.each do |claim|
-        spelled = claim.contract
-        next if registered[spelled].nil?
-
-        group = seen[spelled]
-        if group.nil?
-          group = []
-          seen[spelled] = group
-        end
-        group.push(claim)
-      end
-
-      found = []
-      seen.keys.sort.each do |spelled|
-        group = seen[spelled]
-        next if group.length < 2
-
-        paired(group).each do |pair|
-          found.push(Finding.new(
-            rule: DUPLICATED, difference: true,
-            place: Place.new(path: pair[0].path, line: pair[0].line),
-            message: "#{pair[0].contract.spoken} is claimed at " \
-                     "#{pair[1].path}:#{pair[1].line} as well"
-          ))
-        end
-      end
-      found
-    end
-
     # What a caller would have to write. A scope has no call to describe at
     # all, which is not the same as a method taking nothing.
-    def self.spelled(shape)
-      shape.nil? ? "nothing" : shape.spoken
-    end
-
     # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
     # The marker is the namespace, so two files may share one word and one
@@ -606,6 +444,42 @@ module Sumitsubo
       found
     end
 
+    # What the syntax tree reading registers: the name each interface is held
+    # under, and the shape the signature says a caller writes. A signature no
+    # definition could have is a shape no specification can register, so a
+    # contract without one registers nothing to compare.
+    def self.registered_in(definitions, source)
+      found = []
+      defined(definitions).each do |definition|
+        definition.statements.each do |interface|
+          shape = shape_of(definition, interface, source)
+          next if shape.nil?
+
+          found.push(Check::Registered.new(
+            key: Name.new(language_of(definition, interface), interface.key),
+            place: Place.of(interface.path, interface.line),
+            said: interface.key, shape: shape
+          ))
+        end
+      end
+      found
+    end
+
+    # Every name the syntax tree reading registers, said the way the other
+    # reading says one.
+    def self.stated_names(definitions)
+      found = []
+      defined(definitions).each do |definition|
+        definition.statements.each do |interface|
+          name = Name.new(language_of(definition, interface), interface.key)
+          found.push(Check::Stated.new(
+            key: name, place: Place.of(interface.path, interface.line), said: name.spoken
+          ))
+        end
+      end
+      found
+    end
+
     # The names the syntax tree reading registers, each under the language
     # spelling it, in an order that leaves no ties.
     def self.spelled_names(definitions)
@@ -621,29 +495,12 @@ module Sumitsubo
     # Each of a group answers once, naming the next one round, so two of them
     # read as two lines pointing at each other rather than as every pairing of
     # the places involved.
-    def self.paired(group)
-      group.zip(group.rotate)
-    end
-
     # Whether every definition of one name describes the same call. What a
     # reading answers is a value, so two shapes asking a caller for the same
     # thing are the same shape — a scope carrying no parameters at all agrees
     # with itself, and one taking none does not agree with it.
-    def self.agreed?(group)
-      shape = group[0].shape
-      group.all? { |declared| declared.shape == shape }
-    end
-
     # What a claim can resolve against. Only the marker reading makes claims,
     # so only its definitions are here.
-    def self.registered_in(definitions)
-      registered = {}
-      claimed(definitions).each do |definition|
-        definition.statements.each { |interface| registered[Name.new(marker_of(definition), interface.key)] = true }
-      end
-      registered
-    end
-
     def self.at(interface)
       Place.of(interface.path, interface.line).spoken
     end

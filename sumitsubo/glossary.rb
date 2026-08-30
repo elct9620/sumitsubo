@@ -1,6 +1,7 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/finding"
+require "sumitsubo/check"
 require "sumitsubo/source/scope"
 require "sumitsubo/source/repository"
 require "sumitsubo/specification"
@@ -13,12 +14,6 @@ module Sumitsubo
   # no reference line to verify from at all.
   module Glossary
     FILE = "glossary.md"
-
-    # The checks this specification answers for, so a finding is told apart by
-    # which one found it rather than by its wording.
-    BARREN = "glossary/barren"
-    REJECTED = "glossary/rejected"
-    STALE = "glossary/stale"
 
     # What a project starts a vocabulary from. A title and nothing else is a
     # vocabulary that checks nothing, which is what a root nobody has written
@@ -45,11 +40,17 @@ module Sumitsubo
     # it is a use of the word or the specification spelling it, and before an
     # ignore has been given the chance to set it aside. Its path is relative to
     # the base, which is what an ignore names it by.
-    Mention = Struct.new(:path, :line, :term, :used, :reason)
+    class Mention < Data.define(:path, :line, :term, :used, :reason)
+      # What an ignore has to name to set this aside, which is a mention
+      # without its reason: the reason is the specification's own.
+      def key
+        "#{term} #{used} #{path}:#{line}"
+      end
+    end
 
     # One line a rejection does not answer for, as the specification wrote it,
     # with what it takes to say so where it sits.
-    Ignore = Struct.new(:line, :at, :term, :used)
+    Ignore = Data.define(:line, :at, :term, :used)
 
     # The mechanism names its own file; where the root sits is the tool's to
     # say, so it arrives as an argument.
@@ -154,59 +155,9 @@ module Sumitsubo
       term.statements.each do |entry|
         entry.statements.each do |ignore|
           found["#{term.key} #{entry.key} #{ignore.key}"] =
-            Ignore.new(ignore.line, ignore.key, term.key, entry.key)
+            Ignore.new(line: ignore.line, at: ignore.key, term: term.key, used: entry.key)
         end
       end
-    end
-
-    # The findings a run answers for. A mention the specification set aside is
-    # not reported: which side is wrong is not the tool's to decide, and here
-    # the project has decided.
-    #
-    # An ignore names a mention by its path under the base, and a finding
-    # answers at the path a reader started the run from. This is where a
-    # mention stops being a candidate, so this is where the two are told apart.
-    def self.standing(mentions, spec, base)
-      aside = set_aside(spec)
-      found = []
-      mentions.each do |mention|
-        next unless aside[key_of(mention)].nil?
-
-        found.push(Finding.new(
-          rule: REJECTED, difference: true,
-          place: Place.of(base / mention.path, mention.line),
-          message: "#{mention.term} rejects #{mention.used}: #{mention.reason}"
-        ))
-      end
-      found
-    end
-
-    # What was set aside and no longer names anything — the line moved, or the
-    # wording was fixed. Nothing else notices, so an exception left behind
-    # outlives what it was for; the run refuses to certify rather than pass.
-    def self.stale(mentions, spec)
-      met = {}
-      mentions.each { |mention| met[key_of(mention)] = true }
-      aside = set_aside(spec)
-      found = []
-      aside.keys.sort.each do |key|
-        next unless met[key].nil?
-
-        ignore = aside[key]
-        found.push(Finding.new(
-          rule: STALE, difference: false,
-          place: Place.of(spec.path, ignore.line),
-          message: "nothing at #{ignore.at} has #{ignore.term} rejecting " \
-                   "#{ignore.used}; the line moved or the wording was fixed"
-        ))
-      end
-      found
-    end
-
-    # What an ignore has to name to set a mention aside, which is a mention
-    # without its reason: the reason is the specification's own.
-    def self.key_of(mention)
-      "#{mention.term} #{mention.used} #{mention.path}:#{mention.line}"
     end
 
     # One mention per line, however often the word appears on it: the line is
@@ -217,28 +168,20 @@ module Sumitsubo
       pattern = Regexp.new("\\b" + Regexp.escape(entry.key) + "\\b")
       regions.each do |region|
         region.lines.each do |one|
-          found.push(Mention.new(path, one.line, name, entry.key, entry.text)) unless pattern.match(one.text).nil?
+          found.push(Mention.new(path: path, line: one.line, term: name, used: entry.key, reason: entry.text)) unless pattern.match(one.text).nil?
         end
       end
       found
     end
 
-    # Every include the vocabulary writes that covers no file. One section
-    # reaching nothing takes its whole vocabulary out of the run, and the
-    # words it carries are then checked nowhere.
-    # Every section's includes are asked about at once: they are written in one
-    # file, and a pattern two sections share is one mistake rather than two.
-    #
-    # Where an include was written is asked of the parser that read the
-    # specification, since only that one knows how its format spells a glob.
-    def self.barren(spec, base, path, exclusion, specifications)
+    # Every include the vocabulary writes, asked about at once: they are
+    # written in one file, and a pattern two sections share is one mistake
+    # rather than two. One section reaching nothing takes its whole vocabulary
+    # out of the run, and the words it carries are then checked nowhere.
+    def self.covers(spec, path)
       patterns = []
       spec.statements.each { |section| patterns.concat(section.attributes[INCLUDE]) }
-      empty = Source::Scope.barren(base, patterns.uniq, exclusion)
-      return [] if empty.empty?
-
-      spelled = specifications.spelling(path)
-      empty.map { |pattern| Source::Scope.barren_at(BARREN, path, pattern, spelled[pattern]) }
+      [Check::Covers.new(path: path, patterns: patterns.uniq)]
     end
 
     # A found path is a String relative to the base: these are the keys a

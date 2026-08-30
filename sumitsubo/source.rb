@@ -1,3 +1,5 @@
+require "sumitsubo/place"
+
 module Sumitsubo
   # What every reading of source answers with, beside the shapes a
   # specification is read into. A mechanism compares the two, so both have to
@@ -36,7 +38,11 @@ module Sumitsubo
     # Which language read it is not here. The caller said which, so an answer
     # carrying it would be the answer repeating the question; a caller reading
     # one file as two languages keeps the two apart by holding them apart.
-    Declaration = Data.define(:path, :line, :name, :shape)
+    class Declaration < Data.define(:path, :line, :name, :shape)
+      def place
+        Place.new(path: path, line: line)
+      end
+    end
 
     # What a caller has to write to reach a declaration. Two of them saying the
     # same thing are the same shape, which is how one name declared twice is
