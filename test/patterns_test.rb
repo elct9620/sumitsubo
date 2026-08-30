@@ -26,31 +26,37 @@ end
 # A build directory is what this was wanted for: a name with no separator
 # reaches one wherever it sits, and everything under it goes with it. The file
 # named after it does not, and neither does the directory read as a file.
+# @behavior P-001
 puts "--- a directory named at any depth ---"
 against("target/")
 
 # The separator is what says where to look from. `/target/` is the one at the
 # base; `crates/*/target/` is one per crate, which is the shape Dir.glob cannot
 # spell in an include.
+# @behavior P-002
 puts "--- anchored by a separator at the start or the middle ---"
 against("/target/")
 against("crates/*/target/")
 
 # `**` stands for however many directories, none included.
+# @behavior P-003
 puts "--- however many directories ---"
 against("a/**/c.rs")
 against("**/target/")
 
+# @behavior P-004
 puts "--- a name at any depth ---"
 against("*.log")
 against("?.rs")
 
 # The last rule to match decides, so the order the project wrote them in is
 # what a reader follows.
+# @behavior P-005
 puts "--- put back by a later rule ---"
 against("*.log", "!crates/one/run.log")
 against("!crates/one/run.log", "*.log")
 
+# @behavior P-006
 puts "--- a rule matching nothing takes nothing out ---"
 against("nowhere/")
 
@@ -62,6 +68,7 @@ end
 # An include is anchored to the base and names files, so the whole path has to
 # match. `crates/*/src` is the shape a workspace is written in, and the one
 # Dir.glob answers nothing for.
+# @behavior P-007
 puts "--- what an include reaches ---"
 selected("src/main.rs")
 selected("crates/*/src/*.rs")
@@ -70,12 +77,14 @@ selected("*.log")
 
 # The same text read on the two sides. A rule with no separator reaches a name
 # at any depth when it excludes, and the base and no deeper when it includes.
+# @behavior P-008
 puts "--- the same rule read as an exclusion and as an include ---"
 against("run.log")
 selected("run.log")
 
 # A .gitignore writes for a reader as well as for git, and neither the remark
 # nor the blank line between sections is a pattern.
+# @behavior P-009
 puts "--- what a .gitignore holds, less what it wrote for a reader ---"
 puts Sumitsubo::Source::Patterns.patterns_in(<<~TEXT).inspect
   # what the build leaves behind
@@ -136,6 +145,7 @@ end
 
 # Every shape the two projects' 23 include patterns take. Same answer both
 # ways is what licenses the change.
+# @behavior P-010
 puts "--- the shapes in use answer the same either way ---"
 [
   "CLAUDE.md",
@@ -161,6 +171,7 @@ end
 # not asserted here — it is upstream's behavior, and it differs between the
 # compiler and the CRuby run that takes this snapshot. What is asserted is the
 # answer this matcher gives, which is what a later change would break.
+# @behavior P-011
 puts "--- shapes that had no answer before ---"
 [
   "crates/*/src/**/*.rs",
@@ -171,6 +182,7 @@ puts "--- shapes that had no answer before ---"
 # The matcher has no opinion about hidden directories, and answers inside one.
 # Skipping them is the walk's, which is where the glob this replaces keeps it
 # too, so this line is what the walk has to go on to disagree with.
+# @behavior P-012
 puts "--- inside a hidden directory, which the walk and not the matcher rules on ---"
 puts "  **/*.json -> #{matched("**/*.json").join(" ")}"
 
