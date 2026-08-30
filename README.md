@@ -80,8 +80,8 @@ created .spec/behavior
 
 Those files are where the project writes what it means to keep. `sumi help
 glossary`, `sumi help contract` and `sumi help behavior` have the form of each,
-and `sumi help config` has `.sumi.json` — where the specifications live, where
-the documents go, and which of them a run touches.
+and `sumi help config` has `.sumi.json` — where the specifications live, what
+no mechanism reads, and which of them a run touches.
 
 `sumi verify` checks the source against them:
 
