@@ -105,16 +105,36 @@ static const TSLanguage *tsq_language(const char *name) {
   return NULL;
 }
 
-// A run scans hundreds of files with one grammar and one query, so compiling
-// the query per call would be the whole cost. One slot is enough for that
-// shape, and a second query simply replaces it.
-static const TSLanguage *tsq_query_lang = NULL;
-static char *tsq_query_src = NULL;
-static TSQuery *tsq_query_cached = NULL;
+// A run scans hundreds of files, and compiling a query per call would be the
+// whole cost. It does not scan them with one query: a caller reads a file
+// through one grammar and then reads inside what came back through another, and
+// turns between several of its own, so a single slot is thrown away on every
+// turn and rebuilt on the next. Every query a program writes is held instead —
+// there are a handful, they live as long as the run, and holding them is what
+// makes the order a caller reads in cost nothing.
+//
+// Beyond what fits, a query is compiled every time rather than evicting one: a
+// program with more queries than this has a shape nobody here has met, and
+// answering slowly is better than answering wrongly about which one to drop.
+// The one it was handed last is kept only to be freed on the next, so a run
+// long enough to reach here does not grow without end.
+#define TSQ_QUERIES 32
+static const TSLanguage *tsq_query_lang[TSQ_QUERIES];
+static char *tsq_query_src[TSQ_QUERIES];
+static TSQuery *tsq_query_held[TSQ_QUERIES];
+static int tsq_query_count = 0;
+static TSQuery *tsq_query_spare = NULL;
 
+// The language is half the key. A query is compiled against one grammar's node
+// ids, so the same text compiled for another answers nonsense rather than
+// failing. No two grammars here write a query alike today, which is why nothing
+// goes red when this half is dropped — the pair is what makes it safe for the
+// day one of them does.
 static TSQuery *tsq_query_for(const TSLanguage *language, const char *src) {
-  if (tsq_query_cached && tsq_query_lang == language && strcmp(tsq_query_src, src) == 0) {
-    return tsq_query_cached;
+  for (int i = 0; i < tsq_query_count; i++) {
+    if (tsq_query_lang[i] == language && strcmp(tsq_query_src[i], src) == 0) {
+      return tsq_query_held[i];
+    }
   }
 
   uint32_t error_offset = 0;
@@ -125,11 +145,17 @@ static TSQuery *tsq_query_for(const TSLanguage *language, const char *src) {
     return NULL;
   }
 
-  if (tsq_query_cached) ts_query_delete(tsq_query_cached);
-  free(tsq_query_src);
-  tsq_query_cached = query;
-  tsq_query_src = strdup(src);
-  tsq_query_lang = language;
+  char *held = tsq_query_count < TSQ_QUERIES ? strdup(src) : NULL;
+  if (held) {
+    tsq_query_lang[tsq_query_count] = language;
+    tsq_query_src[tsq_query_count] = held;
+    tsq_query_held[tsq_query_count] = query;
+    tsq_query_count++;
+    return query;
+  }
+
+  if (tsq_query_spare) ts_query_delete(tsq_query_spare);
+  tsq_query_spare = query;
   return query;
 }
 
