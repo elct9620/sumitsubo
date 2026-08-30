@@ -8,7 +8,7 @@ module Sumitsubo
   #
   # Nothing is required here. A reading that reached a grammar would cost every
   # rule's test its snapshot.
-  Finding = Data.define(:rule, :difference, :place, :message) do
+  class Finding < Data.define(:rule, :difference, :place, :message)
     # The comparison was made and the two sides disagree. False says it could
     # not be made at all, which is not a difference about the code.
     def difference?
