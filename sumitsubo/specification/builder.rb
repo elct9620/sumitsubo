@@ -23,12 +23,12 @@ module Sumitsubo
       # same way at every depth, and the line goes with it because a glob
       # covering nothing answers where a reader goes to fix it.
       #
-      # Answered rather than pushed into an array handed over. A module function
-      # that pushes into its array parameter raises at run time in this compiler
-      # once one caller reaches it with an instance variable — measured in
-      # `tmp/2026-08-30-module-function-array-parameter.md`, and to be undone
-      # when that is fixed. Answering is the better shape either way, so what
-      # goes when the defect does is this note rather than the code.
+      # Answered rather than pushed into an array handed over. An array a class
+      # holds is compiled as one of integers in this compiler, so a singleton
+      # method it is passed to raises when it pushes an object into it —
+      # measured in `tmp/2026-08-30-spinel-ivar-empty-array-int.md`, and this
+      # note is what goes when that is fixed. Answering is the better shape
+      # either way, so the code stays.
       def self.scoped(block, path, topic)
         glob = block.taken
         refuse(path, block.line, "writes an include that is not a glob in backticks", topic) if glob.nil?
