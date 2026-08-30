@@ -60,10 +60,11 @@ Three things earn more room:
 
 A path the tool composes is a `Pathname` and reaches the file through that
 same object; a path it read off the filesystem, or rendered for a reader, is a
-String. The rendered ones are what findings carry, and they answer relative to
-where the run started, so `Where.of` is the one place that makes one.
-Composition is `#/`, which answers a `Pathname` on every branch, rather than
-the `join` the ecosystem writes.
+String. The rendered ones are what a finding points at, and they answer
+relative to where the run started, so `Place` is the one place that makes one —
+`of` for a place in a file and `file` for the file alone. Composition is `#/`,
+which answers a `Pathname` on every branch, rather than the `join` the
+ecosystem writes.
 
 A seam normalises rather than refusing: `load` takes what it is handed and
 wraps it, the way `Config.load` does, so a caller composing a path itself is
@@ -110,9 +111,10 @@ The command is `sumi`, shipped as a single native executable.
   no grammar, so what is written by hand is the six tests that read source or
   ask for a binding. Where no snapshot is committed the run is compared against CRuby
   rather than failing, and a test that asserts nothing passes.
-- `--regen` takes the same file list, so name the test to rewrite. Given none
-  it rewrites every snapshot including the hand-written ones, leaving a CRuby
-  backtrace where the expectation was.
+- `--regen` takes the same file list, so name the test to rewrite — and name
+  only one of the nine. Given none it rewrites every snapshot, and given a
+  hand-written one it rewrites that, either way leaving a CRuby backtrace where
+  the expectation was. Naming them is not the guard; naming the right ones is.
 - Tests compile at `-O1` and the shipped executable at the compiler's default,
   so CI builds and runs `sumi` in addition to running the tests.
 - `.claude/hooks/` holds this repository to the same promises inside a
