@@ -26,9 +26,8 @@ module Sumitsubo
       # Answered rather than pushed into an array handed over. An array a class
       # holds is compiled as one of integers in this compiler, so a singleton
       # method it is passed to raises when it pushes an object into it —
-      # measured in `tmp/2026-08-30-spinel-ivar-empty-array-int.md`, and this
-      # note is what goes when that is fixed. Answering is the better shape
-      # either way, so the code stays.
+      # matz/spinel#4213, and this note is what goes when that is fixed.
+      # Answering is the better shape either way, so the code stays.
       def self.scoped(block, path, topic)
         glob = block.taken
         refuse(path, block.line, "writes an include that is not a glob in backticks", topic) if glob.nil?
