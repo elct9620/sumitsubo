@@ -10,10 +10,9 @@ module Sumitsubo
   # place a path a reader is handed is made — `of` for a place in a file,
   # `file` for the file alone, and `new` where the path is rendered already.
   #
-  # A message about a whole document answers with the file rather than with a
-  # place carrying no line. An absent line would be nil, and this compiler
-  # holds a member to one type across the program: the same member cannot be a
-  # line here and nothing there.
+  # A place always carries a line, so a message about a whole document asks for
+  # the file rather than for a place standing in for one: what has no line to
+  # point at is a path, not a place.
   class Place < Data.define(:path, :line)
     def self.of(path, line)
       new(path: file(path), line: line)
@@ -24,8 +23,7 @@ module Sumitsubo
       "#{Pathname.new(path).expand_path.relative_path_from(Pathname.pwd)}"
     end
 
-    # Said to a reader. Built rather than handed back, because a member is not
-    # a string this compiler will pass on as one.
+    # Said to a reader.
     def spoken
       "#{path}:#{line}"
     end
