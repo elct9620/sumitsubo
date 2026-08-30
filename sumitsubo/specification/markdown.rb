@@ -1,13 +1,14 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/parser/markdown/builder/definition"
-require "sumitsubo/parser/markdown/builder/feature"
-require "sumitsubo/parser/markdown/builder/vocabulary"
-require "sumitsubo/parser/markdown/format"
+require "sumitsubo/specification/markdown/builder/definition"
+require "sumitsubo/specification/markdown/builder/feature"
+require "sumitsubo/specification/markdown/builder/vocabulary"
+require "sumitsubo/specification/markdown/format"
 require "sumitsubo/where"
+require "sumitsubo/specification"
 
 module Sumitsubo
-  module Parser
+  class Specification
     # A specification as Markdown, which is the document a person reads as well
     # as the reference line the tool compares against.
     #

@@ -1,13 +1,13 @@
 require "pathname"
 require "sumitsubo/glossary"
 require "sumitsubo/grammar"
-require "sumitsubo/parser/markdown"
+require "sumitsubo/specification/markdown"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reaches a grammar to read a real document, which is what its snapshot is
 # written by hand for: the mechanism is checked against the shape a person
 # actually wrote rather than one assembled here.
-PARSERS = [Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
+PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
 
 back = Dir.pwd
 Dir.chdir("test/fixtures/glossary")

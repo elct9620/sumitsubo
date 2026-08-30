@@ -1,4 +1,4 @@
-require "sumitsubo/parser/markdown"
+require "sumitsubo/specification/markdown"
 require "sumitsubo/source"
 
 # Reading a Markdown specification into a feature and its scenarios: the part
@@ -43,7 +43,7 @@ def said(name, holding)
 end
 
 def read(captures)
-  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).behavior("init.md")
+  Sumitsubo::Specification::Markdown.new(Canned.new(captures)).behavior("init.md")
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil
@@ -167,7 +167,7 @@ read([h1(1, "Init"), h1(3, "Verify")])
 # parser is asked rather than told.
 # @behavior MD-016
 puts "--- which files this parser answers for ---"
-parser = Sumitsubo::Parser::Markdown.new(Canned.new([]))
+parser = Sumitsubo::Specification::Markdown.new(Canned.new([]))
 p [parser.reads?("init.md"), parser.reads?("init.json"), parser.reads?(".spec/behavior/init.md")]
 
 # --- a vocabulary --------------------------------------------------------
@@ -180,7 +180,7 @@ p [parser.reads?("init.md"), parser.reads?("init.json"), parser.reads?(".spec/be
 VOCABULARY = "test/fixtures/reading/glossary.md"
 
 def vocabulary(captures)
-  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).glossary(VOCABULARY)
+  Sumitsubo::Specification::Markdown.new(Canned.new(captures)).glossary(VOCABULARY)
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil
@@ -306,7 +306,7 @@ p vocabulary([
 # @behavior MD-030
 puts "--- a vocabulary nobody wrote ---"
 begin
-  Sumitsubo::Parser::Markdown.new(Canned.new([])).glossary("nowhere.md")
+  Sumitsubo::Specification::Markdown.new(Canned.new([])).glossary("nowhere.md")
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
 end
@@ -349,7 +349,7 @@ def language(line, text) = Capture.new(0, "language", line, text)
 def content(line, text) = Capture.new(0, "content", line, text)
 
 def definition(captures, answers = {})
-  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).contract("cli.md", Spelling.new(answers))
+  Sumitsubo::Specification::Markdown.new(Canned.new(captures)).contract("cli.md", Spelling.new(answers))
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil
@@ -502,7 +502,7 @@ definition([
 # level that heading sits at.
 
 def spelled_in(captures)
-  Sumitsubo::Parser::Markdown.new(Canned.new(captures)).spelled_in("spec.md")
+  Sumitsubo::Specification::Markdown.new(Canned.new(captures)).spelled_in("spec.md")
 end
 
 # @behavior MD-044

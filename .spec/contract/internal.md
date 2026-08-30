@@ -17,89 +17,89 @@ module Sumitsubo::Where
 end
 ```
 
-## `Sumitsubo::Parser.of`
+## `Sumitsubo::Specification::Parser.of`
 
 The one place a file is matched to the parser that answers for it.
 
 ```ruby
-module Sumitsubo::Parser
+module Sumitsubo::Specification::Parser
   def self.of(path, parsers)
   end
 end
 ```
 
-## `Sumitsubo::Parser.reads?`
+## `Sumitsubo::Specification::Parser.reads?`
 
 The one place a run answers whether this build reads the format a file is written in.
 
 ```ruby
-module Sumitsubo::Parser
+module Sumitsubo::Specification::Parser
   def self.reads?(path, parsers)
   end
 end
 ```
 
-## `Sumitsubo::Language.comments_in` `internal`
+## `Sumitsubo::Source::Language.comments_in` `internal`
 
 The reading of what a person wrote for another person, whatever the file is written in.
 
 ```ruby
-module Sumitsubo::Language
+module Sumitsubo::Source::Language
   def self.comments_in(path, where)
   end
 end
 ```
 
-## `Sumitsubo::Language.attached_comments_in` `internal`
+## `Sumitsubo::Source::Language.attached_comments_in` `internal`
 
 The reading of where a claim could sit, for a file whose language has code for a comment to sit in front of.
 
 ```ruby
-module Sumitsubo::Language
+module Sumitsubo::Source::Language
   def self.attached_comments_in(path, where)
   end
 end
 ```
 
-## `Sumitsubo::Language.declarations_in` `internal`
+## `Sumitsubo::Source::Language.declarations_in` `internal`
 
 The reading of what a piece of source declares, as the language a specification named.
 
 ```ruby
-module Sumitsubo::Language
+module Sumitsubo::Source::Language
   def self.declarations_in(path, where, language)
   end
 end
 ```
 
-## `Sumitsubo::Language.declarations_of` `internal`
+## `Sumitsubo::Source::Language.declarations_of` `internal`
 
 The reading of what a piece of text declares, for a shape a specification wrote rather than a file.
 
 ```ruby
-module Sumitsubo::Language
+module Sumitsubo::Source::Language
   def self.declarations_of(source, where, language)
   end
 end
 ```
 
-## `Sumitsubo::Language.carries?` `internal`
+## `Sumitsubo::Source::Language.carries?` `internal`
 
 The one place a run answers whether this build reads the language a specification named.
 
 ```ruby
-module Sumitsubo::Language
+module Sumitsubo::Source::Language
   def self.carries?(language)
   end
 end
 ```
 
-## `Sumitsubo::Marker.claims_in` `internal`
+## `Sumitsubo::Source::Marker.claims_in` `internal`
 
 The reading of what a piece of source claims, for an interface no construct of the language points at.
 
 ```ruby
-module Sumitsubo::Marker
+module Sumitsubo::Source::Marker
   def self.claims_in(path, keywords, languages)
   end
 end
@@ -127,34 +127,34 @@ module Sumitsubo::Grammar
 end
 ```
 
-## `Sumitsubo::Definitions.matches_in` `internal`
+## `Sumitsubo::Source::Language::Nodes.matches_in` `internal`
 
 The one place a reading's captures are grouped by the match they came from.
 
 ```ruby
-module Sumitsubo::Definitions
+module Sumitsubo::Source::Language::Nodes
   def self.matches_in(captures)
   end
 end
 ```
 
-## `Sumitsubo::Definitions.nodes_in` `internal`
+## `Sumitsubo::Source::Language::Nodes.nodes_in` `internal`
 
 The one place matches become the nodes a file declares.
 
 ```ruby
-module Sumitsubo::Definitions
+module Sumitsubo::Source::Language::Nodes
   def self.nodes_in(matches)
   end
 end
 ```
 
-## `Sumitsubo::Definitions.enclosing` `internal`
+## `Sumitsubo::Source::Language::Nodes.enclosing` `internal`
 
 The one place nesting is recovered from where the nodes sit.
 
 ```ruby
-module Sumitsubo::Definitions
+module Sumitsubo::Source::Language::Nodes
   def self.enclosing(scopes, node)
   end
 end

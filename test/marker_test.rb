@@ -1,6 +1,6 @@
 require "pathname"
 require "sumitsubo/behavior"
-require "sumitsubo/marker"
+require "sumitsubo/source/marker"
 require "sumitsubo/source"
 
 # What a piece of source claims to implement, read out of the comments a
@@ -26,7 +26,7 @@ end
 # The text is bracketed because a keyword with nothing after it carries an
 # empty one, and a snapshot cannot hold the trailing space that would leave.
 def claims(path, keywords, regions)
-  Sumitsubo::Marker.claims_in(path, keywords, Offered.new(regions))
+  Sumitsubo::Source::Marker.claims_in(path, keywords, Offered.new(regions))
     .map { |claim| "#{claim.path}:#{claim.line} #{claim.keyword} [#{claim.text}]" }
 end
 

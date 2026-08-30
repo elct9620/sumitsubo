@@ -1,9 +1,9 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/parser"
+require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
-require "sumitsubo/scope"
+require "sumitsubo/source/scope"
 require "sumitsubo/source"
 require "sumitsubo/specification"
 
@@ -121,7 +121,7 @@ module Sumitsubo
     # answers for is passed over, so a directory is still the project's to keep
     # other things in.
     def self.files_in(path, parsers)
-      path.glob("*").select { |file| file.file? && Parser.reads?(file, parsers) }
+      path.glob("*").select { |file| file.file? && Specification::Parser.reads?(file, parsers) }
           .map { |file| "#{file}" }.sort
     end
 
@@ -142,7 +142,7 @@ module Sumitsubo
     # sits in there, once per claim.
     def self.covered(definition, base, exclusion)
       found = {}
-      Scope.of(base, definition.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
+      Source::Scope.of(base, definition.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
       found
     end
 
@@ -163,12 +163,12 @@ module Sumitsubo
     def self.barren(definitions, base, exclusion, parsers)
       found = []
       definitions.each do |definition|
-        empty = Scope.barren(base, definition.includes, exclusion)
+        empty = Source::Scope.barren(base, definition.includes, exclusion)
         next if empty.empty?
 
-        spelled = Parser.of(definition.path, parsers).spelled_in(definition.path)
+        spelled = Specification::Parser.of(definition.path, parsers).spelled_in(definition.path)
         where = Where.of(definition.path)
-        empty.each { |pattern| found.push(Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
+        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
       end
       found
     end
@@ -579,7 +579,7 @@ module Sumitsubo
     # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
     def self.definition_from(path, languages, parsers)
-      Parser.of(path, parsers).contract(path, languages)
+      Specification::Parser.of(path, parsers).contract(path, languages)
     rescue Sumitsubo::Unreadable => e
       raise Error, e.message
     end

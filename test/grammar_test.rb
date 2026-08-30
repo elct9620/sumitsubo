@@ -81,14 +81,14 @@ p markdown("(pipe_table_row (pipe_table_cell) @cell)").map { |capture| capture.t
 # What the grammar answers and what the parser makes of it meet here, because
 # this is the side that can ask a real one. The parser is handed the grammars
 # this build carries, the way a run of `sumi` hands them to it.
-require "sumitsubo/parser/markdown"
+require "sumitsubo/specification/markdown"
 
 # The query lives with the parser that writes it, and the name of the grammar
 # it is written against travels with it: a name the binding does not know
 # answers nothing rather than failing, so the two are pinned to each other.
-p Sumitsubo::Parser::Markdown::GRAMMAR == Sumitsubo::Grammar::MARKDOWN
+p Sumitsubo::Specification::Markdown::GRAMMAR == Sumitsubo::Grammar::MARKDOWN
 
-reading = Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)
+reading = Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)
 
 def steps_of(scenario)
   steps = scenario.attributes
@@ -147,14 +147,14 @@ end
 
 # The languages a build carries answer here, the way a run of `sumi` hands them
 # in: a signature says which one spells the name it registers.
-require "sumitsubo/language"
+require "sumitsubo/source/language"
 
 # @behavior MD-048
 puts "--- a definition whose contracts source claims, read through the grammar ---"
-definition_of(reading.contract("test/fixtures/reading/cli.md", Sumitsubo::Language))
+definition_of(reading.contract("test/fixtures/reading/cli.md", Sumitsubo::Source::Language))
 
 # Two contracts in two languages under one definition, which the field this
 # replaces could not carry.
 # @behavior MD-049
 puts "--- a definition registering contracts in two languages ---"
-definition_of(reading.contract("test/fixtures/reading/seams.md", Sumitsubo::Language))
+definition_of(reading.contract("test/fixtures/reading/seams.md", Sumitsubo::Source::Language))

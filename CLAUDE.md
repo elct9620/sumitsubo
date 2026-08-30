@@ -105,7 +105,7 @@ The command is `sumi`, shipped as a single native executable.
   CRuby has no `ffi_func` — so those snapshots are written by hand and stay
   that way. A file reaching it through its requires counts, which is why
   `sumitsubo/config.rb` names no mechanism, why no mechanism names a language
-  or a format, and why `sumitsubo/definitions.rb` requires nothing at all — a
+  or a format, and why `sumitsubo/source/language/nodes.rb` requires nothing at all — a
   reading brings it captures rather than a path. `require "sumitsubo"` reaches
   no grammar, so what is written by hand is the six tests that read source or
   ask for a binding. Where no snapshot is committed the run is compared against CRuby

@@ -1,8 +1,9 @@
 require "sumitsubo/error"
 require "sumitsubo/where"
+require "sumitsubo/specification"
 
 module Sumitsubo
-  module Parser
+  class Specification
     class Markdown
       # What Markdown gives a specification to be written in: the names a query
       # may ask for a block under, and the ways a captured run of text is taken

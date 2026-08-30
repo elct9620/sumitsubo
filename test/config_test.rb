@@ -1,6 +1,6 @@
 require "pathname"
 require "sumitsubo/config"
-require "sumitsubo/patterns"
+require "sumitsubo/source/patterns"
 
 # Where a run is configured from is decided by what is on disk above it, so the
 # cases are real directories walked into rather than a layout described to a
@@ -82,7 +82,7 @@ puts "--- what the project excludes ---"
 Dir.chdir(here / "project")
 rules = Sumitsubo::Config.load.exclusion
 ["app/order.rb", "target/debug/generated.rb"].each do |path|
-  puts "  #{path}: #{Sumitsubo::Patterns.excludes?(rules, path)}"
+  puts "  #{path}: #{Sumitsubo::Source::Patterns.excludes?(rules, path)}"
 end
 Dir.chdir(here / "loose")
 puts "  a project that said nothing excludes nothing: #{Sumitsubo::Config.load.exclusion.inspect}"
@@ -94,14 +94,14 @@ puts "  a project that said nothing excludes nothing: #{Sumitsubo::Config.load.e
 puts "--- and what its .gitignore already said ---"
 Dir.chdir(here / "project")
 rules = Sumitsubo::Config.load.exclusion
-puts "  vendor/gem.rb: #{Sumitsubo::Patterns.excludes?(rules, "vendor/gem.rb")}"
+puts "  vendor/gem.rb: #{Sumitsubo::Source::Patterns.excludes?(rules, "vendor/gem.rb")}"
 # .sumi.json is read after the .gitignore, so a `!` there is the last rule to
 # match and the path comes back.
 # @behavior C-013
-puts "  vendor/kept.rb, put back by .sumi.json: #{Sumitsubo::Patterns.excludes?(rules, "vendor/kept.rb")}"
+puts "  vendor/kept.rb, put back by .sumi.json: #{Sumitsubo::Source::Patterns.excludes?(rules, "vendor/kept.rb")}"
 # @behavior C-014
 Dir.chdir(here / "switched")
-puts "  switched off: #{Sumitsubo::Patterns.excludes?(Sumitsubo::Config.load.exclusion, "vendor/gem.rb")}"
+puts "  switched off: #{Sumitsubo::Source::Patterns.excludes?(Sumitsubo::Config.load.exclusion, "vendor/gem.rb")}"
 
 Dir.chdir(back)
 root.rmtree

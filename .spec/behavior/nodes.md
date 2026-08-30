@@ -1,4 +1,4 @@
-# Definitions
+# Nodes
 
 What a piece of source declares, read from the syntax tree.
 
@@ -9,7 +9,7 @@ scope, which loses a prefix rather than inventing one.
 
 ## Includes
 
-- `test/definitions_test.rb`
+- `test/nodes_test.rb`
 - `test/language_test.rb`
 
 ## `D-001` A name carries the scopes holding it

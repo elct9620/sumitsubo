@@ -1,8 +1,8 @@
 require "sumitsubo/glossary"
 require "sumitsubo/contract"
 require "sumitsubo/behavior"
-require "sumitsubo/marker"
-require "sumitsubo/scope"
+require "sumitsubo/source/marker"
+require "sumitsubo/source/scope"
 require "sumitsubo/finding"
 
 module Sumitsubo
@@ -98,7 +98,7 @@ module Sumitsubo
         claims = []
         keywords = Sumitsubo::Contract.keywords(definitions)
         Sumitsubo::Contract.scope(reach).each do |path|
-          Marker.claims_in(path, keywords, languages).each do |claim|
+          Source::Marker.claims_in(path, keywords, languages).each do |claim|
             claims.push(Sumitsubo::Contract::Claim.new(
               claim.path, claim.line,
               Sumitsubo::Contract::Name.new(claim.keyword, claim.text)
@@ -162,7 +162,7 @@ module Sumitsubo
         claims = []
         keywords = [Sumitsubo::Behavior::MARKER]
         Sumitsubo::Behavior.scope(reach).each do |path|
-          Marker.claims_in(path, keywords, languages).each do |claim|
+          Source::Marker.claims_in(path, keywords, languages).each do |claim|
             Sumitsubo::Behavior.ids_in(claim.text).each do |id|
               claims.push(Sumitsubo::Behavior::Claim.new(claim.path, claim.line, id))
             end

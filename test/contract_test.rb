@@ -1,16 +1,16 @@
 require "pathname"
 require "sumitsubo/contract"
 require "sumitsubo/grammar"
-require "sumitsubo/language"
+require "sumitsubo/source/language"
 require "sumitsubo/source"
-require "sumitsubo/parser/markdown"
+require "sumitsubo/specification/markdown"
 require "sumitsubo/specification"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reads the format definitions are really written in, which is why its
 # snapshot is written by hand: the mechanism is checked against the shape a
 # person actually wrote rather than one assembled here.
-PARSERS = [Sumitsubo::Parser::Markdown.new(Sumitsubo::Grammar)]
+PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
 
 # The loader answers where an interface sits as well as what it says. An
 # interface nothing claims is a finding about the specification, so the reader
@@ -37,7 +37,7 @@ end
 def loaded(directory, parsers = PARSERS)
   # A signature is read by the reading that reads the source, so what a
   # definition is checked against is the languages this build carries.
-  Sumitsubo::Contract.load(directory, Sumitsubo::Language, parsers)
+  Sumitsubo::Contract.load(directory, Sumitsubo::Source::Language, parsers)
 end
 
 def claim(path, line, keyword, name)
@@ -197,7 +197,7 @@ registered = loaded("#{FIXTURE}/params")
 puts "--- the shape a contract registers ---"
 definition = registered[0]
 definition.statements.each do |interface|
-  params = Sumitsubo::Contract.shape_of(definition, interface, Sumitsubo::Language)
+  params = Sumitsubo::Contract.shape_of(definition, interface, Sumitsubo::Source::Language)
   shape = params.nil? ? "registers no shape" : Sumitsubo::Contract.spell(params)
   puts "  #{interface.key} #{shape}"
 end
@@ -211,7 +211,7 @@ Sumitsubo::Contract.mismatched(registered, { "ruby" => [
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(9, "Store#write", []),
   declares(12, "Store", nil)
-] }, Sumitsubo::Language).each do |finding|
+] }, Sumitsubo::Source::Language).each do |finding|
   puts "#{finding.path}:#{finding.line} #{finding.message}"
 end
 

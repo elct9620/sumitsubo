@@ -1,8 +1,8 @@
-require "sumitsubo/parser/markdown/format"
+require "sumitsubo/specification/markdown/format"
 require "sumitsubo/specification"
 
 module Sumitsubo
-  module Parser
+  class Specification
     class Markdown
       module Builder
         # A vocabulary: the sections a project lays over one another, the terms

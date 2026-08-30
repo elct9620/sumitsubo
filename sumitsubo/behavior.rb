@@ -1,9 +1,9 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/where"
-require "sumitsubo/parser"
+require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
-require "sumitsubo/scope"
+require "sumitsubo/source/scope"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -70,7 +70,7 @@ module Sumitsubo
     # for is passed over, so a directory is still the project's to keep other
     # things in.
     def self.files_in(path, parsers)
-      path.glob("*").select { |file| file.file? && Parser.reads?(file, parsers) }
+      path.glob("*").select { |file| file.file? && Specification::Parser.reads?(file, parsers) }
           .map { |file| "#{file}" }.sort
     end
 
@@ -90,7 +90,7 @@ module Sumitsubo
     # sits in there, once per claim.
     def self.covered(feature, base, exclusion)
       found = {}
-      Scope.of(base, feature.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
+      Source::Scope.of(base, feature.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
       found
     end
 
@@ -111,12 +111,12 @@ module Sumitsubo
     def self.barren(features, base, exclusion, parsers)
       found = []
       features.each do |feature|
-        empty = Scope.barren(base, feature.includes, exclusion)
+        empty = Source::Scope.barren(base, feature.includes, exclusion)
         next if empty.empty?
 
-        spelled = Parser.of(feature.path, parsers).spelled_in(feature.path)
+        spelled = Specification::Parser.of(feature.path, parsers).spelled_in(feature.path)
         where = Where.of(feature.path)
-        empty.each { |pattern| found.push(Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
+        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
       end
       found
     end
@@ -233,7 +233,7 @@ module Sumitsubo
     # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered here under this mechanism's own name.
     def self.feature_from(path, parsers)
-      Parser.of(path, parsers).behavior(path)
+      Specification::Parser.of(path, parsers).behavior(path)
     rescue Sumitsubo::Unreadable => e
       raise Error, e.message
     end

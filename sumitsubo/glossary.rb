@@ -1,8 +1,8 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/parser"
+require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
-require "sumitsubo/scope"
+require "sumitsubo/source/scope"
 require "sumitsubo/specification"
 require "sumitsubo/where"
 
@@ -62,7 +62,7 @@ module Sumitsubo
     # What a mechanism could not read is its own to report, so the parser's
     # refusal is answered under this mechanism's name.
     def self.load(path, parsers)
-      Parser.of(path, parsers).glossary(path)
+      Specification::Parser.of(path, parsers).glossary(path)
     rescue Sumitsubo::Unreadable => e
       raise Error, e.message
     end
@@ -246,12 +246,12 @@ module Sumitsubo
     def self.barren(spec, base, path, exclusion, parsers)
       patterns = []
       spec.statements.each { |section| patterns.concat(section.attributes[INCLUDE]) }
-      empty = Scope.barren(base, patterns.uniq, exclusion)
+      empty = Source::Scope.barren(base, patterns.uniq, exclusion)
       return [] if empty.empty?
 
-      spelled = Parser.of(path, parsers).spelled_in(path)
+      spelled = Specification::Parser.of(path, parsers).spelled_in(path)
       where = Where.of(path)
-      empty.map { |pattern| Scope.barren_at(BARREN, where, pattern, spelled[pattern]) }
+      empty.map { |pattern| Source::Scope.barren_at(BARREN, where, pattern, spelled[pattern]) }
     end
 
     # A found path is a String relative to the base: these are the keys a
@@ -261,7 +261,7 @@ module Sumitsubo
     # A section's boundary is an attribute rather than a member, because the
     # container is what carries one and nothing points at a single glob.
     def self.paths_for(section, base, exclusion)
-      Scope.of(base, section.attributes[INCLUDE], exclusion).uniq.sort
+      Source::Scope.of(base, section.attributes[INCLUDE], exclusion).uniq.sort
     end
   end
 end
