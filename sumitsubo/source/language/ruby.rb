@@ -59,12 +59,20 @@ module Sumitsubo
            (forward_parameter) @forward]*
         PARAMETERS
 
+        # A constant assigned a call that carries a block is a scope of its own:
+        # `Data.define` and `Struct.new` write a class body that way, and what
+        # sits inside it belongs to the constant rather than to the module
+        # around it. Which call it is goes unasked, since a rule naming three of
+        # them would miss the fourth.
+        #
         # The quantifier sits on the alternation while its branches carry none,
         # so tree-sitter answers one match per parameter rather than one match
         # whose captures vary in number. Each names the method it belongs to.
         QUERY = <<~QUERY
           (module name: (_) @name) @scope
           (class name: (_) @name) @scope
+          (assignment left: [(constant) @name (scope_resolution) @name]
+            right: (call block: (_))) @scope
           (method name: (_) @name) @instance
           (singleton_method object: (self) name: (_) @name) @singleton
           (singleton_class value: (self) @name) @reopened

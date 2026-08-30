@@ -7,6 +7,11 @@ pattern reaches only its direct children, and tree-sitter has no operator for
 a deeper one. Two constructs spanning the same lines therefore answer with no
 scope, which loses a prefix rather than inventing one.
 
+A scope is what a name is reached through rather than a keyword, so a constant
+assigned a call carrying a block holds what is written inside it — which is how
+`Data.define` and `Struct.new` spell a class body. Which call it is goes
+unasked. One carrying no block encloses nothing, so it declares nothing either.
+
 ## Includes
 
 - `test/nodes_test.rb`
@@ -148,3 +153,20 @@ scope, which loses a prefix rather than inventing one.
 | Given | a node inside two others, and a third spanning exactly its lines |
 | When | what holds it is worked out |
 | Then | the two answer outermost first and the third does not, since neither can be told from it |
+
+## `D-019` A scope a call with a block brings into being
+
+| Step | Statement |
+| --- | --- |
+| Given | a constant assigned a call carrying a block, and one of them written as a path |
+| Given | a method inside each |
+| When | the file is read for what it declares |
+| Then | each method answers qualified by the constant holding it, the way one inside a class body does |
+
+## `D-020` A constant assigned a call with no block
+
+| Step | Statement |
+| --- | --- |
+| Given | a constant assigned a call carrying no block |
+| When | the file is read for what it declares |
+| Then | the constant is not among what the file declares |

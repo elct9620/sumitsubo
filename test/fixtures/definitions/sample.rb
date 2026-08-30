@@ -70,3 +70,18 @@ end
 class Widget
   include Helper
 end
+
+Boxed = Data.define(:held) do
+  def unwrapped
+  end
+
+  def self.of(held)
+  end
+end
+
+Flat::Boxed = Struct.new(:held) do
+  def unwrapped
+  end
+end
+
+Bare = Data.define(:held)

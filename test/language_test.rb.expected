@@ -5,7 +5,7 @@
 --- and offers nowhere for a claim to sit ---
 []
 --- source is read as the language a specification named ---
-24
+29
 --- what this build carries ---
 true
 false
@@ -61,6 +61,11 @@ broken.rb: cannot be parsed by the ruby grammar
   test/fixtures/definitions/sample.rb:65 Helper
   test/fixtures/definitions/sample.rb:66 Helper#helped ()
   test/fixtures/definitions/sample.rb:70 Widget
+  test/fixtures/definitions/sample.rb:74 Boxed
+  test/fixtures/definitions/sample.rb:75 Boxed#unwrapped ()
+  test/fixtures/definitions/sample.rb:78 Boxed.of (held:positional)
+  test/fixtures/definitions/sample.rb:82 Flat::Boxed
+  test/fixtures/definitions/sample.rb:83 Flat::Boxed#unwrapped ()
 --- and the reading of what it declares refuses it too ---
   test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
 --- what a piece of text declares ---
