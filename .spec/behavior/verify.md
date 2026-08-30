@@ -253,3 +253,12 @@ in the order they happened.
 | Given | a feature written as Markdown whose include covers no file |
 | When | `sumi verify` runs |
 | Then | the include answers at the line of the list item that wrote it |
+
+## `V-029` A root the project also keeps its prose in
+
+| Step | Statement |
+| --- | --- |
+| Given | a root holding a specification and a document written in no form |
+| Given | a glossary whose include reaches that document |
+| When | `sumi verify` runs |
+| Then | the document answers as source, and no mechanism refuses it as a specification |

@@ -153,6 +153,15 @@ Dir.chdir("test/fixtures/markdown")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# One root holding both: the specifications are read as such, and the document
+# beside them — in no form at all — as the source an include reaches. That is
+# what lets a project keep its prose where its reference line already is.
+# @behavior V-029
+puts "--- a root the project also keeps its prose in ---"
+Dir.chdir("test/fixtures/coexisting")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

@@ -75,6 +75,10 @@ exit=2
 .spec/behavior/unreached.md:9 @behavior M-002 is claimed nowhere this specification includes
 1 difference
 exit=2
+--- a root the project also keeps its prose in ---
+docs/architecture.md:4 Order rejects Purchase: Order is what the domain calls it.
+1 difference
+exit=1
 --- no specification at all ---
 no specification at .spec; sumi init lays one down
 exit=2
