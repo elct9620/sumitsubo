@@ -23,11 +23,9 @@ module Sumitsubo
       # same way at every depth, and the line goes with it because a glob
       # covering nothing answers where a reader goes to fix it.
       #
-      # Answered rather than pushed into an array handed over. An array a class
-      # holds is compiled as one of integers in this compiler, so a singleton
-      # method it is passed to raises when it pushes an object into it —
-      # matz/spinel#4213, and this note is what goes when that is fixed.
-      # Answering is the better shape either way, so the code stays.
+      # Answered rather than pushed into an array handed over. Nothing else
+      # here reaches past what it was given, and which array a statement joins
+      # is for the builder holding it to decide.
       def self.scoped(block, path, topic)
         glob = block.taken
         refuse(path, block.line, "writes an include that is not a glob in backticks", topic) if glob.nil?
