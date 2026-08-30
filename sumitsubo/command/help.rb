@@ -344,9 +344,13 @@ module Sumitsubo
                 include Helper                 Helper#helped is declared;
                                                Widget#helped never is
                 def Other.oddball              only a receiver of `self` is read
-                MAX = 100                      a constant is not read at all,
-                                               so a signature declaring one is
-                                               refused rather than registered
+                MAX = 100                      a constant is read only where a
+                                               call carrying a block follows
+                                               it, which is the class body
+                                               such a call writes
+                Box = Data.define(:held)       that call with no block: it
+                                               holds nothing, so nothing of it
+                                               is read
 
             And in Rust:
 
@@ -357,9 +361,11 @@ module Sumitsubo
                 pub use inner::Store           a re-export names it here and
                                                defines it elsewhere
 
-            Two things it sees without telling them apart: `module` and `class`
-            spell one name, and a signature may say either. Visibility is read
-            only where it is written on the definition itself, so a bare
+            Three things it sees without telling them apart: `module` and
+            `class` spell one name, and a signature may say either. One block
+            is not told from another, so a definition inside any call a
+            constant is assigned is read as that constant's. Visibility is
+            read only where it is written on the definition itself, so a bare
             `private` above a method says nothing about it.
 
             A project leaning on these registers the contracts it can check and
