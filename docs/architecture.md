@@ -186,10 +186,11 @@ Every file has one place, and where it sits is what says what it is.
 │  │
 │  ├─ (1) the specification arrives
 │  │  specification/repository.rb                  every specification
+│  │  specification/block.rb                       what a document is made of
 │  │  specification/parser.rb                      port
-│  │  specification/parser/markdown.rb             adapter
-│  │  specification/parser/markdown/format.rb
-│  │  specification/parser/markdown/builder/{vocabulary,definition,feature}.rb
+│  │  specification/parser/markdown.rb             adapter, both grammars
+│  │  specification/builder.rb                     what every form shares
+│  │  specification/builder/{glossary,contract,behavior}.rb
 │  │
 │  ├─ (2) the source arrives
 │  │  source/repository.rb                         everything one run read

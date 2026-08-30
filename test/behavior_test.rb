@@ -34,13 +34,28 @@ end
 class Other
   SUFFIX = ".spec"
 
+  # What a document written this way is made of. A format answers with blocks
+  # and the form makes a feature of them, so this stands in for the reading
+  # rather than for the meaning.
+  TITLE = "Other"
+  SCENARIO = "`O-001` What another format declares"
+
   def reads?(path) = "#{path}".end_with?(SUFFIX)
 
-  def behavior(path)
-    where = "#{path}"
-    Sumitsubo::Specification.new("Other", nil, [], where, {}, [
-      Sumitsubo::Statement.new("O-001", "What another format declares", [], where, 1, { "given" => [] }, [])
-    ])
+  def blocks(paths, kinds)
+    found = {}
+    paths.each { |path| found[path] = spoken }
+    found
+  end
+
+  def spoken
+    heading = Sumitsubo::Specification::Block::HEADING
+    [
+      Sumitsubo::Specification::Block.new(heading, 1, 1, TITLE, nil, [], []),
+      Sumitsubo::Specification::Block.new(
+        heading, 2, 1, SCENARIO, nil, [Sumitsubo::Specification::Span.new("O-001", 0, 7)], []
+      )
+    ]
   end
 end
 

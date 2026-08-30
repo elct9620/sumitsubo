@@ -34,11 +34,9 @@ fetch() {
 fetch tree-sitter tree-sitter/tree-sitter "$RUNTIME"
 fetch tree-sitter-ruby tree-sitter/tree-sitter-ruby "$RUBY"
 fetch tree-sitter-rust tree-sitter/tree-sitter-rust "$RUST"
-# Markdown ships two grammars in one repository. Only the block one is fetched
-# into a translation unit: the inline grammar is reached through
-# ts_parser_set_included_ranges, which this binding does not carry, and the
-# unparsed text a block-level `inline` node holds is what a specification is
-# read from anyway.
+# Markdown ships two grammars in one repository and this build carries both:
+# the block one for the structure a specification is written in, and the inline
+# one for reading the text a block-level node holds unparsed.
 fetch tree-sitter-markdown tree-sitter-grammars/tree-sitter-markdown "$MARKDOWN"
 
 # The binding is compiled against the header it carries, so the pin has one

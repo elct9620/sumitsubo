@@ -16,7 +16,7 @@ PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 # mechanism that keeps it reads it.
 def reads(path)
   Sumitsubo::Specification::Repository.new(PARSERS, nil)
-    .one(path, Sumitsubo::Mechanism::Glossary.new)
+    .one(Sumitsubo::Glossary.at(path), Sumitsubo::Mechanism::Glossary.new)
 end
 
 back = Dir.pwd

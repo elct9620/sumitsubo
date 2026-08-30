@@ -1,4 +1,5 @@
 require "sumitsubo/behavior"
+require "sumitsubo/specification/builder/behavior"
 require "sumitsubo/check/claim"
 require "sumitsubo/check/reach"
 require "sumitsubo/mechanism/seed"
@@ -29,8 +30,14 @@ module Sumitsubo
         Seed.new(Sumitsubo::Behavior.path_in(root), nil)
       end
 
-      def read(parser, path, source)
-        parser.behavior(path)
+      # Which kinds of block this form is written in, asked before a document is
+      # read so that a parser answers with those and no others.
+      def kinds
+        Specification::Builder::Behavior::KINDS
+      end
+
+      def read(blocks, path, source)
+        Specification::Builder::Behavior.new(path).build(blocks)
       rescue Sumitsubo::Unreadable => e
         raise Sumitsubo::Behavior::Error, e.message
       end

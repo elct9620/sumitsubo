@@ -36,13 +36,35 @@ FIXTURE = "test/fixtures/contract"
 class Other
   SUFFIX = ".spec"
 
+  # What a document written this way is made of. A format answers with blocks
+  # and the form makes a definition of them, so this stands in for the reading
+  # rather than for the meaning. The marker reading is the one that asks nothing
+  # of a name, which is what lets a stand-in register a contract at all.
+  MARKER = "`@other`"
+  NAME = "`what another format registers`"
+
   def reads?(path) = "#{path}".end_with?(SUFFIX)
 
-  def contract(path, languages)
-    where = "#{path}"
-    Sumitsubo::Specification.new("Other", nil, [], where, { "marker" => ["@other"] }, [
-      Sumitsubo::Statement.new("what another format registers", nil, [], where, 1, {}, [])
-    ])
+  def blocks(paths, kinds)
+    found = {}
+    paths.each { |path| found[path] = spoken }
+    found
+  end
+
+  def spoken
+    heading = Sumitsubo::Specification::Block::HEADING
+    [
+      Sumitsubo::Specification::Block.new(heading, 1, 1, "Other", nil, [], []),
+      Sumitsubo::Specification::Block.new(heading, 2, 3, "Marker", nil, [], []),
+      Sumitsubo::Specification::Block.new(
+        Sumitsubo::Specification::Block::PARAGRAPH, 0, 5, MARKER, nil,
+        [Sumitsubo::Specification::Span.new("@other", 0, 8)], []
+      ),
+      Sumitsubo::Specification::Block.new(
+        heading, 2, 7, NAME, nil,
+        [Sumitsubo::Specification::Span.new("what another format registers", 0, 31)], []
+      )
+    ]
   end
 end
 

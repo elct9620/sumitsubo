@@ -88,14 +88,14 @@ The command is `sumi`, shipped as a single native executable.
   version line, and keeps a grammar out of every run that only prints or lays
   down files. The stamped revision is covered by CI running the executable.
 - Carried C is one translation unit for the runtime and one per grammar
-  (`ts_lib.c`, `ts_ruby.c`, `ts_rust.c`, `ts_markdown.c`), and cannot be fewer:
-  the runtime and a grammar each carry a `tree_sitter/parser.h` under the same
-  include guard, and two grammars collide on the macros every generated parser
-  defines. Markdown carries the block grammar alone — the inline one is reached
-  through `ts_parser_set_included_ranges`, which the binding does not have, and
-  the unparsed text a block-level `inline` node holds is what a specification is
-  read from. Grammars move into a directory of their own once there are enough
-  to read as a group.
+  (`ts_lib.c`, `ts_ruby.c`, `ts_rust.c`, `ts_markdown.c`,
+  `ts_markdown_inline.c`), and cannot be fewer: the runtime and a grammar each
+  carry a `tree_sitter/parser.h` under the same include guard, and two grammars
+  collide on the macros every generated parser defines. Markdown carries two —
+  the block grammar for the structure, and the inline one for the text a
+  block-level node holds unparsed, which is read as a string of its own rather
+  than in place. Grammars move into a directory of their own once there are
+  enough to read as a group.
 - `spin build` compiles `bin/sumi.rb` to `build/bin/sumi`.
 - `spin test` compiles each `test/*.rb` against the library sources — never
   against `bin/`, which is why `bin/sumi.rb` holds nothing but the delegation

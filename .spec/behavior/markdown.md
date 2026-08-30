@@ -241,6 +241,14 @@ document are claimed from a test that cannot.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that item |
 
+## `MD-055` A rejected word written as an empty pair of marks
+
+| Step | Statement |
+| --- | --- |
+| Given | a term rejecting a word with nothing between the marks |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at that item |
+
 ## `MD-027` An ignore with no rejection to set aside
 
 | Step | Statement |
@@ -264,14 +272,6 @@ document are claimed from a test that cannot.
 | Given | a list written under a term and above the reserved heading |
 | When | the blocks the document is made of are read |
 | Then | the term rejects nothing, since only a reserved heading says a list declares something |
-
-## `MD-030` A vocabulary nobody wrote
-
-| Step | Statement |
-| --- | --- |
-| Given | a path where no vocabulary was written |
-| When | the vocabulary is asked for |
-| Then | the path is named as holding none, before any block is read |
 
 ## `MD-031` A definition whose contracts source claims in a comment
 

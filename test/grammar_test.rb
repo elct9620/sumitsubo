@@ -82,13 +82,40 @@ p markdown("(pipe_table_row (pipe_table_cell) @cell)").map { |capture| capture.t
 # this is the side that can ask a real one. The parser is handed the grammars
 # this build carries, the way a run of `sumi` hands them to it.
 require "sumitsubo/specification/parser/markdown"
+require "sumitsubo/specification/builder/behavior"
+require "sumitsubo/specification/builder/contract"
+require "sumitsubo/specification/builder/glossary"
 
-# The query lives with the parser that writes it, and the name of the grammar
-# it is written against travels with it: a name the binding does not know
-# answers nothing rather than failing, so the two are pinned to each other.
+# The queries live with the parser that writes them, and the names of the
+# grammars they are written against travel with them: a name the binding does
+# not know answers nothing rather than failing, so the two are pinned to each
+# other. Both are pinned, since a specification is read through the pair.
 p Sumitsubo::Specification::Parser::Markdown::GRAMMAR == Sumitsubo::Grammar::MARKDOWN
+p Sumitsubo::Specification::Parser::Markdown::INLINE == Sumitsubo::Grammar::MARKDOWN_INLINE
 
 reading = Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)
+
+# The extension is the whole of what says a file is written this way, so a
+# parser is asked rather than told.
+# @behavior MD-016
+puts "--- which files this parser answers for ---"
+p [reading.reads?("init.md"), reading.reads?("init.json"), reading.reads?(".spec/behavior/init.md")]
+
+# A form says which kinds it is written in and the parser answers with those,
+# the way a run does through the repository. The kinds are named outright
+# because a constant is reached through the name written here, not through a
+# value handed over.
+def feature_blocks(reading, path)
+  reading.blocks([path], Sumitsubo::Specification::Builder::Behavior::KINDS)[path]
+end
+
+def vocabulary_blocks(reading, path)
+  reading.blocks([path], Sumitsubo::Specification::Builder::Glossary::KINDS)[path]
+end
+
+def definition_blocks(reading, path)
+  reading.blocks([path], Sumitsubo::Specification::Builder::Contract::KINDS)[path]
+end
 
 def steps_of(scenario)
   steps = scenario.attributes
@@ -99,12 +126,16 @@ def said(name, holding)
   holding.each { |one| puts "    #{name} #{one}" }
 end
 
-# The document breaks its description up with a subheading. This form is not
-# written at that level, so the heading is never captured and no scenario comes
-# of it — which is what the count below says.
+# The document breaks its description up with a subheading, and wraps that
+# description over two lines. This form is not written at that level, so no
+# scenario comes of the subheading; the wrapping is a space by the time the form
+# sees the paragraph, which is what the one line below says.
+# @behavior MD-002
 # @behavior MD-015
 # @behavior MD-018
-feature = reading.behavior("test/fixtures/reading/init.md")
+PATH = "test/fixtures/reading/init.md"
+feature = Sumitsubo::Specification::Builder::Behavior.new(PATH)
+  .build(feature_blocks(reading, PATH))
 
 puts "#{feature.key} #{feature.includes.map { |one| one.key }.inspect}"
 puts "  #{feature.text}"
@@ -134,7 +165,16 @@ end
 
 # @behavior MD-047
 puts "--- a vocabulary read through the grammar ---"
-vocabulary_of(reading.glossary("test/fixtures/reading/glossary.md"))
+VOCABULARY = "test/fixtures/reading/glossary.md"
+vocabulary_of(
+  Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY, VOCABULARY)
+    .build(vocabulary_blocks(reading, VOCABULARY))
+)
+
+def definition(reading, path)
+  Sumitsubo::Specification::Builder::Contract.new(path, Sumitsubo::Source::Language)
+    .build(definition_blocks(reading, path))
+end
 
 def definition_of(spec)
   puts "#{spec.key} #{spec.attributes.inspect} #{spec.includes.map { |one| one.key }.inspect}"
@@ -151,10 +191,10 @@ require "sumitsubo/source/language"
 
 # @behavior MD-048
 puts "--- a definition whose contracts source claims, read through the grammar ---"
-definition_of(reading.contract("test/fixtures/reading/cli.md", Sumitsubo::Source::Language))
+definition_of(definition(reading, "test/fixtures/reading/cli.md"))
 
 # Two contracts in two languages under one definition, which the field this
 # replaces could not carry.
 # @behavior MD-049
 puts "--- a definition registering contracts in two languages ---"
-definition_of(reading.contract("test/fixtures/reading/seams.md", Sumitsubo::Source::Language))
+definition_of(definition(reading, "test/fixtures/reading/seams.md"))

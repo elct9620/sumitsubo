@@ -7,6 +7,9 @@ tree-sitter: no grammar registered for cobol
 ["1:Init", "5:`I-001` The first run"]
 ["Given ", "a directory with no specification "]
 true
+true
+--- which files this parser answers for ---
+[true, false, true]
 Init ["test/init_test.rb"]
   Laying down an empty specification to start a reference line from.
   test/fixtures/reading/init.md:15 I-001 The first run lays down what a reference line starts from

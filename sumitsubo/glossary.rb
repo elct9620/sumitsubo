@@ -26,6 +26,17 @@ module Sumitsubo
 
     class Error < Sumitsubo::Error; end
 
+    # Where the vocabulary is kept, refused where nobody wrote one. A missing
+    # glossary is not a difference between a specification and the code — there
+    # is no reference line to verify from — and this is the one place that knows
+    # a run without one has something to lay down.
+    def self.at(path)
+      file = Pathname.new(path)
+      raise Error, "no glossary at #{Place.file(file)}; sumi init lays one down" unless file.exist?
+
+      path
+    end
+
     # A vocabulary is one Specification and everything under it a Statement:
     # a section holds the terms it declares, a term's text is its definition, a
     # rejected word sits under the term rejecting it with the reason as its

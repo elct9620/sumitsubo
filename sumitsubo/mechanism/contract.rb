@@ -2,6 +2,7 @@ require "sumitsubo/check/claim"
 require "sumitsubo/check/declaration"
 require "sumitsubo/check/reach"
 require "sumitsubo/contract"
+require "sumitsubo/specification/builder/contract"
 require "sumitsubo/mechanism/seed"
 
 module Sumitsubo
@@ -97,8 +98,14 @@ module Sumitsubo
 
       # The source arrives with the parser because a contract's signature is
       # read by the very reading that reads the source it describes.
-      def read(parser, path, source)
-        parser.contract(path, source)
+      # Which kinds of block this form is written in, asked before a document is
+      # read so that a parser answers with those and no others.
+      def kinds
+        Specification::Builder::Contract::KINDS
+      end
+
+      def read(blocks, path, source)
+        Specification::Builder::Contract.new(path, source).build(blocks)
       rescue Sumitsubo::Unreadable => e
         raise Sumitsubo::Contract::Error, e.message
       end

@@ -29,7 +29,7 @@ module Sumitsubo
         return held unless held.nil?
 
         path = Pathname.new(directory)
-        found = path.directory? ? files_in(path).map { |file| reading(file, mechanism) } : []
+        found = path.directory? ? read_all(files_in(path), mechanism) : []
         @directories[directory] = found
         found
       end
@@ -40,15 +40,34 @@ module Sumitsubo
         held = @files[said]
         return held unless held.nil?
 
-        @files[said] = reading(said, mechanism)
+        @files[said] = read_all([said], mechanism)[0]
       end
 
       private
 
-      # The source goes with the parser because a contract's signature is read
+      # Every file at once. A parser is asked for all of their blocks before any
+      # of them is built, so it puts one question to each grammar rather than two
+      # by turns — which is the difference between compiling a query once and
+      # compiling it for every file.
+      #
+      # The source goes with the reading because a contract's signature is read
       # by the very reading that reads the source it describes.
-      def reading(path, mechanism)
-        mechanism.read(Parser.of(path, @parsers), path, @source)
+      def read_all(paths, mechanism)
+        paths.each { |path| Parser.of(path, @parsers) }
+        answered = {}
+        @parsers.each { |parser| claimed(parser, paths, mechanism, answered) }
+        paths.map { |path| mechanism.read(answered[path], path, @source) }
+      end
+
+      # What one parser answers for, asked of it in one go. A file the parsers
+      # before it claimed is not offered again, the way `Parser.of` answers with
+      # the first that reads it.
+      def claimed(parser, paths, mechanism, answered)
+        group = paths.select { |path| answered[path].nil? && parser.reads?(path) }
+        return if group.empty?
+
+        found = parser.blocks(group, mechanism.kinds)
+        group.each { |path| answered[path] = found[path] }
       end
 
       # Which files are specifications is the parsers' to say rather than an

@@ -5,8 +5,6 @@ Init ["test/init_test.rb", "test/other_test.rb"]
     given a directory with no specification
     when `sumi init` runs
     then an empty glossary is written
---- a soft line break is a space ---
-one two three
 --- a scenario stating two Givens and no Then ---
   {"given" => ["a directory", "a glossary already there"], "when" => ["`sumi init` runs"]}
 --- an id with no title after it ---
@@ -31,8 +29,6 @@ one two three
   refused: init.md:1 declares no title; sumi help behavior has the form
 --- a document with two titles ---
   refused: init.md:3 declares a second title; sumi help behavior has the form
---- which files this parser answers for ---
-[true, false, true]
 --- a vocabulary read into sections, terms and the words they reject ---
 Glossary "Prose above every section."
   Everywhere ["app/**/*.rb"] "What this section is for."
@@ -59,14 +55,14 @@ Glossary "Prose and nothing else."
   refused: test/fixtures/reading/glossary.md:5 writes Rejected outside any term; sumi help glossary has the form
 --- a rejected word that is not in backticks ---
   refused: test/fixtures/reading/glossary.md:9 rejects a word that is not in backticks; sumi help glossary has the form
+--- a rejected word with nothing between the marks ---
+  refused: test/fixtures/reading/glossary.md:9 rejects a word that is not in backticks; sumi help glossary has the form
 --- an ignore written under no rejected word ---
   refused: test/fixtures/reading/glossary.md:9 writes an ignore under no rejected word; sumi help glossary has the form
 --- an ignore with nothing to say why ---
   refused: test/fixtures/reading/glossary.md:10 writes an ignore at app/order.rb:2 with no reason; sumi help glossary has the form
 --- a list a reserved heading does not open is prose ---
 []
---- a vocabulary nobody wrote ---
-  refused: no glossary at nowhere.md; sumi init lays one down
 --- a definition whose contracts source claims in a comment ---
 CLI {"marker" => ["@command"]} ["sumitsubo/command/*.rb"]
   The commands `sumi` answers.

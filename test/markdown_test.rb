@@ -1,56 +1,89 @@
-require "sumitsubo/specification/parser/markdown"
+require "sumitsubo/specification/builder/behavior"
+require "sumitsubo/specification/builder/contract"
+require "sumitsubo/specification/builder/glossary"
 require "sumitsubo/source"
 
-# Reading a Markdown specification into a feature and its scenarios: the part
-# of that work no grammar owns.
+# What a form makes of the blocks a document is made of: the part of reading a
+# specification that no grammar owns.
 #
-# The grammar is handed in, so this test hands in one that answers with what it
-# was given. Nothing here reaches the binding, which is what lets `--regen`
-# write the snapshot beside it. Each case below is one way a document drifts
-# out of shape, written on its own so what it pins can be read off it.
+# The blocks are written out here rather than read from a file, which is what
+# lets `--regen` write the snapshot beside it — nothing reaches the binding.
+# Each case below is one way a document drifts out of shape, written on its own
+# so what it pins can be read off it.
 
-Capture = Struct.new(:match, :name, :line, :last, :start, :finish, :text)
+BLOCK = Sumitsubo::Specification::Block
+SPAN = Sumitsubo::Specification::Span
 
-# A capture as the binding hands one over. What the tree measures is stood in
-# for here: the lines a block spans are its own newlines, and the bytes are the
-# text's own extent, since a case hands over one block rather than a document.
-def capture(name, line, text)
-  Capture.new(0, name, line, line + text.count("\n"), 0, text.length, text)
+# The runs a document marked as taken letter for letter, stood in for the way a
+# canned grammar stood in for the tree: a case writes the text a reader wrote,
+# and the marks in it say where the runs are. The offsets count bytes, since
+# that is what a block is sliced by.
+def spans_in(text)
+  found = []
+  at = 0
+  while true
+    opened = text.index("`", at)
+    break if opened.nil?
+
+    closed = text.index("`", opened + 1)
+    break if closed.nil?
+
+    found.push(SPAN.new(text[(opened + 1)...closed], text[0...opened].bytesize,
+                        text[0...(closed + 1)].bytesize))
+    at = closed + 1
+  end
+  found
 end
 
-# A grammar that answers whatever a case handed it. What a real one answers for
-# a real document is pinned where the binding is, and this file is free of it.
-class Canned
-  def initialize(captures)
-    @captures = captures
-  end
-
-  def captures_in(grammar, path, query, where)
-    @captures
-  end
+# A soft line break is a space before a form ever sees it, so a case may wrap a
+# paragraph the way a reader would and still hand over what the parser hands
+# over. That folding is pinned where a real document is read.
+def block(kind, level, line, text)
+  said = text.split("\n").map { |one| one.strip }.join(" ")
+  BLOCK.new(kind, level, line, said, nil, spans_in(said), [])
 end
 
-def h1(line, text) = capture("h1", line, text)
-def h2(line, text) = capture("h2", line, text)
-def h3(line, text) = capture("h3", line, text)
-def h4(line, text) = capture("h4", line, text)
-def paragraph(line, text) = capture("paragraph", line, text)
-def item(line, text) = capture("item", line, text)
-def nested(line, text) = capture("nested", line, text)
-def row(line, text) = capture("row", line, text)
-def cell(line, text) = capture("cell", line, text)
+def h1(line, text) = block(BLOCK::HEADING, 1, line, text)
+def h2(line, text) = block(BLOCK::HEADING, 2, line, text)
+def h3(line, text) = block(BLOCK::HEADING, 3, line, text)
+def h4(line, text) = block(BLOCK::HEADING, 4, line, text)
+def paragraph(line, text) = block(BLOCK::PARAGRAPH, 0, line, text)
+def item(line, text) = block(BLOCK::ITEM, 1, line, text)
+def nested(line, text) = block(BLOCK::ITEM, 2, line, text)
+def row(line, text) = block(Sumitsubo::Specification::Block::ROW, 0, line, text)
+def cell(line, text) = block(Sumitsubo::Specification::Block::CELL, 0, line, text)
+
+# A row carries its cells and a fenced block its language and content, so a case
+# writes them in the order a reader would and this gathers them the way a parser
+# hands them over.
+def document(blocks)
+  found = []
+  blocks.each { |one| gathered(found, one) }
+  found
+end
+
+def gathered(found, one)
+  return found.push(one) if found.empty?
+
+  holding = found[-1]
+  return holding.cells.push(one) if one.kind == Sumitsubo::Specification::Block::CELL && holding.kind == Sumitsubo::Specification::Block::ROW
+  return holding.language = one.text if one.kind == "language" && holding.kind == BLOCK::CODE
+  return holding.text = one.text if one.kind == "content" && holding.kind == BLOCK::CODE
+
+  found.push(one)
+end
 
 def steps_of(scenario)
   steps = scenario.attributes
-  steps.keys.each { |name| said(name, steps[name]) }
+  steps.keys.each { |name| printed(name, steps[name]) }
 end
 
-def said(name, holding)
+def printed(name, holding)
   holding.each { |one| puts "    #{name} #{one}" }
 end
 
-def read(captures)
-  Sumitsubo::Specification::Parser::Markdown.new(Canned.new(captures)).behavior("init.md")
+def read(blocks)
+  Sumitsubo::Specification::Builder::Behavior.new("init.md").build(document(blocks))
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil
@@ -81,12 +114,6 @@ feature.statements.each do |scenario|
   puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
   steps_of(scenario)
 end
-
-# A paragraph wrapped for a reader says what an unwrapped one says, which is
-# what lets the same words be written either way in either format.
-# @behavior MD-002
-puts "--- a soft line break is a space ---"
-puts read([h1(1, "Init"), paragraph(3, "one\n  two\nthree")]).text
 
 # Two Given rows are two states, and a step nobody wrote is no step rather than
 # an empty one.
@@ -170,24 +197,15 @@ read([paragraph(1, "What init lays down.")])
 puts "--- a document with two titles ---"
 read([h1(1, "Init"), h1(3, "Verify")])
 
-# The extension is the whole of what says a file is written this way, so a
-# parser is asked rather than told.
-# @behavior MD-016
-puts "--- which files this parser answers for ---"
-parser = Sumitsubo::Specification::Parser::Markdown.new(Canned.new([]))
-p [parser.reads?("init.md"), parser.reads?("init.json"), parser.reads?(".spec/behavior/init.md")]
-
 # --- a vocabulary --------------------------------------------------------
 #
 # One file is one specification here as it is for the other two forms; the
-# tree under it is deeper, which is the whole of the difference. The path names
-# a file that is really there, because a vocabulary nobody wrote is refused
-# before any block is read.
+# tree under it is deeper, which is the whole of the difference.
 
 VOCABULARY = "test/fixtures/reading/glossary.md"
 
-def vocabulary(captures)
-  Sumitsubo::Specification::Parser::Markdown.new(Canned.new(captures)).glossary(VOCABULARY)
+def vocabulary(blocks)
+  Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY, VOCABULARY).build(document(blocks))
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil
@@ -282,6 +300,15 @@ vocabulary([
   item(9, "Purchase — Order is what the domain calls it.")
 ])
 
+# A word with nothing between the marks is nothing taken letter for letter, so
+# it would match everywhere or nowhere; the mechanism must never be handed one.
+# @behavior MD-055
+puts "--- a rejected word with nothing between the marks ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
+  item(9, "`` — Order is what the domain calls it.")
+])
+
 # @behavior MD-027
 puts "--- an ignore written under no rejected word ---"
 vocabulary([
@@ -306,17 +333,6 @@ p vocabulary([
   item(7, "one the definition wanted to list"),
   nested(8, "and one under it")
 ]).statements[0].statements[0].statements
-
-# A vocabulary is refused before any block is read, because a file nobody
-# wrote is a reference line to compare against rather than a document out of
-# shape.
-# @behavior MD-030
-puts "--- a vocabulary nobody wrote ---"
-begin
-  Sumitsubo::Specification::Parser::Markdown.new(Canned.new([])).glossary("nowhere.md")
-rescue Sumitsubo::Unreadable => e
-  puts "  refused: #{e.message}"
-end
 
 # --- a definition --------------------------------------------------------
 #
@@ -351,12 +367,12 @@ class Spelling
   end
 end
 
-def fence(line, text) = capture("fence", line, text)
-def language(line, text) = capture("language", line, text)
-def content(line, text) = capture("content", line, text)
+def fence(line, text) = BLOCK.new(BLOCK::CODE, 0, line, "", nil, [], [])
+def language(line, text) = BLOCK.new("language", 0, line, text, nil, [], [])
+def content(line, text) = BLOCK.new("content", 0, line, text, nil, [], [])
 
-def definition(captures, answers = {})
-  Sumitsubo::Specification::Parser::Markdown.new(Canned.new(captures)).contract("cli.md", Spelling.new(answers))
+def definition(blocks, answers = {})
+  Sumitsubo::Specification::Builder::Contract.new("cli.md", Spelling.new(answers)).build(document(blocks))
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil

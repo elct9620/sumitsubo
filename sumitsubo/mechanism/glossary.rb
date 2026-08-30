@@ -1,6 +1,8 @@
 require "sumitsubo/check/reach"
 require "sumitsubo/check/region"
 require "sumitsubo/glossary"
+require "sumitsubo/place"
+require "sumitsubo/specification/builder/glossary"
 require "sumitsubo/mechanism/seed"
 
 module Sumitsubo
@@ -28,14 +30,20 @@ module Sumitsubo
 
       # What a mechanism could not read is its own to report, so the parser's
       # refusal is answered under this mechanism's name.
-      def read(parser, path, source)
-        parser.glossary(path)
+      # Which kinds of block this form is written in, asked before a document is
+      # read so that a parser answers with those and no others.
+      def kinds
+        Specification::Builder::Glossary::KINDS
+      end
+
+      def read(blocks, path, source)
+        Specification::Builder::Glossary.new(path, Place.file(path)).build(blocks)
       rescue Sumitsubo::Unreadable => e
         raise Sumitsubo::Glossary::Error, e.message
       end
 
       def verify(config, findings, specifications, source)
-        path = Sumitsubo::Glossary.path_in(config.root)
+        path = Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root))
         vocabulary = specifications.one(path, self)
         @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
