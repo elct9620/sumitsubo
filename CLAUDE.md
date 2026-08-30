@@ -16,15 +16,15 @@ A term that rejects nothing asserts nothing about the code — it names what the
 project means — and there is no unchecked promise in naming. A note is the
 same.
 
-`.spec/behavior/` therefore arrived with the Behavior mechanism and not before,
-`.spec/contract/` with Contract, and `.spec/glossary.md` stayed empty until
+`docs/behavior/` therefore arrived with the Behavior mechanism and not before,
+`docs/contract/` with Contract, and `docs/glossary.md` stayed empty until
 this project had words worth rejecting. The vocabulary moved out of this file to sit beside them: a term
 written here is prose, and the same term written there is checked against every
 comment the project holds.
 
 ## Vocabulary
 
-The vocabulary lives in `.spec/glossary.md`, and its includes say what it
+The vocabulary lives in `docs/glossary.md`, and its includes say what it
 reaches. A specification is checked at its source, which is where a finding's
 fix belongs; the fixtures stay out, since what they carry is deliberately
 wrong.

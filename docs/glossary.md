@@ -22,9 +22,9 @@ of it.
 
 ### Structured Specification
 
-The files a mechanism reads a specification from: .spec/glossary.md, one file
-per kind of contract under .spec/contract/, and one file per feature under
-.spec/behavior/.
+The files a mechanism reads a specification from, under whatever root the
+project names: glossary.md, one file per kind of contract under contract/, and
+one file per feature under behavior/.
 
 ### Verifiable Specification
 
