@@ -8,6 +8,7 @@ The words this project keeps, and the ones it turns down in their place.
 
 - `CLAUDE.md`
 - `README.md`
+- `docs/*.md`
 - `.spec/glossary.md`
 - `.spec/contract/*.md`
 - `.spec/behavior/*.md`
@@ -54,6 +55,13 @@ is written in; a name, though, is spelled the way one language spells it, so a
 specification registering names says which it means. What a build carries is
 decided when it is built.
 
+### Mechanism
+
+One kind of specification, and the checks it is verified by. Which source a
+specification is compared against the specification selects itself, so what a
+mechanism decides is the name it is switched by, the checks it runs, and how
+each of them is worded.
+
 ### Contract
 
 An interface a project registers as one it means to keep, found in the source
@@ -77,6 +85,13 @@ To say something exists. A specification declares the contracts and behaviors
 it registers; source declares the classes, modules and methods it defines. One
 relation, and the subject is what changes — which is why both sides use the
 word.
+
+### Check
+
+One comparison a mechanism runs, answering a finding wherever the two sides
+have something to say about each other. It is named for what it finds rather
+than for the mechanism running it, so two mechanisms asking one question run
+one check under one name.
 
 ### Finding
 
