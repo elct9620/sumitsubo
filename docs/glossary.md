@@ -9,9 +9,8 @@ The words this project keeps, and the ones it turns down in their place.
 - `CLAUDE.md`
 - `README.md`
 - `docs/*.md`
-- `.spec/glossary.md`
-- `.spec/contract/*.md`
-- `.spec/behavior/*.md`
+- `docs/contract/*.md`
+- `docs/behavior/*.md`
 - `sumitsubo/**/*.rb`
 - `test/*.rb`
 
