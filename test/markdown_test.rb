@@ -89,7 +89,7 @@ rescue Sumitsubo::Unreadable => e
   nil
 end
 
-# @behavior MD-001
+# @behavior F-001
 puts "--- a feature, its scope, and one scenario ---"
 feature = read([
   h1(1, "Init"),
@@ -117,7 +117,7 @@ end
 
 # Two Given rows are two states, and a step nobody wrote is no step rather than
 # an empty one.
-# @behavior MD-003
+# @behavior F-002
 puts "--- a scenario stating two Givens and no Then ---"
 read([
   h1(1, "Init"),
@@ -130,7 +130,7 @@ read([
 
 # The title is the whole heading, so a scenario's own title is whatever follows
 # its id — and a scenario with nothing after the id has none.
-# @behavior MD-004
+# @behavior F-003
 puts "--- an id with no title after it ---"
 read([h1(1, "Init"), h2(3, "`I-003`")]).statements.each do |scenario|
   puts "  #{scenario.key} #{scenario.text.inspect}"
@@ -138,7 +138,7 @@ end
 
 # Prose under a scenario is prose. Only the paragraph under the title says what
 # the feature is for, so a note written further down does not replace it.
-# @behavior MD-005
+# @behavior F-004
 puts "--- a paragraph under a scenario is passed over ---"
 noted = read([
   h1(1, "Init"),
@@ -148,26 +148,26 @@ noted = read([
 ])
 puts "  #{noted.text}"
 
-# @behavior MD-006
+# @behavior F-005
 puts "--- a heading that does not open with an id ---"
 read([h1(1, "Init"), h2(3, "The first run")])
 
-# @behavior MD-007
+# @behavior F-006
 puts "--- an id in backticks that is empty ---"
 read([h1(1, "Init"), h2(3, "`` the first run")])
 
-# @behavior MD-008
+# @behavior F-007
 puts "--- an include that is not a glob in backticks ---"
 read([h1(1, "Init"), h2(3, "Includes"), item(5, "test/init_test.rb")])
 
-# @behavior MD-009
+# @behavior F-008
 puts "--- a step row that lost a separator ---"
 read([
   h1(1, "Init"), h2(3, "`I-005` A run"),
   row(5, "| Given a directory |"), cell(5, "Given a directory ")
 ])
 
-# @behavior MD-010
+# @behavior F-009
 puts "--- a step row carrying an unescaped separator ---"
 read([
   h1(1, "Init"), h2(3, "`I-006` A run"),
@@ -175,25 +175,25 @@ read([
   cell(5, "Given "), cell(5, "a directory "), cell(5, "and a glossary ")
 ])
 
-# @behavior MD-011
+# @behavior F-010
 puts "--- a row naming something that is not a step ---"
 read([
   h1(1, "Init"), h2(3, "`I-007` A run"),
   row(5, "| Where | a directory |"), cell(5, "Where "), cell(5, "a directory ")
 ])
 
-# @behavior MD-012
+# @behavior F-011
 puts "--- a step before any scenario ---"
 read([
   h1(1, "Init"),
   row(3, "| Given | a directory |"), cell(3, "Given "), cell(3, "a directory ")
 ])
 
-# @behavior MD-013
+# @behavior F-012
 puts "--- a document with no title ---"
 read([paragraph(1, "What init lays down.")])
 
-# @behavior MD-014
+# @behavior F-013
 puts "--- a document with two titles ---"
 read([h1(1, "Init"), h1(3, "Verify")])
 
@@ -227,7 +227,7 @@ def said_of(spec)
   end
 end
 
-# @behavior MD-019
+# @behavior F-014
 puts "--- a vocabulary read into sections, terms and the words they reject ---"
 said_of(vocabulary([
   h1(1, "Glossary"),
@@ -250,7 +250,7 @@ said_of(vocabulary([
 
 # A subdomain is a section like any other, so two of them declaring one term is
 # what the mechanism lays over rather than an ambiguity to refuse.
-# @behavior MD-020
+# @behavior F-015
 puts "--- two sections declaring one term ---"
 p vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"),
@@ -259,7 +259,7 @@ p vocabulary([
 
 # The separator is what a reader puts there and `fmt` is what keeps it there,
 # so the reason reads the same whether or not it was written.
-# @behavior MD-021
+# @behavior F-016
 puts "--- a rejected word written with and without the separator ---"
 vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
@@ -268,32 +268,32 @@ vocabulary([
   item(11, "`Acquire`")
 ]).statements[0].statements[0].statements.each { |word| puts "  #{word.key} #{word.text.inspect}" }
 
-# @behavior MD-022
+# @behavior F-017
 puts "--- a term written under no section ---"
 vocabulary([h1(1, "Glossary"), h3(3, "Order")])
 
 # A title is what says the document is a vocabulary at all, so one declaring
 # no section is a vocabulary that checks nothing rather than a document read
 # as the wrong kind.
-# @behavior MD-052
+# @behavior F-019
 puts "--- a vocabulary declaring no section checks nothing ---"
 said_of(vocabulary([h1(1, "Glossary"), paragraph(3, "Prose and nothing else.")]))
 
-# @behavior MD-023
+# @behavior F-018
 puts "--- a document that never says it is a vocabulary ---"
 vocabulary([h2(1, "Everywhere"), h3(3, "Order")])
 
-# @behavior MD-024
+# @behavior F-020
 puts "--- a heading under a term that is not Rejected ---"
 vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejcted")
 ])
 
-# @behavior MD-025
+# @behavior F-021
 puts "--- Rejected written under no term ---"
 vocabulary([h1(1, "Glossary"), h2(3, "Everywhere"), h4(5, "Rejected")])
 
-# @behavior MD-026
+# @behavior F-022
 puts "--- a rejected word that is not in backticks ---"
 vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
@@ -302,21 +302,21 @@ vocabulary([
 
 # A word with nothing between the marks is nothing taken letter for letter, so
 # it would match everywhere or nowhere; the mechanism must never be handed one.
-# @behavior MD-055
+# @behavior F-023
 puts "--- a rejected word with nothing between the marks ---"
 vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
   item(9, "`` — Order is what the domain calls it.")
 ])
 
-# @behavior MD-027
+# @behavior F-024
 puts "--- an ignore written under no rejected word ---"
 vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
   nested(9, "`app/order.rb:2` — Quotes the upstream column name.")
 ])
 
-# @behavior MD-028
+# @behavior F-025
 puts "--- an ignore with nothing to say why ---"
 vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"), h4(7, "Rejected"),
@@ -326,7 +326,7 @@ vocabulary([
 
 # A list under a term but above Rejected is prose, the same as a paragraph
 # under a scenario: only the reserved heading says a list declares something.
-# @behavior MD-029
+# @behavior F-026
 puts "--- a list a reserved heading does not open is prose ---"
 p vocabulary([
   h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Order"),
@@ -387,7 +387,7 @@ def registered_by(spec)
   end
 end
 
-# @behavior MD-031
+# @behavior F-027
 puts "--- a definition whose contracts source claims in a comment ---"
 registered_by(definition([
   h1(1, "CLI"),
@@ -405,7 +405,7 @@ registered_by(definition([
 
 # A signature says which language spells the name it registers, so one
 # definition may register contracts in two of them without either being wrong.
-# @behavior MD-032
+# @behavior F-028
 puts "--- a definition whose contracts the syntax tree declares ---"
 WHERE = "module Sumitsubo::Place\n  def self.of(path)\n  end\nend\n"
 HANDLE = "mod store {\n    pub struct Handle;\n}\n"
@@ -427,38 +427,38 @@ registered_by(definition([
   HANDLE => [scope("store"), declares("store::Handle")]
 }))
 
-# @behavior MD-033
+# @behavior F-029
 puts "--- a contract heading that does not open with a name ---"
 definition([h1(1, "CLI"), h2(3, "the first command")])
 
-# @behavior MD-034
+# @behavior F-030
 puts "--- a flag a contract does not carry ---"
 definition([h1(1, "CLI"), h2(3, "`init` `hidden`")])
 
-# @behavior MD-035
+# @behavior F-031
 puts "--- prose written after a name where only a flag is read ---"
 definition([h1(1, "CLI"), h2(3, "`init` lays down a specification")])
 
-# @behavior MD-036
+# @behavior F-032
 puts "--- a marker named after a contract has already been registered ---"
 definition([h1(1, "CLI"), h2(3, "`init`"), h2(5, "Marker"), paragraph(7, "`@command`")])
 
-# @behavior MD-037
+# @behavior F-033
 puts "--- a marker heading with no word under it ---"
 definition([h1(1, "CLI"), h2(3, "Marker"), h2(5, "`init`")])
 
-# @behavior MD-038
+# @behavior F-034
 puts "--- a contract the syntax tree reading is given no signature for ---"
 definition([h1(1, "Seams"), h2(3, "`Store.open`"), paragraph(5, "A seam.")])
 
-# @behavior MD-039
+# @behavior F-035
 puts "--- a signature whose fence names no language ---"
 definition([
   h1(1, "Seams"), h2(3, "`Store.open`"),
   fence(5, "```\ndef self.open(path)\n```"), content(6, "def self.open(path)\n")
 ])
 
-# @behavior MD-040
+# @behavior F-036
 puts "--- a signature in a language this build does not carry ---"
 definition([
   h1(1, "Seams"), h2(3, "`Store.open`"),
@@ -468,7 +468,7 @@ definition([
 # The signature is what says the name is one a definition could carry, so the
 # name it declares is the name being registered. A fence writing its nesting out
 # is what makes `Store.open` that name rather than `open`.
-# @behavior MD-041
+# @behavior F-037
 puts "--- a signature declaring another name ---"
 definition([
   h1(1, "Seams"), h2(3, "`Store.open`"),
@@ -478,7 +478,7 @@ definition([
 
 # A signature declares the one contract and the scopes holding it, so anything
 # else in the fence is a second contract nothing registers.
-# @behavior MD-053
+# @behavior F-038
 puts "--- a signature declaring a second contract ---"
 TWO = "module Store\n  def self.open(path)\n  end\n\n  def self.close(dir)\n  end\nend\n"
 definition([
@@ -494,7 +494,7 @@ definition([
   fence(5, "```ruby\n#{NEAR}```"), language(5, "ruby"), content(6, NEAR)
 ], { NEAR => [scope("Store"), scope("StoreAdmin"), declares("StoreAdmin.open")] })
 
-# @behavior MD-054
+# @behavior F-039
 puts "--- a signature the reading cannot read ---"
 definition([
   h1(1, "Seams"), h2(3, "`Store.open`"),
@@ -502,13 +502,13 @@ definition([
   content(6, "def self.open(path\n")
 ], { "def self.open(path\n" => :unreadable })
 
-# @behavior MD-042
+# @behavior F-040
 puts "--- a document that names nothing ---"
 definition([h2(1, "`init`")])
 
 # Under a marker every fence is prose, so a second one under a contract is too
 # — and under the other reading only the first is the signature.
-# @behavior MD-043
+# @behavior F-041
 puts "--- a second fence under one contract ---"
 OPEN = "module Store\n  def self.open(path)\n  end\nend\n"
 definition([
@@ -533,14 +533,14 @@ def sections_of(spec)
   spec.statements.each { |section| puts "  #{section.key} #{globs_of(section).inspect}" }
 end
 
-# @behavior MD-044
+# @behavior F-042
 puts "--- includes written at the level a feature writes them ---"
 p globs_of(read([
   h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"), item(6, "`test/other_test.rb`"),
   h2(8, "`I-001` A run"), item(10, "`not an include`")
 ]))
 
-# @behavior MD-045
+# @behavior F-043
 puts "--- includes written at the level a vocabulary writes them ---"
 sections_of(vocabulary([
   h1(1, "Glossary"),
@@ -551,7 +551,7 @@ sections_of(vocabulary([
 
 # Two sections naming one glob each keep their own: a boundary is the section's,
 # and a reader sent to fix one has to be sent to the section that wrote it.
-# @behavior MD-046
+# @behavior F-044
 puts "--- one glob written twice ---"
 sections_of(vocabulary([
   h1(1, "Glossary"),

@@ -130,10 +130,11 @@ $ ./build/bin/sumi verify
 `spin test` compares each test's output against a committed snapshot, and
 `spin test --regen` writes those snapshots by running the file under CRuby.
 CRuby has no `ffi_func`, so a test reaching the tree-sitter binding cannot be
-regenerated and its snapshot is written by hand instead. That is why a parser
-is handed the grammar it puts its query to rather than reaching for one: the
-file deciding what a document means names no grammar, so the judgement stays on
-the side that can still be regenerated.
+regenerated and its snapshot is written by hand instead. That is what the seam
+between reading a document and reading a specification is for: a parser is
+handed the grammars it puts its queries to and answers with the blocks a
+document is made of, and the file deciding what a block means never sees one —
+so the judgement stays on the side that can still be regenerated.
 
 That last line is the project verifying its own specification, which CI runs on
 every push.

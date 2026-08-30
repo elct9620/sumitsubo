@@ -22,16 +22,17 @@ edge and handed in.
                 ▼                     ▼
   Drivers        Adapters               Use Cases              Entities
 ┌──────────┐  ┌────────────────┐  ┌────────────────────┐  ┌──────────────┐
-│tree-     │◄─┤ Markdown parse │─►│ ╔════════════════╗ │  │Specification │
-│sitter    │  │ + Builder×3    │  │ ║ Specification  ║─┼─►│  Statement   │
-│          │  ├────────────────┤  │ ║  Repository    ║ │  │              │
-│          │◄─┤ Ruby / Rust /  │  │ ╚═══════╤════════╝ │  │              │
-│          │  │ Prose readings │─►│         │          │  │              │
-└──────────┘  │ + node shaping │  │ ╔═══════▼════════╗ │  │              │
-              ├────────────────┤  │ ║    Source      ║─┼─►│  Source::*   │
-┌──────────┐  │ walk (reach)   │─►│ ║  Repository    ║ │  │              │
-│filesystem│◄─┤                │  │ ╚═══════╤════════╝ │  │  Place       │
-└──────────┘  └────────────────┘  │         │          │  │              │
+│tree-     │◄─┤ Markdown parse │─►│  Builder×3         │  │Specification │
+│sitter    │  │   → Block      │  │   └► the forms     │  │  Statement   │
+│          │  ├────────────────┤  │ ╔═══════▼════════╗ │  │  Block       │
+│          │◄─┤ Ruby / Rust /  │  │ ║ Specification  ║─┼─►│              │
+│          │  │ Prose readings │─►│ ║  Repository    ║ │  │              │
+└──────────┘  │ + node shaping │  │ ╚═══════╤════════╝ │  │              │
+              ├────────────────┤  │         │          │  │              │
+┌──────────┐  │ walk (reach)   │─►│ ╔═══════▼════════╗ │  │  Source::*   │
+│filesystem│◄─┤                │  │ ║    Source      ║─┼─►│              │
+└──────────┘  └────────────────┘  │ ║  Repository    ║ │  │  Place       │
+                                  │ ╚═══════╤════════╝ │  │              │
                                   │ Mechanism×3        │  │              │
 ┌──────────┐  ┌────────────────┐  │   └► the checks    │  │              │
 │  stdout  │◄─┤ Report         │◄─┤         │          │  │              │
@@ -42,6 +43,10 @@ edge and handed in.
                                   └────────────────────┘  └──────────────┘
 ```
 
+A form is not an adapter: it never reaches a driver. What a parser hands over is
+a Block, and what a form makes of one is the specification's own — which is why
+the two sit on either side of that word rather than in one box.
+
 ## One run
 
 Each stage keeps what it read in one place, so no stage has to know what the
@@ -51,9 +56,9 @@ next one will ask of it.
  (1) read the specification
      .spec/**            ┌─────────────────────────┐
          │  Parser       │ Specification Repository│  every specification
-         └──────────────►│  ├ glossary   vocabulary│
-                         │  ├ contract   definition│
-                         │  └ behavior   feature   │
+         │    → Block    │  ├ glossary   vocabulary│
+         │  Builder      │  ├ contract   definition│
+         └──────────────►│  └ behavior   feature   │
                          └───────────┬─────────────┘
                                      │ every include, as one set
  (2) scan the source                 ▼
@@ -118,9 +123,12 @@ Glossary and Contract answer for the implementation, Behavior for the tests.
 
  behavior/behavior.md ─ Claim @behavior ──►   test/behavior_test.rb
  behavior/glossary.md ────────────────────►   test/glossary_test.rb
- behavior/markdown.md ────────────────────►   test/{grammar,markdown}_test.rb
+ behavior/markdown.md ────────────────────►   test/grammar_test.rb
+   a document read into blocks
+ behavior/form.md    ─────────────────────►   test/markdown_test.rb
+   what a form makes of them
  behavior/…            ────────────────────►  test/…_test.rb
-   thirteen features, reaching all             never the implementation
+   fourteen features, reaching all             never the implementation
    fifteen tests
 ```
 
@@ -220,7 +228,7 @@ Every file has one place, and where it sits is what says what it is.
 │
 ├─ bin/sumi.rb             what this build carries and answers for; never
 │                          compiled into a test
-├─ ts_{lib,ruby,rust,markdown}.c
+├─ ts_{lib,ruby,rust,markdown,markdown_inline}.c
 │                          one translation unit each; fewer will not link
 ├─ .packages/tree-sitter/  the FFI binding — the dot is what keeps its C from
 │                          being compiled a second time
