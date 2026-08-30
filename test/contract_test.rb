@@ -6,6 +6,17 @@ require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
 require "sumitsubo/source/language"
+require "sumitsubo/source/language/prose"
+require "sumitsubo/source/language/ruby"
+require "sumitsubo/source/language/rust"
+
+# What this test carries, built the way `bin/sumi.rb` builds it: a reading is
+# handed the grammar it puts its queries to.
+LANGUAGES = Sumitsubo::Source::Language.new([
+  Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Rust.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Prose.new
+])
 require "sumitsubo/source"
 require "sumitsubo/source/repository"
 require "sumitsubo/specification/parser/markdown"
@@ -18,7 +29,7 @@ require "sumitsubo/specification"
 PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 
 # Source reaches a mechanism through the repository, the way a run's does.
-SOURCE = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language)
+SOURCE = Sumitsubo::Source::Repository.new(LANGUAGES)
 
 # The loader answers where an interface sits as well as what it says. An
 # interface nothing claims is a finding about the specification, so the reader

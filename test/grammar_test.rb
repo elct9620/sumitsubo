@@ -5,6 +5,7 @@
 # --regen` produces its snapshot by running the file under CRuby, which has no
 # ffi_func. The snapshot below is written by hand and stays that way.
 require "sumitsubo/grammar"
+require "sumitsubo/source/repository"
 
 SOURCE = "# A Customer is billed here.\n" \
          "class Charge\n" \
@@ -172,7 +173,7 @@ vocabulary_of(
 )
 
 def definition(reading, path)
-  Sumitsubo::Specification::Builder::Contract.new(path, Sumitsubo::Source::Language)
+  Sumitsubo::Specification::Builder::Contract.new(path, Sumitsubo::Source::Repository.new(LANGUAGES))
     .build(definition_blocks(reading, path))
 end
 
@@ -188,6 +189,17 @@ end
 # The languages a build carries answer here, the way a run of `sumi` hands them
 # in: a signature says which one spells the name it registers.
 require "sumitsubo/source/language"
+require "sumitsubo/source/language/prose"
+require "sumitsubo/source/language/ruby"
+require "sumitsubo/source/language/rust"
+
+# What this test carries, built the way `bin/sumi.rb` builds it: a reading is
+# handed the grammar it puts its queries to.
+LANGUAGES = Sumitsubo::Source::Language.new([
+  Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Rust.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Prose.new
+])
 
 # @behavior MD-048
 puts "--- a definition whose contracts source claims, read through the grammar ---"

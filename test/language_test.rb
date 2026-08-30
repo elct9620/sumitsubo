@@ -1,4 +1,16 @@
 require "sumitsubo/source/language"
+require "sumitsubo/source/language/prose"
+require "sumitsubo/source/language/ruby"
+require "sumitsubo/source/language/rust"
+require "sumitsubo/grammar"
+
+# What this test carries, built the way `bin/sumi.rb` builds it: a reading is
+# handed the grammar it puts its queries to.
+LANGUAGES = Sumitsubo::Source::Language.new([
+  Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Rust.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Prose.new
+])
 
 # How a file is read for what a person put in it, and what a file no language
 # claims answers instead.
@@ -17,45 +29,45 @@ end
 # `Signed` is declared in this file and appears in none of the regions.
 # @behavior L-001
 puts "--- what a person wrote in a source file ---"
-p spell(Sumitsubo::Source::Language.comments_in("test/fixtures/glossary/app/order.rb", "order.rb"))
+p spell(LANGUAGES.comments_in("test/fixtures/glossary/app/order.rb", "order.rb"))
 
 # @behavior L-002
 puts "--- a file no language claims answers entire ---"
-p spell(Sumitsubo::Source::Language.comments_in(PROSE, "overview.md")).length
+p spell(LANGUAGES.comments_in(PROSE, "overview.md")).length
 
 # @behavior L-003
 puts "--- and offers nowhere for a claim to sit ---"
-p Sumitsubo::Source::Language.attached_comments_in(PROSE, "overview.md")
+p LANGUAGES.attached_comments_in(PROSE, "overview.md")
 
 # A name is spelled the way one language spells it, so which reads the file is
 # the specification's to say rather than the filename's to imply.
 # @behavior L-004
 puts "--- source is read as the language a specification named ---"
-p Sumitsubo::Source::Language.declarations_in(RUBY, RUBY, "ruby").length
+p LANGUAGES.declarations_in(RUBY, RUBY, "ruby").length
 
 # What an executable can read is decided when it is built, and a name it does
 # not answer to is a run that cannot compare rather than one that guesses.
 # @behavior L-008
 puts "--- what this build carries ---"
-p Sumitsubo::Source::Language.carries?("ruby")
-p Sumitsubo::Source::Language.carries?("cobol")
+p LANGUAGES.carries?("ruby")
+p LANGUAGES.carries?("cobol")
 
 # The claims sit in a class body, a method body and a block comment, and all
 # three are offered — while the comment at the end of `verify_test.rb`, with
 # nothing after it, is not.
 # @behavior L-005 L-006
 puts "--- where a claim could sit ---"
-p spell(Sumitsubo::Source::Language.attached_comments_in(
+p spell(LANGUAGES.attached_comments_in(
   "test/fixtures/behavior/test/init_test.rb", "init_test.rb"
 )).length
-p spell(Sumitsubo::Source::Language.attached_comments_in(
+p spell(LANGUAGES.attached_comments_in(
   "test/fixtures/behavior/test/verify_test.rb", "verify_test.rb"
 ))
 
 # @behavior L-007
 puts "--- source the grammar cannot read ---"
 begin
-  Sumitsubo::Source::Language.attached_comments_in("test/fixtures/behavior/test/broken.rb", "broken.rb")
+  LANGUAGES.attached_comments_in("test/fixtures/behavior/test/broken.rb", "broken.rb")
 rescue Sumitsubo::Source::Language::Error => e
   puts e.message
 end
@@ -68,14 +80,14 @@ RUST = "test/fixtures/definitions/sample.rs"
 # nothing after it, so it is a comment and not somewhere a claim could sit.
 # @behavior L-010
 puts "--- a second language reads its own comments ---"
-p spell(Sumitsubo::Source::Language.comments_in(RUST, "sample.rs")).length
-p spell(Sumitsubo::Source::Language.attached_comments_in(RUST, "sample.rs")).length
+p spell(LANGUAGES.comments_in(RUST, "sample.rs")).length
+p spell(LANGUAGES.attached_comments_in(RUST, "sample.rs")).length
 
 # A name is the path the file itself carries: an `impl` says how what is inside
 # it is reached without declaring the type, a `mod` and a `trait` do both.
 # @behavior L-011
 puts "--- and spells a name the way it writes a path ---"
-Sumitsubo::Source::Language.declarations_in(RUST, "sample.rs", "rust").each do |name|
+LANGUAGES.declarations_in(RUST, "sample.rs", "rust").each do |name|
   puts "  #{name.line} #{name.name}"
 end
 
@@ -83,7 +95,7 @@ end
 # for it — which is what tells a method from an associated function.
 # @behavior L-012
 puts "--- with the receiver among its parameters ---"
-Sumitsubo::Source::Language.declarations_in(RUST, "sample.rs", "rust").each do |name|
+LANGUAGES.declarations_in(RUST, "sample.rs", "rust").each do |name|
   next if name.shape.nil? || name.shape.params.empty?
 
   spelled = name.shape.params.map { |param| "#{param.kind}#{param.name.nil? ? "" : " #{param.name}"}" }
@@ -93,7 +105,7 @@ end
 DEFS = "test/fixtures/definitions"
 
 def declares(path)
-  Sumitsubo::Source::Language.declarations_in(path, path, "ruby").each do |name|
+  LANGUAGES.declarations_in(path, path, "ruby").each do |name|
     puts "  #{name.path}:#{name.line} #{name.name}#{signature(name)}"
   end
 end
@@ -151,7 +163,7 @@ SIGNATURE = "module Sumitsubo::Place\n" \
 
 # @behavior L-013
 puts "--- what a piece of text declares ---"
-Sumitsubo::Source::Language.declarations_of(SIGNATURE, ".spec/contract/internal.md", "ruby").each do |name|
+LANGUAGES.declarations_of(SIGNATURE, ".spec/contract/internal.md", "ruby").each do |name|
   puts "  #{name.path}:#{name.line} #{name.name}#{signature(name)}"
 end
 
@@ -160,7 +172,7 @@ end
 # @behavior L-014
 puts "--- and text the grammar cannot read is refused ---"
 begin
-  Sumitsubo::Source::Language.declarations_of("def of(path", ".spec/contract/internal.md", "ruby")
+  LANGUAGES.declarations_of("def of(path", ".spec/contract/internal.md", "ruby")
 rescue Sumitsubo::Source::Language::Error => e
   puts "  #{e.message}"
 end

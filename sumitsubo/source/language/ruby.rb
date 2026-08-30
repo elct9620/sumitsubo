@@ -1,6 +1,5 @@
 require "sumitsubo/error"
 require "sumitsubo/source"
-require "sumitsubo/grammar"
 require "sumitsubo/source/language/nodes"
 
 module Sumitsubo
@@ -10,9 +9,19 @@ module Sumitsubo
       # rather than beside the registration because they are written against one
       # grammar's node names: another language answers with its own.
       #
-      # Reached through `language.rb`, which holds the seam and the shapes a
-      # reading answers with, so nothing here requires its way back up.
+      # The grammar is handed in rather than reached for: what a build carries is
+      # decided at its edge, and a reading that named one would be a second
+      # place saying so.
+      #
+      # A caller reaches this through the seam rather than by name, so nothing
+      # here requires its way back up to it — only a build, saying what it
+      # carries, writes the name.
       class Ruby
+        # What the binding knows this grammar by. It travels with the queries,
+        # since they are written against its node names and no two grammars
+        # spell a node alike.
+        GRAMMAR = "ruby"
+
         # Comments are the part of a source file a person wrote for another
         # person, which is where a concept is called by name rather than spelled
         # as an identifier.
@@ -82,8 +91,13 @@ module Sumitsubo
         QUERY
 
         # What a specification calls this language when it names one.
+
+        def initialize(grammar)
+          @grammar = grammar
+        end
+
         def named?(name)
-          name == Grammar::RUBY
+          name == GRAMMAR
         end
 
         def reads?(path)
@@ -145,7 +159,7 @@ module Sumitsubo
         private
 
         def captured(source, query, where)
-          Grammar.captures_of(Grammar::RUBY, source, query, where)
+          @grammar.captures_of(GRAMMAR, source, query, where)
         rescue TreeSitter::ParseError => e
           # Source the grammar cannot read is not a difference between the two
           # sides either: half a file yields regions the rest of it never made.

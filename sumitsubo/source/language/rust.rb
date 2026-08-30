@@ -1,6 +1,5 @@
 require "sumitsubo/error"
 require "sumitsubo/source"
-require "sumitsubo/grammar"
 require "sumitsubo/source/language/nodes"
 
 module Sumitsubo
@@ -15,9 +14,19 @@ module Sumitsubo
       # name written here stops where the file does — as the documentation
       # convention does, writing `Vec::push` rather than the whole path.
       #
-      # Reached through `language.rb`, which holds the seam and the shapes a
-      # reading answers with, so nothing here requires its way back up.
+      # The grammar is handed in rather than reached for: what a build carries is
+      # decided at its edge, and a reading that named one would be a second
+      # place saying so.
+      #
+      # A caller reaches this through the seam rather than by name, so nothing
+      # here requires its way back up to it — only a build, saying what it
+      # carries, writes the name.
       class Rust
+        # What the binding knows this grammar by. It travels with the queries,
+        # since they are written against its node names and no two grammars
+        # spell a node alike.
+        GRAMMAR = "rust"
+
         # What Ruby spells with one node Rust splits into two, and a doc comment
         # is a line comment carrying a marker.
         COMMENTS = "[(line_comment) (block_comment)] @text"
@@ -58,8 +67,13 @@ module Sumitsubo
           (function_signature_item name: (_) @of parameters: (parameters #{PARAMETERS}))
         QUERY
 
+
+        def initialize(grammar)
+          @grammar = grammar
+        end
+
         def named?(name)
-          name == Grammar::RUST
+          name == GRAMMAR
         end
 
         def reads?(path)
@@ -106,7 +120,7 @@ module Sumitsubo
         end
 
         def captured(source, query, where)
-          Grammar.captures_of(Grammar::RUST, source, query, where)
+          @grammar.captures_of(GRAMMAR, source, query, where)
         rescue TreeSitter::ParseError => e
           # Source the grammar cannot read is not a difference between the two
           # sides either: half a file yields regions the rest of it never made.

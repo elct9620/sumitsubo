@@ -1,6 +1,6 @@
 module Sumitsubo
   module Source
-    module Language
+    class Language
       # What a syntax tree hands back, made into declarations — the part of that
       # work no language owns.
       #

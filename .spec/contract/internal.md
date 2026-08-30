@@ -50,57 +50,57 @@ module Sumitsubo::Specification::Parser
 end
 ```
 
-## `Sumitsubo::Source::Language.comments_in` `internal`
+## `Sumitsubo::Source::Language#comments_in` `internal`
 
 The reading of what a person wrote for another person, whatever the file is written in.
 
 ```ruby
-module Sumitsubo::Source::Language
-  def self.comments_in(path, where)
+class Sumitsubo::Source::Language
+  def comments_in(path, where)
   end
 end
 ```
 
-## `Sumitsubo::Source::Language.attached_comments_in` `internal`
+## `Sumitsubo::Source::Language#attached_comments_in` `internal`
 
 The reading of where a claim could sit, for a file whose language has code for a comment to sit in front of.
 
 ```ruby
-module Sumitsubo::Source::Language
-  def self.attached_comments_in(path, where)
+class Sumitsubo::Source::Language
+  def attached_comments_in(path, where)
   end
 end
 ```
 
-## `Sumitsubo::Source::Language.declarations_in` `internal`
+## `Sumitsubo::Source::Language#declarations_in` `internal`
 
 The reading of what a piece of source declares, as the language a specification named.
 
 ```ruby
-module Sumitsubo::Source::Language
-  def self.declarations_in(path, where, language)
+class Sumitsubo::Source::Language
+  def declarations_in(path, where, language)
   end
 end
 ```
 
-## `Sumitsubo::Source::Language.declarations_of` `internal`
+## `Sumitsubo::Source::Language#declarations_of` `internal`
 
 The reading of what a piece of text declares, for a shape a specification wrote rather than a file.
 
 ```ruby
-module Sumitsubo::Source::Language
-  def self.declarations_of(source, where, language)
+class Sumitsubo::Source::Language
+  def declarations_of(source, where, language)
   end
 end
 ```
 
-## `Sumitsubo::Source::Language.carries?` `internal`
+## `Sumitsubo::Source::Language#carries?` `internal`
 
 The one place a run answers whether this build reads the language a specification named.
 
 ```ruby
-module Sumitsubo::Source::Language
-  def self.carries?(language)
+class Sumitsubo::Source::Language
+  def carries?(language)
   end
 end
 ```

@@ -1,6 +1,17 @@
 require "pathname"
 require "sumitsubo"
 require "sumitsubo/source/language"
+require "sumitsubo/source/language/prose"
+require "sumitsubo/source/language/ruby"
+require "sumitsubo/source/language/rust"
+
+# What this test carries, built the way `bin/sumi.rb` builds it: a reading is
+# handed the grammar it puts its queries to.
+LANGUAGES = Sumitsubo::Source::Language.new([
+  Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Rust.new(Sumitsubo::Grammar),
+  Sumitsubo::Source::Language::Prose.new
+])
 require "sumitsubo/grammar"
 require "sumitsubo/specification/parser/markdown"
 
@@ -8,7 +19,7 @@ require "sumitsubo/specification/parser/markdown"
 # file already crosses into the binding through the languages, so the grammar
 # the parser reads through costs it nothing it had not already paid.
 cli = Sumitsubo::CLI.new(
-  Sumitsubo::BUILD_REV, Sumitsubo::Source::Language,
+  Sumitsubo::BUILD_REV, LANGUAGES,
   [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 )
 back = Dir.pwd
