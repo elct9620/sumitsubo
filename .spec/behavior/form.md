@@ -10,7 +10,7 @@ asked for a kind it does not read would be reading something it never writes.
 Nothing here names a format. A run taken letter for letter arrives already
 found, so what a form does with one — a name, an id, a word a term turns down —
 is the whole of what these scenarios say. How a document becomes those blocks is
-`.spec/behavior/markdown.md`.
+the parser's, and is specified where the parser is.
 
 Every shape rule below belongs to the form it was written against, and each
 answers at the line that broke it rather than at the file.

@@ -16,7 +16,7 @@ for two by turns.
 
 A form says which kinds it is written in and no others, which is why a level one
 form has no use for is prose rather than something read and passed over. What a
-block means is never asked here — `.spec/behavior/form.md` has that.
+block means is never asked here: that belongs to the form reading it.
 
 The grammar refuses nothing: every byte sequence is a legal document, so a
 specification written wrong loses the shape a query matches rather than failing

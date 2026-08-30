@@ -46,6 +46,28 @@ included.
 
 - `AST` — An abstract tree drops the comments, which are the only thing Glossary reads.
 
+### Parser
+
+How a file is read for the structure a person gave it. A file is offered to
+each in turn and the first one claiming it answers, the way a language is
+chosen, so which files are specifications is decided by what a build carries
+rather than by an extension written into a mechanism.
+
+### Block
+
+What a document is made of, said in the words a specification is written in
+rather than any one format's: a heading and the level it sits at, a paragraph,
+an item of a list and how deep it is, a fenced block and the language it
+declares, a row and the cells under it. It is what a parser answers with, and
+the first thing that no longer knows how the document was written.
+
+### Form
+
+One kind of specification as the shape a document is written in — a vocabulary,
+a definition, a feature. Three of them share one syntax, so each says which
+kinds of block it is written in and reads what one means for itself: a level
+that states a term in one is prose in another.
+
 ### Language
 
 How a file is read for what a person put in it, and how the names it declares
