@@ -54,7 +54,7 @@ next one will ask of it.
 
 ```
  (1) read the specification
-     .spec/**            ┌─────────────────────────┐
+     the root's three    ┌─────────────────────────┐
          │  Parser       │ Specification Repository│  every specification
          │    → Block    │  ├ glossary   vocabulary│
          │  Builder      │  ├ contract   definition│
@@ -106,12 +106,14 @@ An include is the whole of the relation between a specification and the code:
 Glossary and Contract answer for the implementation, Behavior for the tests.
 
 ```
- .spec/                                       the repository
+ docs/                                        the repository
  ────────────────────────────────────         ──────────────────────────────
 
  glossary.md ─────── Region ──────────────►   CLAUDE.md   README.md
-   the words this project keeps,          ┌─► docs/*.md
-   and the ones it turns down             ├─► .spec/**          ◄── itself
+   the words this project keeps,          ┌─► docs/*.md   ◄── itself, and the
+   and the ones it turns down             │                   prose beside it
+                                          ├─► docs/contract/*.md
+                                          ├─► docs/behavior/*.md
                                           ├─► sumitsubo/**/*.rb
                                           └─► test/*.rb
 
@@ -232,15 +234,16 @@ Every file has one place, and where it sits is what says what it is.
 │                          one translation unit each; fewer will not link
 ├─ .packages/tree-sitter/  the FFI binding — the dot is what keeps its C from
 │                          being compiled a second time
-├─ .spec/                  the reference line this tool holds itself to
+├─ docs/                   the reference line this tool holds itself to, and
+│                          the prose beside it
 ├─ test/                   *_test.rb, the committed .expected beside each,
 │                          and the fixtures they read
 ├─ scripts/                vendor.sh, build_rev.sh — split by what moves when
 ├─ .github/  Dockerfile    what ships
 ├─ .claude/hooks/          the same promises, inside a session
+├─ .sumi.json              what sumi is given about this project — the root
 ├─ spin.toml  spin.lock    what the compiler is given
-└─ README.md  CLAUDE.md  docs/
-                           prose for a reader
+└─ README.md  CLAUDE.md    prose for a reader
 
  not committed:  vendor/ (scripts/vendor.sh)   build_rev.rb
                  (scripts/build_rev.sh)        build/
