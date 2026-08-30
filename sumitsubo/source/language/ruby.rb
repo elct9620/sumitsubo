@@ -38,7 +38,6 @@ module Sumitsubo
         OF = "of"
         NAMED = "named"
         DEFAULT = "default"
-        POSITIONAL = "positional"
 
         # Kinds a caller may always leave out: a splat gathers whatever is there,
         # a block is passed or not, and forwarding says nothing about what has to
@@ -129,7 +128,7 @@ module Sumitsubo
             next if node.kind == REOPENED
 
             found.push(Source::Declaration.new(
-              where, node.first, qualified(scopes, reopened, node), params_for(taken, node)
+              where, node.first, qualified(scopes, reopened, node), shape_for(taken, node)
             ))
           end
           found
@@ -210,7 +209,7 @@ module Sumitsubo
               defaulted = true
             else
               kind = capture.name
-              name = capture.text if capture.name == POSITIONAL && name.nil?
+              name = capture.text if capture.name == Source::Param::POSITIONAL && name.nil?
             end
           end
           return nil if kind.nil?
@@ -220,11 +219,11 @@ module Sumitsubo
 
         # What a declaration answers for its parameters: none at all for a scope,
         # and the list for a method, which is empty where it takes nothing.
-        def params_for(taken, node)
+        def shape_for(taken, node)
           return nil if node.kind == SCOPE
 
           found = taken[owner(node.first, node.text)]
-          found.nil? ? [] : found
+          Source::Shape.new(params: found.nil? ? [] : found)
         end
 
         # A method's name sits on the same line as `def`, so the line and the

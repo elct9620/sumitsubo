@@ -226,10 +226,8 @@ module Sumitsubo
       found = []
       pattern = Regexp.new("\\b" + Regexp.escape(entry.key) + "\\b")
       regions.each do |region|
-        line = region.line
-        region.text.split("\n").each do |text|
-          found.push(Mention.new(path, line, name, entry.key, entry.text)) unless pattern.match(text).nil?
-          line += 1
+        region.lines.each do |one|
+          found.push(Mention.new(path, one.line, name, entry.key, entry.text)) unless pattern.match(one.text).nil?
         end
       end
       found

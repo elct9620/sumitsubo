@@ -28,12 +28,6 @@ module Sumitsubo
   module Contract
     DIRECTORY = "contract"
 
-    # The one kind word this tool owns rather than borrows: it names the
-    # parameter a caller writes with no marking of any sort, which every
-    # language has one of. A finding leaves it out, because a bare name in a
-    # spelled shape already says it.
-    POSITIONAL = "positional"
-
     # The checks this specification answers for, so a finding is told apart by
     # which one found it rather than by its wording.
     BARREN = "contract/barren"
@@ -435,8 +429,8 @@ module Sumitsubo
           found.push(Finding.new(
             rule: CONFLICTING, difference: true,
             place: Place.new(path: pair[0].path, line: pair[0].line),
-            message: "#{pair[0].name} takes #{spell(pair[0].params)} here and " \
-                     "#{spell(pair[1].params)} at #{pair[1].path}:#{pair[1].line}"
+            message: "#{pair[0].name} takes #{spelled(pair[0].shape)} here and " \
+                     "#{spelled(pair[1].shape)} at #{pair[1].path}:#{pair[1].line}"
           ))
         end
       end
@@ -458,7 +452,7 @@ module Sumitsubo
         signature[0], interface.path, language_of(definition, interface)
       )
       declared = found.find { |one| one.name == interface.key }
-      declared.nil? ? nil : declared.params
+      declared.nil? ? nil : declared.shape
     end
 
     # An interface defined with a shape other than the one registered. Where
@@ -475,7 +469,7 @@ module Sumitsubo
 
           group = grouped[Name.new(language_of(definition, interface), interface.key)]
           next if group.nil? || !agreed?(group)
-          next if registered == group[0].params
+          next if registered == group[0].shape
 
           # Both shapes are said, because what a reader chooses between is the
           # two of them; the name is spelled alone, since the reading this
@@ -483,8 +477,8 @@ module Sumitsubo
           found.push(Finding.new(
             rule: MISMATCHED, difference: true,
             place: Place.of(interface.path, interface.line),
-            message: "#{interface.key} takes #{spell(group[0].params)} " \
-                     "where the specification registers #{spell(registered)}"
+            message: "#{interface.key} takes #{spelled(group[0].shape)} " \
+                     "where the specification registers #{spelled(registered)}"
           ))
         end
       end
@@ -558,21 +552,10 @@ module Sumitsubo
       found
     end
 
-    # What a caller would have to write. The kind is left out where a bare
-    # name already says it, and a dash stands where the parameter has none of
-    # its own. A scope has no call to describe at all, which is not the same
-    # as a method taking nothing.
-    def self.spell(params)
-      return "nothing" if params.nil?
-
-      spelled = params.map { |param| spelled_as(param) }
-      "(#{spelled.join(", ")})"
-    end
-
-    def self.spelled_as(param)
-      name = param.name.nil? ? "-" : param.name
-      kind = param.kind == POSITIONAL ? "" : ":#{param.kind}"
-      "#{name}#{kind}#{param.optional ? "?" : ""}"
+    # What a caller would have to write. A scope has no call to describe at
+    # all, which is not the same as a method taking nothing.
+    def self.spelled(shape)
+      shape.nil? ? "nothing" : shape.spoken
     end
 
     # What a mechanism could not read is its own to report, so the parser's
@@ -652,8 +635,8 @@ module Sumitsubo
     # thing are the same shape — a scope carrying no parameters at all agrees
     # with itself, and one taking none does not agree with it.
     def self.agreed?(group)
-      shape = group[0].params
-      group.all? { |declared| declared.params == shape }
+      shape = group[0].shape
+      group.all? { |declared| declared.shape == shape }
     end
 
     # What a claim can resolve against. Only the marker reading makes claims,

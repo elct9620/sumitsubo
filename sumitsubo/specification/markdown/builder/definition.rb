@@ -250,7 +250,7 @@ module Sumitsubo
             end
 
             holding.each do |name|
-              next if name.params.nil? && encloses?(name.name, contract.key)
+              next if name.shape.nil? && encloses?(name.name, contract.key)
 
               refuse(contract.line, "writes a signature declaring #{name.name} as well, " \
                                     "where a signature declares the one contract and what holds it")

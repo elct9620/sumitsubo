@@ -16,6 +16,10 @@ PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
 # interface nothing claims is a finding about the specification, so the reader
 # has to be able to go to the line that registers it.
 
+def shaped
+  Sumitsubo::Source::Shape.new(params: [])
+end
+
 FIXTURE = "test/fixtures/contract"
 
 # A format this build does not really carry, so that what decides which files
@@ -131,7 +135,7 @@ fails { loaded("#{FIXTURE}/twice") }
 # @behavior T-016 T-018
 puts "--- an interface the syntax tree does not define ---"
 Sumitsubo::Contract.undefined(
-  loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Source::Declaration.new("src/commands.rb", 3, "init", [])] }
+  loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Source::Declaration.new("src/commands.rb", 3, "init", shaped)] }
 ).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
@@ -145,8 +149,8 @@ puts "--- a declaration outside the definition registering its name ---"
 spelled = loaded("#{FIXTURE}/nomarker")
 Sumitsubo::Contract.defining(
   spelled,
-  { "ruby" => [Sumitsubo::Source::Declaration.new("#{FIXTURE}/src/commands.rb", 3, "verify", []),
-               Sumitsubo::Source::Declaration.new("#{FIXTURE}/app/controller.rb", 9, "verify", [])] },
+  { "ruby" => [Sumitsubo::Source::Declaration.new("#{FIXTURE}/src/commands.rb", 3, "verify", shaped),
+               Sumitsubo::Source::Declaration.new("#{FIXTURE}/app/controller.rb", 9, "verify", shaped)] },
   Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
 ).each do |language, names|
   names.each { |name| puts "  #{language} #{name.path}:#{name.line} #{name.name}" }
@@ -185,7 +189,8 @@ def takes(name, kind = "positional", optional = false)
 end
 
 def declares(line, name, params)
-  Sumitsubo::Source::Declaration.new("src/store.rb", line, name, params)
+  shape = params.nil? ? nil : Sumitsubo::Source::Shape.new(params: params)
+  Sumitsubo::Source::Declaration.new("src/store.rb", line, name, shape)
 end
 
 registered = loaded("#{FIXTURE}/params")
@@ -198,7 +203,7 @@ puts "--- the shape a contract registers ---"
 definition = registered[0]
 definition.statements.each do |interface|
   params = Sumitsubo::Contract.shape_of(definition, interface, Sumitsubo::Source::Language)
-  shape = params.nil? ? "registers no shape" : Sumitsubo::Contract.spell(params)
+  shape = params.nil? ? "registers no shape" : params.spoken
   puts "  #{interface.key} #{shape}"
 end
 

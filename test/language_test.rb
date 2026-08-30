@@ -84,9 +84,9 @@ end
 # @behavior L-012
 puts "--- with the receiver among its parameters ---"
 Sumitsubo::Source::Language.declarations_in(RUST, "sample.rs", "rust").each do |name|
-  next if name.params.nil? || name.params.empty?
+  next if name.shape.nil? || name.shape.params.empty?
 
-  spelled = name.params.map { |param| "#{param.kind}#{param.name.nil? ? "" : " #{param.name}"}" }
+  spelled = name.shape.params.map { |param| "#{param.kind}#{param.name.nil? ? "" : " #{param.name}"}" }
   puts "  #{name.name}(#{spelled.join(", ")})"
 end
 
@@ -102,9 +102,9 @@ end
 # and a `?` where the caller may leave it out. A dash stands where Ruby let the
 # parameter go unnamed.
 def signature(name)
-  return "" if name.params.nil?
+  return "" if name.shape.nil?
 
-  spelled = name.params.map do |param|
+  spelled = name.shape.params.map do |param|
     "#{param.name.nil? ? "-" : param.name}:#{param.kind}#{param.optional ? "?" : ""}"
   end
   " (#{spelled.join(", ")})"

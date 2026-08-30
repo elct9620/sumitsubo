@@ -93,7 +93,7 @@ module Sumitsubo
             next if node.kind == HOLDER
 
             found.push(Source::Declaration.new(
-              where, node.first, qualified(holders, node), params_for(taken, node)
+              where, node.first, qualified(holders, node), shape_for(taken, node)
             ))
           end
           found
@@ -166,11 +166,11 @@ module Sumitsubo
 
         # A scope takes no parameters at all, which is not the same as a
         # function that takes none.
-        def params_for(taken, node)
+        def shape_for(taken, node)
           return nil unless node.kind == ITEM
 
           found = taken["#{node.first}\t#{node.text}"]
-          found.nil? ? [] : found
+          Source::Shape.new(params: found.nil? ? [] : found)
         end
 
       end

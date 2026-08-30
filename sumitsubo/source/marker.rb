@@ -28,15 +28,13 @@ module Sumitsubo
         where = Place.file(path)
         claims = []
         languages.attached_comments_in(path, where).each do |comment|
-          line = comment.line
           # A comment spanning lines arrives whole, so the claim answers at the
           # line the keyword is on rather than where the comment began.
-          comment.text.split("\n").each do |text|
+          comment.lines.each do |one|
             keywords.each do |keyword|
-              claimed = text_after(text, keyword)
-              claims.push(Source::Claim.new(where, line, keyword, claimed)) unless claimed.nil?
+              claimed = text_after(one.text, keyword)
+              claims.push(Source::Claim.new(where, one.line, keyword, claimed)) unless claimed.nil?
             end
-            line += 1
           end
         end
         claims
