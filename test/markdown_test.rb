@@ -384,13 +384,13 @@ registered_by(definition([
 # definition may register contracts in two of them without either being wrong.
 # @behavior MD-032
 puts "--- a definition whose contracts the syntax tree declares ---"
-WHERE = "module Sumitsubo::Where\n  def self.of(path)\n  end\nend\n"
+WHERE = "module Sumitsubo::Place\n  def self.of(path)\n  end\nend\n"
 HANDLE = "mod store {\n    pub struct Handle;\n}\n"
 
 registered_by(definition([
   h1(1, "Internal seams"),
   paragraph(3, "The places this project keeps to one implementation."),
-  h2(5, "`Sumitsubo::Where.of` `internal`"),
+  h2(5, "`Sumitsubo::Place.of` `internal`"),
   paragraph(7, "The one place a path a reader is handed is made."),
   fence(9, "```ruby\n#{WHERE}```"),
   language(9, "ruby"),
@@ -400,7 +400,7 @@ registered_by(definition([
   language(16, "rust"),
   content(17, HANDLE)
 ], {
-  WHERE => [scope("Sumitsubo::Where"), declares("Sumitsubo::Where.of")],
+  WHERE => [scope("Sumitsubo::Place"), declares("Sumitsubo::Place.of")],
   HANDLE => [scope("store"), declares("store::Handle")]
 }))
 

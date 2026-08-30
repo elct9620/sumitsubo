@@ -87,13 +87,13 @@ astray = [claim("test/fixtures/contract/app/controller.rb", 4, "@command", "init
 puts "--- a contract claimed only from outside its own definition ---"
 witnessing = Sumitsubo::Contract.witnessing(definitions, astray, reach)
 Sumitsubo::Contract.unclaimed(definitions, witnessing).each do |finding|
-  puts "  #{finding.path}:#{finding.line} #{finding.message}"
+  puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-037
 puts "--- and the claim that could not implement it ---"
 Sumitsubo::Contract.misplaced(definitions, astray, reach).each do |finding|
-  puts "  #{finding.path}:#{finding.line} #{finding.message}"
+  puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-002
@@ -133,7 +133,7 @@ puts "--- an interface the syntax tree does not define ---"
 Sumitsubo::Contract.undefined(
   loaded("#{FIXTURE}/nomarker"), { "ruby" => [Sumitsubo::Source::Declaration.new("src/commands.rb", 3, "init", [])] }
 ).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # `verify` is registered by a definition reaching src alone. A class merely
@@ -164,19 +164,19 @@ claims = [
 # @behavior T-009
 puts "--- an interface nothing claims ---"
 Sumitsubo::Contract.unclaimed(definitions, claims).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-010 T-011
 puts "--- a claim resolving to no contract, and one naming none at all ---"
 Sumitsubo::Contract.unresolved(definitions, claims).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-012
 puts "--- one contract claimed in two places ---"
 Sumitsubo::Contract.duplicated(definitions, claims).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # What a reading answers, since that is what the mechanism is really handed.
@@ -212,7 +212,7 @@ Sumitsubo::Contract.mismatched(registered, { "ruby" => [
   declares(9, "Store#write", []),
   declares(12, "Store", nil)
 ] }, Sumitsubo::Source::Language).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # `Store.open` is defined twice with one shape, which is one way in; `Store#read`
@@ -226,7 +226,7 @@ twice = { "ruby" => [
   declares(24, "Store#read", [takes("key", "keyword")])
 ] }
 Sumitsubo::Contract.conflicting(registered, twice).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 
 
@@ -270,5 +270,5 @@ puts "--- a declaration another language spells alike ---"
 Sumitsubo::Contract.undefined(
   spelling, { "ruby" => [Sumitsubo::Source::Declaration.new("src/store.rb", 2, "Store::Handle", nil)] }
 ).each do |finding|
-  puts "  #{finding.path}:#{finding.line} #{finding.message}"
+  puts "  #{finding.place.spoken} #{finding.message}"
 end

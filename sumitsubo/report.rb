@@ -1,4 +1,5 @@
 require "sumitsubo/finding"
+require "sumitsubo/place"
 
 module Sumitsubo
   # What a run has to say and the answer it leaves with, kept in one place
@@ -28,8 +29,8 @@ module Sumitsubo
 
     def answer
       found = @differences + @failures
-      found.sort_by { |one| [one.path, one.line, one.message] }
-           .each { |one| puts "#{one.path}:#{one.line} #{one.message}" }
+      found.sort_by { |one| [one.place.path, one.place.line, one.message] }
+           .each { |one| puts "#{one.place.spoken} #{one.message}" }
       @unreadable.sort.each { |message| puts message }
       puts "#{@differences.length} #{@differences.length == 1 ? "difference" : "differences"}"
       return 2 unless @failures.empty? && @unreadable.empty?

@@ -1,6 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
@@ -142,7 +142,7 @@ module Sumitsubo
     # sits in there, once per claim.
     def self.covered(definition, base, exclusion)
       found = {}
-      Source::Scope.of(base, definition.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
+      Source::Scope.of(base, definition.includes, exclusion).each { |path| found[Place.file(base / path)] = true }
       found
     end
 
@@ -167,8 +167,7 @@ module Sumitsubo
         next if empty.empty?
 
         spelled = Specification::Parser.of(definition.path, parsers).spelled_in(definition.path)
-        where = Where.of(definition.path)
-        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
+        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, definition.path, pattern, spelled[pattern])) }
       end
       found
     end
@@ -289,8 +288,8 @@ module Sumitsubo
         # dozens of files would otherwise spell all of them at the reader.
         found.push(Finding.new(
           rule: MISPLACED, difference: false,
-          path: claim.path, line: claim.line,
-          message: "#{claim.contract.spoken} is claimed outside what #{Where.of(spec)} includes"
+          place: Place.new(path: claim.path, line: claim.line),
+          message: "#{claim.contract.spoken} is claimed outside what #{Place.file(spec)} includes"
         ))
       end
       found
@@ -326,7 +325,7 @@ module Sumitsubo
           # message names neither.
           found.push(Finding.new(
             rule: UNCLAIMED, difference: true,
-            path: Where.of(interface.path), line: interface.line,
+            place: Place.of(interface.path, interface.line),
             message: "#{name.spoken} is claimed nowhere this specification includes"
           ))
         end
@@ -406,7 +405,7 @@ module Sumitsubo
           # names them.
           found.push(Finding.new(
             rule: UNDEFINED, difference: true,
-            path: Where.of(interface.path), line: interface.line,
+            place: Place.of(interface.path, interface.line),
             message: "#{name.spoken} is defined nowhere this specification " \
                      "includes, and one the reading cannot see never is"
           ))
@@ -435,7 +434,7 @@ module Sumitsubo
         paired(group).each do |pair|
           found.push(Finding.new(
             rule: CONFLICTING, difference: true,
-            path: pair[0].path, line: pair[0].line,
+            place: Place.new(path: pair[0].path, line: pair[0].line),
             message: "#{pair[0].name} takes #{spell(pair[0].params)} here and " \
                      "#{spell(pair[1].params)} at #{pair[1].path}:#{pair[1].line}"
           ))
@@ -483,7 +482,7 @@ module Sumitsubo
           # comes from shows no word in front of it.
           found.push(Finding.new(
             rule: MISMATCHED, difference: true,
-            path: Where.of(interface.path), line: interface.line,
+            place: Place.of(interface.path, interface.line),
             message: "#{interface.key} takes #{spell(group[0].params)} " \
                      "where the specification registers #{spell(registered)}"
           ))
@@ -504,7 +503,7 @@ module Sumitsubo
 
         found.push(Finding.new(
           rule: UNRESOLVED, difference: false,
-          path: claim.path, line: claim.line,
+          place: Place.new(path: claim.path, line: claim.line),
           message: unresolved_message(claim.contract)
         ))
       end
@@ -550,7 +549,7 @@ module Sumitsubo
         paired(group).each do |pair|
           found.push(Finding.new(
             rule: DUPLICATED, difference: true,
-            path: pair[0].path, line: pair[0].line,
+            place: Place.new(path: pair[0].path, line: pair[0].line),
             message: "#{pair[0].contract.spoken} is claimed at " \
                      "#{pair[1].path}:#{pair[1].line} as well"
           ))
@@ -668,7 +667,7 @@ module Sumitsubo
     end
 
     def self.at(interface)
-      "#{Where.of(interface.path)}:#{interface.line}"
+      Place.of(interface.path, interface.line).spoken
     end
   end
 end

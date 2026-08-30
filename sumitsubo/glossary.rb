@@ -4,7 +4,7 @@ require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
 require "sumitsubo/specification"
-require "sumitsubo/where"
+require "sumitsubo/place"
 
 module Sumitsubo
   # The structured specification the Glossary mechanism verifies against.
@@ -103,7 +103,7 @@ module Sumitsubo
       mentions = []
       scope.keys.sort.each do |path|
         file = base / path
-        regions = languages.comments_in(file, Where.of(file))
+        regions = languages.comments_in(file, Place.file(file))
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].statements.each do |entry|
@@ -184,7 +184,7 @@ module Sumitsubo
 
         found.push(Finding.new(
           rule: REJECTED, difference: true,
-          path: Where.of(base / mention.path), line: mention.line,
+          place: Place.of(base / mention.path, mention.line),
           message: "#{mention.term} rejects #{mention.used}: #{mention.reason}"
         ))
       end
@@ -205,7 +205,7 @@ module Sumitsubo
         ignore = aside[key]
         found.push(Finding.new(
           rule: STALE, difference: false,
-          path: Where.of(spec.path), line: ignore.line,
+          place: Place.of(spec.path, ignore.line),
           message: "nothing at #{ignore.at} has #{ignore.term} rejecting " \
                    "#{ignore.used}; the line moved or the wording was fixed"
         ))
@@ -250,8 +250,7 @@ module Sumitsubo
       return [] if empty.empty?
 
       spelled = Specification::Parser.of(path, parsers).spelled_in(path)
-      where = Where.of(path)
-      empty.map { |pattern| Source::Scope.barren_at(BARREN, where, pattern, spelled[pattern]) }
+      empty.map { |pattern| Source::Scope.barren_at(BARREN, path, pattern, spelled[pattern]) }
     end
 
     # A found path is a String relative to the base: these are the keys a

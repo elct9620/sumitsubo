@@ -1,6 +1,6 @@
 require "sumitsubo/version"
 require "sumitsubo/error"
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/finding"
 require "sumitsubo/config"
 require "sumitsubo/report"

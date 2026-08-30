@@ -98,7 +98,7 @@ claims = [Sumitsubo::Behavior::Claim.new("test/fixtures/behavior/test/verify_tes
 puts "--- a scenario claimed only from outside its own feature ---"
 witnessing = Sumitsubo::Behavior.witnessing(features, claims, reach)
 Sumitsubo::Behavior.uncovered(features, witnessing).each do |finding|
-  puts "  #{finding.path}:#{finding.line} #{finding.message}"
+  puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # Which files in the directory are specifications is the parsers' answer: the
@@ -117,11 +117,11 @@ end
 puts "--- an include covering no file answers at the line that wrote it ---"
 unreached = Sumitsubo::Behavior.load("test/fixtures/behavior/nowhere", PARSERS)
 Sumitsubo::Behavior.barren(unreached, Pathname.new("test/fixtures/behavior"), [], PARSERS).each do |finding|
-  puts "  #{finding.path}:#{finding.line} #{finding.message}"
+  puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior B-013
 puts "--- and the claim that could not witness it ---"
 Sumitsubo::Behavior.misplaced(features, claims, reach).each do |finding|
-  puts "  #{finding.path}:#{finding.line} #{finding.message}"
+  puts "  #{finding.place.spoken} #{finding.message}"
 end

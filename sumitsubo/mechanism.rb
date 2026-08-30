@@ -122,7 +122,7 @@ module Sumitsubo
             holding = []
             found[reading.language] = holding
           end
-          languages.declarations_in(reading.path, Where.of(reading.path), reading.language).each do |name|
+          languages.declarations_in(reading.path, Place.file(reading.path), reading.language).each do |name|
             holding.push(name)
           end
         end

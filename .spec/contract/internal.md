@@ -6,13 +6,24 @@ The places this project keeps to one implementation, and means to go on keeping.
 
 - `sumitsubo/**/*.rb`
 
-## `Sumitsubo::Where.of` `internal`
+## `Sumitsubo::Place.file` `internal`
 
 The one place a path a reader is handed is made.
 
 ```ruby
-module Sumitsubo::Where
-  def self.of(path)
+class Sumitsubo::Place
+  def self.file(path)
+  end
+end
+```
+
+## `Sumitsubo::Place.of` `internal`
+
+The one place a place in a file is made, for a finding to answer at.
+
+```ruby
+class Sumitsubo::Place
+  def self.of(path, line)
   end
 end
 ```

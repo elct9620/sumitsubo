@@ -1,4 +1,4 @@
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/mechanism"
 
 module Sumitsubo
@@ -17,7 +17,7 @@ module Sumitsubo
       # Laying down what is already there would overwrite a reference line, so
       # what exists is reported rather than replaced.
       def lay_down(seed)
-        where = Where.of(seed.path)
+        where = Place.file(seed.path)
         if seed.path.exist?
           puts "exists #{where}"
         else

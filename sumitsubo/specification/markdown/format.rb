@@ -1,5 +1,5 @@
 require "sumitsubo/error"
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/specification"
 
 module Sumitsubo
@@ -94,7 +94,7 @@ module Sumitsubo
         # the wrong one is sent nowhere. Which topic that is belongs to the
         # kind being read, so it arrives from there.
         def self.refuse(path, line, said, topic)
-          raise Unreadable, "#{Where.of(path)}:#{line} #{said}; sumi help #{topic} has the form"
+          raise Unreadable, "#{Place.of(path, line).spoken} #{said}; sumi help #{topic} has the form"
         end
       end
     end

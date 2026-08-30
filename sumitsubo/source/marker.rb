@@ -1,6 +1,6 @@
 require "sumitsubo/error"
 require "sumitsubo/source"
-require "sumitsubo/where"
+require "sumitsubo/place"
 
 module Sumitsubo
   module Source
@@ -25,7 +25,7 @@ module Sumitsubo
       def self.claims_in(path, keywords, languages)
         # A caller reaching a mechanism other than Behavior has no reason to have
         # rendered the path first, so the reading owns how it answers.
-        where = Where.of(path)
+        where = Place.file(path)
         claims = []
         languages.attached_comments_in(path, where).each do |comment|
           line = comment.line

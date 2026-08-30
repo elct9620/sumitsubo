@@ -102,7 +102,7 @@ module Sumitsubo
         end
 
         # The names this file declares and the shape each is reached by, spelled
-        # the way Ruby spells them: `Sumitsubo::Where.of` for a singleton method,
+        # the way Ruby spells them: `Sumitsubo::Place.of` for a singleton method,
         # `#` for an instance one, the bare path for a class or module.
         def declarations_in(path, where)
           declarations_of(path.read, where)

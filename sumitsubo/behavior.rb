@@ -1,6 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/specification/parser"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
@@ -90,7 +90,7 @@ module Sumitsubo
     # sits in there, once per claim.
     def self.covered(feature, base, exclusion)
       found = {}
-      Source::Scope.of(base, feature.includes, exclusion).each { |path| found[Where.of(base / path)] = true }
+      Source::Scope.of(base, feature.includes, exclusion).each { |path| found[Place.file(base / path)] = true }
       found
     end
 
@@ -115,8 +115,7 @@ module Sumitsubo
         next if empty.empty?
 
         spelled = Specification::Parser.of(feature.path, parsers).spelled_in(feature.path)
-        where = Where.of(feature.path)
-        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, where, pattern, spelled[pattern])) }
+        empty.each { |pattern| found.push(Source::Scope.barren_at(BARREN, feature.path, pattern, spelled[pattern])) }
       end
       found
     end
@@ -164,8 +163,8 @@ module Sumitsubo
         # files would otherwise spell all of them at the reader.
         found.push(Finding.new(
           rule: MISPLACED, difference: false,
-          path: claim.path, line: claim.line,
-          message: "#{claim.id} is claimed outside what #{Where.of(spec)} includes"
+          place: Place.new(path: claim.path, line: claim.line),
+          message: "#{claim.id} is claimed outside what #{Place.file(spec)} includes"
         ))
       end
       found
@@ -199,7 +198,7 @@ module Sumitsubo
           # message names neither.
           found.push(Finding.new(
             rule: UNCOVERED, difference: true,
-            path: Where.of(scenario.path), line: scenario.line,
+            place: Place.of(scenario.path, scenario.line),
             message: "#{MARKER} #{scenario.key} is claimed nowhere this specification includes"
           ))
         end
@@ -223,7 +222,7 @@ module Sumitsubo
 
         found.push(Finding.new(
           rule: UNRESOLVED, difference: false,
-          path: claim.path, line: claim.line,
+          place: Place.new(path: claim.path, line: claim.line),
           message: "#{claim.id} resolves to no scenario"
         ))
       end
@@ -255,7 +254,7 @@ module Sumitsubo
     end
 
     def self.at(scenario)
-      "#{Where.of(scenario.path)}:#{scenario.line}"
+      Place.of(scenario.path, scenario.line).spoken
     end
   end
 end

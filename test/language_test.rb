@@ -139,9 +139,9 @@ end
 # A specification registers a contract by writing the declaration it means, so
 # the same reading answers both sides and a shape no definition could have is a
 # shape no specification can register. The nesting is written out: it is what
-# makes the name `Sumitsubo::Where.of` rather than `of`.
-SIGNATURE = "module Sumitsubo::Where\n" \
-            "  def self.of(path)\n" \
+# makes the name `Sumitsubo::Place.of` rather than `of`.
+SIGNATURE = "module Sumitsubo::Place\n" \
+            "  def self.of(path, line)\n" \
             "  end\n" \
             "end\n"
 

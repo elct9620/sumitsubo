@@ -64,7 +64,7 @@ broken.rb: cannot be parsed by the ruby grammar
 --- and the reading of what it declares refuses it too ---
   test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
 --- what a piece of text declares ---
-  .spec/contract/internal.md:1 Sumitsubo::Where
-  .spec/contract/internal.md:2 Sumitsubo::Where.of (path:positional)
+  .spec/contract/internal.md:1 Sumitsubo::Place
+  .spec/contract/internal.md:2 Sumitsubo::Place.of (path:positional, line:positional)
 --- and text the grammar cannot read is refused ---
   .spec/contract/internal.md: cannot be parsed by the ruby grammar

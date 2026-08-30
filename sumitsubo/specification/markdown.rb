@@ -4,7 +4,7 @@ require "sumitsubo/specification/markdown/builder/definition"
 require "sumitsubo/specification/markdown/builder/feature"
 require "sumitsubo/specification/markdown/builder/vocabulary"
 require "sumitsubo/specification/markdown/format"
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/specification"
 
 module Sumitsubo
@@ -47,7 +47,7 @@ module Sumitsubo
 
       def glossary(path)
         file = Pathname.new(path)
-        where = Where.of(file)
+        where = Place.file(file)
         raise Unreadable, "no glossary at #{where}; sumi init lays one down" unless file.exist?
 
         built(Builder::Vocabulary.new(path, where), path)
@@ -96,7 +96,7 @@ module Sumitsubo
       # query matches, and saying so is a builder's rather than the grammar's.
       def captured(query, path)
         file = Pathname.new(path)
-        @grammar.captures_in(GRAMMAR, file, query, Where.of(file))
+        @grammar.captures_in(GRAMMAR, file, query, Place.file(file))
       end
     end
   end

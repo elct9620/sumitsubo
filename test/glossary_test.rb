@@ -67,10 +67,10 @@ ignored = Sumitsubo::Glossary.load("ignored.md", PARSERS)
 aside = Sumitsubo::Glossary::Mention.new("app/order.rb", 2, "Order", "Purchase", "Order is what the domain calls it.")
 kept = Sumitsubo::Glossary::Mention.new("app/other.rb", 3, "Order", "Purchase", "Order is what the domain calls it.")
 Sumitsubo::Glossary.standing([aside, kept], ignored, Pathname.pwd).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 Sumitsubo::Glossary.stale([aside, kept], ignored).each do |finding|
-  puts "#{finding.path}:#{finding.line} #{finding.message}"
+  puts "#{finding.place.spoken} #{finding.message}"
 end
 
 Dir.chdir(back)

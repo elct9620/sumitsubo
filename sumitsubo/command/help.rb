@@ -221,7 +221,7 @@ module Sumitsubo
 
             It carries its nesting, because that is what makes the name what
             it is: `def self.of(path)` on its own declares `of`, where
-            `module Sumitsubo::Where` around it declares `Sumitsubo::Where.of`.
+            `module Sumitsubo::Place` around it declares `Sumitsubo::Place.of`.
             The name it declares has to be the name in the heading, and the
             only other things it may declare are the scopes holding that name.
 

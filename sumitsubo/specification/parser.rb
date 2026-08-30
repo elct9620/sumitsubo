@@ -1,5 +1,5 @@
 require "sumitsubo/error"
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/specification"
 
 module Sumitsubo
@@ -23,7 +23,7 @@ module Sumitsubo
         parser = parsers.find { |candidate| candidate.reads?(path) }
         return parser unless parser.nil?
 
-        raise Unreadable, "#{Where.of(path)} is not a specification this sumi can read"
+        raise Unreadable, "#{Place.file(path)} is not a specification this sumi can read"
       end
 
       # Whether this build carries a parser answering for the file, the way

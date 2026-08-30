@@ -1,4 +1,4 @@
-require "sumitsubo/where"
+require "sumitsubo/place"
 require "sumitsubo/report"
 require "sumitsubo/mechanism"
 
@@ -15,7 +15,7 @@ module Sumitsubo
         # With no root there is no reference line at all to verify from, which
         # is not a difference between the two sides either.
         unless config.root.directory?
-          puts "no specification at #{Where.of(config.root)}; sumi init lays one down"
+          puts "no specification at #{Place.file(config.root)}; sumi init lays one down"
           return 2
         end
 

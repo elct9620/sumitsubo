@@ -75,7 +75,7 @@ CLI {"marker" => ["@command"]} ["sumitsubo/command/*.rb"]
 --- a definition whose contracts the syntax tree declares ---
 Internal seams {} []
   The places this project keeps to one implementation.
-  cli.md:5 Sumitsubo::Where.of {"internal" => [], "language" => ["ruby"], "signature" => ["module Sumitsubo::Where\n  def self.of(path)\n  end\nend\n"]}
+  cli.md:5 Sumitsubo::Place.of {"internal" => [], "language" => ["ruby"], "signature" => ["module Sumitsubo::Place\n  def self.of(path)\n  end\nend\n"]}
     The one place a path a reader is handed is made.
   cli.md:14 store::Handle {"language" => ["rust"], "signature" => ["mod store {\n    pub struct Handle;\n}\n"]}
     

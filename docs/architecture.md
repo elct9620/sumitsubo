@@ -171,8 +171,8 @@ Every file has one place, and where it sits is what says what it is.
 ├─ sumitsubo/
 │  ├─ the words            entities; they require nothing
 │  │  specification.rb  source.rb  finding.rb  error.rb  version.rb
-│  │  place.rb            the one place a path a reader is handed is made,
-│  │                      and with no line it answers for a whole file
+│  │  place.rb            the one place a path a reader is handed is made:
+│  │                      a place in a file, or the file alone
 │  │
 │  ├─ handed in
 │  │  config.rb                                    DTO
