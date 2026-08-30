@@ -81,14 +81,14 @@ p markdown("(pipe_table_row (pipe_table_cell) @cell)").map { |capture| capture.t
 # What the grammar answers and what the parser makes of it meet here, because
 # this is the side that can ask a real one. The parser is handed the grammars
 # this build carries, the way a run of `sumi` hands them to it.
-require "sumitsubo/specification/markdown"
+require "sumitsubo/specification/parser/markdown"
 
 # The query lives with the parser that writes it, and the name of the grammar
 # it is written against travels with it: a name the binding does not know
 # answers nothing rather than failing, so the two are pinned to each other.
-p Sumitsubo::Specification::Markdown::GRAMMAR == Sumitsubo::Grammar::MARKDOWN
+p Sumitsubo::Specification::Parser::Markdown::GRAMMAR == Sumitsubo::Grammar::MARKDOWN
 
-reading = Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)
+reading = Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)
 
 def steps_of(scenario)
   steps = scenario.attributes

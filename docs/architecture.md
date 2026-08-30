@@ -187,9 +187,9 @@ Every file has one place, and where it sits is what says what it is.
 │  ├─ (1) the specification arrives
 │  │  specification/repository.rb                  every specification
 │  │  specification/parser.rb                      port
-│  │  specification/markdown.rb                    adapter
-│  │  specification/markdown/format.rb
-│  │  specification/markdown/builder/{vocabulary,definition,feature}.rb
+│  │  specification/parser/markdown.rb             adapter
+│  │  specification/parser/markdown/format.rb
+│  │  specification/parser/markdown/builder/{vocabulary,definition,feature}.rb
 │  │
 │  ├─ (2) the source arrives
 │  │  source/repository.rb                         everything one run read

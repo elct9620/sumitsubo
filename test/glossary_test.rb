@@ -4,13 +4,13 @@ require "sumitsubo/check/region"
 require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
-require "sumitsubo/specification/markdown"
+require "sumitsubo/specification/parser/markdown"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reaches a grammar to read a real document, which is what its snapshot is
 # written by hand for: the mechanism is checked against the shape a person
 # actually wrote rather than one assembled here.
-PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
+PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 
 # A vocabulary comes from the repository the way a run's does, read as the
 # mechanism that keeps it reads it.

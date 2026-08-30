@@ -8,14 +8,14 @@ require "sumitsubo/grammar"
 require "sumitsubo/source/language"
 require "sumitsubo/source"
 require "sumitsubo/source/repository"
-require "sumitsubo/specification/markdown"
+require "sumitsubo/specification/parser/markdown"
 require "sumitsubo/specification"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reads the format definitions are really written in, which is why its
 # snapshot is written by hand: the mechanism is checked against the shape a
 # person actually wrote rather than one assembled here.
-PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
+PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 
 # Source reaches a mechanism through the repository, the way a run's does.
 SOURCE = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language)

@@ -7,12 +7,12 @@ require "sumitsubo/specification/repository"
 require "sumitsubo/source/scope"
 require "sumitsubo/specification"
 require "sumitsubo/grammar"
-require "sumitsubo/specification/markdown"
+require "sumitsubo/specification/parser/markdown"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reads the format features are really written in, which is why its
 # snapshot is written by hand.
-PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
+PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 
 # A format this build does not really carry, so that what decides which files
 # are specifications is visibly the parsers rather than an extension written

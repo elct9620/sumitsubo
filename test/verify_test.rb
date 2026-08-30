@@ -2,14 +2,14 @@ require "pathname"
 require "sumitsubo"
 require "sumitsubo/source/language"
 require "sumitsubo/grammar"
-require "sumitsubo/specification/markdown"
+require "sumitsubo/specification/parser/markdown"
 
 # A run is handed what this build carries, the way `bin/sumi.rb` hands it. This
 # file already crosses into the binding through the languages, so the grammar
 # the parser reads through costs it nothing it had not already paid.
 cli = Sumitsubo::CLI.new(
   Sumitsubo::BUILD_REV, Sumitsubo::Source::Language,
-  [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
+  [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 )
 back = Dir.pwd
 
