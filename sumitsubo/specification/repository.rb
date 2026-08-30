@@ -36,11 +36,11 @@ module Sumitsubo
 
       # The one specification a file holds, for a mechanism keeping one.
       def one(path, mechanism)
-        said = "#{path}"
-        held = @files[said]
-        return held unless held.nil?
+        held = "#{path}"
+        found = @files[held]
+        return found unless found.nil?
 
-        @files[said] = read_all([said], mechanism)[0]
+        @files[held] = read_all([held], mechanism)[0]
       end
 
       private

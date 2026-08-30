@@ -182,7 +182,7 @@ module Sumitsubo
           when LANGUAGE then holding.language = capture.text.strip unless holding.nil?
           when CONTENT then holding.text = capture.text unless holding.nil?
           when CELL then holding.cells.push(cell(capture)) unless holding.nil?
-          else found.push(spoken(capture, spanned))
+          else found.push(wrote(capture, spanned))
           end
           holding
         end
@@ -193,7 +193,7 @@ module Sumitsubo
 
         # One block of text a reader wrote, with the runs it marked as taken
         # letter for letter.
-        def spoken(capture, spanned)
+        def wrote(capture, spanned)
           said = folded(capture.text)
           Block.new(OF[capture.name], DEEP[capture.name], capture.line, said, nil, spanned[said], [])
         end

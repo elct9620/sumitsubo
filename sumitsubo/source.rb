@@ -71,9 +71,9 @@ module Sumitsubo
       # Said to a reader. The kind is left out where a bare name already says
       # it, and a dash stands where the parameter has no name of its own.
       def spoken
-        said = name.nil? ? "-" : name
+        called = name.nil? ? "-" : name
         word = kind == POSITIONAL ? "" : ":#{kind}"
-        "#{said}#{word}#{optional ? "?" : ""}"
+        "#{called}#{word}#{optional ? "?" : ""}"
       end
     end
 
