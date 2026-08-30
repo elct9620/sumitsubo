@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Nothing leaves a turn with a red suite. Exit 2 is how a Stop hook says so:
 # it prevents the stop and hands the failure back to be fixed.
+#
+# The binding holds its own record format on its own terms and is a package of
+# its own, so its suite is a second one to run — the same two CI runs, in the
+# same order.
 set -euo pipefail
 
 root=${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}
@@ -10,8 +14,13 @@ if [ -z "$spin" ]; then
   exit 0
 fi
 
-cd "$root"
-output=$("$spin" test 2>&1) && exit 0
+refuse() {
+  printf '%s failed, so this turn is not finished:\n%s\n' "$1" "$(printf '%s' "$2" | tail -c 3000)" >&2
+  exit 2
+}
 
-printf 'spin test failed, so this turn is not finished:\n%s\n' "$(printf '%s' "$output" | tail -c 3000)" >&2
-exit 2
+cd "$root"
+output=$("$spin" test 2>&1) || refuse "spin test" "$output"
+
+cd "$root/.packages/tree-sitter"
+output=$("$spin" test 2>&1) || refuse "spin test in .packages/tree-sitter" "$output"

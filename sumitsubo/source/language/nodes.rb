@@ -71,8 +71,9 @@ module Sumitsubo
           holding.sort_by { |scope| scope.first }
         end
 
-        # The whole node is what a reading captures alongside the name, because its
-        # text is the source slice: the last line it spans is the newlines in it.
+        # The whole node is what a reading captures alongside the name, and the
+        # lines it spans are the capture's own: the tree measured them, so
+        # nothing here counts them back out of the text.
         def self.node_from(captures)
           kind = nil
           text = nil
@@ -84,7 +85,7 @@ module Sumitsubo
             else
               kind = capture.name
               first = capture.line
-              last = capture.line + capture.text.count("\n")
+              last = capture.last
             end
           end
           return nil if kind.nil? || text.nil?

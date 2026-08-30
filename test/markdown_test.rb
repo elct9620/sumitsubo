@@ -9,7 +9,14 @@ require "sumitsubo/source"
 # write the snapshot beside it. Each case below is one way a document drifts
 # out of shape, written on its own so what it pins can be read off it.
 
-Capture = Struct.new(:match, :name, :line, :text)
+Capture = Struct.new(:match, :name, :line, :last, :start, :finish, :text)
+
+# A capture as the binding hands one over. What the tree measures is stood in
+# for here: the lines a block spans are its own newlines, and the bytes are the
+# text's own extent, since a case hands over one block rather than a document.
+def capture(name, line, text)
+  Capture.new(0, name, line, line + text.count("\n"), 0, text.length, text)
+end
 
 # A grammar that answers whatever a case handed it. What a real one answers for
 # a real document is pinned where the binding is, and this file is free of it.
@@ -23,15 +30,15 @@ class Canned
   end
 end
 
-def h1(line, text) = Capture.new(0, "h1", line, text)
-def h2(line, text) = Capture.new(0, "h2", line, text)
-def h3(line, text) = Capture.new(0, "h3", line, text)
-def h4(line, text) = Capture.new(0, "h4", line, text)
-def paragraph(line, text) = Capture.new(0, "paragraph", line, text)
-def item(line, text) = Capture.new(0, "item", line, text)
-def nested(line, text) = Capture.new(0, "nested", line, text)
-def row(line, text) = Capture.new(0, "row", line, text)
-def cell(line, text) = Capture.new(0, "cell", line, text)
+def h1(line, text) = capture("h1", line, text)
+def h2(line, text) = capture("h2", line, text)
+def h3(line, text) = capture("h3", line, text)
+def h4(line, text) = capture("h4", line, text)
+def paragraph(line, text) = capture("paragraph", line, text)
+def item(line, text) = capture("item", line, text)
+def nested(line, text) = capture("nested", line, text)
+def row(line, text) = capture("row", line, text)
+def cell(line, text) = capture("cell", line, text)
 
 def steps_of(scenario)
   steps = scenario.attributes
@@ -344,9 +351,9 @@ class Spelling
   end
 end
 
-def fence(line, text) = Capture.new(0, "fence", line, text)
-def language(line, text) = Capture.new(0, "language", line, text)
-def content(line, text) = Capture.new(0, "content", line, text)
+def fence(line, text) = capture("fence", line, text)
+def language(line, text) = capture("language", line, text)
+def content(line, text) = capture("content", line, text)
 
 def definition(captures, answers = {})
   Sumitsubo::Specification::Parser::Markdown.new(Canned.new(captures)).contract("cli.md", Spelling.new(answers))

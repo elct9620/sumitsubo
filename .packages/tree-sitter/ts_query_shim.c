@@ -4,7 +4,8 @@
 // One call does everything because the boundary is where the cost is: every
 // crossing has to marshal, so parse-query-collect stays on this side.
 //
-// A capture comes back as `match\tname\tline\ttext\n` with the text escaped — a
+// A capture comes back as `match\tname\tline\tlast\tstart\tfinish\ttext\n` with
+// the text escaped — a
 // comment is the thing being collected, and one routinely contains the newline
 // that would otherwise end the record. Captures arrive in node position rather
 // than pattern order, so the name is what tells them apart and the match number
@@ -191,12 +192,16 @@ const char *tsq_query(const char *grammar, const char *source, const char *query
 
       // Rows count from zero inside tree-sitter and from one for anyone
       // reading a file, so the conversion happens here rather than in every
-      // caller that wants to print a location.
-      char line[24];
-      int line_len = snprintf(line, sizeof(line), "\t%u\t", ts_node_start_point(node).row + 1);
+      // caller that wants to print a location. The bytes are carried as they
+      // are: they say where the node sits in what was parsed, which is what a
+      // caller reading inside one capture has to know.
+      char extent[80];
+      int extent_len = snprintf(extent, sizeof(extent), "\t%u\t%u\t%u\t%u\t",
+                                ts_node_start_point(node).row + 1,
+                                ts_node_end_point(node).row + 1, start, end);
 
       if (!tsq_put(head, (size_t)head_len) || !tsq_put(name, (size_t)name_len) ||
-          !tsq_put(line, (size_t)line_len) ||
+          !tsq_put(extent, (size_t)extent_len) ||
           !tsq_put_escaped(source + start, end - start) || !tsq_put("\n", 1)) {
         snprintf(tsq_err, sizeof(tsq_err), "out of memory collecting captures");
         ok = 0;

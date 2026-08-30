@@ -29,9 +29,10 @@ end
 
 module TreeSitter
   # +match+ groups the captures one match made; +name+ is the capture's name in
-  # the query, without its `@`. A node's extent is not carried: the text is the
-  # source slice, so a caller wanting the last line counts the newlines in it.
-  Capture = Struct.new(:match, :name, :line, :text)
+  # the query, without its `@`. +line+ and +last+ are the lines it spans, and
+  # +start+ and +finish+ the bytes it sits between in what was parsed — which is
+  # what lets a caller tell what stands between two captures of one node.
+  Capture = Struct.new(:match, :name, :line, :last, :start, :finish, :text)
 
   # A source the grammar could not read, as opposed to one that says nothing.
   class ParseError < StandardError; end
@@ -64,17 +65,18 @@ module TreeSitter
 
     raw.split("\n").each do |record|
       # The escaping is what makes this safe: a tab in the captured text is
-      # written as a pair, so the only tabs left are the three separators.
+      # written as a pair, so the only tabs left are the six separators.
       fields = record.split("\t")
       # A record short of its separators is skipped rather than half-read: half
       # a capture reads like something the source never said. A capture of
-      # nothing loses its last field to the split, so three is enough.
-      next if fields.length < 3
+      # nothing loses its last field to the split, so six is enough.
+      next if fields.length < 6
 
       # Interpolated to settle the element type: an array built by a loop keeps
       # its members open, and unescape needs a string.
       found << Capture.new(
-        fields[0].to_i, "#{fields[1]}", fields[2].to_i, unescape("#{fields[3]}")
+        fields[0].to_i, "#{fields[1]}", fields[2].to_i, fields[3].to_i,
+        fields[4].to_i, fields[5].to_i, unescape("#{fields[6]}")
       )
     end
 

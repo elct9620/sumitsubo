@@ -3,10 +3,17 @@ require "sumitsubo/source/language/nodes"
 # The part of reading a syntax tree that no language owns: captures grouped by
 # the match they came from, made into nodes, and nested by where they sit.
 #
-# Nothing here reaches the binding — a capture is four fields and this file
-# makes its own — so `--regen` can write the snapshot beside it.
+# Nothing here reaches the binding — this file makes its own captures — so
+# `--regen` can write the snapshot beside it.
 
-Capture = Struct.new(:match, :name, :line, :text)
+Capture = Struct.new(:match, :name, :line, :last, :start, :finish, :text)
+
+# A capture as the binding hands one over. The lines a node spans are what the
+# tree measured, stood in for here by the newlines in the slice; the bytes go
+# unread, since nothing in this file looks inside a capture.
+def capture(match, name, line, text)
+  Capture.new(match, name, line, line + text.count("\n"), 0, text.length, text)
+end
 
 def node(kind, text, first, last)
   Sumitsubo::Source::Language::Nodes::Node.new(kind, text, first, last)
@@ -17,10 +24,10 @@ end
 # @behavior D-016
 puts "--- captures grouped by the match they came from ---"
 Sumitsubo::Source::Language::Nodes.matches_in([
-  Capture.new(1, "scope", 1, "class A\nend"),
-  Capture.new(2, "instance", 4, "def go\nend"),
-  Capture.new(1, "name", 1, "A"),
-  Capture.new(2, "name", 4, "go")
+  capture(1, "scope", 1, "class A\nend"),
+  capture(2, "instance", 4, "def go\nend"),
+  capture(1, "name", 1, "A"),
+  capture(2, "name", 4, "go")
 ]).each do |captures|
   spelled = captures.map { |capture| "#{capture.name}=#{capture.text.split("\n")[0]}" }
   puts "  #{spelled.join(" ")}"
@@ -32,8 +39,8 @@ end
 # @behavior D-017
 puts "--- what those matches declare ---"
 Sumitsubo::Source::Language::Nodes.nodes_in([
-  [Capture.new(1, "scope", 1, "class A\n  def go\n  end\nend"), Capture.new(1, "name", 1, "A")],
-  [Capture.new(2, "of", 2, "go"), Capture.new(2, "positional", 2, "at")]
+  [capture(1, "scope", 1, "class A\n  def go\n  end\nend"), capture(1, "name", 1, "A")],
+  [capture(2, "of", 2, "go"), capture(2, "positional", 2, "at")]
 ]).each { |found| puts "  #{found.kind} #{found.text} #{found.first}-#{found.last}" }
 
 # Nesting is recovered from where the nodes sit, because a pattern reaches only
