@@ -100,15 +100,22 @@ where the run started.
 ## Where the rest is
 
 The forms live in the executable, so a project has them wherever `sumi` is
-installed. The specification is what a person reads, so `.spec/` here is both
-the reference line this project verifies against and its own documentation:
+installed. The specification is what a person reads, so this project keeps it
+in `docs/` beside the rest of its prose rather than in a directory of its own.
+`.spec` is the default, and a `.sumi.json` is what says otherwise.
+
+A shared root reserves three names: `glossary.md`, and the files directly under
+`contract/` and `behavior/`. Those are read as specifications, and refused when
+they turn out not to be one. Everything else under the root is the project's —
+read as source wherever an include reaches it, and passed over where none does.
 
 | Looking for | Where |
 |-------------|-------|
 | How to write each specification | `sumi help glossary` \| `contract` \| `behavior` \| `config` |
-| What each command reads and answers | [.spec/contract/cli.md](.spec/contract/cli.md) |
-| The vocabulary this project keeps | [.spec/glossary.md](.spec/glossary.md) |
-| The behaviors it holds itself to | [.spec/behavior/](.spec/behavior) |
+| What each command reads and answers | [docs/contract/cli.md](docs/contract/cli.md) |
+| The vocabulary this project keeps | [docs/glossary.md](docs/glossary.md) |
+| The behaviors it holds itself to | [docs/behavior/](docs/behavior) |
+| How the code is laid out | [docs/architecture.md](docs/architecture.md) |
 
 ## Development
 
