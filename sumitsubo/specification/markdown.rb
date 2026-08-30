@@ -57,8 +57,8 @@ module Sumitsubo
       # a contract read from the syntax tree says which language spells its
       # name, and whether this build carries that one is not the format's to
       # know.
-      def contract(path, languages)
-        built(Builder::Definition.new(path, languages), path)
+      def contract(path, source)
+        built(Builder::Definition.new(path, source), path)
       end
 
       # The line each include is written on. Every kind of specification lists

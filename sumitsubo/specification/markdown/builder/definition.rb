@@ -64,9 +64,9 @@ module Sumitsubo
           # may not follow it.
           Fence = Struct.new(:line, :language, :content)
 
-          def initialize(path, languages)
+          def initialize(path, source)
             @path = path
-            @languages = languages
+            @source = source
             @key = nil
             @text = nil
             @marker = nil
@@ -230,7 +230,7 @@ module Sumitsubo
             end
 
             language = named[0]
-            refuse(contract.line, "names #{language}, which this sumi does not carry") unless @languages.carries?(language)
+            refuse(contract.line, "names #{language}, which this sumi does not carry") unless @source.carries?(language)
             registering(contract, language)
           end
 
@@ -258,7 +258,7 @@ module Sumitsubo
           end
 
           def declarations_of(contract, language)
-            @languages.declarations_of(contract.attributes[SIGNATURE][0], @path, language)
+            @source.declarations_of(contract.attributes[SIGNATURE][0], @path, language)
           rescue Sumitsubo::Error
             # Named rather than passed on: the reading's message is about a
             # piece of source, and what a reader has is a specification. Caught

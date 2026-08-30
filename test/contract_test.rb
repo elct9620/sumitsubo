@@ -5,6 +5,7 @@ require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
 require "sumitsubo/source/language"
 require "sumitsubo/source"
+require "sumitsubo/source/repository"
 require "sumitsubo/specification/markdown"
 require "sumitsubo/specification"
 
@@ -13,6 +14,9 @@ require "sumitsubo/specification"
 # snapshot is written by hand: the mechanism is checked against the shape a
 # person actually wrote rather than one assembled here.
 PARSERS = [Sumitsubo::Specification::Markdown.new(Sumitsubo::Grammar)]
+
+# Source reaches a mechanism through the repository, the way a run's does.
+SOURCE = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language)
 
 # The loader answers where an interface sits as well as what it says. An
 # interface nothing claims is a finding about the specification, so the reader
@@ -43,7 +47,7 @@ end
 def loaded(directory, parsers = PARSERS)
   # A signature is read by the reading that reads the source, so what a
   # definition is checked against is the languages this build carries.
-  definitions = Sumitsubo::Specification::Repository.new(parsers, Sumitsubo::Source::Language)
+  definitions = Sumitsubo::Specification::Repository.new(parsers, SOURCE)
                   .all(directory, Sumitsubo::Mechanism::Contract.new)
   Sumitsubo::Contract.refuse_ambiguity(definitions)
   definitions
@@ -207,7 +211,7 @@ registered = loaded("#{FIXTURE}/params")
 puts "--- the shape a contract registers ---"
 definition = registered[0]
 definition.statements.each do |interface|
-  params = Sumitsubo::Contract.shape_of(definition, interface, Sumitsubo::Source::Language)
+  params = Sumitsubo::Contract.shape_of(definition, interface, SOURCE)
   shape = params.nil? ? "registers no shape" : params.spoken
   puts "  #{interface.key} #{shape}"
 end
@@ -221,7 +225,7 @@ Sumitsubo::Contract.mismatched(registered, { "ruby" => [
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(9, "Store#write", []),
   declares(12, "Store", nil)
-] }, Sumitsubo::Source::Language).each do |finding|
+] }, SOURCE).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 

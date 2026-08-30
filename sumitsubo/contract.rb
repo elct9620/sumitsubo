@@ -4,6 +4,7 @@ require "sumitsubo/place"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
 require "sumitsubo/source"
+require "sumitsubo/source/repository"
 require "sumitsubo/specification"
 
 module Sumitsubo
@@ -199,6 +200,35 @@ module Sumitsubo
     # read from the syntax tree. Each reading searches only its own files: a
     # marker nobody wrote is not worth parsing for, and a definition nobody
     # claims is not worth reading comments for.
+    # Every word every definition claims, read as this mechanism reads them:
+    # a contract is named by the interface itself, so the whole of what follows
+    # the marker is the name it carries.
+    def self.claimed_in(definitions, reach, source)
+      found = []
+      source.claims(scope(reach), keywords(definitions)).each do |claim|
+        found.push(Claim.new(claim.path, claim.line, Name.new(claim.keyword, claim.text)))
+      end
+      found
+    end
+
+    # What the source in scope defines, held under the language it was read as.
+    # A definition registering contracts in two languages has its files read
+    # once per language, and one file read twice answers twice: which reading
+    # each came back from is what tells the two apart, so it is the answers
+    # that are held apart rather than each answer that says which.
+    def self.defined_in(definitions, reach, source)
+      found = {}
+      readings_in(definitions, reach).each do |reading|
+        holding = found[reading.language]
+        if holding.nil?
+          holding = []
+          found[reading.language] = holding
+        end
+        source.declarations(reading.path, reading.language).each { |name| holding.push(name) }
+      end
+      found
+    end
+
     def self.claimed(definitions)
       found = []
       definitions.each { |definition| found.push(definition) unless marker_of(definition).nil? }
@@ -415,11 +445,11 @@ module Sumitsubo
     #
     # A scope registers no shape at all, which is not the same as a call taking
     # nothing: `class Store` says how the name is reached and describes no call.
-    def self.shape_of(definition, interface, languages)
+    def self.shape_of(definition, interface, source)
       signature = interface.attributes["signature"]
       return nil if signature.nil?
 
-      found = languages.declarations_of(
+      found = source.declarations_of(
         signature[0], interface.path, language_of(definition, interface)
       )
       declared = found.find { |one| one.name == interface.key }
@@ -429,13 +459,13 @@ module Sumitsubo
     # An interface defined with a shape other than the one registered. Where
     # the definitions disagree among themselves that is already answered, and
     # comparing the contract against one of them would add nothing.
-    def self.mismatched(definitions, declared, languages)
+    def self.mismatched(definitions, declared, source)
       grouped = declared_in(declared)
 
       found = []
       defined(definitions).each do |definition|
         definition.statements.each do |interface|
-          registered = shape_of(definition, interface, languages)
+          registered = shape_of(definition, interface, source)
           next if registered.nil?
 
           group = grouped[Name.new(language_of(definition, interface), interface.key)]

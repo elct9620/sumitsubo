@@ -14,9 +14,9 @@ module Sumitsubo
     # because a specification switched off is never read and one that cannot be
     # read leaves the others still answering.
     class Repository
-      def initialize(parsers, languages)
+      def initialize(parsers, source)
         @parsers = parsers
-        @languages = languages
+        @source = source
         @directories = {}
         @files = {}
       end
@@ -52,10 +52,10 @@ module Sumitsubo
 
       private
 
-      # The languages go with the parser because a contract's signature is read
+      # The source goes with the parser because a contract's signature is read
       # by the very reading that reads the source it describes.
       def reading(path, mechanism)
-        mechanism.read(Parser.of(path, @parsers), path, @languages)
+        mechanism.read(Parser.of(path, @parsers), path, @source)
       end
 
       # Which files are specifications is the parsers' to say rather than an

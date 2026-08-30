@@ -3,6 +3,7 @@ require "sumitsubo/error"
 require "sumitsubo/place"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
+require "sumitsubo/source/repository"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -96,6 +97,17 @@ module Sumitsubo
     # rather than quietly accepting.
     def self.ids_in(text)
       text.split(" ")
+    end
+
+    # Every claim the marker leaves in the files in reach. Marker finds the
+    # word and hands back the rest of the line; splitting that into ids is this
+    # mechanism's, which is what lets Contract read the same line as one name.
+    def self.claimed_in(reach, source)
+      found = []
+      source.claims(scope(reach), [MARKER]).each do |claim|
+        ids_in(claim.text).each { |id| found.push(Claim.new(claim.path, claim.line, id)) }
+      end
+      found
     end
 
     # The claims that can witness: each sitting among the files the feature

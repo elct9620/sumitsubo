@@ -2,6 +2,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/finding"
 require "sumitsubo/source/scope"
+require "sumitsubo/source/repository"
 require "sumitsubo/specification"
 require "sumitsubo/place"
 
@@ -88,11 +89,11 @@ module Sumitsubo
     # by the language answering for the file, and that arrives from outside:
     # this mechanism checks a vocabulary and names no language, which is what
     # leaves a second one to be carried without it being touched.
-    def self.check(scope, base, languages)
+    def self.check(scope, base, source)
       mentions = []
       scope.keys.sort.each do |path|
         file = base / path
-        regions = languages.comments_in(file, Place.file(file))
+        regions = source.comments(file)
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].statements.each do |entry|
