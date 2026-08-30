@@ -43,13 +43,6 @@ module Sumitsubo
         @files[said] = reading(said, mechanism)
       end
 
-      # Where each of a specification's includes was written, asked of the
-      # parser that read it, since only that one knows how its format spells a
-      # glob.
-      def spelling(path)
-        Parser.of(path, @parsers).spelled_in(path)
-      end
-
       private
 
       # The source goes with the parser because a contract's signature is read

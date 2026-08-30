@@ -15,6 +15,14 @@ place.
 | When | the sections are resolved against the base |
 | Then | each answers the files its own globs cover, under the name it was written with |
 
+## `G-012` A glob two sections share is one mistake rather than two
+
+| Step | Statement |
+| --- | --- |
+| Given | two sections whose includes name one glob |
+| When | the vocabulary is asked what its includes cover |
+| Then | the glob is asked about once, at the line the first section wrote it on |
+
 ## `G-002` A later section stands in for an earlier one where both name a term
 
 | Step | Statement |

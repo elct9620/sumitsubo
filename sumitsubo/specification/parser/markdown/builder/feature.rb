@@ -117,8 +117,11 @@ module Sumitsubo
               @scenarios.push(scenario_from(said, capture.line))
             end
 
+            # One glob, carrying the line it was written on: a glob covering
+            # nothing answers where a reader goes to fix it.
             def item(capture)
-              @includes.push(Format.glob(@path, capture.line, Format.folded(capture.text), TOPIC))
+              glob = Format.glob(@path, capture.line, Format.folded(capture.text), TOPIC)
+              @includes.push(Statement.new(glob, nil, [], @path, capture.line, {}, []))
             end
 
             # The cells held so far, stated as the step they make. A row is
@@ -143,7 +146,7 @@ module Sumitsubo
                 refuse(line, "declares a scenario whose heading does not open with an id in backticks")
               end
 
-              Statement.new(opened.taken, Format.empty_to_nil(opened.after), @path, line, { "given" => [] }, [])
+              Statement.new(opened.taken, Format.empty_to_nil(opened.after), [], @path, line, { "given" => [] }, [])
             end
 
             # Which step a row states, given how many cells it turned out to

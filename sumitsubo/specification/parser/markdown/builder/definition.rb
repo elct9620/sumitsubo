@@ -153,7 +153,7 @@ module Sumitsubo
                 refuse(line, "declares a contract whose heading does not open with a name in backticks")
               end
 
-              Statement.new(opened.taken, nil, @path, line, flagged(opened.after, line), [])
+              Statement.new(opened.taken, nil, [], @path, line, flagged(opened.after, line), [])
             end
 
             # Every flag after the name, each a code span of its own. A closed
@@ -199,8 +199,11 @@ module Sumitsubo
               @marker = word.taken
             end
 
+            # One glob, carrying the line it was written on: a glob covering
+            # nothing answers where a reader goes to fix it.
             def item(capture)
-              @includes.push(Format.glob(@path, capture.line, Format.folded(capture.text), TOPIC))
+              glob = Format.glob(@path, capture.line, Format.folded(capture.text), TOPIC)
+              @includes.push(Statement.new(glob, nil, [], @path, capture.line, {}, []))
             end
 
             # The fence held so far, taken as the signature of the contract it sat

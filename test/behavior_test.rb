@@ -39,7 +39,7 @@ class Other
   def behavior(path)
     where = "#{path}"
     Sumitsubo::Specification.new("Other", nil, [], where, {}, [
-      Sumitsubo::Statement.new("O-001", "What another format declares", where, 1, { "given" => [] }, [])
+      Sumitsubo::Statement.new("O-001", "What another format declares", [], where, 1, { "given" => [] }, [])
     ])
   end
 end
@@ -51,7 +51,7 @@ end
 # @behavior B-001
 puts "--- what the directory declares, and where ---"
 reads("test/fixtures/behavior/.spec/behavior").each do |feature|
-  puts "#{feature.key} #{feature.includes.inspect}"
+  puts "#{feature.key} #{feature.includes.map { |one| one.key }.inspect}"
   feature.statements.each do |scenario|
     puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
     steps = scenario.attributes
@@ -129,15 +129,14 @@ taken("test/fixtures/behavior/formats", PARSERS + [Other.new]).each do |feature|
   puts "  #{feature.path} #{feature.key} #{feature.statements.map { |one| one.key }.inspect}"
 end
 
-# The walk answers which pattern covered nothing; where that pattern was
-# written is asked of the parser that read the specification, so the reader
-# arrives at the word to edit rather than at the file holding it.
+# The walk answers which pattern covered nothing, and the include carries the
+# line it was written on, so the reader arrives at the word to edit rather than
+# at the file holding it.
 # @behavior B-015
 puts "--- an include covering no file answers at the line that wrote it ---"
 unreached = reads("test/fixtures/behavior/nowhere")
 Sumitsubo::Check::Reach::Barren.new(Sumitsubo::Mechanism::Behavior::BARREN)
-  .run(Sumitsubo::Behavior.covers(unreached), Pathname.new("test/fixtures/behavior"), [],
-       Sumitsubo::Specification::Repository.new(PARSERS, nil)).each do |finding|
+  .run(Sumitsubo::Behavior.covers(unreached), Pathname.new("test/fixtures/behavior"), []).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 

@@ -49,17 +49,6 @@ module Sumitsubo
             opened.taken
           end
 
-          # Where each include is written, asked of a document without being told
-          # which kind it is: every kind lists them under the reserved heading,
-          # and which level that heading sits at is the only thing they differ in.
-          SPELLED = <<~SPELLED
-            (atx_heading (atx_h1_marker) (inline) @h1)
-            (atx_heading (atx_h2_marker) (inline) @h2)
-            (atx_heading (atx_h3_marker) (inline) @h3)
-            (atx_heading (atx_h4_marker) (inline) @h4)
-            (section (list (list_item (paragraph (inline) @item))))
-          SPELLED
-
           # What a pair of backticks opened the text with, and what followed it.
           # Two runs of text that read alike and mean nothing alike, so each is
           # named rather than reached for by position — a heading hands the rest

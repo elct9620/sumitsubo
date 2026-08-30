@@ -37,7 +37,7 @@ module Sumitsubo
       def verify(config, findings, specifications, source)
         path = Sumitsubo::Glossary.path_in(config.root)
         vocabulary = specifications.one(path, self)
-        @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion, specifications)
+        @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
         mentions = Sumitsubo::Glossary.uses(

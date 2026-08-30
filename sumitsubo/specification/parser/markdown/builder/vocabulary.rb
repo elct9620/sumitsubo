@@ -110,7 +110,7 @@ module Sumitsubo
               # Every section answers a list of globs whether or not it wrote
               # any, so what covers nothing is spelled the same as what covers
               # something and no caller is made to ask which it got.
-              @section = Statement.new(said, nil, @where, line, { INCLUDE => [] }, [])
+              @section = Statement.new(said, nil, [], @where, line, {}, [])
               @sections.push(@section)
               @term = nil
               @rejected = nil
@@ -128,7 +128,7 @@ module Sumitsubo
               @term = nil
               return unless @holding.nil?
 
-              @term = Statement.new(said, nil, @where, line, {}, [])
+              @term = Statement.new(said, nil, [], @where, line, {}, [])
               @section.statements.push(@term)
             end
 
@@ -164,7 +164,7 @@ module Sumitsubo
             # term says what it refuses, and prose anywhere else.
             def listed(said, line)
               if @holding == Format::INCLUDES
-                scoped(Format.glob(@path, line, said, TOPIC))
+                scoped(Format.glob(@path, line, said, TOPIC), line)
                 return
               end
               return unless @holding == REJECTED
@@ -172,16 +172,16 @@ module Sumitsubo
               opened = Format.code_span(said)
               refuse(line, "rejects a word that is not in backticks") if opened.nil?
 
-              @rejected = Statement.new(opened.taken, reason(opened.after), @where, line, {}, [])
+              @rejected = Statement.new(opened.taken, reason(opened.after), [], @where, line, {}, [])
               @term.statements.push(@rejected)
             end
 
             # One glob onto the section it was written under. A boundary is a
-            # section's rather than the document's, and nothing points at a glob,
-            # so it is an attribute of that section rather than a statement of
-            # its own.
-            def scoped(glob)
-              @section.attributes[INCLUDE] = @section.attributes[INCLUDE] + [glob]
+            # section's rather than the document's, and the line is carried with
+            # it because a glob covering nothing answers where a reader goes to
+            # fix it.
+            def scoped(glob, line)
+              @section.includes.push(Statement.new(glob, nil, [], @where, line, {}, []))
             end
 
             # One line a rejection does not answer for. Both halves are refused
@@ -199,7 +199,7 @@ module Sumitsubo
               why = reason(opened.after)
               refuse(line, "writes an ignore at #{opened.taken} with no reason") if why.nil?
 
-              @rejected.statements.push(Statement.new(opened.taken, why, @where, line, {}, []))
+              @rejected.statements.push(Statement.new(opened.taken, why, [], @where, line, {}, []))
             end
 
             # What a list item says after the word it took letter for letter.

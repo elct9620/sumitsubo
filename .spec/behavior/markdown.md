@@ -398,24 +398,24 @@ document are claimed from a test that cannot.
 | Step | Statement |
 | --- | --- |
 | Given | a feature scoping itself under the second level, and a list elsewhere |
-| When | the line each include was written on is asked for |
-| Then | only the globs under the reserved heading answer |
+| When | the blocks the document is made of are read |
+| Then | only the globs under the reserved heading answer, each carrying the line it was written on |
 
 ## `MD-045` Includes written at the level a vocabulary writes them
 
 | Step | Statement |
 | --- | --- |
 | Given | two sections each scoping itself under the third level, and a list elsewhere |
-| When | the line each include was written on is asked for |
-| Then | both sections' globs answer, since which level the heading sits at is not asked |
+| When | the blocks the document is made of are read |
+| Then | each section answers its own globs, since a boundary is the section's rather than the document's |
 
 ## `MD-046` One glob written twice
 
 | Step | Statement |
 | --- | --- |
 | Given | two sections whose includes name one glob |
-| When | the line each include was written on is asked for |
-| Then | it answers at the line it was first written on |
+| When | the blocks the document is made of are read |
+| Then | each section keeps its own, so a reader is sent to the section that wrote it |
 
 ## `MD-047` A vocabulary read through the grammar
 

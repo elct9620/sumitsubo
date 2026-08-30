@@ -29,8 +29,29 @@ vocabulary = reads(".spec/glossary.md")
 # @behavior G-001
 puts "--- what each section covers ---"
 vocabulary.statements.each do |section|
-  globs = section.attributes[Sumitsubo::INCLUDE]
+  globs = section.includes.map { |one| one.key }
   puts "#{section.key} #{globs.inspect} -> #{Sumitsubo::Glossary.paths_for(section, Pathname.pwd, []).inspect}"
+end
+
+# Two sections naming one glob are one mistake rather than two, so the walk is
+# asked about it once and the first to write it is where a reader is sent. The
+# vocabulary is built here because no document a person would keep has one.
+# @behavior G-012
+puts "--- one glob two sections share ---"
+WHERE = ".spec/glossary.md"
+
+def section(name, line, glob, at)
+  Sumitsubo::Statement.new(name, nil, [
+    Sumitsubo::Statement.new(glob, nil, [], WHERE, at, {}, [])
+  ], WHERE, line, {}, [])
+end
+
+shared = Sumitsubo::Specification.new("Glossary", nil, [], WHERE, {}, [
+  section("Everywhere", 5, "app/**/*.rb", 7),
+  section("Billing", 11, "app/**/*.rb", 13)
+])
+Sumitsubo::Glossary.covers(shared, WHERE).each do |cover|
+  puts "#{cover.path} #{cover.includes.map { |one| "#{one.line} #{one.key}" }.inspect}"
 end
 
 # @behavior G-002

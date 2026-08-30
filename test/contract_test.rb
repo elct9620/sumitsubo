@@ -41,7 +41,7 @@ class Other
   def contract(path, languages)
     where = "#{path}"
     Sumitsubo::Specification.new("Other", nil, [], where, { "marker" => ["@other"] }, [
-      Sumitsubo::Statement.new("what another format registers", nil, where, 1, {}, [])
+      Sumitsubo::Statement.new("what another format registers", nil, [], where, 1, {}, [])
     ])
   end
 end
@@ -81,7 +81,7 @@ end
 puts "--- what the directory registers, and where ---"
 definitions = loaded("#{FIXTURE}/.spec/contract")
 definitions.each do |definition|
-  puts "#{definition.key} #{Sumitsubo::Contract.marker_of(definition)} #{definition.includes.inspect}"
+  puts "#{definition.key} #{Sumitsubo::Contract.marker_of(definition)} #{definition.includes.map { |one| one.key }.inspect}"
   definition.statements.each do |interface|
     puts "  #{interface.path}:#{interface.line} #{interface.key} — #{interface.text}"
   end

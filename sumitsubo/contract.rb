@@ -110,7 +110,8 @@ module Sumitsubo
     # sits in there, once per claim.
     def self.covered(definition, base, exclusion)
       found = {}
-      Source::Scope.of(base, definition.includes, exclusion).each { |path| found[Place.file(base / path)] = true }
+      globs = definition.includes.map { |one| one.key }
+      Source::Scope.of(base, globs, exclusion).each { |path| found[Place.file(base / path)] = true }
       found
     end
 
@@ -125,7 +126,7 @@ module Sumitsubo
     # What each definition's includes cover, each answering at the definition
     # that wrote them.
     def self.covers(definitions)
-      definitions.map { |one| Check::Covers.new(path: one.path, patterns: one.includes) }
+      definitions.map { |one| Check::Covers.new(path: one.path, includes: one.includes) }
     end
 
     # The word source claims this definition's contracts with, or nil where

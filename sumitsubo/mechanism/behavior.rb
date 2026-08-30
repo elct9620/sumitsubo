@@ -38,7 +38,7 @@ module Sumitsubo
       def verify(config, findings, specifications, source)
         features = specifications.all(Sumitsubo::Behavior.path_in(config.root), self)
         Sumitsubo::Behavior.refuse_ambiguity(features)
-        @barren.run(Sumitsubo::Behavior.covers(features), config.base, config.exclusion, specifications)
+        @barren.run(Sumitsubo::Behavior.covers(features), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
         claims = Sumitsubo::Behavior.claimed_in(reach, source)

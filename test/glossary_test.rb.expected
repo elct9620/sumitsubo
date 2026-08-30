@@ -1,6 +1,8 @@
 --- what each section covers ---
 Everywhere ["app/**/*.rb", "docs/*.md"] -> ["app/billing/charge.rb", "app/order.rb", "docs/overview.md"]
 Billing ["app/billing/*.rb"] -> ["app/billing/charge.rb"]
+--- one glob two sections share ---
+.spec/glossary.md ["7 app/**/*.rb"]
 --- effective vocabulary per file ---
 app/billing/charge.rb Customer: Whoever the order is fulfilled for.
 app/billing/charge.rb Customer rejects User: Nobody logs in to place an order.

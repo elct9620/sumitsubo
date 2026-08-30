@@ -113,5 +113,5 @@ is fixed in one pass.
 | --- | --- |
 | Given | a feature whose include covers no file |
 | When | the includes are asked what they cover |
-| Then | the include answers at the line of the specification that wrote it |
+| Then | the include answers at the line of the list item that wrote it |
 

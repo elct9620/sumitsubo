@@ -106,7 +106,7 @@ end
 # @behavior MD-018
 feature = reading.behavior("test/fixtures/reading/init.md")
 
-puts "#{feature.key} #{feature.includes.inspect}"
+puts "#{feature.key} #{feature.includes.map { |one| one.key }.inspect}"
 puts "  #{feature.text}"
 feature.statements.each do |scenario|
   puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
@@ -121,7 +121,7 @@ end
 def vocabulary_of(spec)
   puts "#{spec.key} #{spec.text.inspect}"
   spec.statements.each do |section|
-    puts "  #{section.key} #{section.attributes[Sumitsubo::INCLUDE].inspect}"
+    puts "  #{section.key} #{section.includes.map { |one| one.key }.inspect}"
     section.statements.each do |term|
       puts "    #{term.line} #{term.key} — #{term.text}"
       term.statements.each do |word|
@@ -137,7 +137,7 @@ puts "--- a vocabulary read through the grammar ---"
 vocabulary_of(reading.glossary("test/fixtures/reading/glossary.md"))
 
 def definition_of(spec)
-  puts "#{spec.key} #{spec.attributes.inspect} #{spec.includes.inspect}"
+  puts "#{spec.key} #{spec.attributes.inspect} #{spec.includes.map { |one| one.key }.inspect}"
   puts "  #{spec.text}"
   spec.statements.each do |contract|
     puts "  #{contract.line} #{contract.key} #{contract.attributes.inspect}"

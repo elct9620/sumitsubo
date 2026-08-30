@@ -3,7 +3,6 @@ require "sumitsubo/error"
 require "sumitsubo/specification/parser/markdown/builder/definition"
 require "sumitsubo/specification/parser/markdown/builder/feature"
 require "sumitsubo/specification/parser/markdown/builder/vocabulary"
-require "sumitsubo/specification/parser/markdown/format"
 require "sumitsubo/place"
 require "sumitsubo/specification"
 
@@ -60,30 +59,6 @@ module Sumitsubo
         # know.
         def contract(path, source)
           built(Builder::Definition.new(path, source), path)
-        end
-
-        # The line each include is written on. Every kind of specification lists
-        # them under the reserved heading and they differ only in which level
-        # that heading sits at, so this is asked of a document without being told
-        # which kind it is.
-        #
-        # Asked only once one of them turned out to cover nothing, so a document
-        # whose includes all reach a file is never read a second time.
-        def spelled_in(path)
-          found = {}
-          scoping = false
-          captured(Format::SPELLED, path).each do |capture|
-            said = Format.folded(capture.text)
-            scoping = said == Format::INCLUDES unless capture.name == Format::ITEM
-            next unless capture.name == Format::ITEM && scoping
-
-            # The document was built before this is asked, so an item under the
-            # reserved heading is a code span already: one that is not was
-            # refused then, and there is no topic to name a second refusal under.
-            glob = Format.code_span(said)
-            found[glob.taken] = capture.line if !glob.nil? && found[glob.taken].nil?
-          end
-          found
         end
 
         private

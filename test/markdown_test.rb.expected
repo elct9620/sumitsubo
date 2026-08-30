@@ -107,8 +107,10 @@ Internal seams {} []
 --- a second fence under one contract ---
   Store.open {"language" => ["ruby"], "signature" => ["module Store\n  def self.open(path)\n  end\nend\n"]}
 --- includes written at the level a feature writes them ---
-{"test/init_test.rb" => 5, "test/other_test.rb" => 6}
+["5 test/init_test.rb", "6 test/other_test.rb"]
 --- includes written at the level a vocabulary writes them ---
-{"app/**/*.rb" => 5, "app/billing/*.rb" => 15}
+  Everywhere ["7 app/**/*.rb"]
+  Billing ["17 app/billing/*.rb"]
 --- one glob written twice ---
-{"app/**/*.rb" => 5}
+  Everywhere ["7 app/**/*.rb"]
+  Billing ["13 app/**/*.rb"]

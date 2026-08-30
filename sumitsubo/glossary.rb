@@ -179,19 +179,35 @@ module Sumitsubo
     # rather than two. One section reaching nothing takes its whole vocabulary
     # out of the run, and the words it carries are then checked nowhere.
     def self.covers(spec, path)
-      patterns = []
-      spec.statements.each { |section| patterns.concat(section.attributes[INCLUDE]) }
-      [Check::Covers.new(path: path, patterns: patterns.uniq)]
+      found = []
+      seen = {}
+      spec.statements.each { |section| found.concat(unseen(section, seen)) }
+      [Check::Covers.new(path: path, includes: found)]
+    end
+
+    # The includes one section adds that an earlier one has not already named,
+    # marking each as seen. A glob two sections share is one mistake, so the
+    # first to write it is where a reader is sent.
+    def self.unseen(section, seen)
+      found = []
+      section.includes.each do |one|
+        next unless seen[one.key].nil?
+
+        seen[one.key] = true
+        found.push(one)
+      end
+      found
     end
 
     # A found path is a String relative to the base: these are the keys a
     # file's vocabulary is held under, and check composes each back onto the
     # base to read it.
     #
-    # A section's boundary is an attribute rather than a member, because the
-    # container is what carries one and nothing points at a single glob.
+    # A section's boundary is the section's own, since which vocabulary holds
+    # where another says nothing is decided by what each covers.
     def self.paths_for(section, base, exclusion)
-      Source::Scope.of(base, section.attributes[INCLUDE], exclusion).uniq.sort
+      globs = section.includes.map { |one| one.key }
+      Source::Scope.of(base, globs, exclusion).uniq.sort
     end
   end
 end

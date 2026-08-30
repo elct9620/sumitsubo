@@ -68,7 +68,8 @@ module Sumitsubo
     # sits in there, once per claim.
     def self.covered(feature, base, exclusion)
       found = {}
-      Source::Scope.of(base, feature.includes, exclusion).each { |path| found[Place.file(base / path)] = true }
+      globs = feature.includes.map { |one| one.key }
+      Source::Scope.of(base, globs, exclusion).each { |path| found[Place.file(base / path)] = true }
       found
     end
 
@@ -83,7 +84,7 @@ module Sumitsubo
     # What each feature's includes cover, each answering at the feature that
     # wrote them.
     def self.covers(features)
-      features.map { |feature| Check::Covers.new(path: feature.path, patterns: feature.includes) }
+      features.map { |feature| Check::Covers.new(path: feature.path, includes: feature.includes) }
     end
 
     # The ids one marker line carries. A claim is data rather than prose, so a

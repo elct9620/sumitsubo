@@ -108,7 +108,7 @@ module Sumitsubo
       def verify(config, findings, specifications, source)
         definitions = specifications.all(Sumitsubo::Contract.path_in(config.root), self)
         Sumitsubo::Contract.refuse_ambiguity(definitions)
-        @barren.run(Sumitsubo::Contract.covers(definitions), config.base, config.exclusion, specifications)
+        @barren.run(Sumitsubo::Contract.covers(definitions), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @claimed.run(config, findings, definitions, source)
         @defined.run(config, findings, definitions, source)

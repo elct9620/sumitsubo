@@ -68,7 +68,7 @@ feature = read([
   cell(16, "Then "),
   cell(16, "an empty glossary is written ")
 ])
-puts "#{feature.key} #{feature.includes.inspect}"
+puts "#{feature.key} #{feature.includes.map { |one| one.key }.inspect}"
 puts "  #{feature.text}"
 feature.statements.each do |scenario|
   puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
@@ -191,7 +191,7 @@ end
 def said_of(spec)
   puts "#{spec.key} #{spec.text.inspect}"
   spec.statements.each do |section|
-    puts "  #{section.key} #{section.attributes[Sumitsubo::INCLUDE].inspect} #{section.text.inspect}"
+    puts "  #{section.key} #{section.includes.map { |one| one.key }.inspect} #{section.text.inspect}"
     section.statements.each do |term|
       puts "    #{term.path}:#{term.line} #{term.key} — #{term.text}"
       term.statements.each do |word|
@@ -356,7 +356,7 @@ rescue Sumitsubo::Unreadable => e
 end
 
 def registered_by(spec)
-  puts "#{spec.key} #{spec.attributes.inspect} #{spec.includes.inspect}"
+  puts "#{spec.key} #{spec.attributes.inspect} #{spec.includes.map { |one| one.key }.inspect}"
   puts "  #{spec.text}"
   spec.statements.each do |contract|
     puts "  #{contract.path}:#{contract.line} #{contract.key} #{contract.attributes.inspect}"
@@ -495,36 +495,43 @@ definition([
 ], { OPEN => [scope("Store"), declares("Store.open")] })
   .statements.each { |contract| puts "  #{contract.key} #{contract.attributes.inspect}" }
 
-# --- where an include was written ----------------------------------------
+# --- what a specification answers for ------------------------------------
 #
-# Asked of a document without being told which kind it is, because every kind
-# lists its includes under the reserved heading and they differ only in which
-# level that heading sits at.
+# Every kind lists its includes under the reserved heading and they differ only
+# in which level that heading sits at, so each form reads its own. A glob
+# carries the line it was written on, which is where a reader goes when it
+# turns out to cover nothing.
 
-def spelled_in(captures)
-  Sumitsubo::Specification::Parser::Markdown.new(Canned.new(captures)).spelled_in("spec.md")
+def globs_of(container)
+  container.includes.map { |one| "#{one.line} #{one.key}" }
+end
+
+def sections_of(spec)
+  spec.statements.each { |section| puts "  #{section.key} #{globs_of(section).inspect}" }
 end
 
 # @behavior MD-044
 puts "--- includes written at the level a feature writes them ---"
-p spelled_in([
+p globs_of(read([
   h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"), item(6, "`test/other_test.rb`"),
   h2(8, "`I-001` A run"), item(10, "`not an include`")
-])
+]))
 
 # @behavior MD-045
 puts "--- includes written at the level a vocabulary writes them ---"
-p spelled_in([
-  h2(1, "Everywhere"), h3(3, "Includes"), item(5, "`app/**/*.rb`"),
-  h3(7, "Order"), item(9, "`not an include`"),
-  h2(11, "Billing"), h3(13, "Includes"), item(15, "`app/billing/*.rb`")
-])
+sections_of(vocabulary([
+  h1(1, "Glossary"),
+  h2(3, "Everywhere"), h3(5, "Includes"), item(7, "`app/**/*.rb`"),
+  h3(9, "Order"), item(11, "`not an include`"),
+  h2(13, "Billing"), h3(15, "Includes"), item(17, "`app/billing/*.rb`")
+]))
 
-# One glob written twice answers at the line it was first written on, since
-# that is where a reader goes to fix it.
+# Two sections naming one glob each keep their own: a boundary is the section's,
+# and a reader sent to fix one has to be sent to the section that wrote it.
 # @behavior MD-046
 puts "--- one glob written twice ---"
-p spelled_in([
-  h2(1, "Everywhere"), h3(3, "Includes"), item(5, "`app/**/*.rb`"),
-  h2(7, "Billing"), h3(9, "Includes"), item(11, "`app/**/*.rb`")
-])
+sections_of(vocabulary([
+  h1(1, "Glossary"),
+  h2(3, "Everywhere"), h3(5, "Includes"), item(7, "`app/**/*.rb`"),
+  h2(9, "Billing"), h3(11, "Includes"), item(13, "`app/**/*.rb`")
+]))
