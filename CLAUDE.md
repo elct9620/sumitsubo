@@ -133,8 +133,6 @@ AOT compiler for Ruby. Its constraints shape the design:
 - No `eval`, `method_missing`, `define_method` with computed names,
   `ObjectSpace`, `TracePoint`, or refinements — mechanisms register themselves
   statically, not through a dynamic DSL.
-- Directories that do not start with a dot are scanned as source, which is
-  half of why `.spec` is the default specification root.
 - Dependencies are source trees compiled into the executable. Nothing loads at
   runtime, so what the executable supports is decided when it is built.
 - C is reached through FFI declarations in a package. The tree-sitter binding

@@ -14,8 +14,9 @@ finding.
 being checked against it yet.
 
 `.spec` is the default because `spec/` is already RSpec's, and because a
-directory that does not start with a dot is one a build is liable to sweep in
-as source.
+project wanting its specification apart from the rest of its prose should get
+that without having to say so. Wanting the two together is what `root` says,
+and this project says it.
 
 ## Includes
 
