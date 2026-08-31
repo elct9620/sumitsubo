@@ -121,7 +121,7 @@ jobs:
       # download nobody can run without a chmod is not the executable this
       # ships. A tar carries the mode, so that is what a release holds: one
       # per target, named for the version and the target it answers for.
-      - name: Attach the executables
+      - name: Attach the executables and their checksums
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -134,6 +134,10 @@ jobs:
             chmod 755 "$dir/sumi"
             tar czf "upload/sumi-${version}-${dir#dist/sumi-}.tar.gz" -C "$dir" sumi
           done
+          # GitHub computes a digest of its own, but only the API answers with
+          # it — a person holding curl has nothing to compare against. The names
+          # go in bare so the file verifies wherever the tarballs were downloaded.
+          (cd upload && sha256sum *.tar.gz > "sumi-${version}-checksums.txt")
           ls -l upload
           gh release upload "$TAG" upload/* --clobber
 
