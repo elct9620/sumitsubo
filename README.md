@@ -24,13 +24,23 @@ whatever else is prose.
 <!-- x-release-please-start-version -->
 
 Every [release](https://github.com/elct9620/sumitsubo/releases) carries one
-executable per target, as a tarball because that is what keeps the file mode:
+executable per target, as a tarball because that is what keeps the file mode,
+and the checksums a download can be checked against:
 
 ```console
 $ version=0.1.0-preview5 target=macos-aarch64
-$ curl -sSL "https://github.com/elct9620/sumitsubo/releases/download/v$version/sumi-$version-$target.tar.gz" | tar xz
+$ base="https://github.com/elct9620/sumitsubo/releases/download/v$version"
+$ curl -sSLO "$base/sumi-$version-$target.tar.gz"
+$ curl -sSLO "$base/sumi-$version-checksums.txt"
+$ shasum -a 256 -c --ignore-missing "sumi-$version-checksums.txt"
+sumi-0.1.0-preview5-macos-aarch64.tar.gz: OK
+$ tar xzf "sumi-$version-$target.tar.gz"
 $ ./sumi -v
 ```
+
+That file names every target, so `--ignore-missing` is what keeps the two you
+did not download from failing the check. Linux spells the command
+`sha256sum -c --ignore-missing`.
 
 The targets are `linux-x86_64`, `linux-aarch64` and `macos-aarch64`. The Linux
 executables ask the host for glibc 2.34 or newer — Ubuntu 22.04, Debian 12 and
