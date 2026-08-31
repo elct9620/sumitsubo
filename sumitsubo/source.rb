@@ -16,10 +16,11 @@ module Sumitsubo
   module Source
     # A stretch of a file a person wrote, and the line it starts on.
     #
-    # What a language required in order to close the comment is not part of
-    # it: `*/` sits at the end of the last thing written there, where a
-    # mechanism reading that line would take it for a word. What a comment
-    # opens with is left, since nothing that could be mistaken follows it.
+    # Where a language's own syntax shares a line with what a person wrote, a
+    # reading takes it off: `*/` sits at the end of the last such line, and a
+    # mechanism reading that line would take it for a word. A delimiter with a
+    # line to itself is left, as `=end` is, and so is what a comment opens
+    # with — neither lands where a claim is read.
     class Region < Data.define(:line, :text)
       # The same stretch one line at a time, each answering at its own line. A
       # comment arrives whole, and what is looked for in it — a keyword, a word

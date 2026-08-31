@@ -26,9 +26,9 @@ module Sumitsubo
     # comparing against source can name: a shape declared here would be one the
     # comparison could not reach for without reaching a grammar.
     #
-    # That a region carries no closing syntax is the one thing this seam asks
-    # of a reading and cannot check: what a language required in order to end a
-    # comment is known only where that language is read.
+    # That a region holds no syntax of the language's own on a line a person
+    # wrote on is the one thing this seam asks of a reading and cannot check:
+    # what a language required is known only where that language is read.
     class Language
       class Error < Sumitsubo::Error; end
 
