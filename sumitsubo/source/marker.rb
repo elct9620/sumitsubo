@@ -14,10 +14,10 @@ module Sumitsubo
     # reads a list of ids where Contract reads one name, and a name like
     # `GET /users/:id` carries the space a list would have split on.
     module Marker
-      # What a name is spelled with. It is the one thing that may not stand in
-      # front of a keyword: everything else there is the comment's own, and a
-      # letter makes the keyword the tail of a longer word instead.
-      LETTER = /[A-Za-z0-9_]/
+      # A name ending where the keyword begins. That is the one thing that may
+      # not stand in front of a keyword: everything else there is the comment's
+      # own, and a letter makes the keyword the tail of a longer word instead.
+      LETTER = /[A-Za-z0-9_]\z/
 
       # Where a claim could sit arrives from outside, so nothing here knows what
       # the file is written in: a language with no comment for code to follow
@@ -68,10 +68,7 @@ module Sumitsubo
       def self.claiming?(word, keyword)
         return false unless word.end_with?(keyword)
 
-        # A word that is the keyword has nothing in front of it, which is the
-        # one position the letter cannot be read from.
-        at = word.length - keyword.length - 1
-        at < 0 || LETTER.match("#{word[at]}").nil?
+        LETTER.match(word.delete_suffix(keyword)).nil?
       end
     end
   end

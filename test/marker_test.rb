@@ -76,5 +76,6 @@ claims("src/order.rb", BEHAVIOR, [
   Sumitsubo::Source::Region.new(3, '#@behavior G-003'),
   Sumitsubo::Source::Region.new(5, '/*@behavior G-004'),
   Sumitsubo::Source::Region.new(7, ' *@behavior G-005'),
-  Sumitsubo::Source::Region.new(9, '# mail@behavior.example claims nothing')
+  Sumitsubo::Source::Region.new(9, ' * 說明：@behavior G-006'),
+  Sumitsubo::Source::Region.new(11, '# mail@behavior.example claims nothing')
 ]).each { |line| puts line }

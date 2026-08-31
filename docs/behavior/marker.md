@@ -71,6 +71,7 @@ front of it, which is what keeps an address out of the claims.
 
 | Step | Statement |
 | --- | --- |
-| Given | comments writing the marker against `#`, `/*` and `*`, and one carrying it after a letter |
+| Given | comments writing the marker against `#`, `/*`, `*` and a character outside ASCII |
+| Given | one carrying the keyword after a letter |
 | When | the file is scanned for claims |
-| Then | the first three answer claims and the last answers none |
+| Then | the first four answer claims and the last answers none |
