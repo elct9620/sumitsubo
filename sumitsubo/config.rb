@@ -9,8 +9,9 @@ module Sumitsubo
   # a run verifies. A project that has said nothing is not misconfigured, so an
   # absent file answers the defaults rather than failing.
   #
-  # Nothing here names a mechanism, which is what keeps this file's test on the
-  # side that --regen can still write a snapshot for.
+  # Nothing here names a mechanism: this is what a run is handed rather than a
+  # stage that decides anything, so a name it switches by arrives from the
+  # caller that knows one.
   class Config
     FILE = ".sumi.json"
     GITIGNORE = ".gitignore"
