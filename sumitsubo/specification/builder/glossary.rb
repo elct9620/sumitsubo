@@ -1,3 +1,4 @@
+require "sumitsubo/place"
 require "sumitsubo/specification"
 require "sumitsubo/specification/builder"
 require "sumitsubo/specification/block"
@@ -104,8 +105,16 @@ module Sumitsubo
         # holds where another says nothing is decided by what its globs cover
         # and by the order they are written, so a word for that role would name
         # something this form does not do.
+        #
+        # The name is refused a second time because it is the only handle a
+        # reader has on a section. The tool tells two apart by what each covers
+        # and by where each sits, and neither of those is on the page.
         def section(block)
-          @section = Statement.new(block.text, nil, [], @where, block.line, {}, [])
+          said = block.text
+          first = @sections.find { |one| one.key == said }
+          refuse(block.line, "opens a second section named #{said}, first opened at #{first_at(first)}") unless first.nil?
+
+          @section = Statement.new(said, nil, [], @where, block.line, {}, [])
           @sections.push(@section)
           @term = nil
           @rejected = nil
@@ -201,6 +210,13 @@ module Sumitsubo
           return Builder.empty_to_nil(said) unless said.index(DASH) == 0
 
           Builder.empty_to_nil(said[DASH.length..-1].strip)
+        end
+
+        # Where the first of a name was written, for a refusal naming both. A
+        # statement holds the file as a reader will see it, so the place is made
+        # from that rather than rendered a second time.
+        def first_at(statement)
+          Place.new(path: statement.path, line: statement.line).spoken
         end
 
         def refuse(line, said)

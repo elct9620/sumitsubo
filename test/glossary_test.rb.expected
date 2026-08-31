@@ -30,5 +30,7 @@ test/fixtures/glossary/titleless.md:1 declares no title; sumi help glossary has 
 --- an ignore that could not be written down is a broken reference line ---
 test/fixtures/glossary/noat.md:12 writes an ignore that does not name a line in backticks; sumi help glossary has the form
 test/fixtures/glossary/noreason.md:12 writes an ignore at app/order.rb:2 with no reason; sumi help glossary has the form
+--- a name the vocabulary spells twice where it stands for one thing ---
+test/fixtures/glossary/secondsection.md:16 opens a second section named Everywhere, first opened at test/fixtures/glossary/secondsection.md:6; sumi help glossary has the form
 --- and one named absolutely still answers where the run started ---
 no glossary at test/fixtures/glossary/absent.md; sumi init lays one down

@@ -94,3 +94,11 @@ place.
 | Given | a glossary writing an ignore with no place to point, and one with no reason |
 | When | the glossary is loaded |
 | Then | each is named as one the specification cannot carry |
+
+## `G-013` A section opened twice under one name is refused where the second is written
+
+| Step | Statement |
+| --- | --- |
+| Given | a glossary opening two sections under one name |
+| When | the glossary is loaded |
+| Then | the second is named as one the specification cannot carry, naming the line the first was opened at |

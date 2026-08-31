@@ -137,6 +137,18 @@ puts "--- an ignore that could not be written down is a broken reference line --
   end
 end
 
+# A section's name is the only handle a reader has on it, so a vocabulary
+# spelling one twice is refused rather than read as two.
+# @behavior G-013
+puts "--- a name the vocabulary spells twice where it stands for one thing ---"
+["test/fixtures/glossary/secondsection.md"].each do |path|
+  begin
+    reads(path)
+  rescue Sumitsubo::Glossary::Error => e
+    puts e.message
+  end
+end
+
 # The root arrives absolute at runtime, so a message composed from the path
 # itself would answer somewhere no reader can go.
 # @behavior G-006
