@@ -137,11 +137,14 @@ puts "--- an ignore that could not be written down is a broken reference line --
   end
 end
 
-# A section's name is the only handle a reader has on it, so a vocabulary
-# spelling one twice is refused rather than read as two.
-# @behavior G-013
+# Which container a name stands for one thing inside is the whole of the rule:
+# the document holds its sections, and a section its terms. A term repeated
+# across two sections is the laying rule and stands, so the line each refusal
+# names is what says where the boundary was drawn.
+# @behavior G-013 G-014
 puts "--- a name the vocabulary spells twice where it stands for one thing ---"
-["test/fixtures/glossary/secondsection.md"].each do |path|
+["test/fixtures/glossary/secondsection.md",
+ "test/fixtures/glossary/secondterm.md"].each do |path|
   begin
     reads(path)
   rescue Sumitsubo::Glossary::Error => e

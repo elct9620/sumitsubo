@@ -102,3 +102,11 @@ place.
 | Given | a glossary opening two sections under one name |
 | When | the glossary is loaded |
 | Then | the second is named as one the specification cannot carry, naming the line the first was opened at |
+
+## `G-014` A term declared twice in one section is refused, where twice in two is not
+
+| Step | Statement |
+| --- | --- |
+| Given | a glossary whose second section declares a term the first already did, and then declares it again |
+| When | the glossary is loaded |
+| Then | only the one repeated inside a section is named as one the specification cannot carry, naming the line that section first declared it at |

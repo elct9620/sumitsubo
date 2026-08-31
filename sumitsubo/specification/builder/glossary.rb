@@ -124,6 +124,11 @@ module Sumitsubo
         # A term, or the heading saying what the section covers. Either closes
         # whatever the one before it opened, so a rejected word never carries
         # past the term rejecting it.
+        #
+        # The section is the boundary a term is declared once inside. Across two,
+        # a later term replacing an earlier one is the whole point of writing
+        # two; inside one there is nothing to replace, so the first would leave
+        # the run taking its rejected words with it and nothing said.
         def term(block)
           said = block.text
           refuse(block.line, "declares #{said} outside any section") if @section.nil?
@@ -132,6 +137,9 @@ module Sumitsubo
           @rejected = nil
           @term = nil
           return unless @holding.nil?
+
+          first = @section.statements.find { |one| one.key == said }
+          refuse(block.line, "declares #{said} a second time in #{@section.key}, first declared at #{first_at(first)}") unless first.nil?
 
           @term = Statement.new(said, nil, [], @where, block.line, {}, [])
           @section.statements.push(@term)
