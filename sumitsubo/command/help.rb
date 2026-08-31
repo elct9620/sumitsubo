@@ -174,7 +174,8 @@ module Sumitsubo
                 def show
 
             Everything after the marker to the end of the line is the name, so
-            a name need not be a name in any language at all.
+            a name need not be a name in any language at all. A block comment
+            closing on that line ends the name where it closes.
 
             WITHOUT ONE, the interfaces are read from the syntax tree and
             nothing is written in front of the code. Each contract carries a

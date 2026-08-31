@@ -15,6 +15,11 @@ module Sumitsubo
   # answer, and a comparison of two of them is a comparison of what they say.
   module Source
     # A stretch of a file a person wrote, and the line it starts on.
+    #
+    # What a language required in order to close the comment is not part of
+    # it: `*/` sits at the end of the last thing written there, where a
+    # mechanism reading that line would take it for a word. What a comment
+    # opens with is left, since nothing that could be mistaken follows it.
     class Region < Data.define(:line, :text)
       # The same stretch one line at a time, each answering at its own line. A
       # comment arrives whole, and what is looked for in it — a keyword, a word
