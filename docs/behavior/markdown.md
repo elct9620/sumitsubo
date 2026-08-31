@@ -42,6 +42,14 @@ to parse, and saying so belongs to the form that was reading it.
 | When | the reading is asked what it declares |
 | Then | the blocks the query asks for answer with the lines they sit on |
 
+## `MD-050` The shape a table is drawn with is no part of it
+
+| Step | Statement |
+| --- | --- |
+| Given | a document whose table carries a heading row and a delimiter row above its own |
+| When | the blocks the document is made of are read |
+| Then | only the rows beneath them answer, so a form never reads the shape a table is drawn with |
+
 ## `MD-016` Which reading answers for a file
 
 | Step | Statement |

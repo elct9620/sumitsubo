@@ -131,9 +131,14 @@ end
 # description over two lines. This form is not written at that level, so no
 # scenario comes of the subheading; the wrapping is a space by the time the form
 # sees the paragraph, which is what the one line below says.
+#
+# The steps are the rows the reader wrote. A table is drawn with a heading row
+# and a delimiter row above them, and neither is a row the grammar answers, so
+# a form reading rows has nothing to skip.
 # @behavior MD-002
 # @behavior MD-015
 # @behavior MD-018
+# @behavior MD-050
 PATH = "test/fixtures/reading/init.md"
 feature = Sumitsubo::Specification::Builder::Behavior.new(PATH)
   .build(feature_blocks(reading, PATH))

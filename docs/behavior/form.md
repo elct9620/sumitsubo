@@ -268,9 +268,9 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a table under a contract stating one attribute |
+| Given | a row under a contract naming an attribute and the value it takes |
 | When | the blocks the document is made of are read |
-| Then | the contract carries it, and the heading and delimiter rows say nothing |
+| Then | the contract carries it, held under the word the first cell names |
 
 ## `F-030` An attribute a contract does not carry
 
