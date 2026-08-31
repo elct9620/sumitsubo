@@ -82,6 +82,13 @@ module Sumitsubo
             all that decides which way that goes, so the section a file falls
             back to is written first.
 
+            A name is spelled once where it stands for one thing: one
+            section of a name in the document, one term of a name in a
+            section, one rejection of a word under a term, one ignore of a
+            line under that word. A step out and it stands for something
+            else - which is what the laying above is for - so only a second
+            written in the same place is refused.
+
             A term is a `###` heading and the paragraph under it is the
             definition. `Includes` is the one `###` heading that is reserved
             rather than a term, which is why a heading of a term's own
