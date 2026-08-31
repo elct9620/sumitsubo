@@ -77,6 +77,8 @@ Internal seams {} []
     
 --- a contract heading that does not open with a name ---
   refused: cli.md:3 declares a contract whose heading does not open with a name in backticks; sumi help contract has the form
+--- a contract heading opening with a word before the name ---
+  refused: cli.md:3 declares a contract whose heading does not open with a name in backticks; sumi help contract has the form
 --- prose written after a contract's name ---
   refused: cli.md:3 writes lays down a specification after a name, where a heading carries the name alone; sumi help contract has the form
 --- a second run in backticks after a contract's name ---

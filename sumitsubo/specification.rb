@@ -25,8 +25,7 @@ module Sumitsubo
   # Attributes are what one mechanism declares and another has no use for,
   # held under the words that mechanism words its own help with. Each answers
   # a list, so a shape carrying one is spelled no differently from a shape
-  # carrying several, and a flag is the empty list — it says a thing of itself
-  # by being there.
+  # carrying several, and one nothing said is absent rather than empty.
   #
   # A statement carries includes because a section answers for a boundary the
   # way the document does, and one written deeper is still the container's own

@@ -1,9 +1,10 @@
 module Sumitsubo
   class Specification
     # A run of a block's text the document marked as taken letter for letter,
-    # beside where it sits in that text. The offsets are what say whether
-    # anything stands before the run or between it and the next one, which is
-    # the difference between a name carrying a flag and a name carrying prose.
+    # beside where it sits in that text. The offsets are what say whether the
+    # block opens with the run and where the text after it starts, which is the
+    # difference between a heading naming a contract and one saying a sentence
+    # about it.
     #
     # They count bytes, the way the tree measures, so a block is sliced by bytes
     # rather than by characters — a dash a reader wrote is three of one and one
@@ -30,7 +31,7 @@ module Sumitsubo
       # written this way, so a block opening with prose is a form nobody reads
       # rather than one read loosely.
       def taken
-        return nil if spans.empty? || !before(0).empty?
+        return nil if spans.empty? || !text.byteslice(0, spans[0].from).strip.empty?
 
         spans[0].taken
       end
@@ -42,22 +43,6 @@ module Sumitsubo
         return text.strip if spans.empty?
 
         text.byteslice(spans[0].to, text.bytesize - spans[0].to).strip
-      end
-
-      # What stands before the run at this position, and `after` what stands
-      # after the last of them. A heading carrying a name and then its flags has
-      # nothing between them, so whatever is here is what the form does not read
-      # — and naming it is how a refusal says which word broke it.
-      def before(nth)
-        opened = nth.zero? ? 0 : spans[nth - 1].to
-        text.byteslice(opened, spans[nth].from - opened).strip
-      end
-
-      def after
-        return text.strip if spans.empty?
-
-        closed = spans[-1].to
-        text.byteslice(closed, text.bytesize - closed).strip
       end
     end
 

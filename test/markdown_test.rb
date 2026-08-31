@@ -433,6 +433,12 @@ registered_by(definition([
 puts "--- a contract heading that does not open with a name ---"
 definition([h1(1, "CLI"), h2(3, "the first command")])
 
+# A name in backticks with a word in front of it opens with the word, so it is
+# the same heading as one carrying no name at all.
+# @behavior F-029
+puts "--- a contract heading opening with a word before the name ---"
+definition([h1(1, "CLI"), h2(3, "the `init` command")])
+
 # A run in backticks after the name is the form this one replaced, so it is
 # answered by the rule that leaves a heading carrying the name alone rather
 # than by a rule of its own.
