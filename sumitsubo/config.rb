@@ -17,6 +17,15 @@ module Sumitsubo
     GITIGNORE = ".gitignore"
     DEFAULT_ROOT = ".spec"
 
+    # What a configuration says, and what each of them takes. Held in order
+    # rather than by name because it is also the order a refusal answers in,
+    # and one configuration read twice should answer alike however its keys
+    # were written down.
+    KEYS = [["root", "a path"],
+            ["exclude", "a list of paths"],
+            ["gitignore", "true or false"],
+            ["specifications", "the specifications to switch"]]
+
     attr_reader :base, :root, :exclusion
 
     # The directory a run is configured from: the nearest one at or above the
@@ -51,6 +60,7 @@ module Sumitsubo
     end
 
     def initialize(base, document)
+      refuse(faults_in(base, document))
       @base = base
       @root = (base / (document["root"] || DEFAULT_ROOT)).cleanpath
       # What every mechanism leaves alone. A build directory belongs to the
@@ -77,6 +87,41 @@ module Sumitsubo
     end
 
     private
+
+    # Everything wrong with a configuration, answered at once. The file is
+    # small and a person who mistyped three keys should not find them one run
+    # at a time, which is what a walk that stops at the first would make them
+    # do.
+    def faults_in(base, document)
+      where = Place.file(base / FILE)
+      said = []
+      KEYS.each do |key|
+        written = document[key[0]]
+        next if written.nil? || takes?(key[0], written)
+
+        said.push("#{where} writes #{key[0]} as #{JSON.generate(written)}, where it takes #{key[1]}")
+      end
+      said
+    end
+
+    # Whether one key was given what it takes. A value of another shape is not
+    # read as something else: `"gitignore": "no"` means what it says, and
+    # reading it as true is the tool deciding what a project meant.
+    def takes?(key, written)
+      case key
+      when "root" then written.is_a?(String)
+      when "exclude" then written.is_a?(Array) && written.all? { |one| one.is_a?(String) }
+      when "gitignore" then written == true || written == false
+      when "specifications" then written.is_a?(Hash)
+      end
+    end
+
+    # A configuration nothing could be read from stops the run, the way one
+    # that will not parse does: with a setting nobody honours, what a run
+    # touches is not what the project asked for.
+    def refuse(said)
+      raise Error, said.join("\n") unless said.empty?
+    end
 
     # Only the one beside the .sumi.json, whose rules are written against the
     # same directory this run reads everything else against. What git reads

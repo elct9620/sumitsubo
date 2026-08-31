@@ -36,6 +36,14 @@ TEXT
 (here / "loose").mkpath
 (here / "broken").mkpath
 (here / "broken" / ".sumi.json").write("{ not json\n")
+(here / "mistyped").mkpath
+(here / "mistyped" / ".sumi.json").write(<<~JSON)
+  {
+    "root": 123,
+    "gitignore": "no",
+    "exclude": "target/"
+  }
+JSON
 
 # @behavior C-005 C-006
 def show(where)
@@ -68,6 +76,17 @@ show("loose")
 # @behavior C-004
 puts "--- a .sumi.json that will not parse is not a difference ---"
 Dir.chdir(here / "broken")
+begin
+  Sumitsubo::Config.load
+rescue Sumitsubo::Error => e
+  puts e.message
+end
+
+# Three faults are written and three are answered, in this file's order rather
+# than the document's, which is what shows a run is not stopping at the first.
+# @behavior C-015
+puts "--- a value no key takes stops the run, and every one of them answers ---"
+Dir.chdir(here / "mistyped")
 begin
   Sumitsubo::Config.load
 rescue Sumitsubo::Error => e

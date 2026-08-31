@@ -11,6 +11,10 @@ loose: base=. root=.spec
   verify: glossary=true behavior=true contract=true
 --- a .sumi.json that will not parse is not a difference ---
 .sumi.json is not readable JSON
+--- a value no key takes stops the run, and every one of them answers ---
+.sumi.json writes root as 123, where it takes a path
+.sumi.json writes exclude as "target/", where it takes a list of paths
+.sumi.json writes gitignore as "no", where it takes true or false
 --- what the project excludes ---
   app/order.rb: false
   target/debug/generated.rb: true

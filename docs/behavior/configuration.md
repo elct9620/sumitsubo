@@ -104,3 +104,11 @@ and this project says it.
 | Given | a .sumi.json switching the .gitignore off |
 | When | the configuration is loaded |
 | Then | what git leaves out is not excluded |
+
+## `C-015` A value no key takes stops the run, and every one of them answers
+
+| Step | Statement |
+| --- | --- |
+| Given | a .sumi.json writing three keys with values none of them takes |
+| When | the configuration is loaded |
+| Then | all three are named at once, in the order the configuration reads its keys rather than the order they were written |
