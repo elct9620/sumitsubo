@@ -10,9 +10,6 @@ deliberately different. The first is what lets a run started anywhere under it
 reach the same files; the second is what lets a reader go straight to a
 finding.
 
-`verify: false` keeps a specification the project means to hold without a run
-being checked against it yet.
-
 `.spec` is the default because `spec/` is already RSpec's, and because a
 project wanting its specification apart from the rest of its prose should get
 that without having to say so. Wanting the two together is what `root` says,

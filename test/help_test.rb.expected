@@ -136,6 +136,11 @@ Form
     `verify: false` keeps a specification the project means to hold
     without a run being checked against it yet.
 
+    The set is closed both ways. A key nothing here reads, and a
+    value the one named does not take, are each refused - and all
+    of them at once, a configuration being short enough to fix in
+    one pass.
+
 What a run reads
     `include` and `exclude` are globs read against the directory
     holding the .sumi.json: `*` and `?` within a name, `**` for

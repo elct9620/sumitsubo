@@ -275,9 +275,8 @@ module Sumitsubo
             a value the one named does not take, are each refused at the row
             that wrote them.
 
-            `internal` says the project means to keep the interface but not to
-            publish it. It is verified like any other; what it says is that a
-            reader outside the project is not the one it is kept for.
+            `internal` says the project means to keep the interface but not
+            to publish it, and it is verified like any other.
 
         Includes
             The boundary of what a definition answers for. With a marker, a
@@ -501,6 +500,11 @@ module Sumitsubo
             verified. The names are `glossary`, `contract`, and `behavior`.
             `verify: false` keeps a specification the project means to hold
             without a run being checked against it yet.
+
+            The set is closed both ways. A key nothing here reads, and a
+            value the one named does not take, are each refused - and all
+            of them at once, a configuration being short enough to fix in
+            one pass.
 
         What a run reads
             `include` and `exclude` are globs read against the directory
