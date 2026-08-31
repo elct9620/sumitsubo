@@ -106,3 +106,11 @@ files a specification answers for.
 | Given | a path inside a directory whose name begins with a dot |
 | When | it is matched |
 | Then | the matcher answers inside it, because skipping one is the walk's decision and not the matcher's |
+
+## `P-013` A pattern written outside ASCII
+
+| Step | Statement |
+| --- | --- |
+| Given | an include naming files in characters a byte count and a character index disagree about |
+| When | a path is asked whether that include reaches it |
+| Then | each pattern reaches the files it names, wherever its star or placeholder sits |

@@ -186,5 +186,17 @@ puts "--- shapes that had no answer before ---"
 puts "--- inside a hidden directory, which the walk and not the matcher rules on ---"
 puts "  **/*.json -> #{matched("**/*.json").join(" ")}"
 
+# A pattern and a path are read by the characters they were written in. The
+# star after a name outside ASCII is what tells that apart from the bytes: the
+# two counts differ there, and every other shape here happens to agree.
+# @behavior P-013
+puts "--- a pattern written outside ASCII ---"
+WIDE = ["說明.rb", "說.rb", "前記.rb", "abc.rb"]
+["說*.rb", "*記.rb", "?記.rb", "說明*"].each do |pattern|
+  rule = Sumitsubo::Source::Patterns.read([pattern])[0]
+  found = WIDE.select { |path| Sumitsubo::Source::Patterns.selects?(rule, path) }
+  puts "  #{pattern} -> #{found.join(" ")}"
+end
+
 Dir.chdir(back)
 root.rmtree
