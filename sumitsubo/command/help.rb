@@ -202,9 +202,13 @@ module Sumitsubo
             end
             ```
 
-            ## `Store#read` `internal`
+            ## `Store#read`
 
             Read one.
+
+            | Attribute | Value |
+            | --- | --- |
+            | internal | yes |
 
             ```ruby
             class Store
@@ -261,12 +265,22 @@ module Sumitsubo
             so a Rust declaration does not define a Ruby contract, and one name
             registered under each is not ambiguous.
 
-        internal
-            A contract heading may carry `internal` after its name, in
-            backticks of its own. It says the project means to keep the
-            interface but not to publish it. It is verified like any other;
-            what it says is that a reader outside the project is not the one it
-            is kept for.
+        Attributes
+            A heading carries the contract's name alone. What the contract is
+            besides its name is a table under it, a row to an attribute - the
+            heading and delimiter rows a reader writes state nothing:
+
+                | Attribute | Value |
+                | --- | --- |
+                | internal | yes |
+
+            The set is closed both ways. An attribute no contract carries, and
+            a value the one named does not take, are each refused at the row
+            that wrote them.
+
+            `internal` says the project means to keep the interface but not to
+            publish it. It is verified like any other; what it says is that a
+            reader outside the project is not the one it is kept for.
 
         Includes
             The boundary of what a definition answers for, and not merely a
