@@ -16,6 +16,7 @@ module Sumitsubo
     FILE = ".sumi.json"
     GITIGNORE = ".gitignore"
     DEFAULT_ROOT = ".spec"
+    SPECIFICATIONS = "specifications"
     VERIFY = "verify"
 
     # What a configuration says, and what each of them takes. Held in order
@@ -104,11 +105,11 @@ module Sumitsubo
     def faults_in(base, document, names)
       where = Place.file(base / FILE)
       said = []
-      KEYS.each do |key|
-        written = document[key[0]]
-        next if written.nil? || takes?(key[0], written)
+      KEYS.each do |key, takes|
+        written = document[key]
+        next if written.nil? || takes?(key, written)
 
-        said.push("#{where} writes #{key[0]} as #{JSON.generate(written)}, where it takes #{key[1]}")
+        said.push("#{where} writes #{key} as #{JSON.generate(written)}, where it takes #{takes}")
       end
       said.concat(unread(where, document)).concat(switched(where, document, names))
     end
@@ -117,7 +118,7 @@ module Sumitsubo
     # for before what was set on it: with the wrong name, what it was set to
     # was never going to be read either way.
     def switched(where, document, names)
-      written = document["specifications"]
+      written = document[SPECIFICATIONS]
       return [] unless written.is_a?(Hash)
 
       said = []
@@ -150,7 +151,7 @@ module Sumitsubo
     # a setting honoured: one nobody reads is a project asking for something
     # and being answered as though it had asked for nothing.
     def unread(where, document)
-      known = KEYS.map { |key| key[0] }
+      known = KEYS.map { |key, _| key }
       document.keys.select { |key| !known.include?(key) }.sort
               .map { |key| "#{where} writes #{key}, which is not something a configuration says" }
     end
@@ -163,7 +164,7 @@ module Sumitsubo
       when "root" then written.is_a?(String)
       when "exclude" then written.is_a?(Array) && written.all? { |one| one.is_a?(String) }
       when "gitignore" then written == true || written == false
-      when "specifications" then written.is_a?(Hash)
+      when SPECIFICATIONS then written.is_a?(Hash)
       end
     end
 
