@@ -106,9 +106,10 @@ module Sumitsubo
         # and by the order they are written, so a word for that role would name
         # something this form does not do.
         #
-        # The name is refused a second time because it is the only handle a
-        # reader has on a section. The tool tells two apart by what each covers
-        # and by where each sits, and neither of those is on the page.
+        # The document is the boundary a section is opened once inside, and the
+        # name is the only handle a reader has on one: the tool tells two apart
+        # by what each covers and by where each sits, and neither is on the
+        # page.
         def section(block)
           said = block.text
           first = @sections.find { |one| one.key == said }
@@ -179,9 +180,9 @@ module Sumitsubo
         # aside under that word, and prose anywhere else.
         #
         # The term is the boundary a word is rejected once inside. A mention is
-        # held under the term and the word alone, so two of them are one key:
-        # the run reports the line twice with two reasons, and an ignore written
-        # under either sets both aside.
+        # held under the term and the word alone, so two of them are one key —
+        # one line reported twice with two reasons, and an ignore under either
+        # setting both aside.
         def listed(block)
           return set_aside(block) if block.level == IGNORE
           return unless block.level == WORD
@@ -207,9 +208,9 @@ module Sumitsubo
         # outlives whoever knew why.
         #
         # The rejected word is the boundary a line is set aside once under. Two
-        # naming one line are one key, so the second's reason stood and the
-        # first was never made to go stale — the same exception outliving what
-        # it was written for.
+        # naming one line are one key — the second's reason standing, and the
+        # first never made to go stale, which is the exception outliving what it
+        # was written for that a stale ignore exists to catch.
         def set_aside(block)
           return unless @holding == REJECTED
 
