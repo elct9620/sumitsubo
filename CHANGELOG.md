@@ -1,5 +1,73 @@
 # Changelog
 
+## [0.1.0-preview5](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview4...v0.1.0-preview5) (2026-08-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* **contract:** state a contract's attributes in a table beside it
+* keep this project's specification where its prose already is
+* **source:** `Sumitsubo::Source::Language` is built with the readings it carries rather than holding them itself, and each reading is built with a grammar.
+* **specification:** a parser answers `blocks(paths, kinds)` rather than one method per kind of specification. A build carrying a format of its own hands over what a document is made of and leaves what it means to the form.
+* let the shapes a reading answers with sit where they are compared
+* `.spec/contract/*.json` is no longer read. Rewrite each definition as `.spec/contract/*.md` — `sumi help contract` has the form. A definition left in JSON is passed over in silence, so a run that suddenly finds nothing to compare is one whose contracts have not been rewritten yet.
+* **contract:** compare a shape against the signature that registered it
+* **contract:** let each contract say which language spells it
+* **markdown:** read a contract's signature instead of guessing its spelling
+* **behavior:** a feature written as JSON is refused. Write it as Markdown; `sumi help behavior` has the form.
+* **glossary:** a vocabulary is written as Markdown at .spec/glossary.md. JSON is no longer read for one; `sumi init` lays down a Markdown seed, and a vocabulary declaring no section is one that checks nothing rather than a file refused.
+* **parser:** let each kind of specification ask for its own blocks
+* **parser:** let each kind of specification be read by its own
+* **parser:** let the query hold every block the format has
+* **behavior:** a behavior specification is written as Markdown. JSON is still read, so a project moves one file at a time, but the two must not name one scenario twice.
+* **grammar:** let the grammars sit where they answer from
+* **parser:** hand a parser the grammar it puts its query to
+* **spec:** call the specification's reader a parser
+* **spec:** name the reserved heading for what it bounds
+* let the specification be the document it already was
+
+### Features
+
+* **behavior:** let the parsers say which files are specifications ([7a54fa8](https://github.com/elct9620/sumitsubo/commit/7a54fa8bda59d875dcfdd9b6f85a19585650cccb))
+* **behavior:** read a feature from the format a person reads it in ([45d6a4a](https://github.com/elct9620/sumitsubo/commit/45d6a4a2323b138af4f607aeec8d0f2c774555b1))
+* **behavior:** write the behaviors as the document a person reads ([359ec83](https://github.com/elct9620/sumitsubo/commit/359ec83638189759fefa783a8f94490259792a28))
+* **binding:** carry the extent a capture already had ([a87d90b](https://github.com/elct9620/sumitsubo/commit/a87d90b676c5094b2f681de933e92202b2ecec12))
+* **contract:** compare a shape against the signature that registered it ([8878662](https://github.com/elct9620/sumitsubo/commit/8878662cfa8bc8e04ddbee9722e58b7e2125eb6e))
+* **contract:** let each contract say which language spells it ([5738437](https://github.com/elct9620/sumitsubo/commit/5738437d6a9b8ce381b979196d8431ef46468985))
+* **contract:** let the parsers say which files register contracts ([ef72921](https://github.com/elct9620/sumitsubo/commit/ef729213df5d76436f3c41a170a76b06be924499))
+* **contract:** say which language a name was looked for as ([8ee6d86](https://github.com/elct9620/sumitsubo/commit/8ee6d86070da26fc89a242328c872b05225c52f0))
+* **contract:** state a contract's attributes in a table beside it ([94c2391](https://github.com/elct9620/sumitsubo/commit/94c23918a1355252154763ff5566c63bb1a872b7))
+* **glossary:** write the vocabulary as the document a person reads ([4dbc791](https://github.com/elct9620/sumitsubo/commit/4dbc79111c85437bdcb9f5ff36aa5d6f55ac5ab0))
+* **language:** read what a piece of text declares ([fadf2a3](https://github.com/elct9620/sumitsubo/commit/fadf2a38de96cbfce9f1c3d52ac5ebefc4eeb6b5))
+* **markdown:** read a contract's signature instead of guessing its spelling ([f00d385](https://github.com/elct9620/sumitsubo/commit/f00d385230a50a05dad86d98313586de35ff77e5))
+* **parser:** let the query hold every block the format has ([6ae7cdb](https://github.com/elct9620/sumitsubo/commit/6ae7cdb0fa3141f9d4b7ebd025d515d3ab08948f))
+* **parser:** read a definition written as Markdown ([e37b46c](https://github.com/elct9620/sumitsubo/commit/e37b46c78655b772660b0b45a27dfacc79fac574))
+* **parser:** read a vocabulary written as Markdown ([d887358](https://github.com/elct9620/sumitsubo/commit/d88735878641b17711fc70e9e4f21600301974a4))
+* read a specification only in the format a person reads it in ([ddf3222](https://github.com/elct9620/sumitsubo/commit/ddf3222d4834f5125f59e64363c5603922ff2f4b))
+* **source:** read a constant assigned a call with a block as a scope ([30d0753](https://github.com/elct9620/sumitsubo/commit/30d0753005c364b04582d46fd96e63a51f20630a))
+* **spec:** declare what reading a Markdown specification promises ([5203cdd](https://github.com/elct9620/sumitsubo/commit/5203cdd5ad7ad2c0daf16089944e66c2111f9a20))
+* **specification:** read a document into blocks a form can read ([9a2d08c](https://github.com/elct9620/sumitsubo/commit/9a2d08c26beafb3a8e7a2268525ca066a1a768f5))
+* **spec:** read a Markdown specification into the shape a mechanism judges ([606df4f](https://github.com/elct9620/sumitsubo/commit/606df4f3f25360afd590e8cf08ba6611576340e7))
+
+
+### Performance Improvements
+
+* **binding:** hold every query a program writes ([2521f04](https://github.com/elct9620/sumitsubo/commit/2521f04408fbc7fc919390f5a2d9bd2983278767))
+
+
+### Code Refactoring
+
+* **grammar:** let the grammars sit where they answer from ([c0e9df9](https://github.com/elct9620/sumitsubo/commit/c0e9df9cde95f886acbb3621d125f3b79444452f))
+* keep this project's specification where its prose already is ([cf5e02e](https://github.com/elct9620/sumitsubo/commit/cf5e02e547d3eb2844a5012eec5ca1773911de77))
+* let the shapes a reading answers with sit where they are compared ([c89eb7e](https://github.com/elct9620/sumitsubo/commit/c89eb7ef6000aebf946fbb7f1ebf3fd8ffdd4e4d))
+* let the specification be the document it already was ([2f847be](https://github.com/elct9620/sumitsubo/commit/2f847be164c034dadc33f872265f0ff550dfb06c))
+* **parser:** hand a parser the grammar it puts its query to ([6411222](https://github.com/elct9620/sumitsubo/commit/6411222c1b2fa857aa3532bc2b4e1865724ae105))
+* **parser:** let each kind of specification ask for its own blocks ([0154130](https://github.com/elct9620/sumitsubo/commit/0154130631494cdf4f114b93df30809099f826f8))
+* **parser:** let each kind of specification be read by its own ([dda365f](https://github.com/elct9620/sumitsubo/commit/dda365f91aa3aa59d243349c7059f04b49555cfe))
+* **source:** hand a reading the grammar it puts its queries to ([70bbc62](https://github.com/elct9620/sumitsubo/commit/70bbc62a989f63995151d0b933401cc260f1d565))
+* **spec:** call the specification's reader a parser ([1381979](https://github.com/elct9620/sumitsubo/commit/13819791ae9f347979fe983b53cd8d46bfcc8051))
+* **spec:** name the reserved heading for what it bounds ([37632f2](https://github.com/elct9620/sumitsubo/commit/37632f2807373acb2cd1fa733e4182656de98e8d))
+
 ## [0.1.0-preview4](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview3...v0.1.0-preview4) (2026-08-24)
 
 
