@@ -281,10 +281,11 @@ module Sumitsubo
 
         Includes
             The boundary of what a definition answers for. With a marker, a
-            contract is implemented by the files its own definition covers, and a claim from anywhere else names it without
-            being able to implement it. Without one, a definition has to sit
-            among those files to count, so a type of the same name in another
-            component does not answer for it.
+            contract is implemented by the files its own definition covers,
+            and a claim from anywhere else names it without being able to
+            implement it. Without one, a definition has to sit among those
+            files to count, so a type of the same name in another component
+            does not answer for it.
 
             One file may sit under two definitions, which is how a module
             answering for both is written. `sumi help glossary` has the same
@@ -442,9 +443,10 @@ module Sumitsubo
         Includes
             The boundary of what a feature answers for: a scenario is
             witnessed by the files its own feature covers, and a claim from
-            anywhere else names it without being able to witness it. One file may sit under two features, which is how a test
-            answering for both is written. `sumi help glossary` has the same
-            boundary under another word: a subdomain.
+            anywhere else names it without being able to witness it. One file
+            may sit under two features, which is how a test answering for
+            both is written. `sumi help glossary` has the same boundary under
+            another word: a subdomain.
 
         Claiming
             Source claims a scenario in the comment in front of the code
