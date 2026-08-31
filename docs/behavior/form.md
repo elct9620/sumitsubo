@@ -256,21 +256,61 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that heading |
 
-## `F-030` A flag a contract does not carry
+## `F-031` Anything written after a contract's name
 
 | Step | Statement |
 | --- | --- |
-| Given | a contract heading carrying a flag outside the closed set |
+| Given | a contract heading carrying a sentence, or a second run in backticks, after its name |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since a heading carries the name alone |
+
+## `F-045` What a contract's attributes are written as
+
+| Step | Statement |
+| --- | --- |
+| Given | a table under a contract stating one attribute |
+| When | the blocks the document is made of are read |
+| Then | the contract carries it, and the heading and delimiter rows say nothing |
+
+## `F-030` An attribute a contract does not carry
+
+| Step | Statement |
+| --- | --- |
+| Given | a row naming an attribute outside the closed set |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, naming the word it was given |
 
-## `F-031` Prose written where only a flag is read
+## `F-046` An attribute given a value it does not take
 
 | Step | Statement |
 | --- | --- |
-| Given | a contract heading carrying a sentence after its name |
+| Given | a row writing a known attribute with a value that attribute does not take |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused, since a heading carries a name and its flags and nothing else |
+| Then | the specification is refused, naming the value it was given and the one it takes |
+
+## `F-047` An attribute row standing under no contract
+
+| Step | Statement |
+| --- | --- |
+| Given | a row written above the first contract |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since a row states an attribute of the contract it sits under |
+
+## `F-048` An attribute row of another width
+
+| Step | Statement |
+| --- | --- |
+| Given | a row under a contract carrying one cell rather than two |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, naming how many cells it turned out to have |
+
+## `F-049` One attribute written twice
+
+| Step | Statement |
+| --- | --- |
+| Given | two rows under one contract naming the same attribute |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since an attribute written twice says which of them it is nowhere |
 
 ## `F-032` A marker named after a contract is already registered
 

@@ -6,9 +6,13 @@ The places this project keeps to one implementation, and means to go on keeping.
 
 - `sumitsubo/**/*.rb`
 
-## `Sumitsubo::Place.file` `internal`
+## `Sumitsubo::Place.file`
 
 The one place a path a reader is handed is made.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Sumitsubo::Place
@@ -17,9 +21,13 @@ class Sumitsubo::Place
 end
 ```
 
-## `Sumitsubo::Place.of` `internal`
+## `Sumitsubo::Place.of`
 
 The one place a place in a file is made, for a finding to answer at.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Sumitsubo::Place
@@ -50,9 +58,13 @@ module Sumitsubo::Specification::Parser
 end
 ```
 
-## `Sumitsubo::Source::Language#comments_in` `internal`
+## `Sumitsubo::Source::Language#comments_in`
 
 The reading of what a person wrote for another person, whatever the file is written in.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Sumitsubo::Source::Language
@@ -61,9 +73,13 @@ class Sumitsubo::Source::Language
 end
 ```
 
-## `Sumitsubo::Source::Language#attached_comments_in` `internal`
+## `Sumitsubo::Source::Language#attached_comments_in`
 
 The reading of where a claim could sit, for a file whose language has code for a comment to sit in front of.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Sumitsubo::Source::Language
@@ -72,9 +88,13 @@ class Sumitsubo::Source::Language
 end
 ```
 
-## `Sumitsubo::Source::Language#declarations_in` `internal`
+## `Sumitsubo::Source::Language#declarations_in`
 
 The reading of what a piece of source declares, as the language a specification named.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Sumitsubo::Source::Language
@@ -83,9 +103,13 @@ class Sumitsubo::Source::Language
 end
 ```
 
-## `Sumitsubo::Source::Language#declarations_of` `internal`
+## `Sumitsubo::Source::Language#declarations_of`
 
 The reading of what a piece of text declares, for a shape a specification wrote rather than a file.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Sumitsubo::Source::Language
@@ -94,9 +118,13 @@ class Sumitsubo::Source::Language
 end
 ```
 
-## `Sumitsubo::Source::Language#carries?` `internal`
+## `Sumitsubo::Source::Language#carries?`
 
 The one place a run answers whether this build reads the language a specification named.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Sumitsubo::Source::Language
@@ -105,9 +133,13 @@ class Sumitsubo::Source::Language
 end
 ```
 
-## `Sumitsubo::Source::Marker.claims_in` `internal`
+## `Sumitsubo::Source::Marker.claims_in`
 
 The reading of what a piece of source claims, for an interface no construct of the language points at.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 module Sumitsubo::Source::Marker
@@ -138,9 +170,13 @@ module Sumitsubo::Grammar
 end
 ```
 
-## `Sumitsubo::Source::Language::Nodes.matches_in` `internal`
+## `Sumitsubo::Source::Language::Nodes.matches_in`
 
 The one place a reading's captures are grouped by the match they came from.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 module Sumitsubo::Source::Language::Nodes
@@ -149,9 +185,13 @@ module Sumitsubo::Source::Language::Nodes
 end
 ```
 
-## `Sumitsubo::Source::Language::Nodes.nodes_in` `internal`
+## `Sumitsubo::Source::Language::Nodes.nodes_in`
 
 The one place matches become the nodes a file declares.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 module Sumitsubo::Source::Language::Nodes
@@ -160,9 +200,13 @@ module Sumitsubo::Source::Language::Nodes
 end
 ```
 
-## `Sumitsubo::Source::Language::Nodes.enclosing` `internal`
+## `Sumitsubo::Source::Language::Nodes.enclosing`
 
 The one place nesting is recovered from where the nodes sit.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 module Sumitsubo::Source::Language::Nodes

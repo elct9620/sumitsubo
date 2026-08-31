@@ -11,7 +11,11 @@ def verify
 end
 ```
 
-## `Store.open` `internal`
+## `Store.open`
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 class Store

@@ -408,20 +408,22 @@ registered_by(definition([
 # @behavior F-028
 puts "--- a definition whose contracts the syntax tree declares ---"
 WHERE = "module Sumitsubo::Place\n  def self.of(path)\n  end\nend\n"
+INIT = "def init\nend\n"
 HANDLE = "mod store {\n    pub struct Handle;\n}\n"
 
 registered_by(definition([
   h1(1, "Internal seams"),
   paragraph(3, "The places this project keeps to one implementation."),
-  h2(5, "`Sumitsubo::Place.of` `internal`"),
+  h2(5, "`Sumitsubo::Place.of`"),
   paragraph(7, "The one place a path a reader is handed is made."),
-  fence(9, "```ruby\n#{WHERE}```"),
-  language(9, "ruby"),
-  content(10, WHERE),
-  h2(14, "`store::Handle`"),
-  fence(16, "```rust\n#{HANDLE}```"),
-  language(16, "rust"),
-  content(17, HANDLE)
+  row(11, "| internal | yes |"), cell(11, "internal "), cell(11, "yes "),
+  fence(13, "```ruby\n#{WHERE}```"),
+  language(13, "ruby"),
+  content(14, WHERE),
+  h2(20, "`store::Handle`"),
+  fence(22, "```rust\n#{HANDLE}```"),
+  language(22, "rust"),
+  content(23, HANDLE)
 ], {
   WHERE => [scope("Sumitsubo::Place"), declares("Sumitsubo::Place.of")],
   HANDLE => [scope("store"), declares("store::Handle")]
@@ -431,13 +433,65 @@ registered_by(definition([
 puts "--- a contract heading that does not open with a name ---"
 definition([h1(1, "CLI"), h2(3, "the first command")])
 
-# @behavior F-030
-puts "--- a flag a contract does not carry ---"
-definition([h1(1, "CLI"), h2(3, "`init` `hidden`")])
+# A run in backticks after the name is the form this one replaced, so it is
+# answered by the rule that leaves a heading carrying the name alone rather
+# than by a rule of its own.
+# @behavior F-031
+puts "--- prose written after a contract's name ---"
+definition([h1(1, "CLI"), h2(3, "`init` lays down a specification")])
 
 # @behavior F-031
-puts "--- prose written after a name where only a flag is read ---"
-definition([h1(1, "CLI"), h2(3, "`init` lays down a specification")])
+puts "--- a second run in backticks after a contract's name ---"
+definition([h1(1, "CLI"), h2(3, "`init` `internal`")])
+
+# The heading and delimiter rows a reader writes are no rows of the grammar's,
+# so a table states as many attributes as it has rows under them.
+# @behavior F-045
+puts "--- a table stating one attribute of a contract ---"
+registered_by(definition([
+  h1(1, "CLI"),
+  h2(3, "`init`"),
+  row(7, "| internal | yes |"), cell(7, "internal "), cell(7, "yes "),
+  fence(9, "```ruby\n#{INIT}```"),
+  language(9, "ruby"),
+  content(10, INIT)
+], { INIT => [declares("init")] }))
+
+# @behavior F-030
+puts "--- an attribute a contract does not carry ---"
+definition([
+  h1(1, "CLI"), h2(3, "`init`"),
+  row(7, "| hidden | yes |"), cell(7, "hidden "), cell(7, "yes ")
+])
+
+# @behavior F-046
+puts "--- an attribute given a value it does not take ---"
+definition([
+  h1(1, "CLI"), h2(3, "`init`"),
+  row(7, "| internal | no |"), cell(7, "internal "), cell(7, "no ")
+])
+
+# @behavior F-047
+puts "--- an attribute row standing under no contract ---"
+definition([
+  h1(1, "CLI"),
+  row(5, "| internal | yes |"), cell(5, "internal "), cell(5, "yes ")
+])
+
+# @behavior F-048
+puts "--- an attribute row that lost a separator ---"
+definition([
+  h1(1, "CLI"), h2(3, "`init`"),
+  row(7, "| internal yes |"), cell(7, "internal yes ")
+])
+
+# @behavior F-049
+puts "--- one attribute written twice ---"
+definition([
+  h1(1, "CLI"), h2(3, "`init`"),
+  row(7, "| internal | yes |"), cell(7, "internal "), cell(7, "yes "),
+  row(8, "| internal | yes |"), cell(8, "internal "), cell(8, "yes ")
+])
 
 # @behavior F-032
 puts "--- a marker named after a contract has already been registered ---"

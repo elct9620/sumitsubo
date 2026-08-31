@@ -6,9 +6,13 @@ The places this project keeps to one implementation.
 
 - `sumitsubo/**/*.rb`
 
-## `Sumitsubo::Where.of` `internal`
+## `Sumitsubo::Where.of`
 
 The one place a path a reader is handed is made.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```ruby
 module Sumitsubo::Where
@@ -17,9 +21,13 @@ module Sumitsubo::Where
 end
 ```
 
-## `store::Handle` `internal`
+## `store::Handle`
 
 A handle a second language spells its own way.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
 
 ```rust
 mod store {

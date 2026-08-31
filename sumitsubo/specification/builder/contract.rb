@@ -24,7 +24,7 @@ module Sumitsubo
       # from.
       class Contract
         KINDS = [Block::HEADING, Block::PARAGRAPH,
-                 Block::ITEM, Block::CODE]
+                 Block::ITEM, Block::CODE, Block::ROW]
 
         # The levels this form is written at: a name, and a heading that either
         # scopes the definition, names the marker, or declares a contract.
@@ -37,13 +37,15 @@ module Sumitsubo
         # The heading naming the word source claims these contracts with.
         MARKER = "Marker"
 
-        # The flags a contract heading may carry after its name. A closed set: a
-        # word this does not know is a form nobody reads rather than one this
-        # build happens not to.
-        FLAGS = ["internal"]
+        # The attributes a contract carries, each with the one value it takes.
+        # A closed set both ways: a word this does not know is a form nobody
+        # reads, and a value nothing answers for is a fact nobody keeps.
+        ATTRIBUTES = { "internal" => "yes" }
 
-        # What the attributes a contract carries are held under, which are the
-        # words the mechanism words its own help with.
+        # What the fence says about a contract, held under the words the
+        # mechanism words its own help with. Neither is an attribute a row may
+        # write: a value said in two places is a specification saying one thing
+        # twice.
         LANGUAGE = "language"
         SIGNATURE = "signature"
 
@@ -87,6 +89,7 @@ module Sumitsubo
           when Block::PARAGRAPH then described(block)
           when Block::ITEM then item(block)
           when Block::CODE then signed(block)
+          when Block::ROW then attributed(block)
           end
         end
 
@@ -130,40 +133,19 @@ module Sumitsubo
         end
 
         # A contract's name is what a claim in the source names, so it is taken
-        # letter for letter. What follows is a flag or nothing: a description is
-        # a paragraph, and a heading is not the place a sentence goes.
+        # letter for letter, and the heading carries it alone: a description is
+        # a paragraph, an attribute is a row, and neither is written where a
+        # reader is reading a name.
         def registered(block)
           name = block.taken
           if name.nil? || name.empty?
             refuse(block.line, "declares a contract whose heading does not open with a name in backticks")
           end
 
-          Statement.new(name, nil, [], @path, block.line, flagged(block), [])
-        end
+          said = block.rest
+          refuse(block.line, "writes #{said} after a name, where a heading carries the name alone") unless said.empty?
 
-        # Every run after the name, each a flag of its own. A closed set, so an
-        # unknown word is a form nobody reads; prose between them or after them is
-        # the same answer, since a heading carries a name and its flags and
-        # nothing else.
-        def flagged(block)
-          attributes = {}
-          nth = 1
-          while nth < block.spans.length
-            stray(block, block.before(nth))
-            flag = block.spans[nth].taken
-            refuse(block.line, "writes #{flag}, which is not a flag a contract carries") unless FLAGS.include?(flag)
-
-            attributes[flag] = []
-            nth = nth + 1
-          end
-          stray(block, block.after)
-          attributes
-        end
-
-        def stray(block, said)
-          return if said.empty?
-
-          refuse(block.line, "writes #{said} after a name, where only a flag in backticks is read")
+          Statement.new(name, nil, [], @path, block.line, {}, [])
         end
 
         # The marker, the definition's own description, or a contract's. Only the
@@ -193,6 +175,34 @@ module Sumitsubo
           return unless @holding == INCLUDES && block.level == GLOB
 
           @includes.push(Builder.scoped(block, @path, TOPIC))
+        end
+
+        # The cells of one row, held as the attribute they state. A row states
+        # an attribute of the contract it sits under, so one standing above the
+        # first is an attribute of nothing rather than of the document.
+        def attributed(block)
+          cells = block.cells
+          return if cells.empty?
+
+          line = cells[0].line
+          refuse(line, "writes an attribute outside any contract") if @contract.nil?
+          unless cells.length == 2
+            refuse(line, "writes an attribute row of #{cells.length} #{cells.length == 1 ? "cell" : "cells"} rather than two")
+          end
+
+          carried(line, cells[0].text.strip, cells[1].text.strip)
+        end
+
+        # One attribute as the row wrote it, once the closed set has answered
+        # for both halves. An attribute written twice says which of them it is
+        # nowhere, the way a second name does.
+        def carried(line, said, value)
+          takes = ATTRIBUTES[said]
+          refuse(line, "writes #{said}, which is not an attribute a contract carries") if takes.nil?
+          refuse(line, "writes #{said} as #{value}, where it takes #{takes}") unless value == takes
+          refuse(line, "writes #{said} twice") unless @contract.attributes[said].nil?
+
+          @contract.attributes[said] = [value]
         end
 
         # A fenced block taken as the signature of the contract it sits under. A

@@ -71,16 +71,31 @@ CLI {"marker" => ["@command"]} ["sumitsubo/command/*.rb"]
 --- a definition whose contracts the syntax tree declares ---
 Internal seams {} []
   The places this project keeps to one implementation.
-  cli.md:5 Sumitsubo::Place.of {"internal" => [], "language" => ["ruby"], "signature" => ["module Sumitsubo::Place\n  def self.of(path)\n  end\nend\n"]}
+  cli.md:5 Sumitsubo::Place.of {"internal" => ["yes"], "language" => ["ruby"], "signature" => ["module Sumitsubo::Place\n  def self.of(path)\n  end\nend\n"]}
     The one place a path a reader is handed is made.
-  cli.md:14 store::Handle {"language" => ["rust"], "signature" => ["mod store {\n    pub struct Handle;\n}\n"]}
+  cli.md:20 store::Handle {"language" => ["rust"], "signature" => ["mod store {\n    pub struct Handle;\n}\n"]}
     
 --- a contract heading that does not open with a name ---
   refused: cli.md:3 declares a contract whose heading does not open with a name in backticks; sumi help contract has the form
---- a flag a contract does not carry ---
-  refused: cli.md:3 writes hidden, which is not a flag a contract carries; sumi help contract has the form
---- prose written after a name where only a flag is read ---
-  refused: cli.md:3 writes lays down a specification after a name, where only a flag in backticks is read; sumi help contract has the form
+--- prose written after a contract's name ---
+  refused: cli.md:3 writes lays down a specification after a name, where a heading carries the name alone; sumi help contract has the form
+--- a second run in backticks after a contract's name ---
+  refused: cli.md:3 writes `internal` after a name, where a heading carries the name alone; sumi help contract has the form
+--- a table stating one attribute of a contract ---
+CLI {} []
+  
+  cli.md:3 init {"internal" => ["yes"], "language" => ["ruby"], "signature" => ["def init\nend\n"]}
+    
+--- an attribute a contract does not carry ---
+  refused: cli.md:7 writes hidden, which is not an attribute a contract carries; sumi help contract has the form
+--- an attribute given a value it does not take ---
+  refused: cli.md:7 writes internal as no, where it takes yes; sumi help contract has the form
+--- an attribute row standing under no contract ---
+  refused: cli.md:5 writes an attribute outside any contract; sumi help contract has the form
+--- an attribute row that lost a separator ---
+  refused: cli.md:7 writes an attribute row of 1 cell rather than two; sumi help contract has the form
+--- one attribute written twice ---
+  refused: cli.md:8 writes internal twice; sumi help contract has the form
 --- a marker named after a contract has already been registered ---
   refused: cli.md:5 names Marker after a contract, which is read one way or the other; sumi help contract has the form
 --- a marker heading with no word under it ---

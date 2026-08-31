@@ -37,10 +37,10 @@ module Sumitsubo
     # The marker and the language are attributes of the definition, and a
     # definition carries one or the other: the marker is the word source
     # claims its contracts with, the language is what the other reading
-    # spells names in. Parameters and `internal` are attributes of the
-    # contract. Parameters are absent where none are registered, which is not
-    # the same as registering that it takes none, and `internal` is the empty
-    # list — it says its one thing by being there.
+    # spells names in. The signature and `internal` are attributes of the
+    # contract, read off the fence under it and off a row a reader wrote;
+    # either is absent where nothing said it, which is not the same as
+    # having said nothing.
 
     # What a claim, or a declaration, refers to: a name and the word it is
     # registered under. The marker is that word for the reading that claims —
