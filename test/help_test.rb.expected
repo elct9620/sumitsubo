@@ -204,3 +204,17 @@ exit=2
   contract: The interfaces a project means to keep. What this establishes is that a
   behavior: The behaviors a project means its tests to implement. What this
   config: .sumi.json says where. A run takes the nearest one at or above where it
+--- lines wider than a topic wraps its prose to ---
+  glossary 77: app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+  contract 100: .spec/contract/routes.md:11 @route GET /users/:id is claimed nowhere this specification includes
+  contract 131: .spec/contract/api.md:9 ruby Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+  contract 89: .spec/contract/api.md:9 Store#read takes (id) where the specification registers (key)
+  contract 73: lib/store.rb:4 Store#read takes (id) here and (key) at lib/other.rb:9
+  contract 76: app/show.rb:1 @route GET /users/:id is claimed at app/other.rb:7 as well
+  contract 77: app/show.rb:1 @route GET /users/:id resolves to no contract      (exit 2)
+  contract 108: app/show.rb:1 @route GET /users/:id is claimed outside what .spec/contract/routes.md includes   (exit 2)
+  contract 92: .spec/contract/api.md:9 writes a signature declaring open, and not Store.open   (exit 2)
+  contract 118: .spec/contract/api.md:9 registers Store.open with no signature, so nothing says how its name is spelled   (exit 2)
+  behavior 93: .spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
+  behavior 77: test/verify_test.rb:13 V-404 resolves to no scenario             (exit 2)
+  behavior 100: test/other_test.rb:13 V-002 is claimed outside what .spec/behavior/verify.md includes   (exit 2)

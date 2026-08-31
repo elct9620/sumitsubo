@@ -27,3 +27,15 @@ help = Sumitsubo::Command::Help.new
 ["glossary", "contract", "behavior", "config"].each do |name|
   puts "  #{name}: #{help.topic(name).split("\n").first}"
 end
+
+# Help is built as strings, so where a line ends is the author's. What a run
+# prints cannot be wrapped without misquoting it, so the wide lines are listed
+# rather than refused: the ones standing here are messages, and a paragraph
+# that grew past the width arrives as one more of them.
+WRAPPED_AT = 72
+puts "--- lines wider than a topic wraps its prose to ---"
+["glossary", "contract", "behavior", "config"].each do |name|
+  help.topic(name).split("\n").each do |line|
+    puts "  #{name} #{line.length}: #{line.strip}" if line.length > WRAPPED_AT
+  end
+end
