@@ -44,6 +44,13 @@ TEXT
     "exclude": "target/"
   }
 JSON
+(here / "unread").mkpath
+(here / "unread" / ".sumi.json").write(<<~JSON)
+  {
+    "rot": ".spec",
+    "exlude": ["target/"]
+  }
+JSON
 
 # @behavior C-005 C-006
 def show(where)
@@ -87,6 +94,17 @@ end
 # @behavior C-015
 puts "--- a value no key takes stops the run, and every one of them answers ---"
 Dir.chdir(here / "mistyped")
+begin
+  Sumitsubo::Config.load
+rescue Sumitsubo::Error => e
+  puts e.message
+end
+
+# A key nothing reads is the quieter of the two: the run went on and answered
+# clean, so nothing said the project had asked for anything.
+# @behavior C-016
+puts "--- a key no configuration says stops the run too ---"
+Dir.chdir(here / "unread")
 begin
   Sumitsubo::Config.load
 rescue Sumitsubo::Error => e

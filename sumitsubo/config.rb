@@ -92,6 +92,10 @@ module Sumitsubo
     # small and a person who mistyped three keys should not find them one run
     # at a time, which is what a walk that stops at the first would make them
     # do.
+    #
+    # What the file reads comes first, in the order it reads them, and what it
+    # cannot place follows sorted: a document's own order decides neither, so
+    # one configuration answers alike however it was written down.
     def faults_in(base, document)
       where = Place.file(base / FILE)
       said = []
@@ -101,7 +105,16 @@ module Sumitsubo
 
         said.push("#{where} writes #{key[0]} as #{JSON.generate(written)}, where it takes #{key[1]}")
       end
-      said
+      said.concat(unread(where, document))
+    end
+
+    # A key nothing here reads. The set is closed because reading is what makes
+    # a setting honoured: one nobody reads is a project asking for something
+    # and being answered as though it had asked for nothing.
+    def unread(where, document)
+      known = KEYS.map { |key| key[0] }
+      document.keys.select { |key| !known.include?(key) }.sort
+              .map { |key| "#{where} writes #{key}, which is not something a configuration says" }
     end
 
     # Whether one key was given what it takes. A value of another shape is not

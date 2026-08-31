@@ -112,3 +112,11 @@ and this project says it.
 | Given | a .sumi.json writing three keys with values none of them takes |
 | When | the configuration is loaded |
 | Then | all three are named at once, in the order the configuration reads its keys rather than the order they were written |
+
+## `C-016` A key no configuration says stops the run
+
+| Step | Statement |
+| --- | --- |
+| Given | a .sumi.json writing two keys nothing reads |
+| When | the configuration is loaded |
+| Then | both are named, sorted, after whatever the keys it does read had to say |

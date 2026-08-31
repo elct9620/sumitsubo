@@ -15,6 +15,9 @@ loose: base=. root=.spec
 .sumi.json writes root as 123, where it takes a path
 .sumi.json writes exclude as "target/", where it takes a list of paths
 .sumi.json writes gitignore as "no", where it takes true or false
+--- a key no configuration says stops the run too ---
+.sumi.json writes exlude, which is not something a configuration says
+.sumi.json writes rot, which is not something a configuration says
 --- what the project excludes ---
   app/order.rb: false
   target/debug/generated.rb: true
