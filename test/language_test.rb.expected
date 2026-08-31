@@ -15,8 +15,10 @@ false
 --- source the grammar cannot read ---
 broken.rb: cannot be parsed by the ruby grammar
 --- a second language reads its own comments ---
+6
 5
-4
+--- a block comment stops before its own closing delimiter ---
+"48:/* @contract audit::Entry::at — a claim in a block comment. "
 --- and spells a name the way it writes a path ---
   6 Charge
   12 Charge::settle
@@ -30,6 +32,7 @@ broken.rb: cannot be parsed by the ruby grammar
   37 audit::trail
   39 audit::Entry
   42 audit::Entry::at
+  49 recorded
 --- with the receiver among its parameters ---
   Charge::settle(self, positional at)
   Charge::open(positional amount)

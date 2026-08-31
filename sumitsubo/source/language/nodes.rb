@@ -1,8 +1,8 @@
 module Sumitsubo
   module Source
     class Language
-      # What a syntax tree hands back, made into declarations — the part of that
-      # work no language owns.
+      # What a syntax tree hands back, made into what a reading answers with —
+      # the part of that work no language owns.
       #
       # Nothing here reaches the binding: a reading captures what its own query
       # asked for and brings the captures here, which is what keeps this file, and

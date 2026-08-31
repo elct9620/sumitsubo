@@ -83,6 +83,13 @@ puts "--- a second language reads its own comments ---"
 p spell(LANGUAGES.comments_in(RUST, "sample.rs")).length
 p spell(LANGUAGES.attached_comments_in(RUST, "sample.rs")).length
 
+# A block comment ends with the delimiter Rust required rather than with
+# something a person wrote, so a region stops before it. The em dash is what
+# holds that to characters: counted in bytes it would cut two short.
+# @behavior L-015
+puts "--- a block comment stops before its own closing delimiter ---"
+p spell(LANGUAGES.attached_comments_in(RUST, "sample.rs")).last
+
 # A name is the path the file itself carries: an `impl` says how what is inside
 # it is reached without declaring the type, a `mod` and a `trait` do both.
 # @behavior L-011

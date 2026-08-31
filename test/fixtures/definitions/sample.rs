@@ -45,4 +45,7 @@ pub mod audit {
     }
 }
 
+/* @contract audit::Entry::at — a claim in a block comment. */
+pub fn recorded() {}
+
 /* A block comment has nothing after it in this file. */

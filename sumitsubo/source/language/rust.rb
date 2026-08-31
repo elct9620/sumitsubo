@@ -28,12 +28,25 @@ module Sumitsubo
         GRAMMAR = "rust"
 
         # What Ruby spells with one node Rust splits into two, and a doc comment
-        # is a line comment carrying a marker.
-        COMMENTS = "[(line_comment) (block_comment)] @text"
+        # is a line comment carrying a marker. A block comment is asked for its
+        # closing delimiter as well: where a person stopped writing is the
+        # tree's to answer, not something to look for in the text afterwards.
+        COMMENTS = <<~COMMENTS
+          (line_comment) @text
+          (block_comment "*/" @close) @text
+        COMMENTS
 
         # A comment with something after it. A claim sits in front of the code
-        # that implements it, so a comment nothing follows claims nothing.
-        ATTACHED = "([(line_comment) (block_comment)] @text . (_))"
+        # that implements it, so a comment nothing follows claims nothing. The
+        # anchor counts named nodes, so the delimiter captured inside does not
+        # stand between the comment and what comes after it.
+        ATTACHED = <<~ATTACHED
+          ((line_comment) @text . (_))
+          ((block_comment "*/" @close) @text . (_))
+        ATTACHED
+
+        # The capture that says where the comment's own syntax resumes.
+        CLOSE = "close"
 
         # What holds a name, what carries one of its own, and what does both.
         # An `impl` block is the first: it says how the functions inside it are
@@ -116,7 +129,26 @@ module Sumitsubo
         private
 
         def regions(captures)
-          captures.map { |capture| Source::Region.new(capture.line, capture.text) }
+          Nodes.matches_in(captures).map { |match| region_from(match) }
+        end
+
+        # What a person wrote in one comment. A line comment is the whole node;
+        # a block one stops where the delimiter Rust required begins, since a
+        # region carrying `*/` hands whoever reads that line a word nobody
+        # wrote. The delimiter is taken off the end rather than counted back
+        # from it.
+        def region_from(captures)
+          text = nil
+          close = nil
+          captures.each do |capture|
+            if capture.name == CLOSE
+              close = capture
+            else
+              text = capture
+            end
+          end
+          said = close.nil? ? text.text : text.text.delete_suffix(close.text)
+          Source::Region.new(text.line, said)
         end
 
         def captured(source, query, where)

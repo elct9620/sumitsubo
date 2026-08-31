@@ -123,3 +123,12 @@ them.
 | Given | a piece of text the language cannot parse |
 | When | it is read for what it declares |
 | Then | the reading refuses rather than answering what it recovered |
+
+## `L-015` A block comment stops before its own closing delimiter
+
+| Step | Statement |
+| --- | --- |
+| Given | a block comment carrying a claim and code after it |
+| Given | text in that comment which is not all ASCII |
+| When | the file is read for where a claim could sit |
+| Then | the region ends where the closing delimiter begins |
