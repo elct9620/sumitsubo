@@ -2,6 +2,11 @@ require "pathname"
 require "sumitsubo/config"
 require "sumitsubo/source/patterns"
 
+# What a build carries reaches a configuration from its caller, so this says
+# which names it means rather than reaching for the mechanisms — which is what
+# keeps a grammar out of this test's requires.
+NAMES = ["glossary", "contract", "behavior"]
+
 # Where a run is configured from is decided by what is on disk above it, so the
 # cases are real directories walked into rather than a layout described to a
 # double. Nothing above the temporary root is expected to carry a .sumi.json or
@@ -44,6 +49,16 @@ TEXT
     "exclude": "target/"
   }
 JSON
+(here / "switching").mkpath
+(here / "switching" / ".sumi.json").write(<<~JSON)
+  {
+    "specifications": {
+      "glosary": { "verify": false },
+      "contract": { "verfiy": false },
+      "behavior": { "verify": "false" }
+    }
+  }
+JSON
 (here / "unread").mkpath
 (here / "unread" / ".sumi.json").write(<<~JSON)
   {
@@ -54,7 +69,7 @@ JSON
 
 # @behavior C-005 C-006
 def show(where)
-  config = Sumitsubo::Config.load
+  config = Sumitsubo::Config.load(NAMES)
   from = Pathname.pwd
   puts "#{where}: base=#{config.base.relative_path_from(from)} " \
        "root=#{config.root.relative_path_from(from)}"
@@ -84,7 +99,7 @@ show("loose")
 puts "--- a .sumi.json that will not parse is not a difference ---"
 Dir.chdir(here / "broken")
 begin
-  Sumitsubo::Config.load
+  Sumitsubo::Config.load(NAMES)
 rescue Sumitsubo::Error => e
   puts e.message
 end
@@ -95,7 +110,7 @@ end
 puts "--- a value no key takes stops the run, and every one of them answers ---"
 Dir.chdir(here / "mistyped")
 begin
-  Sumitsubo::Config.load
+  Sumitsubo::Config.load(NAMES)
 rescue Sumitsubo::Error => e
   puts e.message
 end
@@ -106,7 +121,19 @@ end
 puts "--- a key no configuration says stops the run too ---"
 Dir.chdir(here / "unread")
 begin
-  Sumitsubo::Config.load
+  Sumitsubo::Config.load(NAMES)
+rescue Sumitsubo::Error => e
+  puts e.message
+end
+
+# A name this build does not carry, a word nothing is switched by, and a value
+# that is neither — three ways of switching nothing, which read as a run the
+# project never got.
+# @behavior C-017
+puts "--- switching a specification by a name, a word or a value nothing reads ---"
+Dir.chdir(here / "switching")
+begin
+  Sumitsubo::Config.load(NAMES)
 rescue Sumitsubo::Error => e
   puts e.message
 end
@@ -117,12 +144,12 @@ end
 # @behavior C-011
 puts "--- what the project excludes ---"
 Dir.chdir(here / "project")
-rules = Sumitsubo::Config.load.exclusion
+rules = Sumitsubo::Config.load(NAMES).exclusion
 ["app/order.rb", "target/debug/generated.rb"].each do |path|
   puts "  #{path}: #{Sumitsubo::Source::Patterns.excludes?(rules, path)}"
 end
 Dir.chdir(here / "loose")
-puts "  a project that said nothing excludes nothing: #{Sumitsubo::Config.load.exclusion.inspect}"
+puts "  a project that said nothing excludes nothing: #{Sumitsubo::Config.load(NAMES).exclusion.inspect}"
 
 # A project keeping a .gitignore has already said which paths are not its
 # source. Saying so is not the same as being made to say it twice, so the
@@ -130,7 +157,7 @@ puts "  a project that said nothing excludes nothing: #{Sumitsubo::Config.load.e
 # @behavior C-012
 puts "--- and what its .gitignore already said ---"
 Dir.chdir(here / "project")
-rules = Sumitsubo::Config.load.exclusion
+rules = Sumitsubo::Config.load(NAMES).exclusion
 puts "  vendor/gem.rb: #{Sumitsubo::Source::Patterns.excludes?(rules, "vendor/gem.rb")}"
 # .sumi.json is read after the .gitignore, so a `!` there is the last rule to
 # match and the path comes back.
@@ -138,7 +165,7 @@ puts "  vendor/gem.rb: #{Sumitsubo::Source::Patterns.excludes?(rules, "vendor/ge
 puts "  vendor/kept.rb, put back by .sumi.json: #{Sumitsubo::Source::Patterns.excludes?(rules, "vendor/kept.rb")}"
 # @behavior C-014
 Dir.chdir(here / "switched")
-puts "  switched off: #{Sumitsubo::Source::Patterns.excludes?(Sumitsubo::Config.load.exclusion, "vendor/gem.rb")}"
+puts "  switched off: #{Sumitsubo::Source::Patterns.excludes?(Sumitsubo::Config.load(NAMES).exclusion, "vendor/gem.rb")}"
 
 Dir.chdir(back)
 root.rmtree

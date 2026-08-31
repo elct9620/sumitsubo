@@ -120,3 +120,11 @@ and this project says it.
 | Given | a .sumi.json writing two keys nothing reads |
 | When | the configuration is loaded |
 | Then | both are named, sorted, after whatever the keys it does read had to say |
+
+## `C-017` Switching a specification by a name, a word or a value nothing reads
+
+| Step | Statement |
+| --- | --- |
+| Given | a .sumi.json switching a name this build does not carry, one by a word nothing is switched by, and one to a value that is neither true nor false |
+| When | the configuration is loaded |
+| Then | all three are named, sorted by the specification each was written under |

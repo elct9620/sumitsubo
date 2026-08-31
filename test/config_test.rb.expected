@@ -18,6 +18,10 @@ loose: base=. root=.spec
 --- a key no configuration says stops the run too ---
 .sumi.json writes exlude, which is not something a configuration says
 .sumi.json writes rot, which is not something a configuration says
+--- switching a specification by a name, a word or a value nothing reads ---
+.sumi.json sets verify on behavior as "false", where it takes true or false
+.sumi.json sets verfiy on contract, which is not something a specification is switched by
+.sumi.json switches glosary, which is no specification this sumi carries
 --- what the project excludes ---
   app/order.rb: false
   target/debug/generated.rb: true

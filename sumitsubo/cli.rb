@@ -2,6 +2,7 @@ require "optparse"
 require "sumitsubo/version"
 require "sumitsubo/error"
 require "sumitsubo/config"
+require "sumitsubo/mechanism"
 require "sumitsubo/command/help"
 require "sumitsubo/command/init"
 require "sumitsubo/command/verify"
@@ -21,8 +22,8 @@ module Sumitsubo
 
     def run(argv)
       case argv.first
-      when "init" then Command::Init.new.run(Config.load)
-      when "verify" then Command::Verify.new.run(Config.load, @languages, @parsers)
+      when "init" then Command::Init.new.run(Config.load(switches))
+      when "verify" then Command::Verify.new.run(Config.load(switches), @languages, @parsers)
       when "help" then Command::Help.new.run(argv[1])
       else unknown?(argv.first) ? refuse(argv.first) : flags(argv)
       end
@@ -35,6 +36,13 @@ module Sumitsubo
     end
 
     private
+
+    # The names .sumi.json switches specifications by. What a build carries is
+    # decided at the edge, so a configuration is handed them rather than
+    # reaching for the mechanisms itself.
+    def switches
+      Mechanism::ALL.map { |one| one.specification }
+    end
 
     # A first word that is neither a command nor a flag. Only this one is named
     # back: optparse leaves it standing on both runtimes, while an unknown flag

@@ -16,6 +16,7 @@ module Sumitsubo
     FILE = ".sumi.json"
     GITIGNORE = ".gitignore"
     DEFAULT_ROOT = ".spec"
+    VERIFY = "verify"
 
     # What a configuration says, and what each of them takes. Held in order
     # rather than by name because it is also the order a refusal answers in,
@@ -44,10 +45,14 @@ module Sumitsubo
       start.ascend.find { |directory| (directory / name).exist? }
     end
 
-    def self.load(base = discover)
+    # The names a configuration switches specifications by arrive from the
+    # caller: which of them a build carries is decided when it is built, and a
+    # configuration naming one this build does not have is asking for a run it
+    # will not get.
+    def self.load(names, base = discover)
       directory = Pathname.new(base)
       path = directory / FILE
-      new(directory, path.exist? ? read(path) : {})
+      new(directory, path.exist? ? read(path) : {}, names)
     end
 
     def self.read(path)
@@ -59,8 +64,8 @@ module Sumitsubo
       raise Error, "#{Place.file(path)} is not readable JSON"
     end
 
-    def initialize(base, document)
-      refuse(faults_in(base, document))
+    def initialize(base, document, names)
+      refuse(faults_in(base, document, names))
       @base = base
       @root = (base / (document["root"] || DEFAULT_ROOT)).cleanpath
       # What every mechanism leaves alone. A build directory belongs to the
@@ -83,7 +88,7 @@ module Sumitsubo
     # the project means to hold without a run being checked against it yet.
     def verify?(name)
       entry = @specifications[name]
-      entry.nil? || entry["verify"] != false
+      entry.nil? || entry[VERIFY] != false
     end
 
     private
@@ -96,7 +101,7 @@ module Sumitsubo
     # What the file reads comes first, in the order it reads them, and what it
     # cannot place follows sorted: a document's own order decides neither, so
     # one configuration answers alike however it was written down.
-    def faults_in(base, document)
+    def faults_in(base, document, names)
       where = Place.file(base / FILE)
       said = []
       KEYS.each do |key|
@@ -105,7 +110,40 @@ module Sumitsubo
 
         said.push("#{where} writes #{key[0]} as #{JSON.generate(written)}, where it takes #{key[1]}")
       end
-      said.concat(unread(where, document))
+      said.concat(unread(where, document)).concat(switched(where, document, names))
+    end
+
+    # The specifications a configuration switches, and how. A name is answered
+    # for before what was set on it: with the wrong name, what it was set to
+    # was never going to be read either way.
+    def switched(where, document, names)
+      written = document["specifications"]
+      return [] unless written.is_a?(Hash)
+
+      said = []
+      written.keys.sort.each do |name|
+        if names.include?(name)
+          said.concat(set_on(where, name, written[name]))
+        else
+          said.push("#{where} switches #{name}, which is no specification this sumi carries")
+        end
+      end
+      said
+    end
+
+    # What one specification was switched by. `verify` is the whole of the set,
+    # and a value that is not true or false says nothing either way.
+    def set_on(where, name, written)
+      unless written.is_a?(Hash)
+        return ["#{where} switches #{name} as #{JSON.generate(written)}, where it takes what to switch"]
+      end
+
+      said = written.keys.select { |key| key != VERIFY }.sort
+                    .map { |key| "#{where} sets #{key} on #{name}, which is not something a specification is switched by" }
+      held = written[VERIFY]
+      return said if held.nil? || held == true || held == false
+
+      said.push("#{where} sets verify on #{name} as #{JSON.generate(held)}, where it takes true or false")
     end
 
     # A key nothing here reads. The set is closed because reading is what makes
