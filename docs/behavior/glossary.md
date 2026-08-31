@@ -110,3 +110,11 @@ place.
 | Given | a glossary whose second section declares a term the first already did, and then declares it again |
 | When | the glossary is loaded |
 | Then | only the one repeated inside a section is named as one the specification cannot carry, naming the line that section first declared it at |
+
+## `G-015` A word rejected twice under one term is refused, where twice under two is not
+
+| Step | Statement |
+| --- | --- |
+| Given | a glossary whose section has two terms turning down one word, and one of them turning it down twice |
+| When | the glossary is loaded |
+| Then | only the one repeated under a term is named as one the specification cannot carry, naming the line that term first rejected it at |

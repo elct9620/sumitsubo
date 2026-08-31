@@ -177,6 +177,11 @@ module Sumitsubo
         # on how deep it was written: a glob where the section says what it
         # covers, a rejected word where a term says what it refuses, a line set
         # aside under that word, and prose anywhere else.
+        #
+        # The term is the boundary a word is rejected once inside. A mention is
+        # held under the term and the word alone, so two of them are one key:
+        # the run reports the line twice with two reasons, and an ignore written
+        # under either sets both aside.
         def listed(block)
           return set_aside(block) if block.level == IGNORE
           return unless block.level == WORD
@@ -188,6 +193,9 @@ module Sumitsubo
 
           denied = block.taken
           refuse(block.line, "rejects a word that is not in backticks") if denied.nil? || denied.empty?
+
+          first = @term.statements.find { |one| one.key == denied }
+          refuse(block.line, "rejects #{denied} a second time under #{@term.key}, first rejected at #{first_at(first)}") unless first.nil?
 
           @rejected = Statement.new(denied, reason(block.rest), [], @where, block.line, {}, [])
           @term.statements.push(@rejected)
