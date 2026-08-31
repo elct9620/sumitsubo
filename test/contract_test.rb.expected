@@ -72,3 +72,5 @@ src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) 
   test/fixtures/contract/app/controller.rb as rust
 --- a declaration another language spells alike ---
   test/fixtures/contract/spelled/handle.md:7 rust Store::Handle is defined nowhere this specification includes, and one the reading cannot see never is
+--- a scope named outside ASCII ---
+  Records 記録::write

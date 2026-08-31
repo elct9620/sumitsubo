@@ -58,6 +58,12 @@ module Sumitsubo
         # a scope sharing a prefix with the contract is not read as holding it.
         SEPARATORS = [":", ".", "#"]
 
+        # The same separators as the bytes they are. A name may be written in
+        # characters a byte offset and a character index disagree about, and as
+        # of 2026-09-01 Spinel answers `String#length` by the byte, so the two
+        # are only safe to mix when both are bytes. `T-042` holds that.
+        SEPARATOR_BYTES = SEPARATORS.map { |one| one.getbyte(0) }
+
         def initialize(path, source)
           @path = path
           @source = source
@@ -275,7 +281,7 @@ module Sumitsubo
         # makes the name what it is, so the scopes are declarations too and
         # registering none of them.
         def encloses?(name, key)
-          key.start_with?(name) && SEPARATORS.include?("#{key[name.length]}")
+          key.start_with?(name) && SEPARATOR_BYTES.include?(key.getbyte(name.bytesize))
         end
 
         def spelled(found)

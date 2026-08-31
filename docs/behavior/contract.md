@@ -309,3 +309,11 @@ wrong spelling.
 | Given | source declaring it in one of them |
 | When | the two sides are compared |
 | Then | only the contract spelled in that language is defined, and the other answers as defined nowhere |
+
+## `T-042` A scope named outside ASCII
+
+| Step | Statement |
+| --- | --- |
+| Given | a signature whose contract sits inside a module named outside ASCII |
+| When | the definition is read |
+| Then | the module is read as what holds the contract rather than as a second one the signature declares |

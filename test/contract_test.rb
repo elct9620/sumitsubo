@@ -341,3 +341,12 @@ undefined(
 ).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
+
+# What holds a contract is found by looking at the character after its name,
+# which a byte count reaches past as soon as the name is written outside ASCII.
+# The scope would then read as a second contract the signature declares.
+# @behavior T-042
+puts "--- a scope named outside ASCII ---"
+loaded("#{FIXTURE}/wide").each do |definition|
+  definition.statements.each { |interface| puts "  #{definition.key} #{interface.key}" }
+end
