@@ -110,9 +110,8 @@ exit=0
 --- a topic ---
 .sumi.json says where. A run takes the nearest one at or above where it
 started; failing that the repository it sits in; failing that - with
-neither to go on - where it started. A project that has said nothing is
-not misconfigured, so an absent .sumi.json answers the defaults; only an
-unreadable one stops the run.
+neither to go on - where it started. An absent .sumi.json answers the
+defaults; only an unreadable one stops the run.
 
 Form
     {
@@ -176,10 +175,10 @@ Answers
     2   the comparison could not be made - whatever had to be read first
         was absent, unreadable, or ambiguous
 
-    A difference is a finding about the code; being unable to compare is
-    not, and a run with both answers 2: it says everything it found
-    either way, and the answer is what refuses to certify it. A
-    mechanism that could not be read stops that mechanism and no other.
+    A difference is a finding about the code; being unable to compare
+    is not, and a run with both answers 2 - it says everything it
+    found either way. A mechanism that could not be read stops that
+    mechanism and no other.
 exit=0
 --- a word that is no topic ---
 nope is no topic sumi explains

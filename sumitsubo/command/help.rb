@@ -69,55 +69,47 @@ module Sumitsubo
 
             The billable set of lines.
 
-            The title says the document is a vocabulary, and one declaring
-            no section is a vocabulary that checks nothing - which is what
-            `sumi init` lays down. Every `##` opens a section, named by the
-            project: what it covers is its `Includes`, what it means is the
-            terms under it.
+            The title says the document is a vocabulary. Every `##` opens a
+            section, named by the project: what it covers is its `Includes`,
+            what it means is the terms under it.
 
             A file takes every section covering it, in the order the file
             lists them; a later term replaces an earlier one of the same
-            name outright, its rejected words included, because a term
-            meaning something else there rejects different words. Order is
-            all that decides which way that goes, so the section a file falls
-            back to is written first.
+            name outright, its rejected words included. Order is all that
+            decides which way that goes, so the section a file falls back to
+            is written first.
 
             A name is spelled once where it stands for one thing: one
             section of a name in the document, one term of a name in a
             section, one rejection of a word under a term, one ignore of a
             line under that word. A step out and it stands for something
-            else - which is what the laying above is for - so only a second
-            written in the same place is refused.
+            else, so only a second written in the same place is refused.
 
             A term is a `###` heading and the paragraph under it is the
-            definition. `Includes` is the one `###` heading that is reserved
-            rather than a term, which is why a heading of a term's own
-            starts at `####` - and `Rejected` is the one word read there.
+            definition. `Includes` is the one `###` heading reserved rather
+            than a term, so a heading of a term's own starts at `####`,
+            where `Rejected` is the one word read.
 
             A rejected word is a list item opening with that word in
             backticks. What follows the dash says why the word is wrong, not
             why the term is right - what the term means is what its
-            definition carries. The reason is what a reader is handed at the
-            line they tripped on.
+            definition carries.
 
             An ignore is a list item under the word it sets aside, naming
             `path:line` in backticks with its own reason after the dash.
             Which term is rejecting and which word it rejects come from where
-            it sits, so the line is the whole of what it names - against the
-            same place the `Includes` globs are, which is what a finding
-            prints when the run starts there. Both halves are required.
+            it sits, so the line is the whole of what it names, written
+            against the same place the `Includes` globs are. Both halves are
+            required.
 
             Fix the line and it names nothing, so the run stops until the
-            exception is looked at again. That is the opposite of what a
-            fingerprint would do, and deliberate: an exception nobody is made
-            to revisit outlives what it was written for.
+            exception is looked at again.
 
         What is read
             A source file: its comments, found through the syntax tree. An
-            identifier is a spelling of a concept rather than the concept's
-            name, so counting one would flag every legitimate class in the tree.
-            Any other file: entire - prose is a comment for its whole length.
-            Matching is whole-word and case sensitive.
+            identifier is not a use of the word, so a class named `Purchase`
+            is not counted. Any other file: entire - prose is a comment for
+            its whole length. Matching is whole-word and case sensitive.
 
             The glossary itself, where its own includes cover it: a word has
             to be spelled to be declared rejected, so the line a term or one
@@ -226,9 +218,8 @@ module Sumitsubo
 
         Signatures
             The signature is the code the contract means, written out. It is
-            read by the very reading that reads the source, so what a
-            specification can register is what that reading can find - a shape
-            no definition could have is a shape nobody can write down here.
+            read by the very reading that reads the source, so what can be
+            registered is what that reading can find.
 
             It carries its nesting, because that is what makes the name what
             it is: `def self.of(path)` on its own declares `of`, where
@@ -250,11 +241,10 @@ module Sumitsubo
 
                 (path, mode?, encoding:keyword, rest:splat?, block:block?)
 
-            `positional` is the one kind word sumi owns: it names the parameter
-            a caller writes with no marking of any sort, which every language
-            has, and a finding leaves it out because a bare name already says
-            it. Every other kind word belongs to the language and is compared
-            as text, sumi knowing nothing of what it means:
+            `positional` is the one kind word sumi owns - the parameter a
+            caller writes with no marking of any sort - and a finding leaves
+            it out, since a bare name already says it. Every other kind word
+            belongs to the language and is compared as text:
 
                 ruby  keyword  splat  hash_splat  block  destructured  forward
                 rust  self
@@ -290,13 +280,11 @@ module Sumitsubo
             reader outside the project is not the one it is kept for.
 
         Includes
-            The boundary of what a definition answers for, and not merely a
-            list of files to read. With a marker, a contract is implemented by
-            the files its own definition covers, and a claim from anywhere else
-            names it without being able to implement it. Without one, a
-            definition has to sit among those files to count, so a type of the
-            same name in another component is a type of the same name in
-            another component.
+            The boundary of what a definition answers for. With a marker, a
+            contract is implemented by the files its own definition covers, and a claim from anywhere else names it without
+            being able to implement it. Without one, a definition has to sit
+            among those files to count, so a type of the same name in another
+            component does not answer for it.
 
             One file may sit under two definitions, which is how a module
             answering for both is written. `sumi help glossary` has the same
@@ -323,10 +311,10 @@ module Sumitsubo
                 at the line registering it.
 
             lib/store.rb:4 Store#read takes (id) here and (key) at lib/other.rb:9
-                One name defined with two shapes is a second way in. Both places
-                answer, each naming the other, because deciding which to keep
-                means comparing them. Definitions agreeing on their shape are
-                one way in still, so ordinary reopening says nothing.
+                One name defined with two shapes is a second way in, and both
+                places answer, each naming the other. Definitions agreeing on
+                their shape are one way in still, so ordinary reopening says
+                nothing.
 
             app/show.rb:1 @route GET /users/:id is claimed at app/other.rb:7 as well
                 A contract is the way in, so a second claim is an entrance the
@@ -339,10 +327,9 @@ module Sumitsubo
             app/show.rb:1 @route GET /users/:id is claimed outside what .spec/contract/routes.md includes   (exit 2)
                 The name resolves and the definition registering it does not
                 reach this file, so nothing here can implement it. Widen that
-                include, or move the claim. A definition merely spelling a
-                registered name says nothing this way: a claim asserts that a
-                contract was implemented, where a class of that name asserts
-                nothing at all.
+                include, or move the claim. A class merely spelling a
+                registered name says nothing this way: only a claim asserts
+                that a contract was implemented.
 
             .spec/contract/api.md:9 writes a signature declaring open, and not Store.open   (exit 2)
                 The heading and the signature name one thing written twice.
@@ -405,9 +392,6 @@ module Sumitsubo
             includes. Declaring no scenarios is what a fresh clone answers,
             since git carries no empty directory.
 
-            An id is what a claim in the source names, so one declared twice
-            is refused rather than resolved to either.
-
         Form
             # Verify
 
@@ -431,16 +415,15 @@ module Sumitsubo
 
             A scenario is an `##` heading opening with its id in backticks;
             the rest of that line is the title. `Includes` is the one `##`
-            heading that is prose rather than a scenario, which is why a
-            heading of the feature's own starts at `###`.
+            heading that is prose rather than a scenario, so a heading of the
+            feature's own starts at `###`.
 
             The model is Gherkin's, not its file format: these scenarios are
             read rather than executed.
 
             The steps are a two-column table. `Given` may be written as many
             times as the scenario stands on states; `When` and `Then` are one
-            row each, which three disciplines make reachable rather than a cap
-            that turns work away:
+            row each, which three disciplines make reachable:
 
                 The operation under test is the last one; everything before it
                 is `Given`.
@@ -451,20 +434,17 @@ module Sumitsubo
                 `Then` names the observable difference and stops - not the exit
                 code, and not the reason, which belongs to the title.
 
-            A cell cannot wrap, which is where those three get their pressure.
-            A `|` inside one is written `\\|`.
+            A cell cannot wrap, and a `|` inside one is written `\\|`.
 
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.
 
         Includes
-            The boundary of what a feature answers for, and not merely a list
-            of files to read: a scenario is witnessed by the files its own
-            feature covers, and a claim from anywhere else names it without
-            being able to witness it. One file may sit under two features,
-            which is how a test answering for both is written.
-            `sumi help glossary` has the same boundary under another word: a
-            subdomain.
+            The boundary of what a feature answers for: a scenario is
+            witnessed by the files its own feature covers, and a claim from
+            anywhere else names it without being able to witness it. One file may sit under two features, which is how a test
+            answering for both is written. `sumi help glossary` has the same
+            boundary under another word: a subdomain.
 
         Claiming
             Source claims a scenario in the comment in front of the code
@@ -494,9 +474,8 @@ module Sumitsubo
       CONFIG = <<~TEXT
         .sumi.json says where. A run takes the nearest one at or above where it
         started; failing that the repository it sits in; failing that - with
-        neither to go on - where it started. A project that has said nothing is
-        not misconfigured, so an absent .sumi.json answers the defaults; only an
-        unreadable one stops the run.
+        neither to go on - where it started. An absent .sumi.json answers the
+        defaults; only an unreadable one stops the run.
 
         Form
             {
@@ -560,10 +539,10 @@ module Sumitsubo
             2   the comparison could not be made - whatever had to be read first
                 was absent, unreadable, or ambiguous
 
-            A difference is a finding about the code; being unable to compare is
-            not, and a run with both answers 2: it says everything it found
-            either way, and the answer is what refuses to certify it. A
-            mechanism that could not be read stops that mechanism and no other.
+            A difference is a finding about the code; being unable to compare
+            is not, and a run with both answers 2 - it says everything it
+            found either way. A mechanism that could not be read stops that
+            mechanism and no other.
       TEXT
 
       def run(name)
