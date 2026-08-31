@@ -63,3 +63,18 @@ claims("src/commands.rb", ["@command", "@route"], [
   Sumitsubo::Source::Region.new(5, "# @route GET /users/:id"),
   Sumitsubo::Source::Region.new(8, "# @command")
 ]).each { |line| puts line }
+
+# A language writes its comment against the marker with nothing between, and so
+# does the `*` down the side of a block comment. A letter in front of it makes
+# another word, which is what keeps an address from claiming.
+#
+# Single-quoted because Ruby reads `#@name` in a double-quoted string as the
+# instance variable rather than as the two characters written here.
+# @behavior M-011
+puts "--- a keyword the comment is written against ---"
+claims("src/order.rb", BEHAVIOR, [
+  Sumitsubo::Source::Region.new(3, '#@behavior G-003'),
+  Sumitsubo::Source::Region.new(5, '/*@behavior G-004'),
+  Sumitsubo::Source::Region.new(7, ' *@behavior G-005'),
+  Sumitsubo::Source::Region.new(9, '# mail@behavior.example claims nothing')
+]).each { |line| puts line }

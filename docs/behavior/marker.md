@@ -10,6 +10,11 @@ whole. Behavior's ids are handles and read as a list.
 Marker hands back the line either way. How it is read belongs to the mechanism
 that named the word.
 
+Where a keyword begins is the comment's business rather than this reading's: a
+language writes `//` or `#` against the marker with nothing between, and so does
+the `*` down the side of a block comment. Anything but a letter may stand in
+front of it, which is what keeps an address out of the claims.
+
 ## Includes
 
 - `test/marker_test.rb`
@@ -61,3 +66,11 @@ that named the word.
 | Given | a comment carrying the keyword and nothing else |
 | When | the file is scanned for claims |
 | Then | the claim arrives carrying no text rather than being dropped |
+
+## `M-011` A keyword the comment is written against
+
+| Step | Statement |
+| --- | --- |
+| Given | comments writing the marker against `#`, `/*` and `*`, and one carrying it after a letter |
+| When | the file is scanned for claims |
+| Then | the first three answer claims and the last answers none |

@@ -9,3 +9,7 @@ src/commands.rb:2 @behavior [I-001]
 src/commands.rb:4 @command [verify]
 src/commands.rb:5 @route [GET /users/:id]
 src/commands.rb:8 @command []
+--- a keyword the comment is written against ---
+src/order.rb:3 @behavior [G-003]
+src/order.rb:5 @behavior [G-004]
+src/order.rb:7 @behavior [G-005]
