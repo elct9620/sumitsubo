@@ -230,11 +230,14 @@ module Sumitsubo
           @rejected.statements.push(Statement.new(at, why, [], @where, block.line, {}, []))
         end
 
-        # What a list item says after the word it took letter for letter.
+        # What a list item says after the word it took letter for letter. The
+        # dash is taken off rather than counted past: it is written outside
+        # ASCII, and a count of it would have to be the same kind of thing as
+        # the index it is handed to.
         def reason(said)
-          return Builder.empty_to_nil(said) unless said.index(DASH) == 0
+          return Builder.empty_to_nil(said) unless said.start_with?(DASH)
 
-          Builder.empty_to_nil(said[DASH.length..-1].strip)
+          Builder.empty_to_nil(said.delete_prefix(DASH).strip)
         end
 
         # Where the first of a name was written, for a refusal naming both. A
