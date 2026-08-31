@@ -118,3 +118,11 @@ place.
 | Given | a glossary whose section has two terms turning down one word, and one of them turning it down twice |
 | When | the glossary is loaded |
 | Then | only the one repeated under a term is named as one the specification cannot carry, naming the line that term first rejected it at |
+
+## `G-016` A line set aside twice under one word is refused, where twice under two is not
+
+| Step | Statement |
+| --- | --- |
+| Given | a glossary whose term has two words setting one line aside, and one of them setting it aside twice |
+| When | the glossary is loaded |
+| Then | only the one repeated under a word is named as one the specification cannot carry, naming the line that word first set it aside at |

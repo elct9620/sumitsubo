@@ -205,6 +205,11 @@ module Sumitsubo
         # rather than carried empty: one with nowhere to point matches nothing
         # and reports itself, and one with no reason is the exception that
         # outlives whoever knew why.
+        #
+        # The rejected word is the boundary a line is set aside once under. Two
+        # naming one line are one key, so the second's reason stood and the
+        # first was never made to go stale — the same exception outliving what
+        # it was written for.
         def set_aside(block)
           return unless @holding == REJECTED
 
@@ -217,6 +222,9 @@ module Sumitsubo
 
           why = reason(block.rest)
           refuse(block.line, "writes an ignore at #{at} with no reason") if why.nil?
+
+          first = @rejected.statements.find { |one| one.key == at }
+          refuse(block.line, "sets #{at} aside a second time under #{@rejected.key}, first set aside at #{first_at(first)}") unless first.nil?
 
           @rejected.statements.push(Statement.new(at, why, [], @where, block.line, {}, []))
         end

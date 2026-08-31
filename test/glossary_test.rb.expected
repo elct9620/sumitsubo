@@ -34,5 +34,6 @@ test/fixtures/glossary/noreason.md:12 writes an ignore at app/order.rb:2 with no
 test/fixtures/glossary/secondsection.md:16 opens a second section named Everywhere, first opened at test/fixtures/glossary/secondsection.md:6; sumi help glossary has the form
 test/fixtures/glossary/secondterm.md:26 declares Order a second time in Billing, first declared at test/fixtures/glossary/secondterm.md:22; sumi help glossary has the form
 test/fixtures/glossary/secondword.md:27 rejects Purchase a second time under Order, first rejected at test/fixtures/glossary/secondword.md:26; sumi help glossary has the form
+test/fixtures/glossary/secondignore.md:22 sets app/order.rb:2 aside a second time under Purchase, first set aside at test/fixtures/glossary/secondignore.md:21; sumi help glossary has the form
 --- and one named absolutely still answers where the run started ---
 no glossary at test/fixtures/glossary/absent.md; sumi init lays one down

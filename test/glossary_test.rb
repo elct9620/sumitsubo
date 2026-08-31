@@ -138,14 +138,16 @@ puts "--- an ignore that could not be written down is a broken reference line --
 end
 
 # Which container a name stands for one thing inside is the whole of the rule:
-# the document holds its sections, a section its terms, and a term the words it
-# turns down. Each fixture writes the name outside that container as well, so
-# the line a refusal names is what says where the boundary was drawn.
-# @behavior G-013 G-014 G-015
+# the document holds its sections, a section its terms, a term the words it
+# turns down, and a word the lines it sets aside. Each fixture writes the name
+# outside that container as well, so the line a refusal names is what says
+# where the boundary was drawn.
+# @behavior G-013 G-014 G-015 G-016
 puts "--- a name the vocabulary spells twice where it stands for one thing ---"
 ["test/fixtures/glossary/secondsection.md",
  "test/fixtures/glossary/secondterm.md",
- "test/fixtures/glossary/secondword.md"].each do |path|
+ "test/fixtures/glossary/secondword.md",
+ "test/fixtures/glossary/secondignore.md"].each do |path|
   begin
     reads(path)
   rescue Sumitsubo::Glossary::Error => e
