@@ -30,8 +30,8 @@ and the checksums a download can be checked against:
 ```console
 $ version=0.1.0-preview5 target=macos-aarch64
 $ base="https://github.com/elct9620/sumitsubo/releases/download/v$version"
-$ curl -sSLO "$base/sumi-$version-$target.tar.gz"
-$ curl -sSLO "$base/sumi-$version-checksums.txt"
+$ curl -fsSLO "$base/sumi-$version-$target.tar.gz"
+$ curl -fsSLO "$base/sumi-$version-checksums.txt"
 $ shasum -a 256 -c --ignore-missing "sumi-$version-checksums.txt"
 sumi-0.1.0-preview5-macos-aarch64.tar.gz: OK
 $ tar xzf "sumi-$version-$target.tar.gz"
