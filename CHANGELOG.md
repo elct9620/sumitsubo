@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.1.0-preview6](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview5...v0.1.0-preview6) (2026-09-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **marker:** say where a claim stands in front of nothing
+* **contract:** find what holds a contract by the byte the name ends on
+* **patterns:** match a pattern by the characters it was written in
+* **language:** stop a Rust block comment at its closing delimiter
+* **marker:** read a keyword the comment is written against
+* **config:** refuse a switch that turns no specification off
+* **config:** refuse a key .sumi.json does not say
+* **config:** refuse a value no key in .sumi.json takes
+* **glossary:** refuse a line set aside a second time under one word
+* **glossary:** refuse a word rejected a second time under one term
+* **glossary:** refuse a term declared a second time in one section
+* **glossary:** refuse a second section opened under one name
+
+### Features
+
+* **behavior:** say when a marker is written with nothing behind it ([02e755d](https://github.com/elct9620/sumitsubo/commit/02e755d9dd9eb62df2192da18ebc84d08df8f883))
+* **config:** refuse a key .sumi.json does not say ([0916f2c](https://github.com/elct9620/sumitsubo/commit/0916f2cdf7970ebb145359476eea6dde83a825b7))
+* **config:** refuse a switch that turns no specification off ([0fd24c4](https://github.com/elct9620/sumitsubo/commit/0fd24c440fa842a33fa2e31945b2f22ab7656f51))
+* **glossary:** refuse a second section opened under one name ([e8da675](https://github.com/elct9620/sumitsubo/commit/e8da67569db3e4f952db79681d8a235fadf6a861))
+* **release:** carry the checksums a download can be verified against ([4401f19](https://github.com/elct9620/sumitsubo/commit/4401f19f1b2ec4948807e44235d45722a31197df))
+
+
+### Bug Fixes
+
+* **config:** refuse a value no key in .sumi.json takes ([7320ff7](https://github.com/elct9620/sumitsubo/commit/7320ff741cdf346325608f19a9178829a33c854a))
+* **contract:** find what holds a contract by the byte the name ends on ([794a34c](https://github.com/elct9620/sumitsubo/commit/794a34cfc6565252ccf3cf83c75cb60dc5d5b724))
+* **glossary:** refuse a line set aside a second time under one word ([7f83196](https://github.com/elct9620/sumitsubo/commit/7f8319692821aac117dcb66429e17fff22938001))
+* **glossary:** refuse a term declared a second time in one section ([3be5a4c](https://github.com/elct9620/sumitsubo/commit/3be5a4c4cf4aa8744da20b6b7acfd07167c08c80))
+* **glossary:** refuse a word rejected a second time under one term ([aa844e9](https://github.com/elct9620/sumitsubo/commit/aa844e9b7a0e2ee2c5136a0159b949d7a765a633))
+* **language:** stop a Rust block comment at its closing delimiter ([fc9882f](https://github.com/elct9620/sumitsubo/commit/fc9882f53bb12eb849cc80538c6b095db9a47aca))
+* **marker:** read a keyword the comment is written against ([ff7c86d](https://github.com/elct9620/sumitsubo/commit/ff7c86dae72ab6c4fa6c2bf103a47c03922df7cb))
+* **marker:** read a keyword written against more than ASCII ([775e6da](https://github.com/elct9620/sumitsubo/commit/775e6da85a45638e9d92723727931390fefc8299))
+* **marker:** say where a claim stands in front of nothing ([b6eff18](https://github.com/elct9620/sumitsubo/commit/b6eff187894c5e9358d1d5fdb9bc28dae6f97c66))
+* **patterns:** match a pattern by the characters it was written in ([aaa100a](https://github.com/elct9620/sumitsubo/commit/aaa100ad5c1573976d199287cae9f9a604fc0f46))
+
 ## [0.1.0-preview5](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview4...v0.1.0-preview5) (2026-08-31)
 
 
