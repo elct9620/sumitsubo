@@ -121,37 +121,26 @@ module Sumitsubo
       # One segment, where `*` stands for any run of characters and `?` for one.
       # Neither reaches past the segment it was written in, which is what the
       # caller splitting on the separator has already arranged.
-      #
-      # Where each side ends is asked of the character rather than counted, and
-      # the character in hand is taken once before it is compared: as of
-      # 2026-09-01 Spinel compiles `pattern[first] == "*"` into a comparison
-      # against the byte at that offset, so a star written after anything wider
-      # than ASCII is never recognised and the pattern reaches nothing. Binding
-      # the character to a name first is what makes the comparison its own.
-      # `P-013` holds that.
       def self.spells?(pattern, text, first, at)
-        while true
-          said = pattern[first]
-          return text[at].nil? if said.nil?
-
-          if said == "*"
-            # The run a star stands for may be empty, so every tail from here
-            # on is tried, the one past the last character included.
-            while true
+        while first < pattern.length
+          if pattern[first] == "*"
+            # The run a star stands for may be empty, so every tail from here on
+            # is tried — the one past the last character included, which is what
+            # lets a star at the end of a pattern match nothing at all.
+            while at <= text.length
               return true if spells?(pattern, text, first + 1, at)
-              return false if text[at].nil?
 
               at += 1
             end
+            return false
           end
-
-          here = text[at]
-          return false if here.nil?
-          return false unless said == "?" || said == here
+          return false if at >= text.length
+          return false unless pattern[first] == "?" || pattern[first] == text[at]
 
           first += 1
           at += 1
         end
+        at == text.length
       end
     end
   end
