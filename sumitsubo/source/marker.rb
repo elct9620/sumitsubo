@@ -19,10 +19,10 @@ module Sumitsubo
       # own, and a letter makes the keyword the tail of a longer word instead.
       LETTER = /[A-Za-z0-9_]\z/
 
-      # Where a claim could sit arrives from outside, so nothing here knows what
-      # the file is written in: a language with no comment for code to follow
-      # says so by offering none, which is how anything but source is passed
-      # over.
+      # The comments arrive from outside, so nothing here knows what the file is
+      # written in — only that each says what it stands next to, which is the
+      # same question in every language and in prose, where nothing stands next
+      # to the last line.
       #
       # A whole set of keywords is read in one pass because parsing is the cost:
       # a project declaring several kinds of contract would otherwise read every
@@ -31,18 +31,45 @@ module Sumitsubo
         # A caller reaching a mechanism other than Behavior has no reason to have
         # rendered the path first, so the reading owns how it answers.
         where = Place.file(path)
+        comments = languages.comments_in(path, where)
+        reaching = reaching_in(comments)
         claims = []
-        languages.attached_comments_in(path, where).each do |comment|
-          # A comment spanning lines arrives whole, so the claim answers at the
-          # line the keyword is on rather than where the comment began.
-          comment.lines.each do |one|
-            keywords.each do |keyword|
-              claimed = text_after(one.text, keyword)
-              claims.push(Source::Claim.new(where, one.line, keyword, claimed)) unless claimed.nil?
-            end
-          end
+        comments.each do |comment|
+          claimed_in(comment, keywords, where, reaching[comment.line]).each { |one| claims.push(one) }
         end
         claims
+      end
+
+      # Whether each comment stands in front of code, under the line it starts
+      # on. It reaches code through the comments after it, because what a person
+      # wrote between a claim and what implements it is still what they wrote —
+      # and reaches none where the run of them ends the file or the block.
+      #
+      # The comments arrive in the order they were met, so the last is the one
+      # that settles the run and the answer is carried backwards from it.
+      def self.reaching_in(comments)
+        found = {}
+        reaches = false
+        comments.reverse.each do |comment|
+          reaches = comment.followed_by == Source::Region::SOURCE_CODE ||
+                    (comment.followed_by == Source::Region::COMMENT && reaches)
+          found[comment.line] = reaches
+        end
+        found
+      end
+
+      # The claims one comment carries. It spans lines whole, so a claim answers
+      # at the line its keyword is on rather than where the comment began, while
+      # what the comment stands in front of is the same for every line of it.
+      def self.claimed_in(comment, keywords, where, reaches)
+        found = []
+        comment.lines.each do |one|
+          keywords.each do |keyword|
+            claimed = text_after(one.text, keyword)
+            found.push(Source::Claim.new(where, one.line, keyword, claimed, reaches)) unless claimed.nil?
+          end
+        end
+        found
       end
 
       # Everything after the keyword to the end of the line, or nil where the

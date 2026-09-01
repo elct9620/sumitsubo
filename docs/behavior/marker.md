@@ -75,3 +75,11 @@ front of it, which is what keeps an address out of the claims.
 | Given | one carrying the keyword after a letter |
 | When | the file is scanned for claims |
 | Then | the first four answer claims and the last answers none |
+
+## `M-012` A claim reaching the code it names, and one reaching none
+
+| Step | Statement |
+| --- | --- |
+| Given | a run of comments standing in front of code, and a run standing in front of nothing |
+| When | the file is scanned for claims |
+| Then | every claim in the first run answers as reaching code and every claim in the second as reaching none |

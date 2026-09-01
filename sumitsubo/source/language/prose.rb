@@ -1,4 +1,5 @@
 require "sumitsubo/source"
+require "sumitsubo/source/language/nodes"
 
 module Sumitsubo
   module Source
@@ -20,20 +21,21 @@ module Sumitsubo
           true
         end
 
+        # Prose has no code for a comment to sit in front of, so every line
+        # stands in front of more of the same and the last in front of nothing.
+        # Saying so is what puts a claim written here on the same footing as one
+        # written at the end of a source file, rather than out of sight.
         def comments_in(path, where)
+          said = path.readlines
           found = []
           line = 0
-          path.readlines.each do |text|
+          said.each do |text|
             line += 1
-            found.push(Source::Region.new(line, text))
+            found.push(Source::Region.new(
+              line, text, line == said.length ? Source::Region::NOTHING : Source::Region::COMMENT
+            ))
           end
           found
-        end
-
-        # Prose has no code for a comment to sit in front of, so nothing here
-        # claims anything.
-        def attached_comments_in(path, where)
-          []
         end
       end
     end

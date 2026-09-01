@@ -24,15 +24,12 @@ module Sumitsubo
 
         # Comments are the part of a source file a person wrote for another
         # person, which is where a concept is called by name rather than spelled
-        # as an identifier.
-        COMMENTS = "(comment) @text"
-
-        # A comment with something after it. A behavior is claimed in front of
-        # the code that implements it, so a comment nothing follows claims
-        # nothing. The anchor only excludes that orphan: a comment followed by
-        # another comment is still a match, which is as far as this needs to
-        # reach.
-        ATTACHED = "((comment) @text . (_))"
+        # as an identifier. The second pattern says what each one stands next
+        # to, and matches only where something does.
+        COMMENTS = <<~COMMENTS
+          (comment) @#{Nodes::FOUND}
+          ((comment) @#{Nodes::BEFORE} . (_) @#{Nodes::BESIDE})
+        COMMENTS
 
         SCOPE = "scope"
         SINGLETON = "singleton"
@@ -109,17 +106,15 @@ module Sumitsubo
         # concept's name, so counting one would answer for every legitimate
         # class in the tree.
         def comments_in(path, where)
-          captured(path.read, COMMENTS, where).map do |capture|
-            Source::Region.new(capture.line, capture.text)
-          end
-        end
+          captures = captured(path.read, COMMENTS, where)
+          following = Nodes.following(Nodes.matches_in(captures))
+          found = []
+          captures.each do |capture|
+            next unless capture.name == Nodes::FOUND
 
-        # The comments with code after them. A claim sits in front of what
-        # implements it, so a comment nothing follows claims nothing.
-        def attached_comments_in(path, where)
-          captured(path.read, ATTACHED, where).map do |capture|
-            Source::Region.new(capture.line, capture.text)
+            found.push(Source::Region.new(capture.line, capture.text, following[capture.start]))
           end
+          found
         end
 
         # The names this file declares and the shape each is reached by, spelled

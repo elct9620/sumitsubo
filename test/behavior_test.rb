@@ -124,7 +124,9 @@ puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
 # I-001 is declared by Init, whose include reaches only its own test. A claim
 # of it from the file next door names the scenario without being able to
 # witness it, so the scenario stands unclaimed.
-claims = [Sumitsubo::Behavior::Claim.new(path: "test/fixtures/behavior/test/verify_test.rb", line: 9, id: "I-001")]
+claims = [Sumitsubo::Behavior::Claim.new(
+  path: "test/fixtures/behavior/test/verify_test.rb", line: 9, id: "I-001", reaches_code: true
+)]
 
 # @behavior B-012
 puts "--- a scenario claimed only from outside its own feature ---"

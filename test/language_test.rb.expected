@@ -2,21 +2,21 @@
 ["2:# The customer's Purchase is settled here.", "5:# Purchases and repurchase are different words; whole-word, case", "6:# sensitive matching has to leave both alone.", "10:# An identifier is a spelling of the concept, not its name, so the scan walks", "11:# past the constant below."]
 --- a file no language claims answers entire ---
 2
---- and offers nowhere for a claim to sit ---
-[]
+--- where every line stands in front of more of the same ---
+["1:comment", "2:nothing"]
 --- source is read as the language a specification named ---
 29
 --- what this build carries ---
 true
 false
---- where a claim could sit ---
-3
-["1:# A linear snapshot script, which is how this project writes its own tests.", "2:# There is no method for a claim to attach to, so it attaches to the statement.", "7:# @behavior G-001", "10:# @behavior G-002 I-001", "13:# @behavior G-404"]
+--- what each comment stands next to ---
+["2:code", "4:code", "9:code"]
+["1:comment", "2:code", "7:code", "10:code", "13:code", "16:comment", "17:nothing"]
 --- source the grammar cannot read ---
 broken.rb: cannot be parsed by the ruby grammar
 --- a second language reads its own comments ---
 6
-5
+"51:nothing"
 --- a block comment stops before its own closing delimiter ---
 "48:/* @contract audit::Entry::at — a claim in a block comment. "
 --- and spells a name the way it writes a path ---

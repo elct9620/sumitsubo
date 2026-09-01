@@ -73,7 +73,7 @@ module Sumitsubo
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, and a contract is named by the interface itself, so the
     # whole of that is the name it carries.
-    class Claim < Data.define(:path, :line, :contract)
+    class Claim < Data.define(:path, :line, :contract, :reaches_code)
       def key
         contract
       end
@@ -197,7 +197,10 @@ module Sumitsubo
     def self.claimed_in(definitions, reach, source)
       found = []
       source.claims(scope(reach), keywords(definitions)).each do |claim|
-        found.push(Claim.new(path: claim.path, line: claim.line, contract: Name.new(claim.keyword, claim.text)))
+        found.push(Claim.new(
+          path: claim.path, line: claim.line,
+          contract: Name.new(claim.keyword, claim.text), reaches_code: claim.reaches_code
+        ))
       end
       found
     end

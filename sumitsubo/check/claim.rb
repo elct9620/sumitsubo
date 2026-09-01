@@ -77,6 +77,42 @@ module Sumitsubo
         end
       end
 
+      # The claims that reach the code they name, and the ones that reach none.
+      # A marker stands in front of what implements it, so one standing in front
+      # of nothing witnesses nothing — and every check below compares the first
+      # group, because a claim that cannot witness has already been answered.
+      def self.reaching(claims)
+        claims.select { |claim| claim.reaches_code }
+      end
+
+      def self.dangling(claims)
+        claims.reject { |claim| claim.reaches_code }
+      end
+
+      # A claim with no code under it. Nothing was compared: the marker says a
+      # thing was implemented and there is nothing where the implementation
+      # would be, so this is a comparison that could not be made rather than a
+      # difference.
+      #
+      # It answers at the marker rather than at the specification, because the
+      # line to fix is the one somebody left hanging.
+      class Dangling
+        def initialize(rule, what)
+          @rule = rule
+          @what = what
+        end
+
+        def run(claims)
+          claims.map do |claim|
+            Finding.new(
+              rule: @rule, difference: false, place: claim.place,
+              message: "#{claim.said} stands in front of nothing; " \
+                       "a #{@what} is claimed in the comment in front of the code implementing it"
+            )
+          end
+        end
+      end
+
       # A claim carrying nothing after the marker. It names nothing at all,
       # which is a different thing to say than a name that resolves to none.
       class Nameless

@@ -73,21 +73,6 @@ class Sumitsubo::Source::Language
 end
 ```
 
-## `Sumitsubo::Source::Language#attached_comments_in`
-
-The reading of where a claim could sit, for a file whose language has code for a comment to sit in front of.
-
-| Attribute | Value |
-| --- | --- |
-| internal | yes |
-
-```ruby
-class Sumitsubo::Source::Language
-  def attached_comments_in(path, where)
-  end
-end
-```
-
 ## `Sumitsubo::Source::Language#declarations_in`
 
 The reading of what a piece of source declares, as the language a specification named.

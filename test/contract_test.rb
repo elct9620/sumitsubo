@@ -98,9 +98,12 @@ def unclaimed(definitions, claims)
     .run(Sumitsubo::Contract.stated_in(definitions), claims)
 end
 
-def claim(path, line, keyword, name)
+# A claim stands in front of code unless a case says otherwise, since what it
+# stands in front of is the reading's answer rather than this one's subject.
+def claim(path, line, keyword, name, reaches_code = true)
   Sumitsubo::Contract::Claim.new(
-    path: path, line: line, contract: Sumitsubo::Contract::Name.new(keyword, name)
+    path: path, line: line,
+    contract: Sumitsubo::Contract::Name.new(keyword, name), reaches_code: reaches_code
   )
 end
 

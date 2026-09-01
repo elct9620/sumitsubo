@@ -34,13 +34,13 @@ them.
 | When | the file is read for what a person wrote |
 | Then | every line of it answers |
 
-## `L-003` Nowhere for a claim to sit
+## `L-003` What a line of prose stands in front of
 
 | Step | Statement |
 | --- | --- |
 | Given | a prose file |
-| When | the file is read for where a claim could sit |
-| Then | nothing answers |
+| When | the file is read for what a person wrote |
+| Then | every line stands in front of more of the same, and the last in front of nothing |
 
 ## `L-004` The language a specification named is the one that reads it
 
@@ -55,24 +55,24 @@ them.
 
 | Step | Statement |
 | --- | --- |
-| Given | a Ruby file whose claims sit in a class body, a method body and a block comment |
-| When | the file is read for where a claim could sit |
-| Then | all of them answer, at whatever depth they sit |
+| Given | a Ruby file whose comments sit in a class body, a method body and a block comment |
+| When | the file is read for what each comment stands next to |
+| Then | every one answers code, at whatever depth it sits |
 
 ## `L-006` A comment nothing follows
 
 | Step | Statement |
 | --- | --- |
 | Given | a Ruby file whose last line is a comment |
-| When | the file is read for where a claim could sit |
-| Then | that comment does not answer |
+| When | the file is read for what each comment stands next to |
+| Then | that comment answers nothing, and one standing in front of another answers a comment |
 
 ## `L-007` Source the grammar cannot read
 
 | Step | Statement |
 | --- | --- |
 | Given | a Ruby file the grammar cannot parse |
-| When | the file is read for where a claim could sit |
+| When | the file is read for what a person wrote |
 | Then | the file is named as unreadable rather than answering with what it recovered |
 
 ## `L-008` A language this build was not given
@@ -89,8 +89,8 @@ them.
 | --- | --- |
 | Given | a Rust file carrying line comments, a doc comment and a block comment |
 | Given | a block comment with nothing after it |
-| When | the file is read for what a person wrote and for where a claim could sit |
-| Then | every comment answers the first, and the one nothing follows answers only there |
+| When | the file is read for what a person wrote and for what each comment stands next to |
+| Then | every comment answers, and the one nothing follows says it stands in front of nothing |
 
 ## `L-011` A name is the path the file itself carries
 
@@ -130,5 +130,5 @@ them.
 | --- | --- |
 | Given | a block comment carrying a claim and code after it |
 | Given | text in that comment which is not all ASCII |
-| When | the file is read for where a claim could sit |
+| When | the file is read for what a person wrote |
 | Then | the region ends where the closing delimiter begins |

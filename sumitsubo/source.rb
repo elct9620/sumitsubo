@@ -14,23 +14,39 @@ module Sumitsubo
   # afterwards changes one, so two answering the same thing are the same
   # answer, and a comparison of two of them is a comparison of what they say.
   module Source
-    # A stretch of a file a person wrote, and the line it starts on.
+    # A stretch of a file a person wrote, the line it starts on, and what it
+    # sits in front of.
     #
     # Where a language's own syntax shares a line with what a person wrote, a
     # reading takes it off: `*/` sits at the end of the last such line, and a
     # mechanism reading that line would take it for a word. A delimiter with a
     # line to itself is left, as `=end` is, and so is what a comment opens
     # with — neither lands where a claim is read.
-    class Region < Data.define(:line, :text)
+    class Region < Data.define(:line, :text, :followed_by)
+      # What stands next to a stretch, which is a fact about the file rather
+      # than a judgement on it: whoever asks decides what it means. A reading
+      # that has none of the first — prose, a comment for its whole length —
+      # still answers these, because what a claim can attach to is one question
+      # everywhere.
+      #
+      # The first is spelled out because this compiler keeps constant names
+      # across the whole program: a second `CODE` anywhere takes the first one
+      # away, and `Specification::Block` had it. It reads as the glossary spells
+      # it either way.
+      SOURCE_CODE = "code"
+      COMMENT = "comment"
+      NOTHING = "nothing"
+
       # The same stretch one line at a time, each answering at its own line. A
       # comment arrives whole, and what is looked for in it — a keyword, a word
       # the vocabulary turns down — is looked for by the line a reader is sent
-      # to.
+      # to. What the whole sits in front of is what each line of it sits in
+      # front of: the stretch is one node, however many lines it spans.
       def lines
         at = line
         found = []
         text.split("\n").each do |said|
-          found.push(Region.new(line: at, text: said))
+          found.push(Region.new(line: at, text: said, followed_by: followed_by))
           at += 1
         end
         found
@@ -86,6 +102,10 @@ module Sumitsubo
     # What source says it implements: the word it claimed with, and the rest of
     # the line unread. What counts as a name in that rest belongs to whichever
     # mechanism named the word, so nothing here reads it.
-    Claim = Data.define(:path, :line, :keyword, :text)
+    #
+    # Whether it reaches the code it claims to implement travels with it rather
+    # than being read off again: only the reading knows, and a claim that
+    # reaches none is still a claim somebody wrote.
+    Claim = Data.define(:path, :line, :keyword, :text, :reaches_code)
   end
 end

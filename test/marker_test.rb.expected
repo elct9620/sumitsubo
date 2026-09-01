@@ -14,3 +14,12 @@ src/order.rb:3 @behavior [G-003]
 src/order.rb:5 @behavior [G-004]
 src/order.rb:7 @behavior [G-005]
 src/order.rb:9 @behavior [G-006]
+--- a claim reaches code through the comments after it, or reaches none ---
+src/order.rb:2 @behavior [G-007]
+src/order.rb:3 @behavior [G-008]
+src/order.rb:6 @behavior [G-009] reaching no code
+src/order.rb:7 @behavior [G-010] reaching no code
+--- and says so for every keyword on the line ---
+src/routes.rb:2 @command [verify]
+src/routes.rb:4 @command [init @route GET /users] reaching no code
+src/routes.rb:4 @route [GET /users] reaching no code

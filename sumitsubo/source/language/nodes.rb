@@ -1,10 +1,12 @@
+require "sumitsubo/source"
+
 module Sumitsubo
   module Source
     class Language
       # What a syntax tree hands back, made into what a reading answers with —
       # the part of that work no language owns.
       #
-      # Nothing here reaches the binding: a reading captures what its own query
+      # Nothing here reaches a grammar: a reading captures what its own query
       # asked for and brings the captures here, which is what keeps this file, and
       # every test of it, on the side a snapshot can be regenerated from.
       #
@@ -16,6 +18,13 @@ module Sumitsubo
       module Nodes
         # The capture that names a node, as against the one that says what it is.
         NAME = "name"
+
+        # The captures a reading writes to say where its comments sit: one
+        # pattern finding every comment, and a second pairing one with the node
+        # beside it — which matches only where such a node is there.
+        FOUND = "any"
+        BEFORE = "text"
+        BESIDE = "next"
 
         # One match of a reading's query: what kind of node it was, what it is
         # called, and the lines it spans.
@@ -38,6 +47,36 @@ module Sumitsubo
           end
 
           order.map { |key| grouped[key] }
+        end
+
+        # What each comment sits in front of, under the byte it starts at. A
+        # query has no way to ask what a node is not, so whether the neighbour is
+        # itself a comment is answered by the set of comments the same query
+        # found — which is why the pairing is asked for in a second pattern
+        # rather than read off the first.
+        def self.following(matches)
+          found = {}
+          matches.each do |captures|
+            at = byte_of(captures, FOUND)
+            found[at] = Source::Region::NOTHING unless at.nil?
+          end
+
+          matches.each do |captures|
+            beside = byte_of(captures, BESIDE)
+            next if beside.nil?
+
+            found[byte_of(captures, BEFORE)] =
+              found[beside].nil? ? Source::Region::SOURCE_CODE : Source::Region::COMMENT
+          end
+          found
+        end
+
+        # Where one of a match's captures begins, or nothing where the match
+        # carries no such capture.
+        def self.byte_of(captures, name)
+          found = nil
+          captures.each { |capture| found = capture.start if capture.name == name }
+          found
         end
 
         # The nodes those matches declare. A match that declares nothing answers

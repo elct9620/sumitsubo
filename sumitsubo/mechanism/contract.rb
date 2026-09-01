@@ -23,6 +23,7 @@ module Sumitsubo
         MISPLACED = "contract/misplaced"
         UNRESOLVED = "contract/unresolved"
         NAMELESS = "contract/nameless"
+        DANGLING = "contract/dangling"
 
         def initialize
           @unclaimed = Check::Claim::Unclaimed.new(UNCLAIMED)
@@ -30,6 +31,7 @@ module Sumitsubo
           @misplaced = Check::Claim::Misplaced.new(MISPLACED)
           @unresolved = Check::Claim::Unresolved.new(UNRESOLVED, "contract")
           @nameless = Check::Claim::Nameless.new(NAMELESS, "contract")
+          @dangling = Check::Claim::Dangling.new(DANGLING, "contract")
         end
 
         def run(config, findings, definitions, source)
@@ -39,15 +41,20 @@ module Sumitsubo
           claims = Sumitsubo::Contract.claimed_in(definitions, reach, source)
           stated = Sumitsubo::Contract.stated_in(definitions)
           registering = Sumitsubo::Contract.registering_claims(definitions)
+          # A claim standing in front of nothing is answered once, by itself: it
+          # names an interface without implementing one, so putting it through
+          # the comparisons below would say the same thing a second way.
+          reaching = Check::Claim.reaching(claims)
           # What the two checks below compare is the claims that can implement
           # what they name; the rest answer for themselves further down.
-          witnessing = Check::Claim.witnessing(claims, registering, reach)
+          witnessing = Check::Claim.witnessing(reaching, registering, reach)
 
           @unclaimed.run(stated, witnessing).each { |one| findings.add(one) }
           @duplicated.run(witnessing, stated).each { |one| findings.add(one) }
-          @misplaced.run(claims, registering, reach).each { |one| findings.add(one) }
-          @unresolved.run(Sumitsubo::Contract.named(claims), stated).each { |one| findings.add(one) }
-          @nameless.run(Sumitsubo::Contract.nameless(claims)).each { |one| findings.add(one) }
+          @misplaced.run(reaching, registering, reach).each { |one| findings.add(one) }
+          @unresolved.run(Sumitsubo::Contract.named(reaching), stated).each { |one| findings.add(one) }
+          @nameless.run(Sumitsubo::Contract.nameless(reaching)).each { |one| findings.add(one) }
+          @dangling.run(Check::Claim.dangling(claims)).each { |one| findings.add(one) }
         end
       end
 

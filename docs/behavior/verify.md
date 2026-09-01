@@ -262,3 +262,11 @@ in the order they happened.
 | Given | a glossary whose include reaches that document |
 | When | `sumi verify` runs |
 | Then | the document answers as source, and no mechanism refuses it as a specification |
+
+## `V-030` A claim with no code under it
+
+| Step | Statement |
+| --- | --- |
+| Given | a test file ending on a claim and a note, with nothing after them |
+| When | `sumi verify` runs |
+| Then | the claim is reported at the line it was written on, as standing in front of nothing |

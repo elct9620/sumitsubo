@@ -177,6 +177,10 @@ module Sumitsubo
             a name need not be a name in any language at all. A block comment
             closing on that line ends the name where it closes.
 
+            In front of means there is code below it, whether or not more
+            comments stand between. A claim at the end of a file or a block
+            reaches none, and a run reports it where it was written.
+
             WITHOUT ONE, the interfaces are read from the syntax tree and
             nothing is written in front of the code. Each contract carries a
             fenced signature, and the fence's language is what says how its
@@ -456,6 +460,11 @@ module Sumitsubo
                 # @behavior V-008 V-009
 
             A behavior may be claimed by as many tests as exercise it.
+
+            In front of means there is code below it, whether or not more
+            comments stand between. A claim at the end of a file or a block
+            reaches none, and a run reports it where it was written rather
+            than counting it as coverage.
 
         Findings
             .spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes

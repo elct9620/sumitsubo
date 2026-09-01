@@ -14,12 +14,14 @@ module Sumitsubo
       UNCLAIMED = "behavior/unclaimed"
       MISPLACED = "behavior/misplaced"
       UNRESOLVED = "behavior/unresolved"
+      DANGLING = "behavior/dangling"
 
       def initialize
         @barren = Check::Reach::Barren.new(BARREN)
         @unclaimed = Check::Claim::Unclaimed.new(UNCLAIMED)
         @misplaced = Check::Claim::Misplaced.new(MISPLACED)
         @unresolved = Check::Claim::Unresolved.new(UNRESOLVED, "scenario")
+        @dangling = Check::Claim::Dangling.new(DANGLING, "scenario")
       end
 
       def specification
@@ -51,13 +53,18 @@ module Sumitsubo
         claims = Sumitsubo::Behavior.claimed_in(reach, source)
         stated = Sumitsubo::Behavior.stated_in(features)
         declaring = Sumitsubo::Behavior.declaring_in(features)
+        # A claim standing in front of nothing is answered once, by itself: it
+        # names a scenario without witnessing one, so putting it through the
+        # comparisons below would say the same thing a second way.
+        reaching = Check::Claim.reaching(claims)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.
-        witnessing = Check::Claim.witnessing(claims, declaring, reach)
+        witnessing = Check::Claim.witnessing(reaching, declaring, reach)
 
         @unclaimed.run(stated, witnessing).each { |one| findings.add(one) }
-        @misplaced.run(claims, declaring, reach).each { |one| findings.add(one) }
-        @unresolved.run(claims, stated).each { |one| findings.add(one) }
+        @misplaced.run(reaching, declaring, reach).each { |one| findings.add(one) }
+        @unresolved.run(reaching, stated).each { |one| findings.add(one) }
+        @dangling.run(Check::Claim.dangling(claims)).each { |one| findings.add(one) }
       end
     end
   end

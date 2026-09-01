@@ -14,3 +14,4 @@ puts "exit=#{cli.run(["verify"])}"
 puts "a claim resolving to nothing is still read"
 
 # @behavior G-999
+# a note standing between the claim and the end of the file

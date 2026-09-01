@@ -40,6 +40,10 @@ module Sumitsubo
       # language answering for it. Prose answers for anything the rest did not,
       # so a file always finds one.
       #
+      # Each says what it stands next to as well, which is one question rather
+      # than two: whether a claim may sit in a comment is decided by whoever
+      # asks, and a reading that answered it would be deciding for them.
+      #
       # The question is put to the list rather than a language handed back: a
       # caller holding one would have to know what it is, and the whole of what
       # this is for is that nobody outside has to.
@@ -47,13 +51,6 @@ module Sumitsubo
         file = Pathname.new(path)
         language = reading_of(file)
         language.nil? ? [] : language.comments_in(file, where)
-      end
-
-      # The comments a claim could sit in.
-      def attached_comments_in(path, where)
-        file = Pathname.new(path)
-        language = reading_of(file)
-        language.nil? ? [] : language.attached_comments_in(file, where)
       end
 
       # The names this file declares, read as the language named. A name is

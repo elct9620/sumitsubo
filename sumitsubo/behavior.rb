@@ -32,7 +32,7 @@ module Sumitsubo
 
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.
-    class Claim < Data.define(:path, :line, :id)
+    class Claim < Data.define(:path, :line, :id, :reaches_code)
       def key
         id
       end
@@ -100,7 +100,11 @@ module Sumitsubo
     def self.claimed_in(reach, source)
       found = []
       source.claims(scope(reach), [MARKER]).each do |claim|
-        ids_in(claim.text).each { |id| found.push(Claim.new(path: claim.path, line: claim.line, id: id)) }
+        ids_in(claim.text).each do |id|
+          found.push(Claim.new(
+            path: claim.path, line: claim.line, id: id, reaches_code: claim.reaches_code
+          ))
+        end
       end
       found
     end

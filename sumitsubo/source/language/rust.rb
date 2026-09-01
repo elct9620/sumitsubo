@@ -31,19 +31,17 @@ module Sumitsubo
         # is a line comment carrying a marker. A block comment is asked for its
         # closing delimiter as well: where a person stopped writing is the
         # tree's to answer, not something to look for in the text afterwards.
+        #
+        # The last two patterns say what each comment stands next to, and match
+        # only where something does. They ask for no delimiter: what they are
+        # read for is the pairing, and the region is built from the comment the
+        # patterns above found.
         COMMENTS = <<~COMMENTS
-          (line_comment) @text
-          (block_comment "*/" @close) @text
+          (line_comment) @#{Nodes::FOUND}
+          ((block_comment "*/" @close) @#{Nodes::FOUND})
+          ((line_comment) @#{Nodes::BEFORE} . (_) @#{Nodes::BESIDE})
+          ((block_comment) @#{Nodes::BEFORE} . (_) @#{Nodes::BESIDE})
         COMMENTS
-
-        # A comment with something after it. A claim sits in front of the code
-        # that implements it, so a comment nothing follows claims nothing. The
-        # anchor counts named nodes, so the delimiter captured inside does not
-        # stand between the comment and what comes after it.
-        ATTACHED = <<~ATTACHED
-          ((line_comment) @text . (_))
-          ((block_comment "*/" @close) @text . (_))
-        ATTACHED
 
         # The capture that says where the comment's own syntax resumes.
         CLOSE = "close"
@@ -97,10 +95,6 @@ module Sumitsubo
           regions(captured(path.read, COMMENTS, where))
         end
 
-        def attached_comments_in(path, where)
-          regions(captured(path.read, ATTACHED, where))
-        end
-
         def declarations_in(path, where)
           declarations_of(path.read, where)
         end
@@ -129,26 +123,36 @@ module Sumitsubo
         private
 
         def regions(captures)
-          Nodes.matches_in(captures).map { |match| region_from(match) }
+          matches = Nodes.matches_in(captures)
+          following = Nodes.following(matches)
+          found = []
+          matches.each do |match|
+            region = region_from(match, following)
+            found.push(region) unless region.nil?
+          end
+          found
         end
 
-        # What a person wrote in one comment. A line comment is the whole node;
-        # a block one stops where the delimiter Rust required begins, since a
-        # region carrying `*/` hands whoever reads that line a word nobody
-        # wrote. The delimiter is taken off the end rather than counted back
-        # from it.
-        def region_from(captures)
+        # What a person wrote in one comment, and what it stands next to. A line
+        # comment is the whole node; a block one stops where the delimiter Rust
+        # required begins, since a region carrying `*/` hands whoever reads that
+        # line a word nobody wrote. The delimiter is taken off the end rather
+        # than counted back from it.
+        #
+        # A match pairing a comment with its neighbour carries no comment of its
+        # own to answer with: it was asked for the pairing, which `following`
+        # has already read out of it.
+        def region_from(captures, following)
           text = nil
           close = nil
           captures.each do |capture|
-            if capture.name == CLOSE
-              close = capture
-            else
-              text = capture
-            end
+            close = capture if capture.name == CLOSE
+            text = capture if capture.name == Nodes::FOUND
           end
+          return nil if text.nil?
+
           said = close.nil? ? text.text : text.text.delete_suffix(close.text)
-          Source::Region.new(text.line, said)
+          Source::Region.new(text.line, said, following[text.start])
         end
 
         def captured(source, query, where)

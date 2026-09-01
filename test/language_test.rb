@@ -25,6 +25,12 @@ def spell(regions)
   regions.map { |region| "#{region.line}:#{region.text}" }
 end
 
+# What each region stands next to, which is the reading's other answer about a
+# comment and the one a claim turns on.
+def standing(regions)
+  regions.map { |region| "#{region.line}:#{region.followed_by}" }
+end
+
 # An identifier is a spelling of a concept rather than the concept's name, so
 # `Signed` is declared in this file and appears in none of the regions.
 # @behavior L-001
@@ -36,8 +42,8 @@ puts "--- a file no language claims answers entire ---"
 p spell(LANGUAGES.comments_in(PROSE, "overview.md")).length
 
 # @behavior L-003
-puts "--- and offers nowhere for a claim to sit ---"
-p LANGUAGES.attached_comments_in(PROSE, "overview.md")
+puts "--- where every line stands in front of more of the same ---"
+p standing(LANGUAGES.comments_in(PROSE, "overview.md")).uniq
 
 # A name is spelled the way one language spells it, so which reads the file is
 # the specification's to say rather than the filename's to imply.
@@ -52,22 +58,22 @@ puts "--- what this build carries ---"
 p LANGUAGES.carries?("ruby")
 p LANGUAGES.carries?("cobol")
 
-# The claims sit in a class body, a method body and a block comment, and all
-# three are offered — while the comment at the end of `verify_test.rb`, with
-# nothing after it, is not.
+# The claims sit in a class body, a method body and a block comment, and every
+# one of them stands in front of code — while the comment at the end of
+# `verify_test.rb` stands in front of nothing.
 # @behavior L-005 L-006
-puts "--- where a claim could sit ---"
-p spell(LANGUAGES.attached_comments_in(
+puts "--- what each comment stands next to ---"
+p standing(LANGUAGES.comments_in(
   "test/fixtures/behavior/test/init_test.rb", "init_test.rb"
-)).length
-p spell(LANGUAGES.attached_comments_in(
+))
+p standing(LANGUAGES.comments_in(
   "test/fixtures/behavior/test/verify_test.rb", "verify_test.rb"
 ))
 
 # @behavior L-007
 puts "--- source the grammar cannot read ---"
 begin
-  LANGUAGES.attached_comments_in("test/fixtures/behavior/test/broken.rb", "broken.rb")
+  LANGUAGES.comments_in("test/fixtures/behavior/test/broken.rb", "broken.rb")
 rescue Sumitsubo::Source::Language::Error => e
   puts e.message
 end
@@ -76,19 +82,20 @@ end
 RUST = "test/fixtures/definitions/sample.rs"
 
 # What Ruby spells with one node Rust splits into two, and a doc comment is a
-# line comment carrying a marker. The block comment at the end of the file has
-# nothing after it, so it is a comment and not somewhere a claim could sit.
+# line comment carrying a marker. The block comment at the end of the file
+# stands in front of nothing, so it is a comment and nowhere a claim could sit.
 # @behavior L-010
 puts "--- a second language reads its own comments ---"
 p spell(LANGUAGES.comments_in(RUST, "sample.rs")).length
-p spell(LANGUAGES.attached_comments_in(RUST, "sample.rs")).length
+p standing(LANGUAGES.comments_in(RUST, "sample.rs")).last
 
 # A block comment ends with the delimiter Rust required rather than with
 # something a person wrote, so a region stops before it. The em dash is what
-# holds that to characters: counted in bytes it would cut two short.
+# holds that to characters: counted in bytes it would cut two short, which is
+# why the one carrying it is the region asked for rather than the last.
 # @behavior L-015
 puts "--- a block comment stops before its own closing delimiter ---"
-p spell(LANGUAGES.attached_comments_in(RUST, "sample.rs")).last
+p spell(LANGUAGES.comments_in(RUST, "sample.rs")).find { |said| said.include?("—") }
 
 # A name is the path the file itself carries: an `impl` says how what is inside
 # it is reached without declaring the type, a `mod` and a `trait` do both.
