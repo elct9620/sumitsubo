@@ -24,9 +24,9 @@ module Sumitsubo
     # A glossary writes them in sections and answers for all of them at once,
     # where a feature and a definition each answer for their own.
     #
-    # The includes arrive as they were written rather than as bare globs, so
-    # one covering nothing answers at its own line without the specification
-    # being read a second time to find it.
+    # The includes arrive as they were written rather than as bare patterns,
+    # so one covering nothing answers at its own line without the
+    # specification being read a second time to find it.
     Covers = Data.define(:path, :includes)
   end
 end
