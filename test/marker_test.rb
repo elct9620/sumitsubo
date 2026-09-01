@@ -25,7 +25,7 @@ end
 
 # A region stands in front of code unless the case says otherwise, since what
 # each one stands next to is the reading's answer and not this one's subject.
-def region(line, text, followed_by = Sumitsubo::Source::Region::SOURCE_CODE)
+def region(line, text, followed_by = Sumitsubo::Source::Region::CODE)
   Sumitsubo::Source::Region.new(line, text, followed_by)
 end
 
@@ -100,7 +100,7 @@ claims("src/order.rb", BEHAVIOR, [
 puts "--- a claim reaches code through the comments after it, or reaches none ---"
 claims("src/order.rb", BEHAVIOR, [
   region(2, "# @behavior G-007", Sumitsubo::Source::Region::COMMENT),
-  region(3, "# @behavior G-008", Sumitsubo::Source::Region::SOURCE_CODE),
+  region(3, "# @behavior G-008", Sumitsubo::Source::Region::CODE),
   region(6, "# @behavior G-009", Sumitsubo::Source::Region::COMMENT),
   region(7, "# @behavior G-010", Sumitsubo::Source::Region::NOTHING)
 ]).each { |line| puts line }
@@ -110,6 +110,6 @@ claims("src/order.rb", BEHAVIOR, [
 # @behavior M-012
 puts "--- and says so for every keyword on the line ---"
 claims("src/routes.rb", ["@command", "@route"], [
-  region(2, "# @command verify", Sumitsubo::Source::Region::SOURCE_CODE),
+  region(2, "# @command verify", Sumitsubo::Source::Region::CODE),
   region(4, "# @command init @route GET /users", Sumitsubo::Source::Region::NOTHING)
 ]).each { |line| puts line }

@@ -51,7 +51,7 @@ module Sumitsubo
         found = {}
         reaches = false
         comments.reverse.each do |comment|
-          reaches = comment.followed_by == Source::Region::SOURCE_CODE ||
+          reaches = comment.followed_by == Source::Region::CODE ||
                     (comment.followed_by == Source::Region::COMMENT && reaches)
           found[comment.line] = reaches
         end

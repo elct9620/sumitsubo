@@ -28,12 +28,7 @@ module Sumitsubo
       # that has none of the first — prose, a comment for its whole length —
       # still answers these, because what a claim can attach to is one question
       # everywhere.
-      #
-      # The first is spelled out because this compiler keeps constant names
-      # across the whole program: a second `CODE` anywhere takes the first one
-      # away, and `Specification::Block` had it. It reads as the glossary spells
-      # it either way.
-      SOURCE_CODE = "code"
+      CODE = "code"
       COMMENT = "comment"
       NOTHING = "nothing"
 

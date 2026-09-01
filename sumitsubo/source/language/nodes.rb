@@ -66,7 +66,7 @@ module Sumitsubo
             next if beside.nil?
 
             found[byte_of(captures, BEFORE)] =
-              found[beside].nil? ? Source::Region::SOURCE_CODE : Source::Region::COMMENT
+              found[beside].nil? ? Source::Region::CODE : Source::Region::COMMENT
           end
           found
         end

@@ -67,8 +67,8 @@ def gathered(found, one)
 
   holding = found[-1]
   return holding.cells.push(one) if one.kind == Sumitsubo::Specification::Block::CELL && holding.kind == Sumitsubo::Specification::Block::ROW
-  return holding.language = one.text if one.kind == "language" && holding.kind == BLOCK::CODE
-  return holding.text = one.text if one.kind == "content" && holding.kind == BLOCK::CODE
+  return holding.language = one.text if one.kind == "language" && holding.kind == Sumitsubo::Specification::Block::CODE
+  return holding.text = one.text if one.kind == "content" && holding.kind == Sumitsubo::Specification::Block::CODE
 
   found.push(one)
 end
@@ -367,7 +367,7 @@ class Spelling
   end
 end
 
-def fence(line, text) = BLOCK.new(BLOCK::CODE, 0, line, "", nil, [], [])
+def fence(line, text) = BLOCK.new(Sumitsubo::Specification::Block::CODE, 0, line, "", nil, [], [])
 def language(line, text) = BLOCK.new("language", 0, line, text, nil, [], [])
 def content(line, text) = BLOCK.new("content", 0, line, text, nil, [], [])
 
