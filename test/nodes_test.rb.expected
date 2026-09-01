@@ -6,3 +6,7 @@
 --- the nodes holding one, outermost first ---
   go: Outer > Inner
   away: Outer
+--- what each comment stands next to ---
+  0: comment
+  10: code
+  40: nothing

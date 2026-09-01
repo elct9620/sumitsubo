@@ -9,10 +9,11 @@ require "sumitsubo/source/language/nodes"
 Capture = Struct.new(:match, :name, :line, :last, :start, :finish, :text)
 
 # A capture as the binding hands one over. The lines a node spans are what the
-# tree measured, stood in for here by the newlines in the slice; the bytes go
-# unread, since nothing in this file looks inside a capture.
-def capture(match, name, line, text)
-  Capture.new(match, name, line, line + text.count("\n"), 0, text.length, text)
+# tree measured, stood in for here by the newlines in the slice; the byte it
+# begins at is what tells two captures of one file apart, so it is written out
+# where a case turns on it and stands at zero where none does.
+def capture(match, name, line, text, start = 0)
+  Capture.new(match, name, line, line + text.count("\n"), start, start + text.length, text)
 end
 
 def node(kind, text, first, last)
@@ -54,3 +55,19 @@ scopes = [node("scope", "Inner", 2, 5), node("scope", "Outer", 1, 8), node("scop
   holding = Sumitsubo::Source::Language::Nodes.enclosing(scopes, held).map { |scope| scope.text }
   puts "  #{held.text}: #{holding.join(" > ")}"
 end
+
+# A query has no way to ask what a node is not, so which neighbours are
+# themselves comments is answered by the set of comments the same query found —
+# the byte each begins at being what says whether a neighbour is one of them.
+# A comment with no neighbour captured at all ends its parent.
+# @behavior D-021
+puts "--- what each comment stands next to ---"
+COMMENTS = [
+  [capture(1, "any", 1, "# one", 0)],
+  [capture(2, "any", 2, "# two", 10)],
+  [capture(3, "any", 4, "# three", 40)],
+  [capture(4, "text", 1, "# one", 0), capture(4, "next", 2, "# two", 10)],
+  [capture(5, "text", 2, "# two", 10), capture(5, "next", 3, "def go", 20)]
+]
+standing = Sumitsubo::Source::Language::Nodes.following(COMMENTS)
+standing.keys.sort.each { |at| puts "  #{at}: #{standing[at]}" }

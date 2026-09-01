@@ -170,3 +170,11 @@ unasked. One carrying no block encloses nothing, so it declares nothing either.
 | Given | a constant assigned a call carrying no block |
 | When | the file is read for what it declares |
 | Then | the constant is not among what the file declares |
+
+## `D-021` What each comment stands next to
+
+| Step | Statement |
+| --- | --- |
+| Given | captures naming every comment, and pairs naming what stands beside two of them |
+| When | the captures are read for what each comment stands next to |
+| Then | the one beside a comment answers a comment, the one beside a definition answers code, and the one with no pair answers nothing |
