@@ -16,11 +16,6 @@ module Sumitsubo
     # The walk is this tool's rather than the glob's: one traversal answers
     # every pattern rather than one traversal each, and a directory the project
     # excluded is never looked inside.
-    #
-    # This compiler's glob would not have served either — a `*` between two
-    # separators, which a workspace pattern is written with, answers nothing and
-    # raises nothing. That is a defect rather than what a glob is, so it is a
-    # sentence to drop once it answers, not a second reason for the walk.
     module Scope
       def self.of(base, patterns, exclusion)
         found = []
