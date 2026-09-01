@@ -67,7 +67,7 @@ end
 # An include is anchored to the base and names files, so the whole path has to
 # match. `crates/*/src` is the shape a workspace is written in.
 # @behavior P-007
-puts "--- what an include reaches ---"
+puts "--- the whole path has to match ---"
 selected("src/main.rs")
 selected("crates/*/src/*.rs")
 selected("a/**/c.rs")

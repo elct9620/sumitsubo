@@ -14,7 +14,7 @@
   !crates/one/run.log *.log -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs
 --- a rule matching nothing takes nothing out ---
   nowhere/ -> src/main.rs target/debug/build.rs crates/one/src/lib.rs crates/one/target/debug/gen.rs crates/one/target docs/target.md a/b/c.rs a/b/x/y/c.rs run.log crates/one/run.log
---- what an include reaches ---
+--- the whole path has to match ---
   src/main.rs -> src/main.rs
   crates/*/src/*.rs -> crates/one/src/lib.rs
   a/**/c.rs -> a/b/c.rs a/b/x/y/c.rs

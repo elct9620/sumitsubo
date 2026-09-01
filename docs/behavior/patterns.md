@@ -59,7 +59,7 @@ files a specification answers for.
 | When | the paths are asked whether they are left out |
 | Then | every one of them stands |
 
-## `P-007` What an include reaches
+## `P-007` The whole path has to match
 
 | Step | Statement |
 | --- | --- |
