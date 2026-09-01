@@ -157,7 +157,10 @@ word in front, which is the whole of `<mechanism>/<check>`.
  nothing                      │            │ (C, B) ✕    │
 ──────────────────────────────┼────────────┼─────────────┼─────────────
  the source names nothing     │     —      │ nameless    │     —
- at all                       │            │ (C) ✕       │
+ at all                       │            │ (C, B) ✕    │
+──────────────────────────────┼────────────┼─────────────┼─────────────
+ the source claims it where   │     —      │ dangling    │     —
+ there is no code to claim it │            │ (C, B) ✕    │
 ──────────────────────────────┼────────────┼─────────────┼─────────────
  it points at something,      │     —      │ misplaced   │     —
  outside the boundary         │            │ (C, B) ✕    │
@@ -207,7 +210,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │  source/repository.rb                         everything one run read
 │  │  source/language.rb                           port
 │  │  source/language/{ruby,rust,prose}.rb         adapter
-│  │  source/language/nodes.rb                     captures → declarations
+│  │  source/language/nodes.rb                     captures → what no language owns
 │  │  source/marker.rb                             answers Source::Claim
 │  │  source/scope.rb  source/patterns.rb          reach
 │  │
