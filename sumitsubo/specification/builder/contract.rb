@@ -60,9 +60,10 @@ module Sumitsubo
 
         # The same separators as the bytes they are. A name may be written in
         # characters a byte offset and a character index disagree about, and as
-        # of 2026-09-01 this compiler answers `String#length` by the byte for a
-        # name a reading carried out of its parser, so the two are only safe to
-        # mix when both are bytes. `T-042` holds that.
+        # of 2026-09-01 this compiler answers `String#length` by the byte where
+        # it could not narrow the receiver to `String`, which is what the name
+        # reaching here is given. Mixing the two is only safe in bytes, and
+        # `T-042` holds that.
         #
         # When it answers characters again, this constant goes and `encloses?`
         # asks `SEPARATORS.include?(key[name.length])` instead.
