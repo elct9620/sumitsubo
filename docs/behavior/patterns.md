@@ -83,21 +83,13 @@ files a specification answers for.
 | When | it is read for the rules it holds |
 | Then | neither the remark nor the blank line is one |
 
-## `P-010` The shapes in use
+## `P-010` What each shape an include is written in reaches
 
 | Step | Statement |
 | --- | --- |
-| Given | every shape the includes of two real projects take |
+| Given | every shape the includes of two real projects take, and three nobody has written yet |
 | When | each is matched against a tree written out here |
-| Then | it answers what the glob this replaces answered, which is what licensed taking it over |
-
-## `P-011` Shapes that had no answer before
-
-| Step | Statement |
-| --- | --- |
-| Given | a well-formed pattern the glob this replaces answered nothing for |
-| When | it is matched |
-| Then | the matcher answers, and what it answers is what a later change would break |
+| Then | each reaches the files it names, a trailing `**` reaching every depth the way a `.gitignore` reads one |
 
 ## `P-012` A hidden directory is the walk's to rule on
 

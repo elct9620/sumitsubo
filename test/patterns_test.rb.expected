@@ -24,20 +24,19 @@
   run.log -> run.log
 --- what a .gitignore holds, less what it wrote for a reader ---
 ["/target/", "vendor/", "!vendor/keep.rs"]
---- the shapes in use answer the same either way ---
-  same  CLAUDE.md -> CLAUDE.md
-  same  README.md -> README.md
-  same  .spec/glossary.md -> .spec/glossary.md
-  same  .spec/contract/*.json -> .spec/contract/cli.json
-  same  .spec/behavior/*.md -> .spec/behavior/verify.md
-  same  sumitsubo/**/*.rb -> sumitsubo/command/help.rb sumitsubo/config.rb sumitsubo/source/language/ruby.rb
-  same  sumitsubo/command/*.rb -> sumitsubo/command/help.rb
-  same  test/*.rb -> test/verify_test.rb
-  same  test/verify_test.rb -> test/verify_test.rb
-  same  docs/**/*.md -> docs/spec/glossary.md
-  same  crates/**/*.rs -> crates/one/build.rs crates/one/src/lib.rs
-  same  lib/**/*.rb -> lib/kobako.rb
---- shapes that had no answer before ---
+--- what each shape an include is written in reaches ---
+  CLAUDE.md -> CLAUDE.md
+  README.md -> README.md
+  .spec/glossary.md -> .spec/glossary.md
+  .spec/contract/*.json -> .spec/contract/cli.json
+  .spec/behavior/*.md -> .spec/behavior/verify.md
+  sumitsubo/**/*.rb -> sumitsubo/command/help.rb sumitsubo/config.rb sumitsubo/source/language/ruby.rb
+  sumitsubo/command/*.rb -> sumitsubo/command/help.rb
+  test/*.rb -> test/verify_test.rb
+  test/verify_test.rb -> test/verify_test.rb
+  docs/**/*.md -> docs/spec/glossary.md
+  crates/**/*.rs -> crates/one/build.rs crates/one/src/lib.rs
+  lib/**/*.rb -> lib/kobako.rb
   crates/*/src/**/*.rs -> crates/one/src/lib.rs
   sumitsubo/**/**/*.rb -> sumitsubo/command/help.rb sumitsubo/config.rb sumitsubo/source/language/ruby.rb
   sumitsubo/** -> sumitsubo/command/help.rb sumitsubo/config.rb sumitsubo/source/language/ruby.rb

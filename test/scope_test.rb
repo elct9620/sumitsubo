@@ -78,8 +78,8 @@ puts "  nowhere/*.rb nobody could have meant: #{Sumitsubo::Source::Scope.refused
 puts "--- what an include covers ---"
 puts "  #{Sumitsubo::Source::Scope.of(base, ["**/*.rb"], []).sort.join(" ")}"
 puts "  #{Sumitsubo::Source::Scope.of(base, ["**/*.rb"], Sumitsubo::Source::Patterns.read(["billing/"])).sort.join(" ")}"
-# The glob this walk replaces cannot match a directory in the middle of a
-# path, which is how a workspace writes an include.
+# A wildcard standing for a directory in the middle of a path is how a
+# workspace writes an include.
 # @behavior W-007
 puts "  #{Sumitsubo::Source::Scope.of(base, ["app/*/*.rb"], []).sort.join(" ")}"
 

@@ -31,8 +31,7 @@ puts "--- a directory named at any depth ---"
 against("target/")
 
 # The separator is what says where to look from. `/target/` is the one at the
-# base; `crates/*/target/` is one per crate, which is the shape Dir.glob cannot
-# spell in an include.
+# base, and `crates/*/target/` is one per crate.
 # @behavior P-002
 puts "--- anchored by a separator at the start or the middle ---"
 against("/target/")
@@ -66,8 +65,7 @@ def selected(pattern)
 end
 
 # An include is anchored to the base and names files, so the whole path has to
-# match. `crates/*/src` is the shape a workspace is written in, and the one
-# Dir.glob answers nothing for.
+# match. `crates/*/src` is the shape a workspace is written in.
 # @behavior P-007
 puts "--- what an include reaches ---"
 selected("src/main.rs")
@@ -94,23 +92,10 @@ puts Sumitsubo::Source::Patterns.patterns_in(<<~TEXT).inspect
   !vendor/keep.rs
 TEXT
 
-# --- parity with Dir.glob -----------------------------------------------
+# --- what an include reaches --------------------------------------------
 #
-# Taking `include` over means answering what Dir.glob answered. The rule this
-# holds the matcher to: what Dir.glob matched, the matcher matches; where
-# Dir.glob answered nothing for a well-formed pattern, the matcher answers.
-#
-# The tree is built here rather than pointed at, so the ground truth is the
-# list this file wrote and not whatever the repository happens to hold.
-
-require "pathname"
-
-root = Pathname.new("/tmp/sumi_parity_test_#{Process.pid}")
-root.rmtree if root.exist?
-back = Dir.pwd
-root.mkpath
-Dir.chdir(root)
-base = Pathname.pwd
+# The tree is written here rather than pointed at, so the ground truth is the
+# list this file holds and not whatever the repository happens to carry.
 
 TREE = [
   "CLAUDE.md",
@@ -128,25 +113,19 @@ TREE = [
   "crates/one/src/lib.rs",
   "crates/one/build.rs"
 ]
-TREE.each do |path|
-  file = base / path
-  file.parent.mkpath
-  file.write("")
-end
-
-def globbed(base, pattern)
-  base.glob(pattern).map { |path| "#{path.relative_path_from(base)}" }.sort
-end
 
 def matched(pattern)
   rule = Sumitsubo::Source::Patterns.read([pattern])[0]
   TREE.select { |path| Sumitsubo::Source::Patterns.selects?(rule, path) }.sort
 end
 
-# Every shape the two projects' 23 include patterns take. Same answer both
-# ways is what licenses the change.
+# Every shape the two projects' includes take, and three nobody has written
+# yet. A trailing `**` is the one place the two forms an include could be read
+# against part company: a `.gitignore` reads it as everything inside, at any
+# depth, and a glob reads it as one level. An include takes the form a
+# `.gitignore` line takes, so `sumitsubo/**` reaches every depth.
 # @behavior P-010
-puts "--- the shapes in use answer the same either way ---"
+puts "--- what each shape an include is written in reaches ---"
 [
   "CLAUDE.md",
   "README.md",
@@ -159,29 +138,15 @@ puts "--- the shapes in use answer the same either way ---"
   "test/verify_test.rb",
   "docs/**/*.md",
   "crates/**/*.rs",
-  "lib/**/*.rb"
-].each do |pattern|
-  glob = globbed(base, pattern)
-  mine = matched(pattern)
-  puts "  #{glob == mine ? "same" : "DIFFERS"}  #{pattern} -> #{mine.join(" ")}"
-end
-
-# The other side of the rule: well-formed patterns the glob this replaces
-# never answered, so nobody could write them. What that glob does with them is
-# not asserted here — it is upstream's behavior, and it differs between the
-# compiler and the CRuby run that takes this snapshot. What is asserted is the
-# answer this matcher gives, which is what a later change would break.
-# @behavior P-011
-puts "--- shapes that had no answer before ---"
-[
+  "lib/**/*.rb",
   "crates/*/src/**/*.rs",
   "sumitsubo/**/**/*.rb",
   "sumitsubo/**"
 ].each { |pattern| puts "  #{pattern} -> #{matched(pattern).join(" ")}" }
 
 # The matcher has no opinion about hidden directories, and answers inside one.
-# Skipping them is the walk's, which is where the glob this replaces keeps it
-# too, so this line is what the walk has to go on to disagree with.
+# Skipping them is the walk's, which is where `Dir.glob` keeps it too, so this
+# line is what the walk has to go on to disagree with.
 # @behavior P-012
 puts "--- inside a hidden directory, which the walk and not the matcher rules on ---"
 puts "  **/*.json -> #{matched("**/*.json").join(" ")}"
@@ -197,6 +162,3 @@ WIDE = ["說明.rb", "說.rb", "前記.rb", "abc.rb"]
   found = WIDE.select { |path| Sumitsubo::Source::Patterns.selects?(rule, path) }
   puts "  #{pattern} -> #{found.join(" ")}"
 end
-
-Dir.chdir(back)
-root.rmtree
