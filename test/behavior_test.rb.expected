@@ -49,3 +49,6 @@ test/fixtures/behavior/anonymous/verify.md:7 declares a scenario whose heading d
   test/fixtures/behavior/nowhere/spec.md:7 include nowhere/*.rb covers no file; the pattern is wrong or what it pointed at is gone
 --- and the claim that could not witness it ---
   test/fixtures/behavior/test/verify_test.rb:9 I-001 is claimed outside what test/fixtures/behavior/.spec/behavior/init.md includes
+--- a claim naming no scenario, apart from one resolving to none ---
+  test/fixtures/behavior/test/verify_test.rb:13 G-404 resolves to no scenario
+  test/fixtures/behavior/test/verify_test.rb:16 @behavior names no scenario

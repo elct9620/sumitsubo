@@ -13,5 +13,8 @@ puts "exit=#{cli.run(["verify"])}"
 # @behavior G-404
 puts "a claim resolving to nothing is still read"
 
+# @behavior
+puts "a marker written with nothing behind it names no scenario"
+
 # @behavior G-999
 # a note standing between the claim and the end of the file

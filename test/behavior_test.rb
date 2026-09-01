@@ -163,3 +163,23 @@ Sumitsubo::Check::Claim::Misplaced.new(Sumitsubo::Mechanism::Behavior::MISPLACED
   .run(claims, declaring, reach).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
+
+# A marker with nothing behind it names no scenario at all, which is a
+# different thing to say than an id that resolves to none — so the claim is
+# still made, under the empty id, and the two are answered apart.
+# @behavior B-016
+puts "--- a claim naming no scenario, apart from one resolving to none ---"
+mixed = [
+  Sumitsubo::Behavior::Claim.new(
+    path: "test/fixtures/behavior/test/verify_test.rb", line: 13, id: "G-404", reaches_code: true
+  ),
+  Sumitsubo::Behavior::Claim.new(
+    path: "test/fixtures/behavior/test/verify_test.rb", line: 16, id: "", reaches_code: true
+  )
+]
+(Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Behavior::UNRESOLVED, "scenario")
+   .run(Sumitsubo::Behavior.named(mixed), Sumitsubo::Behavior.stated_in(features)) +
+ Sumitsubo::Check::Claim::Nameless.new(Sumitsubo::Mechanism::Behavior::NAMELESS, "scenario")
+   .run(Sumitsubo::Behavior.nameless(mixed))).each do |finding|
+  puts "  #{finding.place.spoken} #{finding.message}"
+end

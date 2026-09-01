@@ -41,8 +41,10 @@ module Sumitsubo
         Place.new(path: path, line: line)
       end
 
+      # A claim with no id says the marker instead: what a reader has to be
+      # told is that the word was written with nothing behind it.
       def said
-        id
+        id.empty? ? MARKER : id
       end
     end
 
@@ -100,12 +102,39 @@ module Sumitsubo
     def self.claimed_in(reach, source)
       found = []
       source.claims(scope(reach), [MARKER]).each do |claim|
-        ids_in(claim.text).each do |id|
+        named_in(claim).each do |id|
           found.push(Claim.new(
             path: claim.path, line: claim.line, id: id, reaches_code: claim.reaches_code
           ))
         end
       end
+      found
+    end
+
+    # The ids one claim carries, or the empty one where it carries none. A
+    # marker written with nothing behind it still claims: dropping it would be
+    # this mechanism deciding nobody meant to write the word.
+    def self.named_in(claim)
+      found = ids_in(claim.text)
+      found.empty? ? [""] : found
+    end
+
+    # A claim carrying nothing after the marker names no scenario at all, which
+    # is a different thing to say than an id that resolves to none, so the two
+    # are answered apart.
+    def self.nameless(claims)
+      found = []
+      claims.each do |claim|
+        next unless claim.id.empty?
+
+        found.push(Check::Made.new(key: claim.key, place: claim.place, said: claim.said))
+      end
+      found
+    end
+
+    def self.named(claims)
+      found = []
+      claims.each { |claim| found.push(claim) unless claim.id.empty? }
       found
     end
 

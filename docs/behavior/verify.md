@@ -270,3 +270,11 @@ in the order they happened.
 | Given | a test file ending on a claim and a note, with nothing after them |
 | When | `sumi verify` runs |
 | Then | the claim is reported at the line it was written on, as standing in front of nothing |
+
+## `V-031` A marker with nothing behind it
+
+| Step | Statement |
+| --- | --- |
+| Given | a test file carrying the marker with no id after it |
+| When | `sumi verify` runs |
+| Then | the marker is reported as naming no scenario, rather than as one resolving to none |

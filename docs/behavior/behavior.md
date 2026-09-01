@@ -115,3 +115,11 @@ is fixed in one pass.
 | When | the includes are asked what they cover |
 | Then | the include answers at the line of the list item that wrote it |
 
+## `B-016` A claim naming no scenario
+
+| Step | Statement |
+| --- | --- |
+| Given | a claim carrying an id that resolves to nothing |
+| Given | a claim carrying no id at all |
+| When | the claims are compared against the scenarios |
+| Then | the first answers as resolving to none and the second as naming none |

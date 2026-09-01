@@ -40,7 +40,8 @@ exit=1
 --- claims that resolve to nothing a run can compare against ---
 test/verify_test.rb:10 I-001 is claimed outside what .spec/behavior/init.md includes
 test/verify_test.rb:13 G-404 resolves to no scenario
-test/verify_test.rb:16 G-999 stands in front of nothing; a scenario is claimed in the comment in front of the code implementing it
+test/verify_test.rb:16 @behavior names no scenario
+test/verify_test.rb:19 G-999 stands in front of nothing; a scenario is claimed in the comment in front of the code implementing it
 0 differences
 exit=2
 --- a mechanism that cannot be read leaves the others still answering ---

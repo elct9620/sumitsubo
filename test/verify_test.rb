@@ -93,7 +93,9 @@ Dir.chdir(back)
 # The file also ends on a run of comments, one of them a claim. It stands in
 # front of nothing, so it witnesses nothing and says so where it was written
 # rather than leaving the scenario reported as claimed nowhere.
-# @behavior V-006 V-023 V-030
+# One of them carries no id at all, which names no scenario rather than naming
+# one that resolves to none.
+# @behavior V-006 V-023 V-030 V-031
 puts "--- claims that resolve to nothing a run can compare against ---"
 Dir.chdir("test/fixtures/behavior")
 puts "exit=#{cli.run(["verify"])}"

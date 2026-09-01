@@ -466,6 +466,10 @@ module Sumitsubo
             reaches none, and a run reports it where it was written rather
             than counting it as coverage.
 
+            The word with nothing behind it names no scenario, which a run
+            reports as its own thing: an id that resolves to none is a
+            different mistake from writing no id.
+
         Findings
             .spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
                 Declared, and no test this feature reaches claims it. Write the

@@ -14,6 +14,7 @@ module Sumitsubo
       UNCLAIMED = "behavior/unclaimed"
       MISPLACED = "behavior/misplaced"
       UNRESOLVED = "behavior/unresolved"
+      NAMELESS = "behavior/nameless"
       DANGLING = "behavior/dangling"
 
       def initialize
@@ -21,6 +22,7 @@ module Sumitsubo
         @unclaimed = Check::Claim::Unclaimed.new(UNCLAIMED)
         @misplaced = Check::Claim::Misplaced.new(MISPLACED)
         @unresolved = Check::Claim::Unresolved.new(UNRESOLVED, "scenario")
+        @nameless = Check::Claim::Nameless.new(NAMELESS, "scenario")
         @dangling = Check::Claim::Dangling.new(DANGLING, "scenario")
       end
 
@@ -63,7 +65,8 @@ module Sumitsubo
 
         @unclaimed.run(stated, witnessing).each { |one| findings.add(one) }
         @misplaced.run(reaching, declaring, reach).each { |one| findings.add(one) }
-        @unresolved.run(reaching, stated).each { |one| findings.add(one) }
+        @unresolved.run(Sumitsubo::Behavior.named(reaching), stated).each { |one| findings.add(one) }
+        @nameless.run(Sumitsubo::Behavior.nameless(reaching)).each { |one| findings.add(one) }
         @dangling.run(Check::Claim.dangling(claims)).each { |one| findings.add(one) }
       end
     end

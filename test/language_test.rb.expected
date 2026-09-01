@@ -11,7 +11,7 @@ true
 false
 --- what each comment stands next to ---
 ["2:code", "4:code", "9:code"]
-["1:comment", "2:code", "7:code", "10:code", "13:code", "16:comment", "17:nothing"]
+["1:comment", "2:code", "7:code", "10:code", "13:code", "16:code", "19:comment", "20:nothing"]
 --- source the grammar cannot read ---
 broken.rb: cannot be parsed by the ruby grammar
 --- a second language reads its own comments ---
