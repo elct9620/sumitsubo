@@ -60,8 +60,12 @@ module Sumitsubo
 
         # The same separators as the bytes they are. A name may be written in
         # characters a byte offset and a character index disagree about, and as
-        # of 2026-09-01 Spinel answers `String#length` by the byte, so the two
-        # are only safe to mix when both are bytes. `T-042` holds that.
+        # of 2026-09-01 this compiler answers `String#length` by the byte for a
+        # name a reading carried out of its parser, so the two are only safe to
+        # mix when both are bytes. `T-042` holds that.
+        #
+        # When it answers characters again, this constant goes and `encloses?`
+        # asks `SEPARATORS.include?(key[name.length])` instead.
         SEPARATOR_BYTES = SEPARATORS.map { |one| one.getbyte(0) }
 
         def initialize(path, source)
