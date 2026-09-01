@@ -133,10 +133,10 @@ module Sumitsubo
       end
 
       # Every file under +root+, relative to the base. A hidden entry is passed
-      # over and a symlinked directory is not descended: the first is what the
-      # glob this replaces did, the second is what keeps a link back up the tree
-      # from looping. A root nothing wrote answers empty rather than raising,
-      # the way an include reaching nothing has always answered.
+      # over, which is what a glob does with one. A symlinked directory is not
+      # descended: a link back up the tree has no end, so refusing one is what
+      # lets the walk finish at all. A root nothing wrote answers empty rather
+      # than raising, the way an include reaching nothing has always answered.
       def self.under(base, root, exclusion, pruned)
         start = root == "" ? base : base / root
         found = []
