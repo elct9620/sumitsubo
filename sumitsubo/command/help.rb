@@ -521,13 +521,14 @@ module Sumitsubo
             one pass.
 
         What a run reads
-            `include` and `exclude` are globs read against the directory
-            holding the .sumi.json: `*` and `?` within a name, `**` for
-            however many directories, one in the middle included - so
-            `crates/*/src/**/*.rs` is each crate's own source. Character
-            classes and escapes are read by neither, a wildcard never reaches
-            a hidden file, and a directory linking back up the tree is not
-            followed.
+            `include` and `exclude` take the form a .gitignore line takes,
+            read against the directory holding the .sumi.json: `*` and `?`
+            within a name, `**` for however many directories, one in the
+            middle included - so `crates/*/src/**/*.rs` is each crate's own
+            source. A trailing `**` reaches every depth, as a .gitignore
+            reads one and a glob does not. Character classes and escapes
+            are read by neither, a wildcard never reaches a hidden file,
+            and a directory linking back up the tree is not followed.
 
             An include is where it says: `README.md` is the one at the top,
             `**/README.md` is every one. An exclusion with no separator

@@ -91,6 +91,7 @@ Where the specifications live, what a run touches, and what it answers.
 A run reads the nearest `.sumi.json` at or above where it started, and a
 project that has said nothing gets the defaults.
 
-`include` and `exclude` are one glob form read two ways, and the `.gitignore`
-beside that file is read as well. An excluded directory is never looked inside;
-an include covering no file at all refuses to certify.
+`include` and `exclude` are one form read two ways, written the way a
+`.gitignore` line is written, and the `.gitignore` beside that file is read as
+well. An excluded directory is never looked inside; an include covering no file
+at all refuses to certify.
