@@ -129,9 +129,14 @@ Glossary and Contract answer for the implementation, Behavior for the tests.
    a document read into blocks
  behavior/form.md    ─────────────────────►   test/markdown_test.rb
    what a form makes of them
+ behavior/language.md ────────────────────►   test/language_test.rb
+   which reading answers for a file
+ behavior/language_<lang>.md ─────────────►   test/language_<lang>_test.rb
+   what that one reading makes of it           one pair per language
  behavior/…            ────────────────────►  test/…_test.rb
-   fourteen features, reaching all             never the implementation
-   fifteen tests
+   seventeen features, reaching all            never the implementation
+   eighteen tests, each include naming
+   the one test that witnesses it
 ```
 
 ## The checks, grouped by the Source they consume

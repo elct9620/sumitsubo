@@ -1,0 +1,25 @@
+--- a second language reads its own comments ---
+6
+"51:nothing"
+--- a block comment stops before its own closing delimiter ---
+"48:/* @contract audit::Entry::at — a claim in a block comment. "
+--- and spells a name the way it writes a path ---
+  6 Charge
+  12 Charge::settle
+  16 Charge::open
+  21 Outcome
+  26 Ledger
+  27 Ledger::record
+  31 Charge::record
+  34 audit
+  35 audit::LIMIT
+  37 audit::trail
+  39 audit::Entry
+  42 audit::Entry::at
+  49 recorded
+--- with the receiver among its parameters ---
+  Charge::settle(self, positional at)
+  Charge::open(positional amount)
+  Ledger::record(self, positional charge)
+  Charge::record(self, positional charge)
+  audit::Entry::at(self)

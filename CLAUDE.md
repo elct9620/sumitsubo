@@ -108,11 +108,13 @@ The command is `sumi`, shipped as a single native executable.
   `sumitsubo/config.rb` names no mechanism, why no mechanism names a language
   or a format, and why `sumitsubo/source/language/nodes.rb` reaches no grammar — a
   reading brings it captures rather than a path. `require "sumitsubo"` reaches
-  no grammar, so what is written by hand is the six tests that read source or
-  ask for a binding. Where no snapshot is committed the run is compared against CRuby
-  rather than failing, and a test that asserts nothing passes.
+  no grammar, so what is written by hand is the eight tests that read source or
+  ask for a binding. Prose is the one reading a build carries that needs no
+  grammar, so its test is regenerated like any other. Where no snapshot is
+  committed the run is compared against CRuby rather than failing, and a test
+  that asserts nothing passes.
 - `--regen` takes the same file list, so name the test to rewrite — and name
-  only one of the nine. Given none it rewrites every snapshot, and given a
+  only one of the ten. Given none it rewrites every snapshot, and given a
   hand-written one it rewrites that, either way leaving a CRuby backtrace where
   the expectation was. Naming them is not the guard; naming the right ones is.
 - Tests compile at `-O1` and the shipped executable at the compiler's default,
