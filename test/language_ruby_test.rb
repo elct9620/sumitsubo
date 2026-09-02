@@ -27,14 +27,14 @@ end
 
 # An identifier is a spelling of a concept rather than the concept's name, so
 # `Purchase` is declared in this file and appears in none of the regions.
-# @behavior L-001
+# @behavior RB-001
 puts "--- what a person wrote in a source file ---"
 p spell(LANGUAGES.comments_in("test/fixtures/source/ruby/comments.rb", "comments.rb"))
 
 # The claims sit in a class body, a method body and a block comment, and every
 # one of them stands in front of code — while the comment at the end of
 # `trailing.rb` stands in front of nothing.
-# @behavior L-005 L-006
+# @behavior RB-002 RB-003
 puts "--- what each comment stands next to ---"
 p standing(LANGUAGES.comments_in(
   "test/fixtures/source/ruby/nested.rb", "nested.rb"
@@ -43,7 +43,7 @@ p standing(LANGUAGES.comments_in(
   "test/fixtures/source/ruby/trailing.rb", "trailing.rb"
 ))
 
-# @behavior L-007
+# @behavior RB-004
 puts "--- source the grammar cannot read ---"
 begin
   LANGUAGES.comments_in(BROKEN, "broken.rb")
@@ -86,12 +86,12 @@ end
 # What the reading does not carry is declared here too: `Called` answers itself
 # and neither of the methods its calls bring into being, and `Widget` answers
 # itself without the method it mixes in.
-# @behavior D-001 D-002 D-003 D-004 D-007 D-008 D-009 D-010 D-011 D-012 D-013
-# @behavior D-014 D-015 D-019 D-020
+# @behavior RB-005 RB-006 RB-007 RB-008 RB-010 RB-011 RB-012 RB-013 RB-014 RB-015 RB-016
+# @behavior RB-017 RB-018 RB-019 RB-020
 puts "--- what a Ruby file declares ---"
 declares(SAMPLE)
 
-# @behavior D-006
+# @behavior RB-009
 puts "--- and the reading of what it declares refuses it too ---"
 begin
   declares(BROKEN)

@@ -15,7 +15,7 @@ reading a build carries whose test can be regenerated.
 
 - `test/language_prose_test.rb`
 
-## `L-003` What a line of prose stands in front of
+## `PR-001` What a line of prose stands in front of
 
 | Step | Statement |
 | --- | --- |

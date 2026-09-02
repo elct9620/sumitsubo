@@ -26,7 +26,7 @@ end
 # What Ruby spells with one node Rust splits into two, and a doc comment is a
 # line comment carrying a marker. The block comment at the end of the file
 # stands in front of nothing, so it is a comment and nowhere a claim could sit.
-# @behavior L-010
+# @behavior RS-001
 puts "--- a second language reads its own comments ---"
 p spell(LANGUAGES.comments_in(SAMPLE, "sample.rs")).length
 p standing(LANGUAGES.comments_in(SAMPLE, "sample.rs")).last
@@ -35,13 +35,13 @@ p standing(LANGUAGES.comments_in(SAMPLE, "sample.rs")).last
 # something a person wrote, so a region stops before it. The em dash is what
 # holds that to characters: counted in bytes it would cut two short, which is
 # why the one carrying it is the region asked for rather than the last.
-# @behavior L-015
+# @behavior RS-004
 puts "--- a block comment stops before its own closing delimiter ---"
 p spell(LANGUAGES.comments_in(SAMPLE, "sample.rs")).find { |said| said.include?("—") }
 
 # A name is the path the file itself carries: an `impl` says how what is inside
 # it is reached without declaring the type, a `mod` and a `trait` do both.
-# @behavior L-011
+# @behavior RS-002
 puts "--- and spells a name the way it writes a path ---"
 LANGUAGES.declarations_in(SAMPLE, "sample.rs", "rust").each do |name|
   puts "  #{name.line} #{name.name}"
@@ -49,7 +49,7 @@ end
 
 # The receiver is a parameter like any other, carrying the kind word Rust uses
 # for it — which is what tells a method from an associated function.
-# @behavior L-012
+# @behavior RS-003
 puts "--- with the receiver among its parameters ---"
 LANGUAGES.declarations_in(SAMPLE, "sample.rs", "rust").each do |name|
   next if name.shape.nil? || name.shape.params.empty?

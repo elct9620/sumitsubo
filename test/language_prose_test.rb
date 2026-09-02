@@ -19,6 +19,6 @@ end
 
 # Prose has no code for a comment to sit in front of, so saying it puts a claim
 # written here on the same footing as one at the end of a source file.
-# @behavior L-003
+# @behavior PR-001
 puts "--- where every line stands in front of more of the same ---"
 p standing(LANGUAGES.comments_in(PROSE, "overview.md")).uniq

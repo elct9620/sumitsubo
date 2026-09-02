@@ -18,7 +18,7 @@ about a parameter that may be omitted is one this language does not have.
 
 - `test/language_rust_test.rb`
 
-## `L-010` A second language reads its own comments
+## `RS-001` A second language reads its own comments
 
 | Step | Statement |
 | --- | --- |
@@ -27,7 +27,7 @@ about a parameter that may be omitted is one this language does not have.
 | When | the file is read for what a person wrote and for what each comment stands next to |
 | Then | every comment answers, and the one nothing follows says it stands in front of nothing |
 
-## `L-011` A name is the path the file itself carries
+## `RS-002` A name is the path the file itself carries
 
 | Step | Statement |
 | --- | --- |
@@ -35,7 +35,7 @@ about a parameter that may be omitted is one this language does not have.
 | When | the file is read for what it declares |
 | Then | each name answers as the path a reader would write, the blocks holding it in front of it |
 
-## `L-012` The receiver is a parameter like any other
+## `RS-003` The receiver is a parameter like any other
 
 | Step | Statement |
 | --- | --- |
@@ -43,7 +43,7 @@ about a parameter that may be omitted is one this language does not have.
 | When | the file is read for what it declares |
 | Then | the receiver answers among the parameters, carrying the kind word that language uses |
 
-## `L-015` A block comment stops before its own closing delimiter
+## `RS-004` A block comment stops before its own closing delimiter
 
 | Step | Statement |
 | --- | --- |
