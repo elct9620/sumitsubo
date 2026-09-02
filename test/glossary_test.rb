@@ -20,7 +20,7 @@ def reads(path)
 end
 
 back = Dir.pwd
-Dir.chdir("test/fixtures/glossary")
+Dir.chdir("test/fixtures/project/glossary")
 
 vocabulary = reads(".spec/glossary.md")
 
@@ -112,7 +112,7 @@ Dir.chdir(back)
 # @behavior G-003
 puts "--- a missing glossary is a broken reference line, not a difference ---"
 begin
-  reads("test/fixtures/glossary/absent.md")
+  reads("test/fixtures/specification/glossary/absent.md")
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
@@ -122,14 +122,14 @@ end
 # @behavior G-005
 puts "--- and so is one that never says it is a vocabulary ---"
 begin
-  reads("test/fixtures/glossary/titleless.md")
+  reads("test/fixtures/specification/glossary/titleless.md")
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end
 
 # @behavior G-011
 puts "--- an ignore that could not be written down is a broken reference line ---"
-["test/fixtures/glossary/noat.md", "test/fixtures/glossary/noreason.md"].each do |path|
+["test/fixtures/specification/glossary/noat.md", "test/fixtures/specification/glossary/noreason.md"].each do |path|
   begin
     reads(path)
   rescue Sumitsubo::Glossary::Error => e
@@ -144,10 +144,10 @@ end
 # where the boundary was drawn.
 # @behavior G-013 G-014 G-015 G-016
 puts "--- a name the vocabulary spells twice where it stands for one thing ---"
-["test/fixtures/glossary/secondsection.md",
- "test/fixtures/glossary/secondterm.md",
- "test/fixtures/glossary/secondword.md",
- "test/fixtures/glossary/secondignore.md"].each do |path|
+["test/fixtures/specification/glossary/secondsection.md",
+ "test/fixtures/specification/glossary/secondterm.md",
+ "test/fixtures/specification/glossary/secondword.md",
+ "test/fixtures/specification/glossary/secondignore.md"].each do |path|
   begin
     reads(path)
   rescue Sumitsubo::Glossary::Error => e
@@ -160,7 +160,7 @@ end
 # @behavior G-006
 puts "--- and one named absolutely still answers where the run started ---"
 begin
-  reads(Pathname.new("test/fixtures/glossary/absent.md").expand_path.to_s)
+  reads(Pathname.new("test/fixtures/specification/glossary/absent.md").expand_path.to_s)
 rescue Sumitsubo::Glossary::Error => e
   puts e.message
 end

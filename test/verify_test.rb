@@ -26,19 +26,19 @@ back = Dir.pwd
 
 # @behavior V-001
 puts "--- code that drifted from its glossary ---"
-Dir.chdir("test/fixtures/glossary")
+Dir.chdir("test/fixtures/project/glossary")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
 # @behavior V-002
 puts "--- the same run from a subdirectory: same findings, paths from where it started ---"
-Dir.chdir("test/fixtures/glossary/app")
+Dir.chdir("test/fixtures/project/glossary/app")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
 # @behavior V-019
 puts "--- a finding set aside by hand, and an ignore that no longer names one ---"
-Dir.chdir("test/fixtures/ignored")
+Dir.chdir("test/fixtures/project/ignored")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -46,7 +46,7 @@ Dir.chdir(back)
 # the project having said the build directory is not its source.
 # @behavior V-020
 puts "--- a build directory the project excludes ---"
-Dir.chdir("test/fixtures/excluded")
+Dir.chdir("test/fixtures/project/excluded")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -56,7 +56,7 @@ Dir.chdir(back)
 # leaves out, which is the whole of the difference between the two readings.
 # @behavior V-021
 puts "--- a build directory the project's .gitignore already leaves out ---"
-Dir.chdir("test/fixtures/gitignored")
+Dir.chdir("test/fixtures/project/gitignored")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -65,25 +65,25 @@ Dir.chdir(back)
 # is a vocabulary checked against nothing at all.
 # @behavior V-022
 puts "--- an include covering no file, beside one whose files are excluded ---"
-Dir.chdir("test/fixtures/nowhere")
+Dir.chdir("test/fixtures/project/nowhere")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
 # @behavior V-003
 puts "--- a specification switched off is not read, however far the code drifted ---"
-Dir.chdir("test/fixtures/disabled")
+Dir.chdir("test/fixtures/project/disabled")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
 # @behavior V-004
 puts "--- every scenario claimed, so the two sides agree ---"
-Dir.chdir("test/fixtures/aligned")
+Dir.chdir("test/fixtures/project/aligned")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
 # @behavior V-005
 puts "--- a scenario nothing claims answers at the specification ---"
-Dir.chdir("test/fixtures/uncovered")
+Dir.chdir("test/fixtures/project/uncovered")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -97,13 +97,13 @@ Dir.chdir(back)
 # one that resolves to none.
 # @behavior V-006 V-023 V-030 V-031
 puts "--- claims that resolve to nothing a run can compare against ---"
-Dir.chdir("test/fixtures/behavior")
+Dir.chdir("test/fixtures/project/behavior")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
 # @behavior V-007 V-011
 puts "--- a mechanism that cannot be read leaves the others still answering ---"
-Dir.chdir("test/fixtures/unparseable")
+Dir.chdir("test/fixtures/project/unparseable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -113,7 +113,7 @@ Dir.chdir(back)
 # and unable to implement a contract the CLI definition registers.
 # @behavior V-012 V-013 V-014 V-024
 puts "--- an interface nothing claims, one claimed twice, one registered nowhere, and one claimed out of reach ---"
-Dir.chdir("test/fixtures/contracted")
+Dir.chdir("test/fixtures/project/contracted")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -123,7 +123,7 @@ Dir.chdir(back)
 # registered name defines nothing for it, and nothing answers for the class.
 # @behavior V-015 V-025
 puts "--- an interface the syntax tree does not declare ---"
-Dir.chdir("test/fixtures/declared")
+Dir.chdir("test/fixtures/project/declared")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -137,7 +137,7 @@ Dir.chdir(back)
 # constant is the scope holding the contract, and the method inside it drifted.
 # @behavior V-017 V-018 V-028
 puts "--- source whose shape drifted from the contract ---"
-Dir.chdir("test/fixtures/shaped")
+Dir.chdir("test/fixtures/project/shaped")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -146,7 +146,7 @@ Dir.chdir(back)
 # than reporting every name in it as undefined.
 # @behavior V-016
 puts "--- a definition that lost the word its contracts were claimed with ---"
-Dir.chdir("test/fixtures/unresolvable")
+Dir.chdir("test/fixtures/project/unresolvable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -154,7 +154,7 @@ Dir.chdir(back)
 # a list item in backticks rather than a quoted value.
 # @behavior V-027
 puts "--- a feature whose include covers no file ---"
-Dir.chdir("test/fixtures/markdown")
+Dir.chdir("test/fixtures/project/markdown")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
@@ -163,7 +163,7 @@ Dir.chdir(back)
 # what lets a project keep its prose where its reference line already is.
 # @behavior V-029
 puts "--- a root the project also keeps its prose in ---"
-Dir.chdir("test/fixtures/coexisting")
+Dir.chdir("test/fixtures/project/coexisting")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 

@@ -12,23 +12,23 @@ true
 [true, false, true]
 Init ["test/init_test.rb"]
   Laying down an empty specification to start a reference line from.
-  test/fixtures/reading/init.md:15 I-001 The first run lays down what a reference line starts from
+  test/fixtures/specification/forms/init.md:15 I-001 The first run lays down what a reference line starts from
     given a directory with no specification
     when `sumi init` runs
     then an empty glossary specification is created at the configured root
-  test/fixtures/reading/init.md:23 I-002 A second run leaves the reference line alone
+  test/fixtures/specification/forms/init.md:23 I-002 A second run leaves the reference line alone
     given a directory `sumi init` has already run in
     when `sumi init` runs again
     then each specification is reported as already there rather than replaced
-  test/fixtures/reading/init.md:31 I-003 A configured root is created however deep it is
+  test/fixtures/specification/forms/init.md:31 I-003 A configured root is created however deep it is
     given a .sumi.json naming a root two directories down
     when `sumi init` runs
     then every directory on the way to that root is created
-  test/fixtures/reading/init.md:39 I-004 The first run lays down somewhere for behaviors to go
+  test/fixtures/specification/forms/init.md:39 I-004 The first run lays down somewhere for behaviors to go
     given a directory with no specification
     when `sumi init` runs
     then a behavior directory is created at the configured root
-  test/fixtures/reading/init.md:47 I-005 The first run lays down somewhere for contracts to go
+  test/fixtures/specification/forms/init.md:47 I-005 The first run lays down somewhere for contracts to go
     given a directory with no specification
     when `sumi init` runs
     then a contract directory is created at the configured root

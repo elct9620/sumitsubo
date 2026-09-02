@@ -24,16 +24,16 @@ app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 app/other.rb:3 Order rejects Purchase: Order is what the domain calls it.
 ignored.md:20 nothing at app/gone.rb:9 has Order rejecting Purchase; the line moved or the wording was fixed
 --- a missing glossary is a broken reference line, not a difference ---
-no glossary at test/fixtures/glossary/absent.md; sumi init lays one down
+no glossary at test/fixtures/specification/glossary/absent.md; sumi init lays one down
 --- and so is one that never says it is a vocabulary ---
-test/fixtures/glossary/titleless.md:1 declares no title; sumi help glossary has the form
+test/fixtures/specification/glossary/titleless.md:1 declares no title; sumi help glossary has the form
 --- an ignore that could not be written down is a broken reference line ---
-test/fixtures/glossary/noat.md:12 writes an ignore that does not name a line in backticks; sumi help glossary has the form
-test/fixtures/glossary/noreason.md:12 writes an ignore at app/order.rb:2 with no reason; sumi help glossary has the form
+test/fixtures/specification/glossary/noat.md:12 writes an ignore that does not name a line in backticks; sumi help glossary has the form
+test/fixtures/specification/glossary/noreason.md:12 writes an ignore at app/order.rb:2 with no reason; sumi help glossary has the form
 --- a name the vocabulary spells twice where it stands for one thing ---
-test/fixtures/glossary/secondsection.md:16 opens a second section named Everywhere, first opened at test/fixtures/glossary/secondsection.md:6; sumi help glossary has the form
-test/fixtures/glossary/secondterm.md:26 declares Order a second time in Billing, first declared at test/fixtures/glossary/secondterm.md:22; sumi help glossary has the form
-test/fixtures/glossary/secondword.md:27 rejects Purchase a second time under Order, first rejected at test/fixtures/glossary/secondword.md:26; sumi help glossary has the form
-test/fixtures/glossary/secondignore.md:22 sets app/order.rb:2 aside a second time under Purchase, first set aside at test/fixtures/glossary/secondignore.md:21; sumi help glossary has the form
+test/fixtures/specification/glossary/secondsection.md:16 opens a second section named Everywhere, first opened at test/fixtures/specification/glossary/secondsection.md:6; sumi help glossary has the form
+test/fixtures/specification/glossary/secondterm.md:26 declares Order a second time in Billing, first declared at test/fixtures/specification/glossary/secondterm.md:22; sumi help glossary has the form
+test/fixtures/specification/glossary/secondword.md:27 rejects Purchase a second time under Order, first rejected at test/fixtures/specification/glossary/secondword.md:26; sumi help glossary has the form
+test/fixtures/specification/glossary/secondignore.md:22 sets app/order.rb:2 aside a second time under Purchase, first set aside at test/fixtures/specification/glossary/secondignore.md:21; sumi help glossary has the form
 --- and one named absolutely still answers where the run started ---
-no glossary at test/fixtures/glossary/absent.md; sumi init lays one down
+no glossary at test/fixtures/specification/glossary/absent.md; sumi init lays one down

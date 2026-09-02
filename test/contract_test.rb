@@ -39,7 +39,7 @@ def shaped
   Sumitsubo::Source::Shape.new(params: [])
 end
 
-FIXTURE = "test/fixtures/contract"
+FIXTURE = "test/fixtures/specification/contract"
 
 # A format this build does not really carry, so that what decides which files
 # are specifications is visibly the parsers rather than an extension written
@@ -142,7 +142,7 @@ puts Sumitsubo::Contract.scope(reach).inspect
 # `init` is registered by the CLI definition, whose include reaches only src.
 # A claim of it from the controller names the contract without being able to
 # implement it, so the contract stands unclaimed.
-astray = [claim("test/fixtures/contract/app/controller.rb", 4, "@command", "init")]
+astray = [claim("test/fixtures/specification/contract/app/controller.rb", 4, "@command", "init")]
 
 # @behavior T-036
 puts "--- a contract claimed only from outside its own definition ---"

@@ -139,7 +139,7 @@ end
 # @behavior MD-015
 # @behavior MD-018
 # @behavior MD-050
-PATH = "test/fixtures/reading/init.md"
+PATH = "test/fixtures/specification/forms/init.md"
 feature = Sumitsubo::Specification::Builder::Behavior.new(PATH)
   .build(feature_blocks(reading, PATH))
 
@@ -171,7 +171,7 @@ end
 
 # @behavior MD-047
 puts "--- a vocabulary read through the grammar ---"
-VOCABULARY = "test/fixtures/reading/glossary.md"
+VOCABULARY = "test/fixtures/specification/forms/glossary.md"
 vocabulary_of(
   Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY, VOCABULARY)
     .build(vocabulary_blocks(reading, VOCABULARY))
@@ -208,10 +208,10 @@ LANGUAGES = Sumitsubo::Source::Language.new([
 
 # @behavior MD-048
 puts "--- a definition whose contracts source claims, read through the grammar ---"
-definition_of(definition(reading, "test/fixtures/reading/cli.md"))
+definition_of(definition(reading, "test/fixtures/specification/forms/cli.md"))
 
 # Two contracts in two languages under one definition, which the field this
 # replaces could not carry.
 # @behavior MD-049
 puts "--- a definition registering contracts in two languages ---"
-definition_of(definition(reading, "test/fixtures/reading/seams.md"))
+definition_of(definition(reading, "test/fixtures/specification/forms/seams.md"))

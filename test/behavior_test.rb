@@ -65,7 +65,7 @@ end
 
 # @behavior B-001
 puts "--- what the directory declares, and where ---"
-reads("test/fixtures/behavior/.spec/behavior").each do |feature|
+reads("test/fixtures/project/behavior/.spec/behavior").each do |feature|
   puts "#{feature.key} #{feature.includes.map { |one| one.key }.inspect}"
   feature.statements.each do |scenario|
     puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
@@ -78,12 +78,12 @@ end
 
 # @behavior B-002
 puts "--- a directory nobody wrote declares no scenarios ---"
-p reads("test/fixtures/behavior/.spec/absent")
+p reads("test/fixtures/project/behavior/.spec/absent")
 
 # @behavior B-004
 puts "--- one id under two scenarios leaves a marker nothing to resolve to ---"
 begin
-  reads("test/fixtures/behavior/duplicate")
+  reads("test/fixtures/specification/behavior/duplicate")
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -91,7 +91,7 @@ end
 # @behavior B-003
 puts "--- the root arrives absolute, but a message answers where the run started ---"
 begin
-  reads(Pathname.pwd / "test/fixtures/behavior/duplicate")
+  reads(Pathname.pwd / "test/fixtures/specification/behavior/duplicate")
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -99,7 +99,7 @@ end
 # @behavior B-005
 puts "--- a scenario with no id cannot be referenced at all ---"
 begin
-  reads("test/fixtures/behavior/anonymous")
+  reads("test/fixtures/specification/behavior/anonymous")
 rescue Sumitsubo::Behavior::Error => e
   puts e.message
 end
@@ -115,7 +115,7 @@ p Sumitsubo::Behavior.ids_in("V-008 V-009")
 # and the union of them is only what gets read once.
 # @behavior B-011
 puts "--- what each feature's include reaches ---"
-base = Pathname.new("test/fixtures/behavior")
+base = Pathname.new("test/fixtures/project/behavior")
 features = reads(base / ".spec/behavior")
 reach = Sumitsubo::Behavior.reach(features, base, [])
 features.each { |feature| puts "  #{feature.key} #{reach[feature.path].keys.sort.inspect}" }
@@ -125,7 +125,7 @@ puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
 # of it from the file next door names the scenario without being able to
 # witness it, so the scenario stands unclaimed.
 claims = [Sumitsubo::Behavior::Claim.new(
-  path: "test/fixtures/behavior/test/verify_test.rb", line: 9, id: "I-001", reaches_code: true
+  path: "test/fixtures/project/behavior/test/verify_test.rb", line: 9, id: "I-001", reaches_code: true
 )]
 
 # @behavior B-012
@@ -142,7 +142,7 @@ end
 # `notes.txt` is passed over rather than refused.
 # @behavior B-014
 puts "--- which files a directory holds that this build can read ---"
-taken("test/fixtures/behavior/formats", PARSERS + [Other.new]).each do |feature|
+taken("test/fixtures/specification/behavior/formats", PARSERS + [Other.new]).each do |feature|
   puts "  #{feature.path} #{feature.key} #{feature.statements.map { |one| one.key }.inspect}"
 end
 
@@ -151,9 +151,9 @@ end
 # at the file holding it.
 # @behavior B-015
 puts "--- an include covering no file answers at the line that wrote it ---"
-unreached = reads("test/fixtures/behavior/nowhere")
+unreached = reads("test/fixtures/specification/behavior/nowhere")
 Sumitsubo::Check::Reach::Barren.new(Sumitsubo::Mechanism::Behavior::BARREN)
-  .run(Sumitsubo::Behavior.covers(unreached), Pathname.new("test/fixtures/behavior"), []).each do |finding|
+  .run(Sumitsubo::Behavior.covers(unreached), Pathname.new("test/fixtures/project/behavior"), []).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
@@ -171,10 +171,10 @@ end
 puts "--- a claim naming no scenario, apart from one resolving to none ---"
 mixed = [
   Sumitsubo::Behavior::Claim.new(
-    path: "test/fixtures/behavior/test/verify_test.rb", line: 13, id: "G-404", reaches_code: true
+    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 13, id: "G-404", reaches_code: true
   ),
   Sumitsubo::Behavior::Claim.new(
-    path: "test/fixtures/behavior/test/verify_test.rb", line: 16, id: "", reaches_code: true
+    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 16, id: "", reaches_code: true
   )
 ]
 (Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Behavior::UNRESOLVED, "scenario")

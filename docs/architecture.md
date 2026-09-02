@@ -240,8 +240,17 @@ Every file has one place, and where it sits is what says what it is.
 │                          being compiled a second time
 ├─ docs/                   the reference line this tool holds itself to, and
 │                          the prose beside it
-├─ test/                   *_test.rb, the committed .expected beside each,
-│                          and the fixtures they read
+├─ test/                   *_test.rb, the committed .expected beside each
+│  └─ fixtures/            what a case is read against. Where one sits says
+│     │                    which side of the tool it answers for, so a new
+│     │                    case has one place to go
+│     ├─ project/          a root a whole run is walked into, named for the
+│     │                    answer that run gives
+│     ├─ specification/    documents read for what they declare — a bag per
+│     │                    mechanism, named for the defect, and one document
+│     │                    per form under forms/
+│     └─ source/<lang>/    material a language answers for; a language this
+│                          build gains brings a directory of its own
 ├─ scripts/                vendor.sh, build_rev.sh — split by what moves when
 ├─ .github/  Dockerfile    what ships
 ├─ .claude/hooks/          the same promises, inside a session

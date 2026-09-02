@@ -40,37 +40,37 @@ broken.rb: cannot be parsed by the ruby grammar
   Charge::record(self, positional charge)
   audit::Entry::at(self)
 --- what a Ruby file declares ---
-  test/fixtures/definitions/sample.rb:1 Outer
-  test/fixtures/definitions/sample.rb:2 Outer::Inner
-  test/fixtures/definitions/sample.rb:3 Outer::Inner.load (path:positional)
-  test/fixtures/definitions/sample.rb:7 Outer::Inner#check (text:positional)
-  test/fixtures/definitions/sample.rb:13 Flat::Scoped
-  test/fixtures/definitions/sample.rb:14 Flat::Scoped.of (path:positional)
-  test/fixtures/definitions/sample.rb:19 Alone
-  test/fixtures/definitions/sample.rb:20 Alone#solo ()
-  test/fixtures/definitions/sample.rb:24 loose ()
-  test/fixtures/definitions/sample.rb:27 Reopened
-  test/fixtures/definitions/sample.rb:29 Reopened.built ()
-  test/fixtures/definitions/sample.rb:34 Signed
-  test/fixtures/definitions/sample.rb:35 Signed#positional (one:positional, two:positional?)
-  test/fixtures/definitions/sample.rb:38 Signed#keyworded (three:keyword, four:keyword?)
-  test/fixtures/definitions/sample.rb:41 Signed#gathered (rest:splat?, opts:hash_splat?, block:block?)
-  test/fixtures/definitions/sample.rb:44 Signed#anonymous (-:splat?, -:hash_splat?, -:block?)
-  test/fixtures/definitions/sample.rb:47 Signed#unusual (-:destructured, -:forward?)
-  test/fixtures/definitions/sample.rb:50 Signed#strict (one:positional)
-  test/fixtures/definitions/sample.rb:53 Signed#bare ()
-  test/fixtures/definitions/sample.rb:56 Signed.singular (one:positional, two:keyword?)
-  test/fixtures/definitions/sample.rb:60 Called
-  test/fixtures/definitions/sample.rb:65 Helper
-  test/fixtures/definitions/sample.rb:66 Helper#helped ()
-  test/fixtures/definitions/sample.rb:70 Widget
-  test/fixtures/definitions/sample.rb:74 Boxed
-  test/fixtures/definitions/sample.rb:75 Boxed#unwrapped ()
-  test/fixtures/definitions/sample.rb:78 Boxed.of (held:positional)
-  test/fixtures/definitions/sample.rb:82 Flat::Boxed
-  test/fixtures/definitions/sample.rb:83 Flat::Boxed#unwrapped ()
+  test/fixtures/source/ruby/sample.rb:1 Outer
+  test/fixtures/source/ruby/sample.rb:2 Outer::Inner
+  test/fixtures/source/ruby/sample.rb:3 Outer::Inner.load (path:positional)
+  test/fixtures/source/ruby/sample.rb:7 Outer::Inner#check (text:positional)
+  test/fixtures/source/ruby/sample.rb:13 Flat::Scoped
+  test/fixtures/source/ruby/sample.rb:14 Flat::Scoped.of (path:positional)
+  test/fixtures/source/ruby/sample.rb:19 Alone
+  test/fixtures/source/ruby/sample.rb:20 Alone#solo ()
+  test/fixtures/source/ruby/sample.rb:24 loose ()
+  test/fixtures/source/ruby/sample.rb:27 Reopened
+  test/fixtures/source/ruby/sample.rb:29 Reopened.built ()
+  test/fixtures/source/ruby/sample.rb:34 Signed
+  test/fixtures/source/ruby/sample.rb:35 Signed#positional (one:positional, two:positional?)
+  test/fixtures/source/ruby/sample.rb:38 Signed#keyworded (three:keyword, four:keyword?)
+  test/fixtures/source/ruby/sample.rb:41 Signed#gathered (rest:splat?, opts:hash_splat?, block:block?)
+  test/fixtures/source/ruby/sample.rb:44 Signed#anonymous (-:splat?, -:hash_splat?, -:block?)
+  test/fixtures/source/ruby/sample.rb:47 Signed#unusual (-:destructured, -:forward?)
+  test/fixtures/source/ruby/sample.rb:50 Signed#strict (one:positional)
+  test/fixtures/source/ruby/sample.rb:53 Signed#bare ()
+  test/fixtures/source/ruby/sample.rb:56 Signed.singular (one:positional, two:keyword?)
+  test/fixtures/source/ruby/sample.rb:60 Called
+  test/fixtures/source/ruby/sample.rb:65 Helper
+  test/fixtures/source/ruby/sample.rb:66 Helper#helped ()
+  test/fixtures/source/ruby/sample.rb:70 Widget
+  test/fixtures/source/ruby/sample.rb:74 Boxed
+  test/fixtures/source/ruby/sample.rb:75 Boxed#unwrapped ()
+  test/fixtures/source/ruby/sample.rb:78 Boxed.of (held:positional)
+  test/fixtures/source/ruby/sample.rb:82 Flat::Boxed
+  test/fixtures/source/ruby/sample.rb:83 Flat::Boxed#unwrapped ()
 --- and the reading of what it declares refuses it too ---
-  test/fixtures/behavior/test/broken.rb: cannot be parsed by the ruby grammar
+  test/fixtures/source/ruby/broken.rb: cannot be parsed by the ruby grammar
 --- what a piece of text declares ---
   .spec/contract/internal.md:1 Sumitsubo::Place
   .spec/contract/internal.md:2 Sumitsubo::Place.of (path:positional, line:positional)

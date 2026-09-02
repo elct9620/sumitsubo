@@ -202,7 +202,7 @@ read([h1(1, "Init"), h1(3, "Verify")])
 # One file is one specification here as it is for the other two forms; the
 # tree under it is deeper, which is the whole of the difference.
 
-VOCABULARY = "test/fixtures/reading/glossary.md"
+VOCABULARY = "test/fixtures/specification/forms/glossary.md"
 
 def vocabulary(blocks)
   Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY, VOCABULARY).build(document(blocks))

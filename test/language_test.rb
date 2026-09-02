@@ -18,8 +18,8 @@ LANGUAGES = Sumitsubo::Source::Language.new([
 # This reaches the grammar, so the snapshot beside it is written by hand —
 # `--regen` runs under CRuby, which has no `ffi_func`.
 
-RUBY = "test/fixtures/definitions/sample.rb"
-PROSE = "test/fixtures/behavior/test/overview.md"
+RUBY = "test/fixtures/source/ruby/sample.rb"
+PROSE = "test/fixtures/source/prose/overview.md"
 
 def spell(regions)
   regions.map { |region| "#{region.line}:#{region.text}" }
@@ -32,10 +32,10 @@ def standing(regions)
 end
 
 # An identifier is a spelling of a concept rather than the concept's name, so
-# `Signed` is declared in this file and appears in none of the regions.
+# `Purchase` is declared in this file and appears in none of the regions.
 # @behavior L-001
 puts "--- what a person wrote in a source file ---"
-p spell(LANGUAGES.comments_in("test/fixtures/glossary/app/order.rb", "order.rb"))
+p spell(LANGUAGES.comments_in("test/fixtures/source/ruby/comments.rb", "comments.rb"))
 
 # @behavior L-002
 puts "--- a file no language claims answers entire ---"
@@ -60,26 +60,26 @@ p LANGUAGES.carries?("cobol")
 
 # The claims sit in a class body, a method body and a block comment, and every
 # one of them stands in front of code — while the comment at the end of
-# `verify_test.rb` stands in front of nothing.
+# `trailing.rb` stands in front of nothing.
 # @behavior L-005 L-006
 puts "--- what each comment stands next to ---"
 p standing(LANGUAGES.comments_in(
-  "test/fixtures/behavior/test/init_test.rb", "init_test.rb"
+  "test/fixtures/source/ruby/nested.rb", "nested.rb"
 ))
 p standing(LANGUAGES.comments_in(
-  "test/fixtures/behavior/test/verify_test.rb", "verify_test.rb"
+  "test/fixtures/source/ruby/trailing.rb", "trailing.rb"
 ))
 
 # @behavior L-007
 puts "--- source the grammar cannot read ---"
 begin
-  LANGUAGES.comments_in("test/fixtures/behavior/test/broken.rb", "broken.rb")
+  LANGUAGES.comments_in("test/fixtures/source/ruby/broken.rb", "broken.rb")
 rescue Sumitsubo::Source::Language::Error => e
   puts e.message
 end
 
 
-RUST = "test/fixtures/definitions/sample.rs"
+RUST = "test/fixtures/source/rust/sample.rs"
 
 # What Ruby spells with one node Rust splits into two, and a doc comment is a
 # line comment carrying a marker. The block comment at the end of the file
@@ -116,7 +116,7 @@ LANGUAGES.declarations_in(RUST, "sample.rs", "rust").each do |name|
   puts "  #{name.name}(#{spelled.join(", ")})"
 end
 
-DEFS = "test/fixtures/definitions"
+DEFS = "test/fixtures/source/ruby"
 
 def declares(path)
   LANGUAGES.declarations_in(path, path, "ruby").each do |name|
@@ -161,7 +161,7 @@ declares("#{DEFS}/sample.rb")
 # @behavior D-006
 puts "--- and the reading of what it declares refuses it too ---"
 begin
-  declares("test/fixtures/behavior/test/broken.rb")
+  declares("test/fixtures/source/ruby/broken.rb")
 rescue Sumitsubo::Source::Language::Error => e
   puts "  #{e.message}"
 end

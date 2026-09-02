@@ -32,11 +32,11 @@ Init ["test/init_test.rb", "test/other_test.rb"]
 --- a vocabulary read into sections, terms and the words they reject ---
 Glossary "Prose above every section."
   Everywhere ["app/**/*.rb"] "What this section is for."
-    test/fixtures/reading/glossary.md:13 Order — What a customer asks us to fulfil.
+    test/fixtures/specification/forms/glossary.md:13 Order — What a customer asks us to fulfil.
       19 rejects Purchase — Order is what the domain calls it.
         20 app/legacy_import.rb:88 — Quotes the upstream column name.
   Billing ["app/billing/*.rb"] nil
-    test/fixtures/reading/glossary.md:28 Order — The billable set of lines.
+    test/fixtures/specification/forms/glossary.md:28 Order — The billable set of lines.
 --- two sections declaring one term ---
 [["Everywhere", ["Order"]], ["Billing", ["Order"]]]
 --- a rejected word written with and without the separator ---
@@ -44,23 +44,23 @@ Glossary "Prose above every section."
   Buy "Order is what the domain calls it."
   Acquire nil
 --- a term written under no section ---
-  refused: test/fixtures/reading/glossary.md:3 declares Order outside any section; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:3 declares Order outside any section; sumi help glossary has the form
 --- a vocabulary declaring no section checks nothing ---
 Glossary "Prose and nothing else."
 --- a document that never says it is a vocabulary ---
-  refused: test/fixtures/reading/glossary.md:1 declares no title; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:1 declares no title; sumi help glossary has the form
 --- a heading under a term that is not Rejected ---
-  refused: test/fixtures/reading/glossary.md:7 writes Rejcted where only Rejected is read; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:7 writes Rejcted where only Rejected is read; sumi help glossary has the form
 --- Rejected written under no term ---
-  refused: test/fixtures/reading/glossary.md:5 writes Rejected outside any term; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:5 writes Rejected outside any term; sumi help glossary has the form
 --- a rejected word that is not in backticks ---
-  refused: test/fixtures/reading/glossary.md:9 rejects a word that is not in backticks; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:9 rejects a word that is not in backticks; sumi help glossary has the form
 --- a rejected word with nothing between the marks ---
-  refused: test/fixtures/reading/glossary.md:9 rejects a word that is not in backticks; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:9 rejects a word that is not in backticks; sumi help glossary has the form
 --- an ignore written under no rejected word ---
-  refused: test/fixtures/reading/glossary.md:9 writes an ignore under no rejected word; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:9 writes an ignore under no rejected word; sumi help glossary has the form
 --- an ignore with nothing to say why ---
-  refused: test/fixtures/reading/glossary.md:10 writes an ignore at app/order.rb:2 with no reason; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:10 writes an ignore at app/order.rb:2 with no reason; sumi help glossary has the form
 --- a list a reserved heading does not open is prose ---
 []
 --- a definition whose contracts source claims in a comment ---
