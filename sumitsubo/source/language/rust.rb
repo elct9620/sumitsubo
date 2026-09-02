@@ -4,7 +4,7 @@ require "sumitsubo/source/language/nodes"
 
 module Sumitsubo
   module Source
-    module Language
+    class Language
       # Rust, read through the grammar this build links in.
       #
       # A name is the path a reader would write to reach it, which is the path

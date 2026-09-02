@@ -3,7 +3,7 @@ require "sumitsubo/source/language/nodes"
 
 module Sumitsubo
   module Source
-    module Language
+    class Language
       # Whatever no language before it claimed. Prose is a comment for its whole
       # length, so the file answers entire and nothing has to be found in it.
       #

@@ -4,7 +4,7 @@ require "sumitsubo/source/language/nodes"
 
 module Sumitsubo
   module Source
-    module Language
+    class Language
       # Ruby, read through the grammar this build links in. The queries live here
       # rather than beside the registration because they are written against one
       # grammar's node names: another language answers with its own.
