@@ -57,3 +57,21 @@ LANGUAGES.declarations_in(SAMPLE, "sample.rs", "rust").each do |name|
   spelled = name.shape.params.map { |param| "#{param.kind}#{param.name.nil? ? "" : " #{param.name}"}" }
   puts "  #{name.name}(#{spelled.join(", ")})"
 end
+
+BROKEN = "test/fixtures/source/rust/broken.rs"
+
+# @behavior RS-005
+puts "--- source the grammar cannot read ---"
+begin
+  LANGUAGES.comments_in(BROKEN, "broken.rs")
+rescue Sumitsubo::Source::Language::Error => e
+  puts e.message
+end
+
+# @behavior RS-006
+puts "--- and the reading of what it declares refuses it too ---"
+begin
+  LANGUAGES.declarations_in(BROKEN, "broken.rs", "rust")
+rescue Sumitsubo::Source::Language::Error => e
+  puts "  #{e.message}"
+end

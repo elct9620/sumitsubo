@@ -100,6 +100,51 @@ compares an already-known shape is an attribute rather than new code.
   language, no marker         ──►  Source::Declaration the name, and its Shape
 ```
 
+## Adding a language
+
+A language reaches a build through two things counted separately: the grammar
+its parse table comes from, and the reading that puts queries to it. Markdown
+is the proof they are not one — two grammars, and no reading of source at all —
+so the first three steps below can run more than once for a single language.
+
+```
+ the grammar                         the reading
+ ─────────────────────────────       ──────────────────────────────────
+ 1  scripts/vendor.sh                4  source/language/<lang>.rb
+      the pin, and a fetch line           named? reads? COMMENTS QUERY
+ 2  ts_<lang>.c                      5  bin/sumi.rb
+      one translation unit; two           the require, and the entry in
+      grammars will not share one         the list a build hands in
+ 3  grammar.rb                       6  docs/behavior/language_<lang>.md
+      the ffi_func, and the name a        the questions its neighbours
+      specification writes                already answered
+                                     7  test/language_<lang>_test.rb
+                                          and its .expected, written by
+                                          hand unless the reading needs
+                                          no grammar
+                                     8  test/fixtures/source/<lang>/
+                                          the material those answer about
+```
+
+A reading is asked five things, and its document is written against them: what
+a person wrote in one of its files, what each of those stands next to, how a
+name is spelled as the path that reaches it, what kind each parameter carries,
+and what becomes of source the grammar refuses. Which files it claims and what
+a specification calls it belong to the seam, answered once in `language.md` for
+every reading at once.
+
+A language with no answer to one of the five says so in its document's own
+prose. A scenario asserting an absence is one nothing can check, so there is
+nowhere else for it to go — Rust letting a caller omit no parameter is written
+that way, and prose answering only the second question is too.
+
+Two things are already waiting on this:
+
+- A grammar moves into a directory of its own once there are enough to read as
+  a group. There are five translation units now.
+- TypeScript ships two grammars in one repository and JavaScript is a third, so
+  steps 1 to 3 stop answering one-to-one to a language before 4 to 8 do.
+
 ## What this project's own specification reaches
 
 An include is the whole of the relation between a specification and the code:

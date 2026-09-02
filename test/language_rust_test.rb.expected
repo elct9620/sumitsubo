@@ -23,3 +23,7 @@
   Ledger::record(self, positional charge)
   Charge::record(self, positional charge)
   audit::Entry::at(self)
+--- source the grammar cannot read ---
+broken.rs: cannot be parsed by the rust grammar
+--- and the reading of what it declares refuses it too ---
+  broken.rs: cannot be parsed by the rust grammar

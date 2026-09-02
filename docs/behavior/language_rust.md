@@ -51,3 +51,19 @@ about a parameter that may be omitted is one this language does not have.
 | Given | text in that comment which is not all ASCII |
 | When | the file is read for what a person wrote |
 | Then | the region ends where the closing delimiter begins |
+
+## `RS-005` Source the grammar cannot read for what a person wrote
+
+| Step | Statement |
+| --- | --- |
+| Given | a Rust file the grammar cannot parse |
+| When | the file is read for what a person wrote |
+| Then | the file is named as unreadable rather than answering with what it recovered |
+
+## `RS-006` Source the grammar cannot read for what it declares
+
+| Step | Statement |
+| --- | --- |
+| Given | a Rust file the grammar cannot parse |
+| When | the file is read for what it declares |
+| Then | the file is named as unreadable rather than answering with the names it recovered |
