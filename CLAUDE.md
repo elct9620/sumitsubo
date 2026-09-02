@@ -146,8 +146,9 @@ AOT compiler for Ruby. Its constraints shape the design:
   answers. What that bounds is the blast radius: a reading of source
   or of a specification is handed a grammar rather than reaching for one, so it
   names no grammar and its snapshot can still be regenerated.
-- `Exception#backtrace` and `Kernel#caller` return empty arrays, so an error
-  carries whatever context it needs by itself.
+- No frame is ever recorded: `Kernel#caller` and a rescued exception's
+  `backtrace` are both empty, and only what `set_backtrace` was handed comes
+  back. An error carries whatever context it needs by itself.
 - String literals are frozen by default.
 - There is no RubyGems. The standard library is what Spinel's own packages
   provide: json, csv, erb, set, strscan, stringio, pathname, optparse, digest,
