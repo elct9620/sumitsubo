@@ -167,6 +167,18 @@ Dir.chdir("test/fixtures/project/coexisting")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# One run over two languages, which the four findings are one of each of. The
+# glossary reaches both and a language is chosen for each file by what it is,
+# while the two definitions each reach one and read it as the language their
+# own signatures are spelled in. A shape that disagrees is what says the source
+# was really read: a name found nowhere would answer the same whether the file
+# was read or never opened.
+# @behavior V-032
+puts "--- a project written in two languages, read in one run ---"
+Dir.chdir("test/fixtures/project/polyglot")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

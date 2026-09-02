@@ -278,3 +278,12 @@ in the order they happened.
 | Given | a test file carrying the marker with no id after it |
 | When | `sumi verify` runs |
 | Then | the marker is reported as naming no scenario, rather than as one resolving to none |
+
+## `V-032` A project written in two languages, read in one run
+
+| Step | Statement |
+| --- | --- |
+| Given | a project holding source in two languages |
+| Given | a glossary whose include reaches both, and a definition for each reaching only its own |
+| When | `sumi verify` runs |
+| Then | each file is read as the language it is, and each definition compares against the one it named |

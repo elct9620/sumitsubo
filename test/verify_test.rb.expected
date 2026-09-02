@@ -81,6 +81,13 @@ exit=2
 docs/architecture.md:4 Order rejects Purchase: Order is what the domain calls it.
 1 difference
 exit=1
+--- a project written in two languages, read in one run ---
+.spec/contract/api.md:9 Order.open takes (id, mode) where the specification registers (id)
+.spec/contract/engine.md:9 Order::settle takes (-:self, at) where the specification registers (-:self)
+src/engine.rs:8 Order rejects Purchase: Order is what the domain calls it.
+src/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+4 differences
+exit=1
 --- no specification at all ---
 no specification at .spec; sumi init lays one down
 exit=2

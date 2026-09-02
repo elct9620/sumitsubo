@@ -138,6 +138,13 @@ prose. A scenario asserting an absence is one nothing can check, so there is
 nowhere else for it to go — Rust letting a caller omit no parameter is written
 that way, and prose answering only the second question is too.
 
+Steps 6 to 8 answer for one reading on its own. That a run reaches a file at
+all, picks the reading its name calls for, and hands a definition the language
+its own signatures are spelled in, is asserted once by `project/polyglot/` —
+two languages in one run — and does not grow with each language added. A
+language needing something of that chain the two already there do not is a
+finding, not a ninth step.
+
 Two things are already waiting on this:
 
 - A grammar moves into a directory of its own once there are enough to read as
@@ -294,8 +301,9 @@ Every file has one place, and where it sits is what says what it is.
 │  └─ fixtures/            what a case is read against. Where one sits says
 │     │                    which side of the tool it answers for, so a new
 │     │                    case has one place to go
-│     ├─ project/          a root a whole run is walked into, named for the
-│     │                    answer that run gives
+│     ├─ project/          a root a whole run is walked into, named for what
+│     │                    that run turns on — the answer where one finding is
+│     │                    the point, the shape where the arrangement is
 │     ├─ specification/    documents read for what they declare — a bag per
 │     │                    mechanism, named for the defect, and one document
 │     │                    per form under forms/
