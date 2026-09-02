@@ -50,8 +50,8 @@ def h4(line, text) = block(BLOCK::HEADING, 4, line, text)
 def paragraph(line, text) = block(BLOCK::PARAGRAPH, 0, line, text)
 def item(line, text) = block(BLOCK::ITEM, 1, line, text)
 def nested(line, text) = block(BLOCK::ITEM, 2, line, text)
-def row(line, text) = block(Sumitsubo::Specification::Block::ROW, 0, line, text)
-def cell(line, text) = block(Sumitsubo::Specification::Block::CELL, 0, line, text)
+def row(line, text) = block(BLOCK::ROW, 0, line, text)
+def cell(line, text) = block(BLOCK::CELL, 0, line, text)
 
 # A row carries its cells and a fenced block its language and content, so a case
 # writes them in the order a reader would and this gathers them the way a parser
@@ -66,9 +66,9 @@ def gathered(found, one)
   return found.push(one) if found.empty?
 
   holding = found[-1]
-  return holding.cells.push(one) if one.kind == Sumitsubo::Specification::Block::CELL && holding.kind == Sumitsubo::Specification::Block::ROW
-  return holding.language = one.text if one.kind == "language" && holding.kind == Sumitsubo::Specification::Block::CODE
-  return holding.text = one.text if one.kind == "content" && holding.kind == Sumitsubo::Specification::Block::CODE
+  return holding.cells.push(one) if one.kind == BLOCK::CELL && holding.kind == BLOCK::ROW
+  return holding.language = one.text if one.kind == "language" && holding.kind == BLOCK::CODE
+  return holding.text = one.text if one.kind == "content" && holding.kind == BLOCK::CODE
 
   found.push(one)
 end
@@ -367,7 +367,7 @@ class Spelling
   end
 end
 
-def fence(line, text) = BLOCK.new(Sumitsubo::Specification::Block::CODE, 0, line, "", nil, [], [])
+def fence(line, text) = BLOCK.new(BLOCK::CODE, 0, line, "", nil, [], [])
 def language(line, text) = BLOCK.new("language", 0, line, text, nil, [], [])
 def content(line, text) = BLOCK.new("content", 0, line, text, nil, [], [])
 

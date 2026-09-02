@@ -25,7 +25,21 @@ module Sumitsubo
     # document is made of is not decided here: a feature and a vocabulary are two
     # forms sharing one syntax, so what to ask for belongs to the form being
     # read, and what a block means belongs there too.
-    Block = Struct.new(:kind, :level, :line, :text, :language, :spans, :cells) do
+    class Block < Struct.new(:kind, :level, :line, :text, :language, :spans, :cells)
+      # The kinds a document is made of. A form asks for the ones it is written
+      # in and no others, which is what leaves a level it has no use for as
+      # prose.
+      HEADING = "heading"
+      PARAGRAPH = "paragraph"
+      ITEM = "item"
+      CODE = "code"
+      ROW = "row"
+
+      # A cell arrives under the row holding it rather than on its own, since
+      # where one row ends and the next begins is what a form has to know. It is
+      # asked for with the row and never apart from it.
+      CELL = "cell"
+
       # The run this block opens with, or nil where it opens with anything else.
       # A contract's name, a scenario's id and a word a term turns down are each
       # written this way, so a block opening with prose is a form nobody reads
@@ -44,21 +58,6 @@ module Sumitsubo
 
         text.byteslice(spans[0].to, text.bytesize - spans[0].to).strip
       end
-    end
-
-    # The kinds a document is made of. A form asks for the ones it is written in
-    # and no others, which is what leaves a level it has no use for as prose.
-    class Block
-      HEADING = "heading"
-      PARAGRAPH = "paragraph"
-      ITEM = "item"
-      CODE = "code"
-      ROW = "row"
-
-      # A cell arrives under the row holding it rather than on its own, since
-      # where one row ends and the next begins is what a form has to know. It is
-      # asked for with the row and never apart from it.
-      CELL = "cell"
     end
   end
 end
