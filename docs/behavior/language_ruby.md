@@ -39,7 +39,7 @@ a file declares, because a syntax tree is read rather than a program run.
 | When | the file is read for what each comment stands next to |
 | Then | that comment answers nothing, and one standing in front of another answers a comment |
 
-## `L-007` Source the grammar cannot read
+## `L-007` Source the grammar cannot read for what a person wrote
 
 | Step | Statement |
 | --- | --- |
@@ -79,7 +79,7 @@ a file declares, because a syntax tree is read rather than a program run.
 | When | the file is read for what it declares |
 | Then | it answers by its bare name, because there is no path to put in front of it |
 
-## `D-006` Source the grammar cannot read
+## `D-006` Source the grammar cannot read for what it declares
 
 | Step | Statement |
 | --- | --- |
