@@ -50,12 +50,7 @@ module Sumitsubo
         # puts it there.
         DASH = "—"
 
-        # Two forms of the one path. A refusal is composed from the first; the
-        # second is what a term and a rejected word carry, so a refusal naming
-        # two of them points at both. The other forms hold one and render where
-        # they answer.
         def initialize(path)
-          @path = path
           @where = Place.file(path)
           @key = nil
           @text = nil
@@ -191,7 +186,7 @@ module Sumitsubo
           return set_aside(block) if block.level == IGNORE
           return unless block.level == WORD
           if @holding == INCLUDES
-            @section.includes.push(Builder.scoped(block, @path, TOPIC))
+            @section.includes.push(Builder.scoped(block, @where, TOPIC))
             return
           end
           return unless @holding == REJECTED
@@ -252,7 +247,7 @@ module Sumitsubo
         end
 
         def refuse(line, said)
-          Builder.refuse(@path, line, said, TOPIC)
+          Builder.refuse(@where, line, said, TOPIC)
         end
       end
     end
