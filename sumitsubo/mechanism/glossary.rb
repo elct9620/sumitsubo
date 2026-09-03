@@ -1,7 +1,6 @@
 require "sumitsubo/check/reach"
 require "sumitsubo/check/region"
 require "sumitsubo/glossary"
-require "sumitsubo/place"
 require "sumitsubo/specification/builder/glossary"
 require "sumitsubo/mechanism/seed"
 
@@ -37,7 +36,7 @@ module Sumitsubo
       end
 
       def read(blocks, path, source)
-        Specification::Builder::Glossary.new(path, Place.file(path)).build(blocks)
+        Specification::Builder::Glossary.new(path).build(blocks)
       rescue Sumitsubo::Unreadable => e
         raise Sumitsubo::Glossary::Error, e.message
       end

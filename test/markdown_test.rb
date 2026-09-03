@@ -205,7 +205,7 @@ read([h1(1, "Init"), h1(3, "Verify")])
 VOCABULARY = "test/fixtures/specification/forms/glossary.md"
 
 def vocabulary(blocks)
-  Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY, VOCABULARY).build(document(blocks))
+  Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY).build(document(blocks))
 rescue Sumitsubo::Unreadable => e
   puts "  refused: #{e.message}"
   nil

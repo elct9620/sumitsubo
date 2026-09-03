@@ -173,7 +173,7 @@ end
 puts "--- a vocabulary read through the grammar ---"
 VOCABULARY = "test/fixtures/specification/forms/glossary.md"
 vocabulary_of(
-  Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY, VOCABULARY)
+  Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY)
     .build(vocabulary_blocks(reading, VOCABULARY))
 )
 

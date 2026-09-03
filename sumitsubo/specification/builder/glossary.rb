@@ -50,9 +50,13 @@ module Sumitsubo
         # puts it there.
         DASH = "—"
 
-        def initialize(path, where)
+        # Two forms of the one path. A refusal is composed from the first; the
+        # second is what a term and a rejected word carry, so a refusal naming
+        # two of them points at both. The other forms hold one and render where
+        # they answer.
+        def initialize(path)
           @path = path
-          @where = where
+          @where = Place.file(path)
           @key = nil
           @text = nil
           @sections = []
