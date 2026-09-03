@@ -268,6 +268,15 @@ vocabulary([
   item(11, "`Acquire`")
 ]).statements[0].statements[0].statements.each { |word| puts "  #{word.key} #{word.text.inspect}" }
 
+# One rule reads an include for all three forms, so what tells its refusals
+# apart is the topic each sends a reader to.
+# @behavior F-007
+puts "--- an include a vocabulary writes outside backticks ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Includes"),
+  item(7, "app/**/*.rb")
+])
+
 # @behavior F-017
 puts "--- a term written under no section ---"
 vocabulary([h1(1, "Glossary"), h3(3, "Order")])

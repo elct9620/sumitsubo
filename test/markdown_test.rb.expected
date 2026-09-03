@@ -43,6 +43,8 @@ Glossary "Prose above every section."
   Purchase "Order is what the domain calls it."
   Buy "Order is what the domain calls it."
   Acquire nil
+--- an include a vocabulary writes outside backticks ---
+  refused: test/fixtures/specification/forms/glossary.md:7 writes an include that is not a glob in backticks; sumi help glossary has the form
 --- a term written under no section ---
   refused: test/fixtures/specification/forms/glossary.md:3 declares Order outside any section; sumi help glossary has the form
 --- a vocabulary declaring no section checks nothing ---
