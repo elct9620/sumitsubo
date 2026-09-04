@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.0-preview7](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview6...v0.1.0-preview7) (2026-09-03)
+
+
+### Features
+
+* **language:** say what adding a language costs, and answer the question Rust left open ([2dbd778](https://github.com/elct9620/sumitsubo/commit/2dbd77869b0e0fc5688f8b50e82697b480bcb1a1))
+
+
+### Bug Fixes
+
+* **source:** declare the seam's constant with one keyword everywhere ([815e927](https://github.com/elct9620/sumitsubo/commit/815e92735b0c614092dc3c4eff0617dc4e0798c8))
+
 ## [0.1.0-preview6](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview5...v0.1.0-preview6) (2026-09-01)
 
 
