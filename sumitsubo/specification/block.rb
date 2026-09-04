@@ -1,3 +1,9 @@
+# `Specification` is assigned rather than declared, so a file reopening it
+# before that assignment runs loses what it added: CRuby warns and carries
+# on, and the compiler merges either way. Nothing here calls into it — the
+# require is the order.
+require "sumitsubo/specification"
+
 module Sumitsubo
   class Specification
     # A run of a block's text the document marked as taken letter for letter,
