@@ -21,15 +21,14 @@ end
 
 # What a vocabulary could not be read as, however it was refused: a form points
 # at the line that broke it, and a document nothing could open answers for the
-# file. The two are named apart because Spinel gives one name one type across
-# both clauses. matz/spinel#4343.
+# file.
 def refused(path)
   reads(path)
   nil
-rescue Sumitsubo::Misshapen => misshapen
-  misshapen.refusals.each { |one| puts "#{one.place.spoken} #{one.message}" }
-rescue Sumitsubo::Error => wider
-  puts wider.message
+rescue Sumitsubo::Misshapen => e
+  e.refusals.each { |one| puts "#{one.place.spoken} #{one.message}" }
+rescue Sumitsubo::Error => e
+  puts e.message
 end
 
 back = Dir.pwd

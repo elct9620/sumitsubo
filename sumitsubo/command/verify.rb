@@ -35,13 +35,10 @@ module Sumitsubo
           # What it compares is its own, so what it could not compare is too.
           begin
             mechanism.verify(config, findings, specifications, source)
-          # The two are named apart because Spinel gives one name one type
-          # across both clauses, and `refused` would arrive as the wider of
-          # them, with no refusals to answer for. matz/spinel#4343.
-          rescue Sumitsubo::Misshapen => refused
-            refused.refusals.each { |one| findings.add(mechanism.refused(one)) }
-          rescue Sumitsubo::Error => unread
-            findings.unreadable(unread.message)
+          rescue Sumitsubo::Misshapen => e
+            e.refusals.each { |one| findings.add(mechanism.refused(one)) }
+          rescue Sumitsubo::Error => e
+            findings.unreadable(e.message)
           end
         end
         # A document read beside others never reached the mechanism that asked

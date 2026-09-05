@@ -47,10 +47,6 @@ module Sumitsubo
       # What one mechanism says about its own specification. One that cannot be
       # read leaves the others still able to answer, the way a linter reports
       # every file it managed to parse.
-      #
-      # The two are named apart because Spinel gives one name one type across
-      # both clauses, and `refused` would arrive as the wider of them, with no
-      # refusals to answer for. matz/spinel#4343.
       def asked(mechanism, config, findings, specifications, checking)
         # A specification the configuration switched off is one the project
         # does not keep, and a reference line nobody keeps is not one to hold
@@ -60,10 +56,10 @@ module Sumitsubo
         mechanism.declared(config, specifications).each do |document|
           written(mechanism, document, findings, checking)
         end
-      rescue Sumitsubo::Misshapen => refused
-        refused.refusals.each { |one| findings.add(mechanism.refused(one)) }
-      rescue Sumitsubo::Error => unread
-        findings.unreadable(unread.message)
+      rescue Sumitsubo::Misshapen => e
+        e.refusals.each { |one| findings.add(mechanism.refused(one)) }
+      rescue Sumitsubo::Error => e
+        findings.unreadable(e.message)
       end
 
       # What one document writes otherwise than a reference line is written,
