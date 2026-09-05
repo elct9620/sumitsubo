@@ -24,3 +24,22 @@ output=$("$spin" test 2>&1) || refuse "spin test" "$output"
 
 cd "$root/.packages/tree-sitter"
 output=$("$spin" test 2>&1) || refuse "spin test in .packages/tree-sitter" "$output"
+
+# A green above is a statement about one compiler. CI builds against the
+# revision the action pins, and a local toolchain ahead of that is a normal
+# state rather than a fault, so this says which one answered rather than
+# asking the two to agree.
+#
+# It goes out as `systemMessage` because a hook that lets the turn end has no
+# other way to reach a reader: stderr from an exit 0 reaches the debug log
+# alone. Carrying no decision field, it leaves the turn ending as it would.
+spinel=${SPINEL:-$(command -v spinel || true)}
+pin=$(sed -n 's/^[[:space:]]*default: \([0-9a-f]\{40\}\)$/\1/p' \
+  "$root/.github/actions/setup-spinel/action.yml" || true)
+if [ -n "$spinel" ] && [ -n "$pin" ]; then
+  ran=$("$spinel" --version 2>/dev/null | awk '{ print $2 }' || true)
+  if [ -n "$ran" ] && [ "$ran" != "${pin:0:12}" ]; then
+    printf '{"systemMessage":"The suite ran under spinel %s; CI builds against %s."}\n' \
+      "$ran" "${pin:0:12}"
+  fi
+fi
