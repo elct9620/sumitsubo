@@ -4,10 +4,13 @@ require "sumitsubo/source/marker"
 
 module Sumitsubo
   module Source
-    # Everything a run read out of the source, and the one place any of it is
-    # read from. Which language answers for a file is the languages' to say, so
-    # this names none: it holds the seam and asks it the three questions a
-    # comparison has of source.
+    # The one place source is read from, and nothing is kept here: a question
+    # goes to the seam and the answer comes straight back, so a file two
+    # mechanisms reach is parsed once for each of them.
+    #
+    # Which language answers for a file is the languages' to say, so this names
+    # none: it holds the seam and asks it the three questions a comparison has
+    # of source.
     #
     # A path arrives composed and answers rendered, because what a reading
     # hands back is what a finding points at.

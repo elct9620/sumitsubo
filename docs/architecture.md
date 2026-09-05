@@ -69,7 +69,7 @@ next one will ask of it.
                          └───────────┬─────────────┘
                                      │ file list
                          ┌───────────▼─────────────┐
-                         │    Source Repository    │  everything one run read
+                         │    Source Repository    │  where source is read
                          │  ├ Region       comment │
                          │  ├ Claim        marker  │
                          │  └ Declaration  syntax  │
@@ -262,7 +262,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │  specification/builder/{glossary,contract,behavior}.rb
 │  │
 │  ├─ (2) the source arrives
-│  │  source/repository.rb                         everything one run read
+│  │  source/repository.rb                         where source is read
 │  │  source/language.rb                           port
 │  │  source/language/<lang>.rb                    adapter, Prose last
 │  │  source/language/nodes.rb                     captures → what no language owns
