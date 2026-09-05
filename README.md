@@ -29,12 +29,12 @@ executable per target, as a tarball because that is what keeps the file mode,
 and the checksums a download can be checked against:
 
 ```console
-$ version=0.1.0-preview7 target=macos-aarch64
+$ version=0.1.0-preview8 target=macos-aarch64
 $ base="https://github.com/elct9620/sumitsubo/releases/download/v$version"
 $ curl -fsSLO "$base/sumi-$version-$target.tar.gz"
 $ curl -fsSLO "$base/sumi-$version-checksums.txt"
 $ shasum -a 256 -c --ignore-missing "sumi-$version-checksums.txt"
-sumi-0.1.0-preview7-macos-aarch64.tar.gz: OK
+sumi-0.1.0-preview8-macos-aarch64.tar.gz: OK
 $ tar xzf "sumi-$version-$target.tar.gz"
 $ ./sumi -v
 ```
@@ -55,7 +55,7 @@ The image holds the same executable a release ships, so it is a way to run
 and this is the way in:
 
 ```console
-$ docker run --rm -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview7 verify
+$ docker run --rm -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview8 verify
 ```
 
 It is built `FROM scratch` and carries the executable, the glibc loader, and
@@ -67,7 +67,7 @@ image weighs is what the executable weighs, plus the few megabytes glibc costs.
 behind that the person who ran it does not own. On Linux, say who you are:
 
 ```console
-$ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview7 init
+$ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/work" ghcr.io/elct9620/sumitsubo:0.1.0-preview8 init
 ```
 
 Docker Desktop maps ownership back to whoever is running it, so on macOS and
