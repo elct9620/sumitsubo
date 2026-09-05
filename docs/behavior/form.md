@@ -415,3 +415,11 @@ declaring anything else is a contract nobody registered.
 | Given | two sections whose includes name one glob |
 | When | the blocks the document is made of are read |
 | Then | each section keeps its own, so a reader is sent to the section that wrote it |
+
+## `F-050` Every way a document is out of shape, rather than the first
+
+| Step | Statement |
+| --- | --- |
+| Given | a document whose scenario heading opens with no id, and two rows naming a step that is not one |
+| When | the blocks the document is made of are read |
+| Then | all three are answered, and no fourth follows from the scenario the reading could not name |

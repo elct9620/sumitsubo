@@ -8,15 +8,22 @@ module Sumitsubo
   # at answers for the file, so this carries no place.
   class Unreadable < Error; end
 
-  # A document its own form refused, at the line that broke it. The place is
-  # what lets a run answer it beside every other finding, in the order a reader
-  # walks the file rather than after everything else.
-  class Misshapen < Unreadable
-    attr_reader :place
+  # One way a document is out of shape: what is wrong with it, and the line
+  # that broke. The place is what lets a run answer it beside every other
+  # finding, in the order a reader walks the file rather than after everything
+  # else.
+  Refusal = Struct.new(:place, :message)
 
-    def initialize(message, place)
-      super(message)
-      @place = place
+  # A document its own form refused, in every way it is out of shape rather
+  # than the first. A refusal stops the block it was made about and the blocks
+  # after it are still read, so a reader is handed the whole of what to fix and
+  # makes one pass at it.
+  class Misshapen < Unreadable
+    attr_reader :refusals
+
+    def initialize(refusals)
+      super(refusals[0].message)
+      @refusals = refusals
     end
   end
 end

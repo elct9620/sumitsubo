@@ -60,6 +60,7 @@ module Sumitsubo
 
         def initialize(path, source)
           @path = path
+          @refusals = []
           @source = source
           @key = nil
           @text = nil
@@ -72,16 +73,42 @@ module Sumitsubo
         end
 
         def build(blocks)
-          blocks.each { |block| arrived(block) }
-
-          refuse(1, "declares no name") if @key.nil?
-          refuse(@marker_at, "names #{MARKER} and gives no word to claim with") if @marker.nil? && !@marker_at.nil?
-          @contracts.each { |contract| declared(contract) }
+          blocks.each { |block| taken(block) }
+          gathered(1, "declares no name") if @key.nil?
+          gathered(@marker_at, "names #{MARKER} and gives no word to claim with") if @marker.nil? && !@marker_at.nil?
+          @contracts.each { |contract| checked(contract) }
+          raise Sumitsubo::Misshapen.new(@refusals) unless @refusals.empty?
 
           Specification.new(@key, @text, @includes, @path, attributes, @contracts)
         end
 
         private
+
+        # A refusal says one way the document is out of shape and stops the
+        # block it was made about; the blocks after it are still read, so a
+        # reader is handed all of them at once and fixes them in one pass. What
+        # follows from an earlier refusal is a refusal too — the block it would
+        # have leaned on is not there.
+        def taken(block)
+          arrived(block)
+        rescue Sumitsubo::Misshapen => e
+          @refusals.concat(e.refusals)
+        end
+
+        # A refusal gathered rather than raised, for where nothing after it
+        # leans on what it was about.
+        def gathered(line, said)
+          @refusals.push(Builder.refusal(@path, line, said, TOPIC))
+        end
+
+        # What one contract has to answer once every block is read. Each is
+        # asked on its own, so a signature nobody could read does not hide the
+        # next one.
+        def checked(contract)
+          declared(contract)
+        rescue Sumitsubo::Misshapen => e
+          @refusals.concat(e.refusals)
+        end
 
         def arrived(block)
           case block.kind
@@ -125,8 +152,8 @@ module Sumitsubo
         end
 
         def marking(line)
-          refuse(line, "names #{MARKER} twice") unless @marker_at.nil?
-          refuse(line, "names #{MARKER} after a contract, which is read one way or the other") unless @contracts.empty?
+          gathered(line, "names #{MARKER} twice") unless @marker_at.nil?
+          gathered(line, "names #{MARKER} after a contract, which is read one way or the other") unless @contracts.empty?
 
           @marker_at = line
           @holding = MARKER
@@ -213,24 +240,27 @@ module Sumitsubo
           return unless @marker_at.nil?
           return if @contract.nil? || !@contract.attributes[SIGNATURE].nil?
 
-          if block.language.nil?
-            refuse(block.line, "writes a signature with no language, which is what says how #{@contract.key} is spelled")
-          end
-
-          @contract.attributes[LANGUAGE] = [block.language]
+          @contract.attributes[LANGUAGE] = [block.language] unless block.language.nil?
           @contract.attributes[SIGNATURE] = [block.text]
+          return unless block.language.nil?
+
+          gathered(block.line, "writes a signature with no language, which is what says how #{@contract.key} is spelled")
         end
 
         # What every contract has to answer once the document is read. The marker
         # reading asks nothing of a name — a claim is a claim in whatever the file
         # is written in — so this is the other one's alone.
         def declared(contract)
-          return unless @marker.nil?
+          return unless @marker.nil? && @marker_at.nil?
 
-          named = contract.attributes[LANGUAGE]
-          if named.nil?
+          if contract.attributes[SIGNATURE].nil?
             refuse(contract.line, "registers #{contract.key} with no signature, so nothing says how its name is spelled")
           end
+
+          named = contract.attributes[LANGUAGE]
+          # The fence answered for itself, and a signature naming no language
+          # spells nothing to compare a name against.
+          return if named.nil?
 
           language = named[0]
           refuse(contract.line, "names #{language}, which this sumi does not carry") unless @source.carries?(language)

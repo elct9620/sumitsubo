@@ -27,7 +27,7 @@ def refused(path)
   reads(path)
   nil
 rescue Sumitsubo::Misshapen => misshapen
-  puts "#{misshapen.place.spoken} #{misshapen.message}"
+  misshapen.refusals.each { |one| puts "#{one.place.spoken} #{one.message}" }
 rescue Sumitsubo::Error => wider
   puts wider.message
 end

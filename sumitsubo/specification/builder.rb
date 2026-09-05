@@ -36,8 +36,18 @@ module Sumitsubo
       # A refusal names the topic that has the form it was written against,
       # because one syntax carries three of them and a reader sent to the wrong
       # one is sent nowhere.
+      #
+      # Worded once for the two ways a form reaches for one: raised where what
+      # comes after it leans on what was refused, and gathered where it does
+      # not. A document answers for every way it is out of shape, so the walk
+      # goes on either way and the raise reaches no further than the block it
+      # was made about.
+      def self.refusal(path, line, said, topic)
+        Refusal.new(Place.of(path, line), "#{said}; sumi help #{topic} has the form")
+      end
+
       def self.refuse(path, line, said, topic)
-        raise Misshapen.new("#{said}; sumi help #{topic} has the form", Place.of(path, line))
+        raise Misshapen.new([refusal(path, line, said, topic)])
       end
 
       def self.empty_to_nil(said)

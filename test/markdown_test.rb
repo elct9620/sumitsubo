@@ -85,7 +85,7 @@ end
 def read(blocks)
   Sumitsubo::Specification::Builder::Behavior.new("init.md").build(document(blocks))
 rescue Sumitsubo::Misshapen => e
-  puts "  refused: #{e.place.spoken} #{e.message}"
+  e.refusals.each { |one| puts "  refused: #{one.place.spoken} #{one.message}" }
   nil
 end
 
@@ -197,6 +197,19 @@ read([paragraph(1, "What init lays down.")])
 puts "--- a document with two titles ---"
 read([h1(1, "Init"), h1(3, "Verify")])
 
+# Three ways out of shape, none following from another: a reader is handed all
+# of them and makes one pass. The scenario is still opened where its id could
+# not be read, so the steps under it are not refused a second time for standing
+# where no scenario is.
+# @behavior F-050
+puts "--- every way a document is out of shape, rather than the first ---"
+read([
+  h1(1, "Init"), h2(3, "A run"),
+  row(5, "| Wen | a directory |"), cell(5, "Wen "), cell(5, "a directory "),
+  h2(7, "`I-008` Another run"),
+  row(9, "| Whenever | a directory |"), cell(9, "Whenever "), cell(9, "a directory ")
+])
+
 # --- a vocabulary --------------------------------------------------------
 #
 # One file is one specification here as it is for the other two forms; the
@@ -207,7 +220,7 @@ VOCABULARY = "test/fixtures/specification/forms/glossary.md"
 def vocabulary(blocks)
   Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY).build(document(blocks))
 rescue Sumitsubo::Misshapen => e
-  puts "  refused: #{e.place.spoken} #{e.message}"
+  e.refusals.each { |one| puts "  refused: #{one.place.spoken} #{one.message}" }
   nil
 end
 
@@ -383,7 +396,7 @@ def content(line, text) = BLOCK.new("content", 0, line, text, nil, [], [])
 def definition(blocks, answers = {})
   Sumitsubo::Specification::Builder::Contract.new("cli.md", Spelling.new(answers)).build(document(blocks))
 rescue Sumitsubo::Misshapen => e
-  puts "  refused: #{e.place.spoken} #{e.message}"
+  e.refusals.each { |one| puts "  refused: #{one.place.spoken} #{one.message}" }
   nil
 end
 

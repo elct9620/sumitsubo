@@ -39,7 +39,7 @@ module Sumitsubo
           # across both clauses, and `refused` would arrive as the wider of
           # them with no place to answer at. Reported 2026-09-05.
           rescue Sumitsubo::Misshapen => refused
-            findings.add(mechanism.refused(refused))
+            refused.refusals.each { |one| findings.add(mechanism.refused(one)) }
           rescue Sumitsubo::Error => unread
             findings.unreadable(unread.message)
           end

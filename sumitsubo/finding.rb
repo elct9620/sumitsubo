@@ -13,7 +13,10 @@ module Sumitsubo
     # worded so a reader meets it in the order they walk the file. The rule is
     # the mechanism's, and where and what are the refusal's own.
     def self.refused(rule, refusal)
-      new(rule: rule, difference: false, place: refusal.place, message: refusal.message)
+      # The message is written out rather than passed on: a refusal arrives out
+      # of the several a document was refused for, which Spinel holds untyped,
+      # and what a member answers there is boxed. Reported 2026-09-05.
+      new(rule: rule, difference: false, place: refusal.place, message: "#{refusal.message}")
     end
 
     # The comparison was made and the two sides disagree. False says it could

@@ -61,7 +61,7 @@ module Sumitsubo
           written(mechanism, document, findings, checking)
         end
       rescue Sumitsubo::Misshapen => refused
-        findings.add(mechanism.refused(refused))
+        refused.refusals.each { |one| findings.add(mechanism.refused(one)) }
       rescue Sumitsubo::Error => unread
         findings.unreadable(unread.message)
       end

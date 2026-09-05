@@ -57,6 +57,7 @@ module Sumitsubo
 
         def initialize(path)
           @where = Place.file(path)
+          @refusals = []
           @key = nil
           @text = nil
           @sections = []
@@ -67,15 +68,33 @@ module Sumitsubo
         end
 
         def build(blocks)
-          blocks.each { |block| arrived(block) }
+          blocks.each { |block| taken(block) }
+          gathered(1, "declares no title") if @key.nil?
+          raise Sumitsubo::Misshapen.new(@refusals) unless @refusals.empty?
 
-          refuse(1, "declares no title") if @key.nil?
           # The sections carry the boundaries here, so the container declares
           # none. The shape allows one as their default; nothing needs it yet.
           Specification.new(@key, @text, [], @where, {}, @sections)
         end
 
         private
+
+        # A refusal says one way the document is out of shape and stops the
+        # block it was made about; the blocks after it are still read, so a
+        # reader is handed all of them at once and fixes them in one pass. What
+        # follows from an earlier refusal is a refusal too — the block it would
+        # have leaned on is not there.
+        def taken(block)
+          arrived(block)
+        rescue Sumitsubo::Misshapen => e
+          @refusals.concat(e.refusals)
+        end
+
+        # A refusal gathered rather than raised, for where nothing after it
+        # leans on what it was about.
+        def gathered(line, said)
+          @refusals.push(Builder.refusal(@where, line, said, TOPIC))
+        end
 
         def arrived(block)
           case block.kind
@@ -100,7 +119,7 @@ module Sumitsubo
         # section a vocabulary that checks nothing rather than a document read as
         # the wrong kind.
         def titled(block)
-          refuse(block.line, "declares a second title") unless @key.nil?
+          gathered(block.line, "declares a second title") unless @key.nil?
 
           @key = block.text
         end
@@ -117,7 +136,7 @@ module Sumitsubo
         def section(block)
           said = block.text
           first = @sections.find { |one| one.key == said }
-          refuse(block.line, "opens a second section named #{said}, first opened at #{first_at(first)}") unless first.nil?
+          gathered(block.line, "opens a second section named #{said}, first opened at #{first_at(first)}") unless first.nil?
 
           @section = Statement.new(said, nil, [], @where, block.line, {}, [])
           @sections.push(@section)
@@ -144,7 +163,7 @@ module Sumitsubo
           return unless @holding.nil?
 
           first = @section.statements.find { |one| one.key == said }
-          refuse(block.line, "declares #{said} a second time in #{@section.key}, first declared at #{first_at(first)}") unless first.nil?
+          gathered(block.line, "declares #{said} a second time in #{@section.key}, first declared at #{first_at(first)}") unless first.nil?
 
           @term = Statement.new(said, nil, [], @where, block.line, {}, [])
           @section.statements.push(@term)
@@ -200,7 +219,7 @@ module Sumitsubo
           refuse(block.line, "rejects a word that is not in backticks") if denied.nil? || denied.empty?
 
           first = @term.statements.find { |one| one.key == denied }
-          refuse(block.line, "rejects #{denied} a second time under #{@term.key}, first rejected at #{first_at(first)}") unless first.nil?
+          gathered(block.line, "rejects #{denied} a second time under #{@term.key}, first rejected at #{first_at(first)}") unless first.nil?
 
           @rejected = Statement.new(denied, reason(block.rest), [], @where, block.line, {}, [])
           @term.statements.push(@rejected)
@@ -226,10 +245,10 @@ module Sumitsubo
           end
 
           why = reason(block.rest)
-          refuse(block.line, "writes an ignore at #{at} with no reason") if why.nil?
+          gathered(block.line, "writes an ignore at #{at} with no reason") if why.nil?
 
           first = @rejected.statements.find { |one| one.key == at }
-          refuse(block.line, "sets #{at} aside a second time under #{@rejected.key}, first set aside at #{first_at(first)}") unless first.nil?
+          gathered(block.line, "sets #{at} aside a second time under #{@rejected.key}, first set aside at #{first_at(first)}") unless first.nil?
 
           @rejected.statements.push(Statement.new(at, why, [], @where, block.line, {}, []))
         end

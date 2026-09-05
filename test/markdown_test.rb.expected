@@ -29,6 +29,10 @@ Init ["test/init_test.rb", "test/other_test.rb"]
   refused: init.md:1 declares no title; sumi help behavior has the form
 --- a document with two titles ---
   refused: init.md:3 declares a second title; sumi help behavior has the form
+--- every way a document is out of shape, rather than the first ---
+  refused: init.md:3 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+  refused: init.md:5 writes a step named Wen rather than Given, When or Then; sumi help behavior has the form
+  refused: init.md:9 writes a step named Whenever rather than Given, When or Then; sumi help behavior has the form
 --- a vocabulary read into sections, terms and the words they reject ---
 Glossary "Prose above every section."
   Everywhere ["app/**/*.rb"] "What this section is for."
@@ -92,14 +96,18 @@ CLI {} []
     
 --- an attribute a contract does not carry ---
   refused: cli.md:7 writes hidden, which is not an attribute a contract carries; sumi help contract has the form
+  refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
 --- an attribute given a value it does not take ---
   refused: cli.md:7 writes internal as no, where it takes yes; sumi help contract has the form
+  refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
 --- an attribute row standing under no contract ---
   refused: cli.md:5 writes an attribute outside any contract; sumi help contract has the form
 --- an attribute row that lost a separator ---
   refused: cli.md:7 writes an attribute row of 1 cell rather than two; sumi help contract has the form
+  refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
 --- one attribute written twice ---
   refused: cli.md:8 writes internal twice; sumi help contract has the form
+  refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
 --- a marker named after a contract has already been registered ---
   refused: cli.md:5 names Marker after a contract, which is read one way or the other; sumi help contract has the form
 --- a marker heading with no word under it ---
@@ -119,6 +127,7 @@ CLI {} []
   refused: cli.md:3 writes a signature the ruby reading cannot read; sumi help contract has the form
 --- a document that names nothing ---
   refused: cli.md:1 declares no name; sumi help contract has the form
+  refused: cli.md:1 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
 --- a second fence under one contract ---
   Store.open {"language" => ["ruby"], "signature" => ["module Store\n  def self.open(path)\n  end\nend\n"]}
 --- includes written at the level a feature writes them ---

@@ -37,6 +37,7 @@ module Sumitsubo
 
         def initialize(path)
           @path = path
+          @refusals = []
           @key = nil
           @text = nil
           @scoping = false
@@ -45,13 +46,31 @@ module Sumitsubo
         end
 
         def build(blocks)
-          blocks.each { |block| arrived(block) }
+          blocks.each { |block| taken(block) }
+          gathered(1, "declares no title") if @key.nil?
+          raise Sumitsubo::Misshapen.new(@refusals) unless @refusals.empty?
 
-          refuse(1, "declares no title") if @key.nil?
           Specification.new(@key, @text, @includes, @path, {}, @scenarios)
         end
 
         private
+
+        # A refusal says one way the document is out of shape and stops the
+        # block it was made about; the blocks after it are still read, so a
+        # reader is handed all of them at once and fixes them in one pass. What
+        # follows from an earlier refusal is a refusal too — the block it would
+        # have leaned on is not there.
+        def taken(block)
+          arrived(block)
+        rescue Sumitsubo::Misshapen => e
+          @refusals.concat(e.refusals)
+        end
+
+        # A refusal gathered rather than raised, for where nothing after it
+        # leans on what it was about.
+        def gathered(line, said)
+          @refusals.push(Builder.refusal(@path, line, said, TOPIC))
+        end
 
         def arrived(block)
           case block.kind
@@ -77,7 +96,7 @@ module Sumitsubo
 
         # A file naming two titles says which of them it is nowhere.
         def titled(block)
-          refuse(block.line, "declares a second title") unless @key.nil?
+          gathered(block.line, "declares a second title") unless @key.nil?
 
           @key = block.text
         end
@@ -103,7 +122,7 @@ module Sumitsubo
         def scenario_from(block)
           id = block.taken
           if id.nil? || id.empty?
-            refuse(block.line, "declares a scenario whose heading does not open with an id in backticks")
+            gathered(block.line, "declares a scenario whose heading does not open with an id in backticks")
           end
 
           Statement.new(id, Builder.empty_to_nil(block.rest), [], @path, block.line,
