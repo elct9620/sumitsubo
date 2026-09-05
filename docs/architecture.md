@@ -1,11 +1,20 @@
 # Architecture
 
 A specification is read into one place, source into another, and what the
-comparison says into a third.
+comparison says into a third. A run takes as much of that as it needs: `verify`
+takes all three, and `fmt` the first and the last, which is what lets a
+reference line be got right before any code is held to it.
 
-Revisit this when a fourth stage appears — anything a run does that is not
-reading a specification, scanning source, or answering — or when a mechanism
-needs a source none of the three below can be read as.
+Writing a specification back is the one thing a run does that is none of the
+three. It is the shell's, the way laying a seed down is: `init` and `fmt` reach
+the filesystem where every stage below reads from it, and neither reaches
+through a port, because there is one implementation of a file and nothing to
+choose between.
+
+Revisit this when a fifth thing appears — anything a run does that is not
+reading a specification, scanning source, answering, or writing a
+specification back — or when a mechanism needs a source none of the three
+below can be read as.
 
 ## Layers
 
@@ -47,10 +56,16 @@ A form is not an adapter: it never reaches a driver. What a parser hands over is
 a Block, and what a form makes of one is the specification's own — which is why
 the two sit on either side of that word rather than in one box.
 
+The filesystem is the one driver with an arrow going the other way, and only
+the shell draws it: `init` lays a seed down and `fmt` writes a document back.
+Nothing inner reaches it, so the direction the layers are named for holds.
+
 ## One run
 
 Each stage keeps what it read in one place, so no stage has to know what the
-next one will ask of it.
+next one will ask of it. Below is `verify`, which takes all three. `fmt` takes
+(1) and (3), and puts what it can write for a person back into the document it
+read on the way.
 
 ```
  (1) read the specification
@@ -228,13 +243,18 @@ word in front, which is the whole of `<mechanism>/<check>`.
 ──────────────────────────────┴────────────┴─────────────┴─────────────
  reach answers for itself:  barren  (G, C, B) ✕
  a document its own form refused:  unreadable  (G, C, B) ✕
-   answered at the line that broke it, so it sorts among the findings rather
-   than after them, and the documents beside it are read and answered anyway
+   every way it is out of shape, each answered at the line that broke it, so
+   they sort among the findings rather than after them, and the documents
+   beside it are read and answered anyway
+ a line written otherwise than a reference line is:  miswritten  (G) ✻
+   what `fmt` writes for a person, and `fmt --check` answers instead
  a specification nothing could open answers for itself, at no line ✕
    no parser reads it, it is not there, or it names one thing twice
 
  G glossary   C contract   B behavior
  ✕ a failure: the comparison could not be made
+ ✻ answered by `fmt` alone; `verify` has no opinion on how a document is
+   written, only on what it says
    everything else is a difference: both sides were read and disagree
 ```
 
@@ -259,6 +279,7 @@ Every file has one place, and where it sits is what says what it is.
 │  ├─ (1) the specification arrives
 │  │  specification/repository.rb                  every specification
 │  │  specification/block.rb                       what a document is made of
+│  │  specification/rewrite.rb                     one line, as it would be written
 │  │  specification/parser.rb                      port
 │  │  specification/parser/markdown.rb             adapter, both grammars
 │  │  specification/builder.rb                     what every form shares
@@ -286,7 +307,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │  finding/report.rb                            adapter, to stdout
 │  │
 │  ├─ the shell
-│  │  cli.rb  command/{help,init,verify}.rb
+│  │  cli.rb  command/{fmt,help,init,verify}.rb
 │  │
 │  └─ grammar.rb                                   the one driver, both sides
 │
