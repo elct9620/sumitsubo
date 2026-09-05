@@ -189,18 +189,19 @@ module Sumitsubo
         # kept under the method they belong to.
         def params_in(matches)
           found = {}
-          matches.each do |captures|
-            of = named(captures, OF)
-            next if of.nil?
+          groups = Nodes.grouped_by(matches, OF)
+          groups.keys.each { |key| found[key] = params_from(groups[key]) }
+          found
+        end
 
-            key = owner(of.line, of.text)
-            holding = found[key]
-            if holding.nil?
-              holding = []
-              found[key] = holding
-            end
+        # The parameters one method takes. A match that qualifies it without
+        # naming a parameter — an empty list is written that way — contributes
+        # nothing, which is not the same as the method taking none.
+        def params_from(group)
+          found = []
+          group.each do |captures|
             param = param_from(captures)
-            holding.push(param) unless param.nil?
+            found.push(param) unless param.nil?
           end
           found
         end
@@ -239,24 +240,10 @@ module Sumitsubo
         def shape_for(taken, node)
           return nil if node.kind == SCOPE
 
-          found = taken[owner(node.first, node.text)]
+          found = taken[Nodes.owner_of(node.first, node.text)]
           Source::Shape.new(params: found.nil? ? [] : found)
         end
 
-        # A method's name sits on the same line as `def`, so the line and the
-        # name together are what tell two methods apart at the resolution the
-        # captures carry. One line holding two of a name is below that
-        # resolution, and their parameters merge — the one place this reading
-        # invents rather than loses.
-        def owner(line, name)
-          "#{line}\t#{name}"
-        end
-
-        def named(captures, name)
-          found = nil
-          captures.each { |capture| found = capture if capture.name == name }
-          found
-        end
       end
     end
   end

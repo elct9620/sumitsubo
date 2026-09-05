@@ -71,3 +71,20 @@ COMMENTS = [
 ]
 standing = Sumitsubo::Source::Language::Nodes.following(COMMENTS)
 standing.keys.sort.each { |at| puts "  #{at}: #{standing[at]}" }
+
+# A match that qualifies a declaration rather than making one is gathered under
+# it. The one naming no declaration is passed over; two naming one on the same
+# line are below the resolution the captures carry, so their qualifiers merge —
+# which is where this invents rather than loses.
+# @behavior D-022
+puts "--- the matches gathered under the declaration each names ---"
+GROUPED = Sumitsubo::Source::Language::Nodes.grouped_by([
+  [capture(1, "of", 2, "settle"), capture(1, "positional", 2, "at")],
+  [capture(2, "scope", 1, "class A\nend"), capture(2, "name", 1, "A")],
+  [capture(3, "of", 6, "settle"), capture(3, "keyword", 6, "note")],
+  [capture(4, "of", 2, "settle"), capture(4, "block", 2, "held")]
+], "of")
+GROUPED.keys.sort.each do |key|
+  spelled = GROUPED[key].map { |captures| captures.map { |one| one.name }.join("+") }
+  puts "  #{key.split("\t").join(":")} #{spelled.join(" ")}"
+end

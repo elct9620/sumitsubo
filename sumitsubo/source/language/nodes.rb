@@ -49,6 +49,52 @@ module Sumitsubo
           order.map { |key| grouped[key] }
         end
 
+        # The capture of a match carrying this name, or nothing where the match
+        # carries none. The last one wins, which is what a match naming one
+        # node twice would have to mean.
+        def self.capture_of(captures, name)
+          found = nil
+          captures.each { |capture| found = capture if capture.name == name }
+          found
+        end
+
+        # The declaration a parameter belongs to. Its name and the line it was
+        # written on are what tell two declarations apart at the resolution the
+        # captures carry, and the gathering and the lookup have to spell that
+        # the same way, so it is spelled here and nowhere else.
+        #
+        # One line holding two of a name is below that resolution, and their
+        # parameters merge — the one place this loses nothing and invents
+        # instead.
+        def self.owner_of(line, name)
+          "#{line}\t#{name}"
+        end
+
+        # The matches gathered under the declaration each one names, in the
+        # order the parser met them. A match naming none is passed over: it
+        # declared something rather than qualifying one.
+        #
+        # What a match then contributes is the reading's to build. Two
+        # languages agree on which declaration a parameter belongs to and on
+        # nothing else about it — what kinds there are, and which of them a
+        # caller may leave out, is the language's own.
+        def self.grouped_by(matches, of)
+          found = {}
+          matches.each do |captures|
+            owner = capture_of(captures, of)
+            next if owner.nil?
+
+            key = owner_of(owner.line, owner.text)
+            holding = found[key]
+            if holding.nil?
+              holding = []
+              found[key] = holding
+            end
+            holding.push(captures)
+          end
+          found
+        end
+
         # What each comment sits in front of, under the byte it starts at. A
         # query has no way to ask what a node is not, so whether the neighbour is
         # itself a comment is answered by the set of comments the same query
@@ -74,9 +120,8 @@ module Sumitsubo
         # Where one of a match's captures begins, or nothing where the match
         # carries no such capture.
         def self.byte_of(captures, name)
-          found = nil
-          captures.each { |capture| found = capture.start if capture.name == name }
-          found
+          found = capture_of(captures, name)
+          found.nil? ? nil : found.start
         end
 
         # The nodes those matches declare. A match that declares nothing answers

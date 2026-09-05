@@ -184,33 +184,44 @@ module Sumitsubo
         end
 
         # The parameters each function takes, kept under the function they
-        # belong to. Rust lets a caller leave none of them out.
+        # belong to.
         def params_in(matches)
           found = {}
-          matches.each do |captures|
-            of = nil
-            kind = nil
-            name = nil
-            captures.each do |capture|
-              if capture.name == OF
-                of = capture
-              elsif capture.name == NAMED
-                name = capture.text
-              else
-                kind = capture.name
-              end
-            end
-            next if of.nil? || kind.nil?
+          groups = Nodes.grouped_by(matches, OF)
+          groups.keys.each { |key| found[key] = params_from(groups[key]) }
+          found
+        end
 
-            key = "#{of.line}\t#{of.text}"
-            holding = found[key]
-            if holding.nil?
-              holding = []
-              found[key] = holding
-            end
-            holding.push(Source::Param.new(name, kind, false))
+        # The parameters one function takes. A match that qualifies it without
+        # naming a parameter — an empty list is written that way — contributes
+        # nothing, which is not the same as the function taking none.
+        def params_from(group)
+          found = []
+          group.each do |captures|
+            param = param_from(captures)
+            found.push(param) unless param.nil?
           end
           found
+        end
+
+        # What a caller has to write for this parameter. A receiver carries no
+        # name of its own, so the kind word is the whole of what it answers.
+        # Rust lets a caller leave none of them out.
+        def param_from(captures)
+          kind = nil
+          name = nil
+          captures.each do |capture|
+            next if capture.name == OF
+
+            if capture.name == NAMED
+              name = capture.text
+            else
+              kind = capture.name
+            end
+          end
+          return nil if kind.nil?
+
+          Source::Param.new(name, kind, false)
         end
 
         # A scope takes no parameters at all, which is not the same as a
@@ -218,7 +229,7 @@ module Sumitsubo
         def shape_for(taken, node)
           return nil unless node.kind == ITEM
 
-          found = taken["#{node.first}\t#{node.text}"]
+          found = taken[Nodes.owner_of(node.first, node.text)]
           Source::Shape.new(params: found.nil? ? [] : found)
         end
 
