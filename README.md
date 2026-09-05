@@ -8,8 +8,9 @@ specification is the reference line; the source code is the material. It
 reports the difference and does not decide which side is wrong — correcting the
 specification is as valid an outcome as correcting the code.
 
-The command is `sumi`, a single native executable. It reads Ruby and Rust, and
-whatever else is prose.
+The command is `sumi`, a single native executable. It reads Ruby, Rust, Go,
+Python, JavaScript and TypeScript — `.tsx` included — and whatever else is
+prose.
 
 ## Mechanisms
 

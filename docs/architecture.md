@@ -25,8 +25,8 @@ edge and handed in.
 │tree-     │◄─┤ Markdown parse │─►│  Builder×3         │  │Specification │
 │sitter    │  │   → Block      │  │   └► the forms     │  │  Statement   │
 │          │  ├────────────────┤  │ ╔═══════▼════════╗ │  │  Block       │
-│          │◄─┤ Ruby / Rust /  │  │ ║ Specification  ║─┼─►│              │
-│          │  │ Prose readings │─►│ ║  Repository    ║ │  │              │
+│          │◄─┤ the readings,  │  │ ║ Specification  ║─┼─►│              │
+│          │  │ Prose last     │─►│ ║  Repository    ║ │  │              │
 └──────────┘  │ + node shaping │  │ ╚═══════╤════════╝ │  │              │
               ├────────────────┤  │         │          │  │              │
 ┌──────────┐  │ walk (reach)   │─►│ ╔═══════▼════════╗ │  │  Source::*   │
@@ -145,9 +145,10 @@ two languages in one run — and does not grow with each language added. A
 language needing something of that chain the two already there do not is a
 finding, not a ninth step.
 
-One thing is already waiting on this: TypeScript ships two grammars in one
-repository and JavaScript is a third, so steps 1 to 3 stop answering
-one-to-one to a language before 4 to 8 do.
+Steps 1 to 3 do not answer one-to-one to a language. TypeScript ships two
+grammars in one repository, so one fetch and one pin stand behind two
+translation units and two readings; Go needs no external scanner, so its unit
+holds one source where its neighbours hold two.
 
 ## What this project's own specification reaches
 
@@ -183,9 +184,9 @@ Glossary and Contract answer for the implementation, Behavior for the tests.
  behavior/language_<lang>.md ─────────────►   test/language_<lang>_test.rb
    what that one reading makes of it           one pair per language
  behavior/…            ────────────────────►  test/…_test.rb
-   seventeen features, reaching all            never the implementation
-   eighteen tests, each include naming
-   the one test that witnesses it
+   every feature, reaching every test,         never the implementation
+   each include naming the one test
+   that witnesses it
 ```
 
 ## The checks, grouped by the Source they consume
@@ -263,7 +264,7 @@ Every file has one place, and where it sits is what says what it is.
 │  ├─ (2) the source arrives
 │  │  source/repository.rb                         everything one run read
 │  │  source/language.rb                           port
-│  │  source/language/{ruby,rust,prose}.rb         adapter
+│  │  source/language/<lang>.rb                    adapter, Prose last
 │  │  source/language/nodes.rb                     captures → what no language owns
 │  │  source/marker.rb                             answers Source::Claim
 │  │  source/scope.rb  source/patterns.rb          reach

@@ -249,18 +249,18 @@ module Sumitsubo
             `positional` is the one kind word sumi owns - the parameter a
             caller writes with no marking of any sort - and a finding leaves
             it out, since a bare name already says it. Every other kind word
-            belongs to the language and is compared as text:
-
-                ruby  keyword  splat  hash_splat  block  destructured  forward
-                rust  self
+            is the language's own - `splat`, `self`, `variadic`,
+            `positional_only`, `rest` - and is compared as text. A finding
+            prints the word it found, so what one language calls a kind is
+            read there rather than learned from a list here.
 
         Names
-            A name is how the language spells it - in Ruby, `.` for a singleton
-            method, `#` for an instance one, a bare path for a class or module;
-            in Rust, the path the file itself carries, `Charge::settle` for a
-            method in an `impl` and `audit::Entry` for a struct in a `mod`. A
-            crate name and the module a file becomes live outside the file, so
-            a name stops where the file does.
+            A name is spelled the way that language's own documentation
+            convention spells it - `Charge#settle` and `Charge.open` as
+            RDoc and JSDoc write them, `Charge::settle` as rustdoc does,
+            `Charge.Settle` as go doc links do. What lives outside the
+            file - a crate, a package, the module path a directory gives
+            it - is no part of the name, so one stops where the file does.
 
             The language is the namespace, the way the marker is for the other
             reading. Two languages may spell one name and mean nothing alike,
@@ -373,6 +373,20 @@ module Sumitsubo
                                                under any one type's name
                 pub use inner::Store           a re-export names it here and
                                                defines it elsewhere
+
+            And in the languages beside them:
+
+                LIMIT = 10                     a name holding a plain value
+                                               declares nothing, in Python as
+                                               in JavaScript
+                """A docstring."""              Python evaluates it rather
+                                               than writing it as a comment,
+                                               so it is not what a person
+                                               wrote
+                const o = { run() {} }         what an object literal holds is
+                                               outside what a module declares
+                enum Status { Settled }        a variant is not declared, only
+                                               the enum that holds it
 
             Three things it sees without telling them apart: `module` and
             `class` spell one name, and a signature may say either. One block
