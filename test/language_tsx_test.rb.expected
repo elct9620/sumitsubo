@@ -1,0 +1,22 @@
+--- and what a person wrote in a file of its own ---
+5
+"19:/* @contract Charge.open — a claim in a block comment. "
+"nothing"
+--- a component is the function it is ---
+  4 Props
+  8 Charge
+  10 Charge#settle
+  14 Charge.open
+  20 Panel
+  22 Badge
+--- with the parameters a caller has to satisfy ---
+  Charge#settle(at:positional, note:positional?)
+  Charge.open(amount:positional)
+  Panel(props:positional)
+  Badge(-:destructured)
+--- source the grammar cannot read ---
+broken.tsx: cannot be parsed by the tsx grammar
+--- and the reading of what it declares refuses it too ---
+  broken.tsx: cannot be parsed by the tsx grammar
+--- and the grammar beside it cannot read the same file ---
+  sample.tsx: cannot be parsed by the typescript grammar

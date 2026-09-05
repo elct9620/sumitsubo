@@ -31,6 +31,10 @@ module TypescriptGrammar
   ffi_func :tree_sitter_typescript, [], :ptr
 end
 
+module TsxGrammar
+  ffi_func :tree_sitter_tsx, [], :ptr
+end
+
 module MarkdownGrammar
   ffi_func :tree_sitter_markdown, [], :ptr
 end
@@ -51,6 +55,10 @@ module Sumitsubo
     PYTHON = "python"
     JAVASCRIPT = "javascript"
     TYPESCRIPT = "typescript"
+    # TypeScript ships two grammars and this build carries both: the language,
+    # and the one that reads JSX alongside it. A file is one or the other, so a
+    # specification naming the wrong one is a parse this cannot make.
+    TSX = "tsx"
     # Markdown ships two grammars and this build carries both. The block one
     # gives the structure a specification is written in — sections, tables,
     # fences — and hands back the text a block-level `inline` node holds
@@ -85,5 +93,6 @@ TreeSitter.register(Sumitsubo::Grammar::GO, GoGrammar.tree_sitter_go)
 TreeSitter.register(Sumitsubo::Grammar::PYTHON, PythonGrammar.tree_sitter_python)
 TreeSitter.register(Sumitsubo::Grammar::JAVASCRIPT, JavascriptGrammar.tree_sitter_javascript)
 TreeSitter.register(Sumitsubo::Grammar::TYPESCRIPT, TypescriptGrammar.tree_sitter_typescript)
+TreeSitter.register(Sumitsubo::Grammar::TSX, TsxGrammar.tree_sitter_tsx)
 TreeSitter.register(Sumitsubo::Grammar::MARKDOWN, MarkdownGrammar.tree_sitter_markdown)
 TreeSitter.register(Sumitsubo::Grammar::MARKDOWN_INLINE, MarkdownInlineGrammar.tree_sitter_markdown_inline)

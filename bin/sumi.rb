@@ -10,6 +10,7 @@ require "sumitsubo/source/language/prose"
 require "sumitsubo/source/language/python"
 require "sumitsubo/source/language/ruby"
 require "sumitsubo/source/language/rust"
+require "sumitsubo/source/language/tsx"
 require "sumitsubo/source/language/typescript"
 require "sumitsubo/grammar"
 require "sumitsubo/specification/parser/markdown"
@@ -24,6 +25,7 @@ exit Sumitsubo::CLI.new(
     Sumitsubo::Source::Language::Python.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Javascript.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Typescript.new(Sumitsubo::Grammar),
+    Sumitsubo::Source::Language::Tsx.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Prose.new
   ]),
   [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]

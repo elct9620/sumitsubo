@@ -82,26 +82,44 @@ static int tsq_put_escaped(const char *bytes, size_t len) {
 // Grammars linked into the binary announce themselves rather than being listed
 // here. Which languages a build carries is the application's decision, and a
 // binding naming them would make every one of those symbols a requirement.
-#define TSQ_MAX_GRAMMARS 8
+//
+// The room is fixed because registration happens as the program loads, before
+// anything could be told that it failed. It is set well past what a build
+// plausibly links in — a grammar costs two pointers here and megabytes of
+// parse table there, so the array is never the reason to stop adding one.
+#define TSQ_MAX_GRAMMARS 32
 
 static struct {
   char *name;
   const TSLanguage *language;
 } tsq_grammars[TSQ_MAX_GRAMMARS];
 static int tsq_grammar_count = 0;
+static int tsq_grammar_dropped = 0;
 
 void tsq_register(const char *name, const TSLanguage *language) {
-  if (tsq_grammar_count >= TSQ_MAX_GRAMMARS) return;
+  if (tsq_grammar_count >= TSQ_MAX_GRAMMARS) {
+    tsq_grammar_dropped = 1;
+    return;
+  }
   tsq_grammars[tsq_grammar_count].name = strdup(name);
   tsq_grammars[tsq_grammar_count].language = language;
   tsq_grammar_count++;
 }
 
+// A name nobody announced and a name that arrived after the room ran out read
+// alike from here, and a build hitting the second would otherwise hunt for a
+// registration that is written down and did happen. So the answer says which.
 static const TSLanguage *tsq_language(const char *name) {
   for (int i = 0; i < tsq_grammar_count; i++) {
     if (strcmp(tsq_grammars[i].name, name) == 0) return tsq_grammars[i].language;
   }
-  snprintf(tsq_err, sizeof(tsq_err), "no grammar registered for %s", name);
+  if (tsq_grammar_dropped) {
+    snprintf(tsq_err, sizeof(tsq_err),
+             "no grammar registered for %s: this build announced more than %d",
+             name, TSQ_MAX_GRAMMARS);
+  } else {
+    snprintf(tsq_err, sizeof(tsq_err), "no grammar registered for %s", name);
+  }
   return NULL;
 }
 
