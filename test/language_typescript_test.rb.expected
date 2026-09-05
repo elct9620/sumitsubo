@@ -1,0 +1,28 @@
+--- and what a person wrote in a file of its own ---
+5
+"37:/* @contract Charge.open — a claim in a block comment. "
+"nothing"
+--- what TypeScript declares beyond what JavaScript does ---
+  4 Ledger
+  5 Ledger#record
+  9 Outcome
+  11 Status
+  16 Charge
+  18 Charge#settle
+  22 Charge.open
+  26 Charge#audit
+  29 audit
+  30 audit.trail
+  35 recorded
+  38 ambient
+--- with the parameters a caller has to satisfy ---
+  Ledger#record(charge:positional)
+  Charge#settle(at:positional, note:positional?, mark:positional?, rest:rest?)
+  Charge.open(amount:positional)
+  audit.trail(entry:positional)
+  recorded(entry:positional)
+  ambient(x:positional)
+--- source the grammar cannot read ---
+broken.ts: cannot be parsed by the typescript grammar
+--- and the reading of what it declares refuses it too ---
+  broken.ts: cannot be parsed by the typescript grammar

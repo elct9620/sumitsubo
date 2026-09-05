@@ -16,6 +16,7 @@ RUST=v0.24.2
 GO=v0.25.0
 PYTHON=v0.25.0
 JAVASCRIPT=v0.25.0
+TYPESCRIPT=v0.23.2
 MARKDOWN=v0.5.3
 
 mkdir -p "$vendor"
@@ -40,6 +41,9 @@ fetch tree-sitter-rust tree-sitter/tree-sitter-rust "$RUST"
 fetch tree-sitter-go tree-sitter/tree-sitter-go "$GO"
 fetch tree-sitter-python tree-sitter/tree-sitter-python "$PYTHON"
 fetch tree-sitter-javascript tree-sitter/tree-sitter-javascript "$JAVASCRIPT"
+# TypeScript ships two grammars in one repository — the language, and the one
+# that reads JSX alongside it — so one fetch answers for two translation units.
+fetch tree-sitter-typescript tree-sitter/tree-sitter-typescript "$TYPESCRIPT"
 # Markdown ships two grammars in one repository and this build carries both:
 # the block one for the structure a specification is written in, and the inline
 # one for reading the text a block-level node holds unparsed.
@@ -59,6 +63,15 @@ cp "$vendor/tree-sitter/lib/include/tree_sitter/api.h" \
 src="$vendor/tree-sitter/lib/src"
 [ -e "$src/tree_sitter" ] || ln -s ../include/tree_sitter "$src/tree_sitter"
 [ -e "$src/unicode/unicode" ] || ln -s . "$src/unicode/unicode"
+
+# Both TypeScript grammars reach their scanner through a header they share,
+# and that header asks for "tree_sitter/parser.h" — which resolves beside
+# itself, where there is none. Upstream builds pass -I for each grammar's own
+# src; spin gives the application root alone, so the directory is mirrored
+# where the shared header will look for it.
+common="$vendor/tree-sitter-typescript/common"
+[ ! -d "$common" ] || [ -e "$common/tree_sitter" ] ||
+  ln -s ../typescript/src/tree_sitter "$common/tree_sitter"
 
 # spin decides what to recompile from the mtimes of the files it scans, and
 # vendor/ is not one of them. Re-pinning would otherwise link yesterday's
