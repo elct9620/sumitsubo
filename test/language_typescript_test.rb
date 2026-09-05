@@ -36,10 +36,10 @@ LANGUAGES.declarations_in(SAMPLE, "sample.ts", "typescript").each do |name|
   puts "  #{name.line} #{name.name}"
 end
 
-# A `?` says outright that a caller may leave a parameter out, which no other
-# language here writes on the parameter itself. A rest parameter is a required
-# one holding a rest pattern, so the two are asked for separately — one pattern
-# reaching both would answer the same parameter twice.
+# A `?` says outright that a caller may leave a parameter out, where a default
+# only implies it. A rest parameter is a required one holding a rest pattern,
+# so the two are asked for separately — one pattern reaching both would answer
+# the same parameter twice.
 # @behavior TS-003
 puts "--- with the parameters a caller has to satisfy ---"
 LANGUAGES.declarations_in(SAMPLE, "sample.ts", "typescript").each do |name|

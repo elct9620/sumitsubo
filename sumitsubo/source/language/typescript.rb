@@ -47,8 +47,7 @@ module Sumitsubo
         DEFAULT = "default"
 
         # A rest parameter gathers whatever is there, and a `?` says outright
-        # that a caller may leave one out — the only language here that writes
-        # optionality on the parameter rather than leaving it to a default.
+        # that a caller may leave one out, where a default only implies it.
         OMISSIBLE = ["rest"]
         OPTIONAL = "optional"
 

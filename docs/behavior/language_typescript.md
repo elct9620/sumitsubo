@@ -11,9 +11,8 @@ member, so it takes the same `#`.
 
 An abstract class is a node of its own rather than a class carrying a word, so
 a reading asking only for a class passes one over without saying it did. A `?`
-says outright that a caller may leave a parameter out, which is the only place
-among these languages where optionality is written on the parameter rather
-than left to a default.
+says outright that a caller may leave a parameter out, where a default only
+implies it.
 
 What the reading does not carry. An enum's members are not declared, only the
 enum — the same line Rust draws around a variant. A function written inside
