@@ -192,6 +192,14 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that heading |
 
+## `F-053` Rejected written under the heading a section scopes itself with
+
+| Step | Statement |
+| --- | --- |
+| Given | the rejected words written under the reserved heading rather than under a term |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, naming the heading they were written under rather than the term they have none of |
+
 ## `F-022` A rejected word not taken letter for letter
 
 | Step | Statement |

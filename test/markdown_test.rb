@@ -315,6 +315,12 @@ vocabulary([
 puts "--- Rejected written under no term ---"
 vocabulary([h1(1, "Glossary"), h2(3, "Everywhere"), h4(5, "Rejected")])
 
+# The reserved heading closes a term the way any other heading does, so a reader
+# is told which nothing the words were written under.
+# @behavior F-053
+puts "--- Rejected written under the heading a section scopes itself with ---"
+vocabulary([h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Includes"), h4(7, "Rejected")])
+
 # @behavior F-022
 puts "--- a rejected word that is not in backticks ---"
 vocabulary([

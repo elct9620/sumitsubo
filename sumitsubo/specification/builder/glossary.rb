@@ -175,7 +175,7 @@ module Sumitsubo
         # rejection under it out of the run without saying so.
         def rejects(block)
           said = block.text
-          refuse(block.line, "writes #{said} outside any term") if @term.nil?
+          refuse(block.line, outside(said)) if @term.nil?
           refuse(block.line, "writes #{said} where only #{REJECTED} is read") unless said == REJECTED
 
           @holding = REJECTED
@@ -270,6 +270,16 @@ module Sumitsubo
         # from that rather than rendered a second time.
         def first_at(statement)
           Place.new(path: statement.path, line: statement.line).spoken
+        end
+
+        # Which nothing the rejected words were written under. The reserved
+        # heading closes a term the way any other heading does, so a word
+        # spelled with it leaves them nothing to reject under — and a reader
+        # sent to look for a missing term is sent to the wrong line.
+        def outside(said)
+          return "writes #{said} outside any term" unless @holding == INCLUDES
+
+          "writes #{said} under #{INCLUDES}, which scopes the section rather than declaring a term"
         end
 
         def refuse(line, said)

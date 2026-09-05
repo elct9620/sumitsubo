@@ -59,6 +59,8 @@ Glossary "Prose and nothing else."
   refused: test/fixtures/specification/forms/glossary.md:7 writes Rejcted where only Rejected is read; sumi help glossary has the form
 --- Rejected written under no term ---
   refused: test/fixtures/specification/forms/glossary.md:5 writes Rejected outside any term; sumi help glossary has the form
+--- Rejected written under the heading a section scopes itself with ---
+  refused: test/fixtures/specification/forms/glossary.md:7 writes Rejected under Includes, which scopes the section rather than declaring a term; sumi help glossary has the form
 --- a rejected word that is not in backticks ---
   refused: test/fixtures/specification/forms/glossary.md:9 rejects a word that is not in backticks; sumi help glossary has the form
 --- a rejected word with nothing between the marks ---
