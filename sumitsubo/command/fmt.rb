@@ -50,7 +50,7 @@ module Sumitsubo
       #
       # The two are named apart because Spinel gives one name one type across
       # both clauses, and `refused` would arrive as the wider of them, with no
-      # refusals to answer for. Reported 2026-09-05.
+      # refusals to answer for. matz/spinel#4343.
       def asked(mechanism, config, findings, specifications, checking)
         # A specification the configuration switched off is one the project
         # does not keep, and a reference line nobody keeps is not one to hold

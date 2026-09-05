@@ -22,7 +22,7 @@ end
 # What a vocabulary could not be read as, however it was refused: a form points
 # at the line that broke it, and a document nothing could open answers for the
 # file. The two are named apart because Spinel gives one name one type across
-# both clauses. Reported 2026-09-05.
+# both clauses. matz/spinel#4343.
 def refused(path)
   reads(path)
   nil

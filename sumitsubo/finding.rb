@@ -15,7 +15,11 @@ module Sumitsubo
     def self.refused(rule, refusal)
       # The message is written out rather than passed on: a refusal arrives out
       # of the several a document was refused for, which Spinel holds untyped,
-      # and what a member answers there is boxed. Reported 2026-09-05.
+      # and what a member answers there is boxed. Passing it on stops the build.
+      #
+      # Nobody has reduced this to a file of its own, so there is no ticket to
+      # follow: six standalone shapes carrying what looked like the cause all
+      # compiled. Take the interpolation out to see it again.
       new(rule: rule, difference: false, place: refusal.place, message: "#{refusal.message}")
     end
 
