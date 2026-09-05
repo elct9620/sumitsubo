@@ -77,3 +77,9 @@ jobs:
       # step that runs a mechanism over a real project rather than a fixture.
       - name: Verify this repository against its own specification
         run: ./build/bin/sumi verify
+
+      # The other half of the same promise: this repository's reference line is
+      # held to the form it ships a command for. `--check` rather than a write,
+      # because what a run has to say here is what a person has to fix.
+      - name: Check this repository's specification is written the way one is
+        run: ./build/bin/sumi fmt --check
