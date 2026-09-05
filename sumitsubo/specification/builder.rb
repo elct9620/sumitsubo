@@ -13,10 +13,9 @@ module Sumitsubo
     # that states a term in one form is prose in another.
     module Builder
       # The one heading every kind of specification spells alike, since every
-      # one of them says what it answers for. It is prose, so a scenario or a
-      # contract of the same name is written as a run taken letter for letter
-      # and does not collide with it; a term is prose too, which is what a
-      # vocabulary gives up to have it.
+      # one of them says what it answers for. Every form knows it by the prose
+      # a heading carries and by nothing else, which is why it is written here
+      # as the text itself rather than the name a heading is read for.
       INCLUDES = "Includes"
 
       # One glob, as whatever wrote it will hold it. A boundary is written the

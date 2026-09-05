@@ -147,7 +147,8 @@ module Sumitsubo
 
         # A term, or the heading saying what the section covers. Either closes
         # whatever the one before it opened, so a rejected word never carries
-        # past the term rejecting it.
+        # past the term rejecting it. The heading declares nothing of its own,
+        # so no term can be spelled with the reserved word.
         #
         # The section is the boundary a term is declared once inside. Across two,
         # a later term replacing an earlier one is the whole point of writing
