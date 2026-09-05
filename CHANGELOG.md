@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.1.0-preview8](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview7...v0.1.0-preview8) (2026-09-05)
+
+
+### Features
+
+* **finding:** answer a refused document where it was refused ([3e72724](https://github.com/elct9620/sumitsubo/commit/3e72724e65310dca775044a7ba2901a8493a3f68))
+* **fmt:** check a specification is written the way a reference line is ([0993ce1](https://github.com/elct9620/sumitsubo/commit/0993ce1123d61abf73a4102df1e34bedf34d0d03))
+* **fmt:** write a vocabulary the way a reference line is written ([7083048](https://github.com/elct9620/sumitsubo/commit/70830483d24837bc043159ec574926fe1a0cf106))
+* **form:** answer for every way a document is out of shape ([c756bde](https://github.com/elct9620/sumitsubo/commit/c756bde9f70d0564bed125a8e02134e172073a73))
+* **language:** read Go for its comments and what it declares ([66b0af0](https://github.com/elct9620/sumitsubo/commit/66b0af0452aa36f2f63b1f73a1ac50734f7bb089))
+* **language:** read JavaScript for its comments and what it declares ([ad15407](https://github.com/elct9620/sumitsubo/commit/ad15407baeac0a716320e3874bc0a9d0e7faa3d2))
+* **language:** read Python for its comments and what it declares ([348d826](https://github.com/elct9620/sumitsubo/commit/348d8267dc23e0d5fde21441d94a79a9d4a5ef8f))
+* **language:** read TSX, and give the binding room for the grammar ([51a53bf](https://github.com/elct9620/sumitsubo/commit/51a53bffdd584a09c79744a956cc42d340689141))
+* **language:** read TypeScript for its comments and what it declares ([609d7a6](https://github.com/elct9620/sumitsubo/commit/609d7a69c2334c33e41b188a12eada26639bc9bb))
+
+
+### Bug Fixes
+
+* **cli:** refuse a word the command was not given ([484a33e](https://github.com/elct9620/sumitsubo/commit/484a33e0c2f1929bc6e547239c86257bd57c87c9))
+* **contract:** read a file as the language that claims it ([821ecfd](https://github.com/elct9620/sumitsubo/commit/821ecfdfed8c56b1ec9a393a97bed9e5fe5177ea))
+* **form:** say what to do about a row that gained a separator ([9228470](https://github.com/elct9620/sumitsubo/commit/92284707d3d846a4628afaa504609c0062313abb))
+* **specification:** let a document nobody could read answer for itself ([6780071](https://github.com/elct9620/sumitsubo/commit/6780071b78691208312d8571d55d1318146b0c15))
+* **specification:** load the constant this file reopens before reopening it ([c045c62](https://github.com/elct9620/sumitsubo/commit/c045c62d9d0a110cfaf0683b030f785b2f4795b7))
+
 ## [0.1.0-preview7](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview6...v0.1.0-preview7) (2026-09-03)
 
 
