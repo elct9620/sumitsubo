@@ -94,8 +94,7 @@ module Sumitsubo
       def read_into(found, blocks, path, mechanism)
         found.push(mechanism.read(blocks, path, @source))
       rescue Sumitsubo::Misshapen => e
-        @unread.push(Finding.new(rule: mechanism.unreadable, difference: false,
-                                 place: e.place, message: e.message))
+        @unread.push(mechanism.refused(e))
       end
 
       # What one parser answers for, asked of it in one go. A file the parsers

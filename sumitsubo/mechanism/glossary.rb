@@ -2,6 +2,7 @@ require "sumitsubo/check/reach"
 require "sumitsubo/check/region"
 require "sumitsubo/glossary"
 require "sumitsubo/specification/builder/glossary"
+require "sumitsubo/finding"
 require "sumitsubo/mechanism/seed"
 
 module Sumitsubo
@@ -38,9 +39,11 @@ module Sumitsubo
         Specification::Builder::Glossary.new(path).build(blocks)
       end
 
-      # The rule a document this form refused answers under.
-      def unreadable
-        UNREADABLE
+      # A document this form refused, worded as the finding a run answers
+      # with. The rule is worded here because it is this mechanism's, the way
+      # every other rule of its own is.
+      def refused(refusal)
+        Finding.refused(UNREADABLE, refusal)
       end
 
       # The one specification this mechanism keeps. A vocabulary is a single

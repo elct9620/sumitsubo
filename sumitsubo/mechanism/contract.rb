@@ -3,6 +3,7 @@ require "sumitsubo/check/declaration"
 require "sumitsubo/check/reach"
 require "sumitsubo/contract"
 require "sumitsubo/specification/builder/contract"
+require "sumitsubo/finding"
 require "sumitsubo/mechanism/seed"
 
 module Sumitsubo
@@ -116,9 +117,11 @@ module Sumitsubo
         Specification::Builder::Contract.new(path, source).build(blocks)
       end
 
-      # The rule a document this form refused answers under.
-      def unreadable
-        UNREADABLE
+      # A document this form refused, worded as the finding a run answers
+      # with. The rule is worded here because it is this mechanism's, the way
+      # every other rule of its own is.
+      def refused(refusal)
+        Finding.refused(UNREADABLE, refusal)
       end
 
       # Every specification this mechanism keeps, and everything that can be

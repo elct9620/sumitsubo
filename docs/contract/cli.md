@@ -52,6 +52,23 @@ app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 2 differences
 ```
 
+## `fmt`
+
+Check the specification is written the way a reference line is written.
+
+Answers the half of a run that is about the specification alone, so a reference
+line can be got right before any code is held to it. No file a specification
+covers is opened: a signature is still read as the language it names, since
+that is what says how the name is spelled, and nothing else of the source is.
+A specification the configuration switched off is one the project does not
+keep, so it is passed over here as it is under `verify`.
+
+```console
+$ sumi fmt
+.spec/behavior/verify.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+0 differences
+```
+
 ## `help`
 
 Explain how to write a specification, without a document beside the executable.

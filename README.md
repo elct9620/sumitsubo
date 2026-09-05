@@ -94,6 +94,16 @@ glossary`, `sumi help contract` and `sumi help behavior` have the form of each,
 and `sumi help config` has `.sumi.json` — where the specifications live, what
 no mechanism reads, and which of them a run touches.
 
+`sumi fmt` checks the specification is written the way one is, without asking
+what the source does — so a reference line can be got right before any code is
+held to it:
+
+```console
+$ sumi fmt
+.spec/behavior/verify.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+0 differences
+```
+
 `sumi verify` checks the source against them:
 
 ```console

@@ -1,0 +1,22 @@
+--- source that drifted from its glossary says nothing here ---
+0 differences
+exit=0
+--- a document its form refused, beside one that reads ---
+.spec/behavior/broken.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+0 differences
+exit=2
+--- one name declared twice, and a specification the project does not keep ---
+@command verify is declared twice, at .spec/contract/one.md:13 and .spec/contract/two.md:13
+B-001 is declared twice, at .spec/behavior/one.md:9 and .spec/behavior/two.md:9
+0 differences
+exit=2
+--- no specification at all ---
+no specification at .spec; sumi init lays one down
+exit=2
+--- what init lays down is written the way one is ---
+created .spec/glossary.md
+created .spec/contract
+created .spec/behavior
+exit=0
+0 differences
+exit=0
