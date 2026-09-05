@@ -11,6 +11,7 @@ module Sumitsubo
     # never that the implementation is right.
     class Behavior
       BARREN = "behavior/barren"
+      UNREADABLE = "behavior/unreadable"
       UNCLAIMED = "behavior/unclaimed"
       MISPLACED = "behavior/misplaced"
       UNRESOLVED = "behavior/unresolved"
@@ -42,8 +43,11 @@ module Sumitsubo
 
       def read(blocks, path, source)
         Specification::Builder::Behavior.new(path).build(blocks)
-      rescue Sumitsubo::Unreadable => e
-        raise Sumitsubo::Behavior::Error, e.message
+      end
+
+      # The rule a document this form refused answers under.
+      def unreadable
+        UNREADABLE
       end
 
       def verify(config, findings, specifications, source)

@@ -89,8 +89,8 @@ src/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 4 differences
 exit=1
 --- a specification nobody could read, beside one that answers ---
-.spec/behavior/good.md:9 @behavior B-001 is claimed nowhere this specification includes
 .spec/behavior/broken.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+.spec/behavior/good.md:9 @behavior B-001 is claimed nowhere this specification includes
 1 difference
 exit=2
 --- no specification at all ---

@@ -227,8 +227,11 @@ word in front, which is the whole of `<mechanism>/<check>`.
  the shapes disagree          │            │             │ (C)
 ──────────────────────────────┴────────────┴─────────────┴─────────────
  reach answers for itself:  barren  (G, C, B) ✕
- a specification that could not be read answers for itself, at no line ✕
-   no parser reads it, its form refuses it, or it names one thing twice
+ a document its own form refused:  unreadable  (G, C, B) ✕
+   answered at the line that broke it, so it sorts among the findings rather
+   than after them, and the documents beside it are read and answered anyway
+ a specification nothing could open answers for itself, at no line ✕
+   no parser reads it, it is not there, or it names one thing twice
 
  G glossary   C contract   B behavior
  ✕ a failure: the comparison could not be made

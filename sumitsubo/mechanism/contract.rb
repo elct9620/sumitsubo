@@ -14,6 +14,7 @@ module Sumitsubo
     # answers for them instead.
     class Contract
       BARREN = "contract/barren"
+      UNREADABLE = "contract/unreadable"
 
       # Source says in a comment that it implements an interface, which is what
       # an interface needs when no construct of the language points at it.
@@ -103,18 +104,21 @@ module Sumitsubo
         Seed.new(Sumitsubo::Contract.path_in(root), nil)
       end
 
-      # The source arrives with the parser because a contract's signature is
-      # read by the very reading that reads the source it describes.
       # Which kinds of block this form is written in, asked before a document is
       # read so that a parser answers with those and no others.
       def kinds
         Specification::Builder::Contract::KINDS
       end
 
+      # The source arrives with the blocks because a contract's signature is
+      # read by the very reading that reads the source it describes.
       def read(blocks, path, source)
         Specification::Builder::Contract.new(path, source).build(blocks)
-      rescue Sumitsubo::Unreadable => e
-        raise Sumitsubo::Contract::Error, e.message
+      end
+
+      # The rule a document this form refused answers under.
+      def unreadable
+        UNREADABLE
       end
 
       # An include covers no file whichever reading the definition writing it

@@ -35,13 +35,19 @@ module Sumitsubo
           # What it compares is its own, so what it could not compare is too.
           begin
             mechanism.verify(config, findings, specifications, source)
-          rescue Sumitsubo::Error => e
-            findings.unreadable(e.message)
+          # The two are named apart because Spinel gives one name one type
+          # across both clauses, and `refused` would arrive as the wider of
+          # them with no place to answer at. Reported 2026-09-05.
+          rescue Sumitsubo::Misshapen => refused
+            findings.add(Finding.new(rule: mechanism.unreadable, difference: false,
+                                     place: refused.place, message: refused.message))
+          rescue Sumitsubo::Error => unread
+            findings.unreadable(unread.message)
           end
         end
-        # A document nobody could read never reached the mechanism that asked
-        # for it, so what was wrong with it is answered here rather than there.
-        specifications.unread.each { |said| findings.unreadable(said) }
+        # A document read beside others never reached the mechanism that asked
+        # for it, so its refusal is answered here rather than there.
+        specifications.unread.each { |one| findings.add(one) }
         Finding::Report.new(findings).lines.each { |line| puts line }
         findings.code
       end

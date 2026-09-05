@@ -24,8 +24,8 @@ def reads(directory)
   taken(directory, PARSERS)
 end
 
-# What a directory's documents could not be read as. A document nobody could
-# read is kept rather than raised, so the ones beside it still answer and the
+# Each document a directory held that its form refused. One nobody could read
+# is kept rather than raised, so the ones beside it still answer and the
 # refusal is asked for rather than rescued.
 def refused(directory)
   repository = Sumitsubo::Specification::Repository.new(PARSERS, nil)
@@ -107,7 +107,8 @@ end
 
 # @behavior B-005
 puts "--- a scenario with no id cannot be referenced at all ---"
-refused("test/fixtures/specification/behavior/anonymous").each { |said| puts said }
+refused("test/fixtures/specification/behavior/anonymous")
+  .each { |one| puts "#{one.place.spoken} #{one.message}" }
 
 # Marker hands back the whole of the line after the keyword; what counts as an
 # id is this mechanism's to say.

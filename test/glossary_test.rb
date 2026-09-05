@@ -19,6 +19,19 @@ def reads(path)
     .one(Sumitsubo::Glossary.at(path), Sumitsubo::Mechanism::Glossary.new)
 end
 
+# What a vocabulary could not be read as, however it was refused: a form points
+# at the line that broke it, and a document nothing could open answers for the
+# file. The two are named apart because Spinel gives one name one type across
+# both clauses. Reported 2026-09-05.
+def refused(path)
+  reads(path)
+  nil
+rescue Sumitsubo::Misshapen => misshapen
+  puts "#{misshapen.place.spoken} #{misshapen.message}"
+rescue Sumitsubo::Error => wider
+  puts wider.message
+end
+
 back = Dir.pwd
 Dir.chdir("test/fixtures/project/glossary")
 
@@ -111,30 +124,18 @@ Dir.chdir(back)
 
 # @behavior G-003
 puts "--- a missing glossary is a broken reference line, not a difference ---"
-begin
-  reads("test/fixtures/specification/glossary/absent.md")
-rescue Sumitsubo::Glossary::Error => e
-  puts e.message
-end
+refused("test/fixtures/specification/glossary/absent.md")
 
 # A vocabulary is what a title says a document is. Without one there is
 # nothing saying this was meant to be read as a vocabulary at all.
 # @behavior G-005
 puts "--- and so is one that never says it is a vocabulary ---"
-begin
-  reads("test/fixtures/specification/glossary/titleless.md")
-rescue Sumitsubo::Glossary::Error => e
-  puts e.message
-end
+refused("test/fixtures/specification/glossary/titleless.md")
 
 # @behavior G-011
 puts "--- an ignore that could not be written down is a broken reference line ---"
 ["test/fixtures/specification/glossary/noat.md", "test/fixtures/specification/glossary/noreason.md"].each do |path|
-  begin
-    reads(path)
-  rescue Sumitsubo::Glossary::Error => e
-    puts e.message
-  end
+  refused(path)
 end
 
 # Which container a name stands for one thing inside is the whole of the rule:
@@ -148,19 +149,11 @@ puts "--- a name the vocabulary spells twice where it stands for one thing ---"
  "test/fixtures/specification/glossary/secondterm.md",
  "test/fixtures/specification/glossary/secondword.md",
  "test/fixtures/specification/glossary/secondignore.md"].each do |path|
-  begin
-    reads(path)
-  rescue Sumitsubo::Glossary::Error => e
-    puts e.message
-  end
+  refused(path)
 end
 
 # The root arrives absolute at runtime, so a message composed from the path
 # itself would answer somewhere no reader can go.
 # @behavior G-006
 puts "--- and one named absolutely still answers where the run started ---"
-begin
-  reads(Pathname.new("test/fixtures/specification/glossary/absent.md").expand_path.to_s)
-rescue Sumitsubo::Glossary::Error => e
-  puts e.message
-end
+refused(Pathname.new("test/fixtures/specification/glossary/absent.md").expand_path.to_s)

@@ -84,8 +84,8 @@ end
 
 def read(blocks)
   Sumitsubo::Specification::Builder::Behavior.new("init.md").build(document(blocks))
-rescue Sumitsubo::Unreadable => e
-  puts "  refused: #{e.message}"
+rescue Sumitsubo::Misshapen => e
+  puts "  refused: #{e.place.spoken} #{e.message}"
   nil
 end
 
@@ -206,8 +206,8 @@ VOCABULARY = "test/fixtures/specification/forms/glossary.md"
 
 def vocabulary(blocks)
   Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY).build(document(blocks))
-rescue Sumitsubo::Unreadable => e
-  puts "  refused: #{e.message}"
+rescue Sumitsubo::Misshapen => e
+  puts "  refused: #{e.place.spoken} #{e.message}"
   nil
 end
 
@@ -382,8 +382,8 @@ def content(line, text) = BLOCK.new("content", 0, line, text, nil, [], [])
 
 def definition(blocks, answers = {})
   Sumitsubo::Specification::Builder::Contract.new("cli.md", Spelling.new(answers)).build(document(blocks))
-rescue Sumitsubo::Unreadable => e
-  puts "  refused: #{e.message}"
+rescue Sumitsubo::Misshapen => e
+  puts "  refused: #{e.place.spoken} #{e.message}"
   nil
 end
 

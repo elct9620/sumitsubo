@@ -37,7 +37,7 @@ module Sumitsubo
       # because one syntax carries three of them and a reader sent to the wrong
       # one is sent nowhere.
       def self.refuse(path, line, said, topic)
-        raise Unreadable, "#{Place.of(path, line).spoken} #{said}; sumi help #{topic} has the form"
+        raise Misshapen.new("#{said}; sumi help #{topic} has the form", Place.of(path, line))
       end
 
       def self.empty_to_nil(said)

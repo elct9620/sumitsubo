@@ -1,4 +1,5 @@
 require "pathname"
+require "sumitsubo/finding"
 require "sumitsubo/specification"
 require "sumitsubo/specification/parser"
 
@@ -22,10 +23,10 @@ module Sumitsubo
         @unread = []
       end
 
-      # What was wrong with each document a directory held and nothing could
-      # read. They are collected rather than raised, so a run answers for every
-      # specification it managed to read the way a linter answers for every
-      # file it managed to parse.
+      # Each document a directory held that its form refused, answered at the
+      # line that broke it. They are collected rather than raised, so a run
+      # answers for every specification it managed to read the way a linter
+      # answers for every file it managed to parse.
       def unread
         @unread
       end
@@ -83,13 +84,18 @@ module Sumitsubo
         found
       end
 
-      # One document read into the specifications beside it, or what was wrong
-      # with it kept instead. A specification nobody could read is not the rest
-      # of them to lose, so nothing is pushed and the walk carries on.
+      # One document read into the specifications beside it, or the refusal
+      # kept instead. A specification nobody could read is not the rest of them
+      # to lose, so nothing is pushed and the walk carries on.
+      #
+      # Only a form's own refusal is kept: it says where it was refused, which
+      # is what a run needs to answer it. A document no reading answers for at
+      # all is raised before any of them is built.
       def read_into(found, blocks, path, mechanism)
         found.push(mechanism.read(blocks, path, @source))
-      rescue Sumitsubo::Error => e
-        @unread.push(e.message)
+      rescue Sumitsubo::Misshapen => e
+        @unread.push(Finding.new(rule: mechanism.unreadable, difference: false,
+                                 place: e.place, message: e.message))
       end
 
       # What one parser answers for, asked of it in one go. A file the parsers

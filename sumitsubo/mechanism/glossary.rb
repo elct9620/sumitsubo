@@ -9,6 +9,7 @@ module Sumitsubo
     # The words a project keeps, checked against every word a person wrote.
     class Glossary
       BARREN = "glossary/barren"
+      UNREADABLE = "glossary/unreadable"
       REJECTED = "glossary/rejected"
       STALE = "glossary/stale"
 
@@ -27,8 +28,6 @@ module Sumitsubo
         Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::SEED)
       end
 
-      # What a mechanism could not read is its own to report, so the parser's
-      # refusal is answered under this mechanism's name.
       # Which kinds of block this form is written in, asked before a document is
       # read so that a parser answers with those and no others.
       def kinds
@@ -37,8 +36,11 @@ module Sumitsubo
 
       def read(blocks, path, source)
         Specification::Builder::Glossary.new(path).build(blocks)
-      rescue Sumitsubo::Unreadable => e
-        raise Sumitsubo::Glossary::Error, e.message
+      end
+
+      # The rule a document this form refused answers under.
+      def unreadable
+        UNREADABLE
       end
 
       def verify(config, findings, specifications, source)
