@@ -37,7 +37,7 @@ module Sumitsubo
             mechanism.verify(config, findings, specifications, source)
           # The two are named apart because Spinel gives one name one type
           # across both clauses, and `refused` would arrive as the wider of
-          # them with no place to answer at. Reported 2026-09-05.
+          # them, with no refusals to answer for. Reported 2026-09-05.
           rescue Sumitsubo::Misshapen => refused
             refused.refusals.each { |one| findings.add(mechanism.refused(one)) }
           rescue Sumitsubo::Error => unread

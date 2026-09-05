@@ -48,9 +48,9 @@ module Sumitsubo
       # read leaves the others still able to answer, the way a linter reports
       # every file it managed to parse.
       #
-      # The two refusals are named apart because Spinel gives one name one type
-      # across both clauses, and `refused` would arrive as the wider of them
-      # with no place to answer at. Reported 2026-09-05.
+      # The two are named apart because Spinel gives one name one type across
+      # both clauses, and `refused` would arrive as the wider of them, with no
+      # refusals to answer for. Reported 2026-09-05.
       def asked(mechanism, config, findings, specifications, checking)
         # A specification the configuration switched off is one the project
         # does not keep, and a reference line nobody keeps is not one to hold
