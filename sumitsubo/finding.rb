@@ -13,13 +13,9 @@ module Sumitsubo
     # worded so a reader meets it in the order they walk the file. The rule is
     # the mechanism's, and where and what are the refusal's own.
     def self.refused(rule, refusal)
-      # The message is written out rather than passed on: a refusal arrives out
-      # of the several a document was refused for, which Spinel holds untyped,
-      # and what a member answers there is boxed. Passing it on stops the build.
-      #
-      # Nobody has reduced this to a file of its own, so there is no ticket to
-      # follow: six standalone shapes carrying what looked like the cause all
-      # compiled. Take the interpolation out to see it again.
+      # The message is interpolated rather than passed on: the send answers
+      # boxed, and the constructor a Data synthesizes takes that uncoerced where
+      # a user method's parameter of the same type does not. matz/spinel#4348.
       new(rule: rule, difference: false, place: refusal.place, message: "#{refusal.message}")
     end
 
