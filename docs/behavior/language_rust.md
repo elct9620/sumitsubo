@@ -2,12 +2,10 @@
 
 What Rust answers when it is the reading a file was handed to.
 
-A name is the path a reader would write to reach it, which is the path the file
-itself carries: `Charge::settle` for a method in an `impl`, `audit::Entry` for a
-struct in a `mod`. What a crate is called and which module a file becomes live
-in Cargo.toml and in the directory tree, so a name written here stops where the
-file does — as the documentation convention does, writing `Vec::push` rather
-than the whole path.
+A name is the path the file itself carries: `Charge::settle` for a method in an
+`impl`, `audit::Entry` for a struct in a `mod`. What a crate is called and which
+module a file becomes live in Cargo.toml and in the directory tree, so a name
+written here stops where the file does, as rustdoc stops it.
 
 What Ruby spells with one node this splits into two, and a block comment ends
 with a delimiter the language required rather than with something a person

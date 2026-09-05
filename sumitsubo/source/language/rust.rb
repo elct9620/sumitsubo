@@ -7,12 +7,11 @@ module Sumitsubo
     class Language
       # Rust, read through the grammar this build links in.
       #
-      # A name is the path a reader would write to reach it, which is the path
-      # the file itself carries: `Charge::settle` for a method in an `impl`,
-      # `audit::Entry` for a struct in a `mod`. What a crate is called and which
-      # module a file becomes live in Cargo.toml and in the directory tree, so a
-      # name written here stops where the file does — as the documentation
-      # convention does, writing `Vec::push` rather than the whole path.
+      # A name is the path the file itself carries: `Charge::settle` for a
+      # method in an `impl`, `audit::Entry` for a struct in a `mod`. What a
+      # crate is called and which module a file becomes live in Cargo.toml and
+      # in the directory tree, so a name written here stops where the file
+      # does, as rustdoc stops it.
       #
       # The grammar is handed in rather than reached for: what a build carries is
       # decided at its edge, and a reading that named one would be a second
