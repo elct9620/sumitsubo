@@ -138,3 +138,7 @@ CLI {} []
 --- one glob written twice ---
   Everywhere ["7 app/**/*.rb"]
   Billing ["13 app/**/*.rb"]
+--- the reserved word written as a name and as a heading ---
+  ["5 test/init_test.rb"] ["Includes"]
+--- a term spelled as the reserved word ---
+  Everywhere ["7 app/**/*.rb"] ["Order"]

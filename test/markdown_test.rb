@@ -640,3 +640,26 @@ sections_of(vocabulary([
   h2(3, "Everywhere"), h3(5, "Includes"), item(7, "`app/**/*.rb`"),
   h2(9, "Billing"), h3(11, "Includes"), item(13, "`app/**/*.rb`")
 ]))
+
+# A name is taken letter for letter and the reserved heading is not, so one word
+# stands for both at one level without either giving way.
+# @behavior F-051
+puts "--- the reserved word written as a name and as a heading ---"
+named = read([
+  h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"),
+  h2(7, "`Includes` A scenario named for the reserved word")
+])
+puts "  #{globs_of(named).inspect} #{named.statements.map { |one| one.key }.inspect}"
+
+# A term is prose and the reserved heading is prose too, so the word a section
+# scopes itself with is the one word a vocabulary cannot also define.
+# @behavior F-052
+puts "--- a term spelled as the reserved word ---"
+vocabulary([
+  h1(1, "Glossary"),
+  h2(3, "Everywhere"), h3(5, "Includes"), item(7, "`app/**/*.rb`"),
+  h3(9, "Includes"), paragraph(11, "What a specification answers for."),
+  h3(13, "Order"), paragraph(15, "What a customer asks us to fulfil.")
+]).statements.each do |section|
+  puts "  #{section.key} #{globs_of(section).inspect} #{section.statements.map { |one| one.key }.inspect}"
+end

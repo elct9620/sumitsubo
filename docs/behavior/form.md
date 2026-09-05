@@ -416,6 +416,22 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | each section keeps its own, so a reader is sent to the section that wrote it |
 
+## `F-051` The reserved word written as a name and as a heading
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature scoping itself under the reserved heading, and a scenario named with that same word in backticks |
+| When | the blocks the document is made of are read |
+| Then | the heading answers the globs and the scenario answers its id, since a name is taken letter for letter and the reserved heading is not |
+
+## `F-052` A term spelled as the reserved word
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary whose section scopes itself, then declares a term spelled as the reserved word and one of its own |
+| When | the blocks the document is made of are read |
+| Then | the section keeps its globs and declares only its own term, since a term is written as prose and the reserved heading is prose too |
+
 ## `F-050` Every way a document is out of shape, rather than the first
 
 | Step | Statement |
