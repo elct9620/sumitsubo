@@ -15,6 +15,7 @@ RUBY=v0.23.1
 RUST=v0.24.2
 GO=v0.25.0
 PYTHON=v0.25.0
+JAVASCRIPT=v0.25.0
 MARKDOWN=v0.5.3
 
 mkdir -p "$vendor"
@@ -38,6 +39,7 @@ fetch tree-sitter-ruby tree-sitter/tree-sitter-ruby "$RUBY"
 fetch tree-sitter-rust tree-sitter/tree-sitter-rust "$RUST"
 fetch tree-sitter-go tree-sitter/tree-sitter-go "$GO"
 fetch tree-sitter-python tree-sitter/tree-sitter-python "$PYTHON"
+fetch tree-sitter-javascript tree-sitter/tree-sitter-javascript "$JAVASCRIPT"
 # Markdown ships two grammars in one repository and this build carries both:
 # the block one for the structure a specification is written in, and the inline
 # one for reading the text a block-level node holds unparsed.

@@ -1,0 +1,28 @@
+--- a fifth language reads its own comments ---
+6
+"43:/* @contract Charge.open — a claim in a block comment. "
+"nothing"
+--- and marks a member the way JSDoc does ---
+  5 Charge
+  7 Charge#settle
+  11 Charge.open
+  15 Charge#amount
+  19 Charge##secret
+  24 recorded
+  28 trail
+  30 later
+  34 single
+  36 nested
+  37 inner
+  44 audited
+--- with the parameters a caller has to satisfy ---
+  Charge#settle(at:positional, note:positional?, rest:rest?)
+  Charge.open(amount:positional)
+  recorded(-:destructured, -:destructured)
+  trail(entry:positional)
+  later(entry:positional, mark:positional?)
+  single(entry:positional)
+--- source the grammar cannot read ---
+broken.js: cannot be parsed by the javascript grammar
+--- and the reading of what it declares refuses it too ---
+  broken.js: cannot be parsed by the javascript grammar

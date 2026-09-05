@@ -5,6 +5,7 @@ require "sumitsubo"
 # that only prints or lays down files.
 require "sumitsubo/source/language"
 require "sumitsubo/source/language/go"
+require "sumitsubo/source/language/javascript"
 require "sumitsubo/source/language/prose"
 require "sumitsubo/source/language/python"
 require "sumitsubo/source/language/ruby"
@@ -20,6 +21,7 @@ exit Sumitsubo::CLI.new(
     Sumitsubo::Source::Language::Rust.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Go.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Python.new(Sumitsubo::Grammar),
+    Sumitsubo::Source::Language::Javascript.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Prose.new
   ]),
   [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]

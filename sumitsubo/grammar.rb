@@ -23,6 +23,10 @@ module PythonGrammar
   ffi_func :tree_sitter_python, [], :ptr
 end
 
+module JavascriptGrammar
+  ffi_func :tree_sitter_javascript, [], :ptr
+end
+
 module MarkdownGrammar
   ffi_func :tree_sitter_markdown, [], :ptr
 end
@@ -41,6 +45,7 @@ module Sumitsubo
     RUST = "rust"
     GO = "go"
     PYTHON = "python"
+    JAVASCRIPT = "javascript"
     # Markdown ships two grammars and this build carries both. The block one
     # gives the structure a specification is written in — sections, tables,
     # fences — and hands back the text a block-level `inline` node holds
@@ -73,5 +78,6 @@ TreeSitter.register(Sumitsubo::Grammar::RUBY, RubyGrammar.tree_sitter_ruby)
 TreeSitter.register(Sumitsubo::Grammar::RUST, RustGrammar.tree_sitter_rust)
 TreeSitter.register(Sumitsubo::Grammar::GO, GoGrammar.tree_sitter_go)
 TreeSitter.register(Sumitsubo::Grammar::PYTHON, PythonGrammar.tree_sitter_python)
+TreeSitter.register(Sumitsubo::Grammar::JAVASCRIPT, JavascriptGrammar.tree_sitter_javascript)
 TreeSitter.register(Sumitsubo::Grammar::MARKDOWN, MarkdownGrammar.tree_sitter_markdown)
 TreeSitter.register(Sumitsubo::Grammar::MARKDOWN_INLINE, MarkdownInlineGrammar.tree_sitter_markdown_inline)
