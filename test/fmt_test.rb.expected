@@ -1,6 +1,9 @@
 --- source that drifted from its glossary says nothing here ---
-0 differences
-exit=0
+.spec/glossary.md:18 Purchase is set off with a wide dash where a plain one is written
+.spec/glossary.md:26 User is set off with a wide dash where a plain one is written
+.spec/glossary.md:40 Invoice is set off with a wide dash where a plain one is written
+3 differences
+exit=1
 --- a document its form refused, beside one that reads ---
 .spec/behavior/broken.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
 0 differences
@@ -18,5 +21,21 @@ created .spec/glossary.md
 created .spec/contract
 created .spec/behavior
 exit=0
+0 differences
+exit=0
+--- a word set off with a wide dash, and the run that only says so ---
+.spec/glossary.md:15 Purchase is set off with a wide dash where a plain one is written
+.spec/glossary.md:16 app/legacy.rb:9 is set off with a wide dash where a plain one is written
+2 differences
+exit=1
+still written that way: true
+--- and the run that writes it ---
+wrote .spec/glossary.md
+0 differences
+exit=0
+  - `Purchase` - Order is what the domain calls it — never what the ledger does.
+    - `app/legacy.rb:9` - Quotes the upstream column name.
+the dashes in the prose beside them stand: true true
+--- which leaves nothing to say ---
 0 differences
 exit=0

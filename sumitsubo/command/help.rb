@@ -15,7 +15,7 @@ module Sumitsubo
         Commands:
             init             Lay down an empty specification to start from
             verify           Check the source against the specification
-            fmt              Check the specification is written the way one is
+            fmt [--check]    Write the specification the way a reference line is
             help <topic>     Explain how to write a specification
 
         Topics:
@@ -57,8 +57,8 @@ module Sumitsubo
 
             #### Rejected
 
-            - `Purchase` — Order is what the domain calls it.
-              - `app/legacy_import.rb:88` — Quotes the upstream column name.
+            - `Purchase` - Order is what the domain calls it.
+              - `app/legacy_import.rb:88` - Quotes the upstream column name.
 
             ## Billing
 

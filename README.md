@@ -94,13 +94,17 @@ glossary`, `sumi help contract` and `sumi help behavior` have the form of each,
 and `sumi help config` has `.sumi.json` — where the specifications live, what
 no mechanism reads, and which of them a run touches.
 
-`sumi fmt` checks the specification is written the way one is, without asking
-what the source does — so a reference line can be got right before any code is
-held to it:
+`sumi fmt` writes them the way a reference line is written, without asking what
+the source does — so a reference line can be got right before any code is held
+to it. `sumi fmt --check` says the same thing and changes nothing:
 
 ```console
+$ sumi fmt --check
+.spec/glossary.md:15 Purchase is set off with a wide dash where a plain one is written
+1 difference
+
 $ sumi fmt
-.spec/behavior/verify.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+wrote .spec/glossary.md
 0 differences
 ```
 

@@ -53,6 +53,12 @@ module Sumitsubo
         Finding.refused(UNREADABLE, refusal)
       end
 
+      # Nothing about how a feature is written is checked yet, so it is
+      # written the one way it reads.
+      def rewrites(feature, lines)
+        []
+      end
+
       # Every specification this mechanism keeps, and everything that can be
       # said about them before a line of source is read: one id standing for
       # two scenarios is refused here, because no document answers for it by

@@ -2,8 +2,10 @@
 
 The commands `sumi` answers, and what each one is for.
 
-No command takes an option of its own. `-v` and `-h` are the whole of what a
-flag says here, and everything a run has to say goes to stdout.
+The one option a command takes is `fmt --check`, which says to report rather
+than rewrite: a run that changes the reference line is asked for by name.
+`-v` and `-h` are the whole of what a flag says here, and everything a run has
+to say goes to stdout.
 
 A word a command does not take is named back rather than passed over, and the
 command never runs: a run that rewrites what it was pointed at would otherwise
@@ -12,7 +14,9 @@ read a mistyped flag as consent to rewrite it.
 What a run answers is one ladder throughout: `0` where it did what it was
 asked, `1` where the two sides differ, and `2` where the comparison could not
 be made — whatever had to be read first was absent, unreadable, or ambiguous.
-Only `verify` has a second side to differ from, so only it answers `1`.
+Two runs have a second side to differ from, so two answer `1`: `verify`, whose
+sides are the specification and the source, and `fmt --check`, whose sides are
+the document as it is written and as a reference line is written.
 
 ## Includes
 
@@ -54,7 +58,8 @@ app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
 
 ## `fmt`
 
-Check the specification is written the way a reference line is written.
+Write the specification the way a reference line is written, and say what
+cannot be written that way.
 
 Answers the half of a run that is about the specification alone, so a reference
 line can be got right before any code is held to it. No file a specification
@@ -63,9 +68,17 @@ that is what says how the name is spelled, and nothing else of the source is.
 A specification the configuration switched off is one the project does not
 keep, so it is passed over here as it is under `verify`.
 
+A document is rewritten in place, and in place is the reference line itself, so
+`--check` says the same thing and changes nothing. What a form cannot write for
+a person it answers instead, at the line that broke it.
+
 ```console
+$ sumi fmt --check
+.spec/glossary.md:15 Purchase is set off with a wide dash where a plain one is written
+1 difference
+
 $ sumi fmt
-.spec/behavior/verify.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+wrote .spec/glossary.md
 0 differences
 ```
 

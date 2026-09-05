@@ -43,7 +43,7 @@ included.
 
 #### Rejected
 
-- `AST` — An abstract tree drops the comments, which are the only thing Glossary reads.
+- `AST` - An abstract tree drops the comments, which are the only thing Glossary reads.
 
 ### Parser
 
@@ -96,9 +96,9 @@ implements it.
 
 #### Rejected
 
-- `behaviour` — Behavior is the spelling every identifier here uses.
-- `Behaviour` — Behavior is the spelling every identifier here uses.
-- `behaviours` — Behaviors is the spelling every identifier here uses.
+- `behaviour` - Behavior is the spelling every identifier here uses.
+- `Behaviour` - Behavior is the spelling every identifier here uses.
+- `behaviours` - Behaviors is the spelling every identifier here uses.
 
 ### Declare
 

@@ -12,7 +12,7 @@ module Sumitsubo
   class CLI
     # How many words each command takes after its own name: `help` takes a
     # topic, and the rest take nothing at all.
-    TAKES = { "init" => 0, "verify" => 0, "fmt" => 0, "help" => 1 }
+    TAKES = { "init" => 0, "verify" => 0, "fmt" => 1, "help" => 1 }
 
     # The revision, the languages and the parsers are handed in rather than
     # read, because all three are what a build says of itself and `spin test`
@@ -32,7 +32,7 @@ module Sumitsubo
       case argv.first
       when "init" then Command::Init.new.run(Config.load(switches))
       when "verify" then Command::Verify.new.run(Config.load(switches), @languages, @parsers)
-      when "fmt" then Command::Fmt.new.run(Config.load(switches), @languages, @parsers)
+      when "fmt" then fmt(argv)
       when "help" then Command::Help.new.run(argv[1])
       else unknown?(argv.first) ? refuse(argv.first) : flags(argv)
       end
@@ -55,6 +55,15 @@ module Sumitsubo
       return nil if takes.nil?
 
       argv[takes + 1]
+    end
+
+    # A run that rewrites the reference line has to be asked for by name, so
+    # the one word `fmt` takes is checked against the one word it means.
+    def fmt(argv)
+      given = argv[1]
+      return refuse(given) unless given.nil? || given == Command::Fmt::CHECK
+
+      Command::Fmt.new.run(Config.load(switches), @languages, @parsers, !given.nil?)
     end
 
     # The names .sumi.json switches specifications by. What a build carries is

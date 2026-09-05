@@ -4,7 +4,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -23,7 +23,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -42,7 +42,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -61,7 +61,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -81,7 +81,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -100,7 +100,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -199,7 +199,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -219,7 +219,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -239,7 +239,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -259,7 +259,7 @@ Usage: sumi <command> [options]
 Commands:
     init             Lay down an empty specification to start from
     verify           Check the source against the specification
-    fmt              Check the specification is written the way one is
+    fmt [--check]    Write the specification the way a reference line is
     help <topic>     Explain how to write a specification
 
 Topics:

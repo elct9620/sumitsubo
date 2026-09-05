@@ -48,7 +48,12 @@ module Sumitsubo
         # it is not: a reason reads the same either way, so requiring it would
         # refuse nothing a person could have meant differently. `fmt` is what
         # puts it there.
-        DASH = "—"
+        #
+        # Either is read and the first is written, because it is the one a
+        # keyboard has: a document setting a word off with the other says the
+        # same thing, and `fmt` leaves it saying it the way the rest do.
+        DASH = "-"
+        WIDE = "—"
 
         def initialize(path)
           @where = Place.file(path)
@@ -230,13 +235,14 @@ module Sumitsubo
         end
 
         # What a list item says after the word it took letter for letter. The
-        # dash is taken off rather than counted past: it is written outside
-        # ASCII, and a count of it would have to be the same kind of thing as
-        # the index it is handed to.
+        # dash is taken off rather than counted past: the wide one is written
+        # outside ASCII, and a count of it would have to be the same kind of
+        # thing as the index it is handed to.
         def reason(said)
-          return Builder.empty_to_nil(said) unless said.start_with?(DASH)
+          return Builder.empty_to_nil(said.delete_prefix(DASH).strip) if said.start_with?(DASH)
+          return Builder.empty_to_nil(said.delete_prefix(WIDE).strip) if said.start_with?(WIDE)
 
-          Builder.empty_to_nil(said.delete_prefix(DASH).strip)
+          Builder.empty_to_nil(said)
         end
 
         # Where the first of a name was written, for a refusal naming both. A
