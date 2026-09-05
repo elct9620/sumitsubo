@@ -24,6 +24,15 @@ def reads(directory)
   taken(directory, PARSERS)
 end
 
+# What a directory's documents could not be read as. A document nobody could
+# read is kept rather than raised, so the ones beside it still answer and the
+# refusal is asked for rather than rescued.
+def refused(directory)
+  repository = Sumitsubo::Specification::Repository.new(PARSERS, nil)
+  repository.all(directory, Sumitsubo::Mechanism::Behavior.new)
+  repository.unread
+end
+
 def taken(directory, parsers)
   features = Sumitsubo::Specification::Repository.new(parsers, nil)
                .all(directory, Sumitsubo::Mechanism::Behavior.new)
@@ -98,11 +107,7 @@ end
 
 # @behavior B-005
 puts "--- a scenario with no id cannot be referenced at all ---"
-begin
-  reads("test/fixtures/specification/behavior/anonymous")
-rescue Sumitsubo::Behavior::Error => e
-  puts e.message
-end
+refused("test/fixtures/specification/behavior/anonymous").each { |said| puts said }
 
 # Marker hands back the whole of the line after the keyword; what counts as an
 # id is this mechanism's to say.

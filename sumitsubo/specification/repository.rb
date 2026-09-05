@@ -19,6 +19,15 @@ module Sumitsubo
         @source = source
         @directories = {}
         @files = {}
+        @unread = []
+      end
+
+      # What was wrong with each document a directory held and nothing could
+      # read. They are collected rather than raised, so a run answers for every
+      # specification it managed to read the way a linter answers for every
+      # file it managed to parse.
+      def unread
+        @unread
       end
 
       # Every specification a directory holds. A directory nobody wrote
@@ -29,7 +38,7 @@ module Sumitsubo
         return held unless held.nil?
 
         path = Pathname.new(directory)
-        found = path.directory? ? read_all(files_in(path), mechanism) : []
+        found = path.directory? ? read_apart(files_in(path), mechanism) : []
         @directories[directory] = found
         found
       end
@@ -40,7 +49,7 @@ module Sumitsubo
         found = @files[held]
         return found unless found.nil?
 
-        @files[held] = read_all([held], mechanism)[0]
+        @files[held] = read_one(held, mechanism)
       end
 
       private
@@ -49,14 +58,38 @@ module Sumitsubo
       # of them is built, so it puts one question to each grammar rather than two
       # by turns — which is the difference between compiling a query once and
       # compiling it for every file.
-      #
-      # The source goes with the reading because a contract's signature is read
-      # by the very reading that reads the source it describes.
-      def read_all(paths, mechanism)
+      def blocks_of(paths, mechanism)
         paths.each { |path| Parser.of(path, @parsers) }
         answered = {}
         @parsers.each { |parser| claimed(parser, paths, mechanism, answered) }
-        paths.map { |path| mechanism.read(answered[path], path, @source) }
+        answered
+      end
+
+      # The one specification a file holds. A mechanism keeping one has nothing
+      # left to compare where it cannot be read, so the refusal is raised rather
+      # than kept and the mechanism that asked for it answers.
+      #
+      # The source goes with the reading because a contract's signature is read
+      # by the very reading that reads the source it describes.
+      def read_one(path, mechanism)
+        mechanism.read(blocks_of([path], mechanism)[path], path, @source)
+      end
+
+      # Every specification a directory holds, each answering for itself.
+      def read_apart(paths, mechanism)
+        answered = blocks_of(paths, mechanism)
+        found = []
+        paths.each { |path| read_into(found, answered[path], path, mechanism) }
+        found
+      end
+
+      # One document read into the specifications beside it, or what was wrong
+      # with it kept instead. A specification nobody could read is not the rest
+      # of them to lose, so nothing is pushed and the walk carries on.
+      def read_into(found, blocks, path, mechanism)
+        found.push(mechanism.read(blocks, path, @source))
+      rescue Sumitsubo::Error => e
+        @unread.push(e.message)
       end
 
       # What one parser answers for, asked of it in one go. A file the parsers

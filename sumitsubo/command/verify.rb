@@ -39,6 +39,9 @@ module Sumitsubo
             findings.unreadable(e.message)
           end
         end
+        # A document nobody could read never reached the mechanism that asked
+        # for it, so what was wrong with it is answered here rather than there.
+        specifications.unread.each { |said| findings.unreadable(said) }
         Finding::Report.new(findings).lines.each { |line| puts line }
         findings.code
       end

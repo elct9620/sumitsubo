@@ -287,3 +287,11 @@ in the order they happened.
 | Given | a glossary whose include reaches both, and a definition for each reaching only its own |
 | When | `sumi verify` runs |
 | Then | each file is read as the language it is, and each definition compares against the one it named |
+
+## `V-033` A specification nobody could read, beside one that answers
+
+| Step | Statement |
+| --- | --- |
+| Given | a directory holding a feature whose scenario opens with no id, and one declaring a scenario nothing claims |
+| When | `sumi verify` runs |
+| Then | the refusal and the difference are both answered, and the run leaves the code a comparison could not be made |

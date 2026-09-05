@@ -113,6 +113,15 @@ rescue Sumitsubo::Error => e
   puts e.message
 end
 
+# What a directory's documents could not be read as. A document nobody could
+# read is kept rather than raised, so the ones beside it still answer and the
+# refusal is asked for rather than rescued.
+def refused(directory)
+  repository = Sumitsubo::Specification::Repository.new(PARSERS, SOURCE)
+  repository.all(directory, Sumitsubo::Mechanism::Contract.new)
+  repository.unread
+end
+
 # @behavior T-001
 puts "--- what the directory registers, and where ---"
 definitions = loaded("#{FIXTURE}/.spec/contract")
@@ -174,7 +183,7 @@ fails { loaded("#{FIXTURE}/duplicate") }
 
 # @behavior T-006
 puts "--- a contract with no name cannot be claimed at all ---"
-fails { loaded("#{FIXTURE}/nameless") }
+refused("#{FIXTURE}/nameless").each { |said| puts said }
 
 # A marker is what a route needs because nothing in Ruby points at one. A
 # definition naming none is read from the syntax tree instead.

@@ -179,6 +179,15 @@ Dir.chdir("test/fixtures/project/polyglot")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# The difference is the point: it comes from the document beside the one that
+# could not be read, so it stands as proof the run went on rather than stopping
+# at the refusal. A run that stopped would answer the refusal alone.
+# @behavior V-033
+puts "--- a specification nobody could read, beside one that answers ---"
+Dir.chdir("test/fixtures/project/beside")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath
