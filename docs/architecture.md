@@ -79,8 +79,8 @@ read on the way.
  (2) scan the source                 ▼
                          ┌─────────────────────────┐
                          │ reach                   │──► barren
-                         │  ├ union → what to read │──► unscoped
-                         │  └ per spec → boundary  │
+                         │  ├ union → what to read │
+                         │  └ per spec → boundary  │──► unscoped
                          └───────────┬─────────────┘
                                      │ file list
                          ┌───────────▼─────────────┐
