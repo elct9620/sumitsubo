@@ -15,6 +15,10 @@ module RustGrammar
   ffi_func :tree_sitter_rust, [], :ptr
 end
 
+module GoGrammar
+  ffi_func :tree_sitter_go, [], :ptr
+end
+
 module MarkdownGrammar
   ffi_func :tree_sitter_markdown, [], :ptr
 end
@@ -31,6 +35,7 @@ module Sumitsubo
   module Grammar
     RUBY = "ruby"
     RUST = "rust"
+    GO = "go"
     # Markdown ships two grammars and this build carries both. The block one
     # gives the structure a specification is written in — sections, tables,
     # fences — and hands back the text a block-level `inline` node holds
@@ -61,5 +66,6 @@ end
 
 TreeSitter.register(Sumitsubo::Grammar::RUBY, RubyGrammar.tree_sitter_ruby)
 TreeSitter.register(Sumitsubo::Grammar::RUST, RustGrammar.tree_sitter_rust)
+TreeSitter.register(Sumitsubo::Grammar::GO, GoGrammar.tree_sitter_go)
 TreeSitter.register(Sumitsubo::Grammar::MARKDOWN, MarkdownGrammar.tree_sitter_markdown)
 TreeSitter.register(Sumitsubo::Grammar::MARKDOWN_INLINE, MarkdownInlineGrammar.tree_sitter_markdown_inline)

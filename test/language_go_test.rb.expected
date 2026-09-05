@@ -1,0 +1,27 @@
+--- a third language reads its own comments ---
+6
+"36:nothing"
+--- a block comment stops before its own closing delimiter ---
+"33:/* @contract Charge.Audit — a claim in a block comment. "
+--- and spells a method through the type it hangs on ---
+  6 Charge
+  11 Charge.Settle
+  15 Charge.Audit
+  17 Open
+  21 Grouped
+  23 Unnamed
+  25 Ledger
+  26 Ledger.Record
+  29 Limit
+  31 Started
+  34 Recorded
+--- with the parameters a caller has to satisfy ---
+  Charge.Settle(at:positional)
+  Open(amount:positional, notes:variadic?)
+  Grouped(a:positional, b:positional)
+  Unnamed(-:positional)
+  Ledger.Record(charge:positional)
+--- source the grammar cannot read ---
+broken.go: cannot be parsed by the go grammar
+--- and the reading of what it declares refuses it too ---
+  broken.go: cannot be parsed by the go grammar

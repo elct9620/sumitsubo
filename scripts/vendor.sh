@@ -13,6 +13,7 @@ vendor="$root/vendor"
 RUNTIME=v0.26.12
 RUBY=v0.23.1
 RUST=v0.24.2
+GO=v0.25.0
 MARKDOWN=v0.5.3
 
 mkdir -p "$vendor"
@@ -34,6 +35,7 @@ fetch() {
 fetch tree-sitter tree-sitter/tree-sitter "$RUNTIME"
 fetch tree-sitter-ruby tree-sitter/tree-sitter-ruby "$RUBY"
 fetch tree-sitter-rust tree-sitter/tree-sitter-rust "$RUST"
+fetch tree-sitter-go tree-sitter/tree-sitter-go "$GO"
 # Markdown ships two grammars in one repository and this build carries both:
 # the block one for the structure a specification is written in, and the inline
 # one for reading the text a block-level node holds unparsed.
