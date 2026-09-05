@@ -172,17 +172,30 @@ module Sumitsubo
     end
 
     # Every file to read and the language to read it as. A definition
-    # registering contracts in two languages has each of its files read once
-    # per language, since one file may declare a name in only one of them.
+    # registering contracts in two languages reaches files of both, and each is
+    # read as the one that claims it — a file no reading claims for a language
+    # holds no name spelled that way, and reading it as that language is a
+    # parse that fails rather than an answer.
     Reading = Data.define(:path, :language)
 
-    def self.readings_in(definitions, reach)
+    def self.readings_in(definitions, reach, source)
       found = []
       defined(definitions).each do |definition|
         paths = reached(reach, definition)
         languages_of(definition).each do |language|
-          paths.each { |path| found.push(Reading.new(path, language)) }
+          spelled(source, paths, language).each { |one| found.push(one) }
         end
+      end
+      found
+    end
+
+    # The files among these that could carry a name spelled as this language
+    # spells it. Which files a definition reaches is its include's to say, and
+    # which of them a language could have written is the file's own.
+    def self.spelled(source, paths, language)
+      found = []
+      paths.each do |path|
+        found.push(Reading.new(path, language)) if source.spelled_in?(path, language)
       end
       found
     end
@@ -212,7 +225,7 @@ module Sumitsubo
     # that are held apart rather than each answer that says which.
     def self.defined_in(definitions, reach, source)
       found = {}
-      readings_in(definitions, reach).each do |reading|
+      readings_in(definitions, reach, source).each do |reading|
         holding = found[reading.language]
         if holding.nil?
           holding = []

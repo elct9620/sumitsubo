@@ -67,9 +67,10 @@ src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) 
 --- the same name under two languages ---
   API ruby Store::Handle
   Handle rust Store::Handle
---- and each definition's files are read as its own language ---
+--- and a file is read as the language that claims it ---
+  API ruby: reaches 1, reads 1
+  Handle rust: reaches 1, reads 0
   test/fixtures/specification/contract/src/commands.rb as ruby
-  test/fixtures/specification/contract/app/controller.rb as rust
 --- a declaration another language spells alike ---
   test/fixtures/specification/contract/spelled/handle.md:7 rust Store::Handle is defined nowhere this specification includes, and one the reading cannot see never is
 --- a scope named outside ASCII ---

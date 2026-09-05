@@ -44,6 +44,13 @@ module Sumitsubo
         @languages.declarations_of(said, where, language)
       end
 
+      # Whether a file could hold a declaration spelled as this language
+      # spells it, which is what keeps a definition's files from being read
+      # once per language it registers.
+      def spelled_in?(path, language)
+        @languages.spelled_in?(path, language)
+      end
+
       # Whether this build reads the language a specification named.
       def carries?(language)
         @languages.carries?(language)

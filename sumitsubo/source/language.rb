@@ -83,6 +83,23 @@ module Sumitsubo
         @readings.any? { |reading| reading.named?(language) }
       end
 
+      # Whether a file could hold a declaration spelled the way this language
+      # spells it. A specification says which language a name is spelled in,
+      # because two languages can spell one name and mean nothing alike — but
+      # that decides how a name is read, not which files could carry one. A
+      # file another language claims carries none: `.py` is no more Go for
+      # being handed to Go, and handing it over is a parse that fails rather
+      # than an answer.
+      #
+      # A file no named reading claims answers false as well, which is how a
+      # name nobody recognises stays out. What a build reads is decided by what
+      # the name says the file is, so an extension that lies has to be said
+      # somewhere a reading can hear it.
+      def spelled_in?(path, language)
+        reading = reading_of(Pathname.new(path))
+        reading.nil? ? false : reading.named?(language)
+      end
+
       # The reading that answers for a file, and the one answering to a name.
       # Two questions rather than one: a comment is read by whichever reading
       # claims the file, and a declaration by the one the specification named.

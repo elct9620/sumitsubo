@@ -118,6 +118,21 @@ class Sumitsubo::Source::Language
 end
 ```
 
+## `Sumitsubo::Source::Language#spelled_in?`
+
+The one place a run answers whether a file could carry a name spelled as this language spells it.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
+
+```ruby
+class Sumitsubo::Source::Language
+  def spelled_in?(path, language)
+  end
+end
+```
+
 ## `Sumitsubo::Source::Marker.claims_in`
 
 The reading of what a piece of source claims, for an interface no construct of the language points at.

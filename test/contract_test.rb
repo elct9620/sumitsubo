@@ -328,12 +328,22 @@ spelling.each do |definition|
   end
 end
 
-# Each definition's files are read as the language its own contracts are
-# spelled in, so a file under two of them is read once for each.
-puts "--- and each definition's files are read as its own language ---"
-Sumitsubo::Contract.readings_in(
-  spelling, Sumitsubo::Contract.reach(spelling, Pathname.new(FIXTURE), [])
-).each { |reading| puts "  #{reading.path} as #{reading.language}" }
+# A definition's files are read as the language claiming each, not once per
+# language the definition registers. The Rust definition here reaches a Ruby
+# file and makes no reading of it: handing it over is a parse that fails
+# rather than an answer, and what it would have found is nothing either way.
+# @behavior T-043
+puts "--- and a file is read as the language that claims it ---"
+REACH = Sumitsubo::Contract.reach(spelling, Pathname.new(FIXTURE), [])
+spelling.each do |definition|
+  reached = Sumitsubo::Contract.reached(REACH, definition).length
+  made = Sumitsubo::Contract.readings_in([definition], REACH, SOURCE)
+  puts "  #{definition.key} #{Sumitsubo::Contract.languages_of(definition).join(",")}: " \
+       "reaches #{reached}, reads #{made.length}"
+end
+Sumitsubo::Contract.readings_in(spelling, REACH, SOURCE).each do |reading|
+  puts "  #{reading.path} as #{reading.language}"
+end
 
 # The Ruby contract is defined in Ruby and the Rust one is not: a declaration
 # the other language answered does not define it, however alike they spell.

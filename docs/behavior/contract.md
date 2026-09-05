@@ -73,8 +73,14 @@ may register contracts in two of them. It is also the namespace that reading
 registers under, the way the marker is for the other: two languages can spell
 one name and mean nothing alike, so a declaration in one does not define a
 contract spelled in the other, and one name registered under each is not
-ambiguous. Every file a definition reaches is therefore read once per language
-its contracts are spelled in.
+ambiguous.
+
+Which files could carry such a name is a different question, and the file
+answers it: a definition reaching files of two languages has each read as the
+one claiming it, because `.py` is no more Go for being handed to Go and
+handing it over is a parse that fails rather than an answer. A file no reading
+claims for a language carries no name spelled that way either — an extension
+nobody recognises is one nothing can be registered against.
 
 A marker needs none, because a claim is a claim in whatever the file is
 written in. A language this build was not given is a specification that cannot
@@ -317,3 +323,11 @@ wrong spelling.
 | Given | a signature whose contract sits inside a module named outside ASCII |
 | When | the definition is read |
 | Then | the module is read as what holds the contract rather than as a second one the signature declares |
+
+## `T-043` A file is read as the language that claims it
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition registering contracts in one language, reaching a file another language claims |
+| When | the files to read are worked out |
+| Then | it reaches that file and makes no reading of it, rather than one the grammar would refuse |
