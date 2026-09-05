@@ -188,6 +188,16 @@ Dir.chdir("test/fixtures/project/beside")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# A name is what a claim names, so one standing for two things leaves every
+# claim of it resolving to neither. No document answers for that by itself,
+# which is why it is refused across the directory rather than in one of them.
+# Both mechanisms keeping a directory answer it, and each answers for its own.
+# @behavior V-034
+puts "--- one name declared twice, in each specification that keeps a directory ---"
+Dir.chdir("test/fixtures/project/twice")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

@@ -50,9 +50,21 @@ module Sumitsubo
         UNREADABLE
       end
 
-      def verify(config, findings, specifications, source)
+      # Every specification this mechanism keeps, and everything that can be
+      # said about them before a line of source is read: one id standing for
+      # two scenarios is refused here, because no document answers for it by
+      # itself. What a form refused is already kept as the documents were read.
+      #
+      # `fmt` asks for this and nothing else, and `verify` asks for it first,
+      # so the two commands say the same thing about a reference line.
+      def declared(config, specifications)
         features = specifications.all(Sumitsubo::Behavior.path_in(config.root), self)
         Sumitsubo::Behavior.refuse_ambiguity(features)
+        features
+      end
+
+      def verify(config, findings, specifications, source)
+        features = declared(config, specifications)
         @barren.run(Sumitsubo::Behavior.covers(features), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)

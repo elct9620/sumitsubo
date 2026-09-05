@@ -295,3 +295,11 @@ in the order they happened.
 | Given | a directory holding a feature whose scenario opens with no id, and one declaring a scenario nothing claims |
 | When | `sumi verify` runs |
 | Then | the refusal and the difference are both answered, and the run leaves the code a comparison could not be made |
+
+## `V-034` One name declared twice, in each specification keeping a directory
+
+| Step | Statement |
+| --- | --- |
+| Given | two features declaring one id, and two definitions registering one name under one marker |
+| When | `sumi verify` runs |
+| Then | each is refused naming both places, and the run leaves the code a comparison could not be made |

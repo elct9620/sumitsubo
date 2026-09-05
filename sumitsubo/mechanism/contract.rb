@@ -121,11 +121,23 @@ module Sumitsubo
         UNREADABLE
       end
 
+      # Every specification this mechanism keeps, and everything that can be
+      # said about them before a line of source is read: one name standing for
+      # two interfaces is refused here, because no document answers for it by
+      # itself. What a form refused is already kept as the documents were read.
+      #
+      # `fmt` asks for this and nothing else, and `verify` asks for it first,
+      # so the two commands say the same thing about a reference line.
+      def declared(config, specifications)
+        definitions = specifications.all(Sumitsubo::Contract.path_in(config.root), self)
+        Sumitsubo::Contract.refuse_ambiguity(definitions)
+        definitions
+      end
+
       # An include covers no file whichever reading the definition writing it
       # chose, so it is asked once for all of them.
       def verify(config, findings, specifications, source)
-        definitions = specifications.all(Sumitsubo::Contract.path_in(config.root), self)
-        Sumitsubo::Contract.refuse_ambiguity(definitions)
+        definitions = declared(config, specifications)
         @barren.run(Sumitsubo::Contract.covers(definitions), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @claimed.run(config, findings, definitions, source)

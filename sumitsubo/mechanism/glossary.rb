@@ -43,9 +43,19 @@ module Sumitsubo
         UNREADABLE
       end
 
+      # The one specification this mechanism keeps. A vocabulary is a single
+      # document, so a name standing for two things is refused as it is read
+      # and there is nothing left to say across documents.
+      #
+      # `fmt` asks for this and nothing else, and `verify` asks for it first,
+      # so the two commands say the same thing about a reference line.
+      def declared(config, specifications)
+        specifications.one(Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root)), self)
+      end
+
       def verify(config, findings, specifications, source)
         path = Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root))
-        vocabulary = specifications.one(path, self)
+        vocabulary = declared(config, specifications)
         @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
