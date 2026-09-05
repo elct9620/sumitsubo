@@ -1,0 +1,23 @@
+--- a comment, and the docstring that is not one ---
+4
+nil
+"nothing"
+--- and spells a name as the dotted path holding it ---
+  5 Charge
+  9 Charge.settle
+  13 Charge.open
+  17 recorded
+  21 typed
+  25 Outer
+  26 Outer.Inner
+  27 Outer.Inner.deep
+--- with the kind each separator gives the parameters around it ---
+  Charge.settle(self:positional, at:positional, note:positional?, tag:positional?, rest:splat?, key:keyword?, opts:hash_splat?)
+  Charge.open(amount:positional)
+  recorded(a:positional_only, b:positional, c:keyword)
+  typed(x:positional)
+  Outer.Inner.deep(self:positional)
+--- source the grammar cannot read ---
+broken.py: cannot be parsed by the python grammar
+--- and the reading of what it declares refuses it too ---
+  broken.py: cannot be parsed by the python grammar

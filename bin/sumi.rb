@@ -6,6 +6,7 @@ require "sumitsubo"
 require "sumitsubo/source/language"
 require "sumitsubo/source/language/go"
 require "sumitsubo/source/language/prose"
+require "sumitsubo/source/language/python"
 require "sumitsubo/source/language/ruby"
 require "sumitsubo/source/language/rust"
 require "sumitsubo/grammar"
@@ -18,6 +19,7 @@ exit Sumitsubo::CLI.new(
     Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Rust.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Go.new(Sumitsubo::Grammar),
+    Sumitsubo::Source::Language::Python.new(Sumitsubo::Grammar),
     Sumitsubo::Source::Language::Prose.new
   ]),
   [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
