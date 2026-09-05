@@ -14,8 +14,8 @@ module Sumitsubo
 
         Commands:
             init             Lay down an empty specification to start from
-            verify           Check the source against the specification
             fmt [--check]    Write the specification the way a reference line is
+            verify           Check the source against the specification
             help <topic>     Explain how to write a specification
 
         Topics:

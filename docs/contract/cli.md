@@ -14,9 +14,9 @@ read a mistyped flag as consent to rewrite it.
 What a run answers is one ladder throughout: `0` where it did what it was
 asked, `1` where the two sides differ, and `2` where the comparison could not
 be made — whatever had to be read first was absent, unreadable, or ambiguous.
-Two runs have a second side to differ from, so two answer `1`: `verify`, whose
-sides are the specification and the source, and `fmt --check`, whose sides are
-the document as it is written and as a reference line is written.
+Two runs have a second side to differ from, so two answer `1`: `fmt --check`,
+whose sides are the document as it is written and as a reference line is
+written, and `verify`, whose sides are the specification and the source.
 
 ## Includes
 
@@ -39,21 +39,6 @@ $ sumi init
 created .spec/glossary.md
 created .spec/contract
 exists .spec/behavior
-```
-
-## `verify`
-
-Verify the source code is aligned with the verifiable specification.
-
-Reports the difference and does not decide which side is wrong — correcting
-the specification is as valid an outcome as correcting the code. A finding
-answers as `path:line`, relative to where the run started.
-
-```console
-$ sumi verify
-.spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
-app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
-2 differences
 ```
 
 ## `fmt`
@@ -80,6 +65,21 @@ $ sumi fmt --check
 $ sumi fmt
 wrote .spec/glossary.md
 0 differences
+```
+
+## `verify`
+
+Verify the source code is aligned with the verifiable specification.
+
+Reports the difference and does not decide which side is wrong — correcting
+the specification is as valid an outcome as correcting the code. A finding
+answers as `path:line`, relative to where the run started.
+
+```console
+$ sumi verify
+.spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
+app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+2 differences
 ```
 
 ## `help`

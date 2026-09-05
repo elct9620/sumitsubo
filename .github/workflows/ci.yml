@@ -73,13 +73,15 @@ jobs:
             || { echo "::error::the executable was not stamped: $got"; exit 1; }
 
       # Dogfooding is a promise this repository makes about itself, and a
-      # promise nobody executes is one that rots quietly. This is also the only
-      # step that runs a mechanism over a real project rather than a fixture.
-      - name: Verify this repository against its own specification
-        run: ./build/bin/sumi verify
-
-      # The other half of the same promise: this repository's reference line is
-      # held to the form it ships a command for. `--check` rather than a write,
-      # because what a run has to say here is what a person has to fix.
+      # promise nobody executes is one that rots quietly. These two are the only
+      # steps that run a mechanism over a real project rather than a fixture.
+      #
+      # The reference line is held to its own form first: a comparison made
+      # against a document that is not yet right is one nobody should be shown,
+      # and what this step says is what a person has to fix before the next one
+      # is worth reading. `--check` rather than a write, for the same reason.
       - name: Check this repository's specification is written the way one is
         run: ./build/bin/sumi fmt --check
+
+      - name: Verify this repository against its own specification
+        run: ./build/bin/sumi verify
