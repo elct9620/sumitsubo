@@ -20,7 +20,7 @@ Init ["test/init_test.rb", "test/other_test.rb"]
 --- a step row that lost a separator ---
   refused: init.md:5 writes a step row of 1 cell rather than two; sumi help behavior has the form
 --- a step row carrying an unescaped separator ---
-  refused: init.md:5 writes a step row of 3 cells rather than two; sumi help behavior has the form
+  refused: init.md:5 writes a step row of 3 cells rather than two, where a | inside a cell is written \|; sumi help behavior has the form
 --- a row naming something that is not a step ---
   refused: init.md:5 writes a step named Where rather than Given, When or Then; sumi help behavior has the form
 --- a step before any scenario ---

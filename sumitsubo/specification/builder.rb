@@ -50,6 +50,18 @@ module Sumitsubo
         raise Misshapen.new([refusal(path, line, said, topic)])
       end
 
+      # How wide a row turned out to be, said the way both forms say it. A row
+      # of any width but two is a separator lost or an unescaped one gained, and
+      # only the second is something a person can be told what to do about: what
+      # they meant as one cell was read as two, and the tool cannot tell that
+      # from a row they meant to write wide.
+      def self.width_of(count)
+        said = "of #{count} #{count == 1 ? "cell" : "cells"} rather than two"
+        return said if count < 2
+
+        "#{said}, where a | inside a cell is written \\|"
+      end
+
       def self.empty_to_nil(said)
         said.empty? ? nil : said
       end

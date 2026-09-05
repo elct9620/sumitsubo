@@ -214,7 +214,7 @@ module Sumitsubo
           line = cells[0].line
           refuse(line, "writes an attribute outside any contract") if @contract.nil?
           unless cells.length == 2
-            refuse(line, "writes an attribute row of #{cells.length} #{cells.length == 1 ? "cell" : "cells"} rather than two")
+            refuse(line, "writes an attribute row #{Builder.width_of(cells.length)}")
           end
 
           carried(line, cells[0].text.strip, cells[1].text.strip)

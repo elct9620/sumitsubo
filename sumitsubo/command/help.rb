@@ -279,7 +279,8 @@ module Sumitsubo
 
             The set is closed both ways. An attribute no contract carries, and
             a value the one named does not take, are each refused at the row
-            that wrote them.
+            that wrote them. A cell cannot wrap, and a `|` inside one is
+            written `\|`.
 
             `internal` says the project means to keep the interface but not
             to publish it, and it is verified like any other.

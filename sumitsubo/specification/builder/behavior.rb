@@ -144,7 +144,7 @@ module Sumitsubo
         # and either way what it says cannot be told apart from what it means.
         def step_of(line, count, name)
           unless count == 2
-            refuse(line, "writes a step row of #{count} #{count == 1 ? "cell" : "cells"} rather than two")
+            refuse(line, "writes a step row #{Builder.width_of(count)}")
           end
           refuse(line, "writes a step named #{name} rather than Given, When or Then") unless STEPS.include?(name)
 
