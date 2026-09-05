@@ -112,7 +112,7 @@ so the first three steps below can run more than once for a single language.
  ─────────────────────────────       ──────────────────────────────────
  1  scripts/vendor.sh                4  source/language/<lang>.rb
       the pin, and a fetch line           named? reads? COMMENTS QUERY
- 2  ts_<lang>.c                      5  bin/sumi.rb
+ 2  grammars/ts_<lang>.c             5  bin/sumi.rb
       one translation unit; two           the require, and the entry in
       grammars will not share one         the list a build hands in
  3  grammar.rb                       6  docs/behavior/language_<lang>.md
@@ -145,12 +145,9 @@ two languages in one run — and does not grow with each language added. A
 language needing something of that chain the two already there do not is a
 finding, not a ninth step.
 
-Two things are already waiting on this:
-
-- A grammar moves into a directory of its own once there are enough to read as
-  a group. There are five translation units now.
-- TypeScript ships two grammars in one repository and JavaScript is a third, so
-  steps 1 to 3 stop answering one-to-one to a language before 4 to 8 do.
+One thing is already waiting on this: TypeScript ships two grammars in one
+repository and JavaScript is a third, so steps 1 to 3 stop answering
+one-to-one to a language before 4 to 8 do.
 
 ## What this project's own specification reaches
 
@@ -291,8 +288,8 @@ Every file has one place, and where it sits is what says what it is.
 │
 ├─ bin/sumi.rb             what this build carries and answers for; never
 │                          compiled into a test
-├─ ts_{lib,ruby,rust,markdown,markdown_inline}.c
-│                          one translation unit each; fewer will not link
+├─ grammars/               the C a build links in: one translation unit for the
+│                          runtime and one per grammar; fewer will not link
 ├─ .packages/tree-sitter/  the FFI binding — the dot is what keeps its C from
 │                          being compiled a second time
 ├─ docs/                   the reference line this tool holds itself to, and

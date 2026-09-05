@@ -57,6 +57,6 @@ src="$vendor/tree-sitter/lib/src"
 # spin decides what to recompile from the mtimes of the files it scans, and
 # vendor/ is not one of them. Re-pinning would otherwise link yesterday's
 # runtime against today's header.
-touch "$root"/*.c 2>/dev/null || true
+touch "$root"/grammars/*.c 2>/dev/null || true
 
 echo "vendored into $vendor"
