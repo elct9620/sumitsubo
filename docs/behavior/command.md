@@ -54,3 +54,11 @@ How the executable answers what it is asked to do.
 | Given | the executable |
 | When | it is run with `help` and a word no topic is named by |
 | Then | the word is named back and the usage is answered |
+
+## `S-007` A command given a word it does not take
+
+| Step | Statement |
+| --- | --- |
+| Given | the executable |
+| When | it is run with a command and a word that command does not take |
+| Then | the word is named back and the usage is answered, and the command never runs |

@@ -9,6 +9,10 @@ require "sumitsubo/command/verify"
 
 module Sumitsubo
   class CLI
+    # How many words each command takes after its own name: `help` takes a
+    # topic, and the rest take nothing at all.
+    TAKES = { "init" => 0, "verify" => 0, "help" => 1 }
+
     # The revision, the languages and the parsers are handed in rather than
     # read, because all three are what a build says of itself and `spin test`
     # never compiles bin/. The revision defaults to what a tree that reached
@@ -21,6 +25,9 @@ module Sumitsubo
     end
 
     def run(argv)
+      given = beyond(argv)
+      return refuse(given) unless given.nil?
+
       case argv.first
       when "init" then Command::Init.new.run(Config.load(switches))
       when "verify" then Command::Verify.new.run(Config.load(switches), @languages, @parsers)
@@ -36,6 +43,17 @@ module Sumitsubo
     end
 
     private
+
+    # The first word a command was given and does not take, or nil where it was
+    # given none. Refused rather than passed over, because a run that rewrites
+    # the specification would otherwise read a mistyped flag as consent to
+    # rewrite it.
+    def beyond(argv)
+      takes = TAKES[argv.first]
+      return nil if takes.nil?
+
+      argv[takes + 1]
+    end
 
     # The names .sumi.json switches specifications by. What a build carries is
     # decided at the edge, so a configuration is handed them rather than

@@ -22,6 +22,13 @@ puts "exit=#{cli.run(["help", "config"])}"
 # @behavior S-006
 puts "--- a word that is no topic ---"
 puts "exit=#{cli.run(["help", "nope"])}"
+# @behavior S-007
+puts "--- a command given a flag it does not take ---"
+puts "exit=#{cli.run(["verify", "--nonsense"])}"
+puts "--- a command given a word it does not take ---"
+puts "exit=#{cli.run(["init", "wat"])}"
+puts "--- a topic followed by a word help does not take ---"
+puts "exit=#{cli.run(["help", "config", "extra"])}"
 puts "--- what each topic opens with ---"
 help = Sumitsubo::Command::Help.new
 ["glossary", "contract", "behavior", "config"].each do |name|

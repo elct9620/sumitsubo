@@ -205,6 +205,63 @@ Options:
     -v, --version    Show version
     -h, --help       Show this help
 exit=2
+--- a command given a flag it does not take ---
+--nonsense is not something sumi answers
+Usage: sumi <command> [options]
+
+Commands:
+    init             Lay down an empty specification to start from
+    verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
+
+Options:
+    -v, --version    Show version
+    -h, --help       Show this help
+exit=2
+--- a command given a word it does not take ---
+wat is not something sumi answers
+Usage: sumi <command> [options]
+
+Commands:
+    init             Lay down an empty specification to start from
+    verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
+
+Options:
+    -v, --version    Show version
+    -h, --help       Show this help
+exit=2
+--- a topic followed by a word help does not take ---
+extra is not something sumi answers
+Usage: sumi <command> [options]
+
+Commands:
+    init             Lay down an empty specification to start from
+    verify           Check the source against the specification
+    help <topic>     Explain how to write a specification
+
+Topics:
+    glossary         The vocabulary, and the words it rejects
+    contract         The interfaces the project means to keep
+    behavior         The scenarios its tests implement
+    config           .sumi.json - where things live, and what a run touches
+
+Options:
+    -v, --version    Show version
+    -h, --help       Show this help
+exit=2
 --- what each topic opens with ---
   glossary: The vocabulary a project means to use, and the words it rejects in its
   contract: The interfaces a project means to keep. What this establishes is that a

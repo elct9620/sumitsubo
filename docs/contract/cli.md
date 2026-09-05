@@ -5,6 +5,10 @@ The commands `sumi` answers, and what each one is for.
 No command takes an option of its own. `-v` and `-h` are the whole of what a
 flag says here, and everything a run has to say goes to stdout.
 
+A word a command does not take is named back rather than passed over, and the
+command never runs: a run that rewrites what it was pointed at would otherwise
+read a mistyped flag as consent to rewrite it.
+
 What a run answers is one ladder throughout: `0` where it did what it was
 asked, `1` where the two sides differ, and `2` where the comparison could not
 be made — whatever had to be read first was absent, unreadable, or ambiguous.
