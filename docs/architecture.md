@@ -79,7 +79,7 @@ read on the way.
  (2) scan the source                 ▼
                          ┌─────────────────────────┐
                          │ reach                   │──► barren
-                         │  ├ union → what to read │
+                         │  ├ union → what to read │──► unscoped
                          │  └ per spec → boundary  │
                          └───────────┬─────────────┘
                                      │ file list
@@ -242,6 +242,9 @@ word in front, which is the whole of `<mechanism>/<check>`.
  the shapes disagree          │            │             │ (C)
 ──────────────────────────────┴────────────┴─────────────┴─────────────
  reach answers for itself:  barren  (G, C, B) ✕
+   a section naming no include at all:  unscoped  (G) ✕
+   only a vocabulary, since a feature and a definition answer for their
+   statements one at a time and one reaching nothing says so on each
  a document its own form refused:  unreadable  (G, C, B) ✕
    every way it is out of shape, each answered at the line that broke it, so
    they sort among the findings rather than after them, and the documents

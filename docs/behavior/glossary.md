@@ -23,6 +23,14 @@ place.
 | When | the vocabulary is asked what its includes cover |
 | Then | the glob is asked about once, at the line the first section wrote it on |
 
+## `G-017` A section that declares words and reaches nowhere
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary with one section declaring a term and writing no glob, and one writing neither |
+| When | the vocabulary is asked what its includes cover |
+| Then | only the one declaring a term answers, as a failure at the section, since a word held in no file is checked nowhere |
+
 ## `G-002` A later section stands in for an earlier one where both name a term
 
 | Step | Statement |

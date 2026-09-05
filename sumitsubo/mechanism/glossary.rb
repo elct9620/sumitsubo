@@ -12,6 +12,7 @@ module Sumitsubo
     # The words a project keeps, checked against every word a person wrote.
     class Glossary
       BARREN = "glossary/barren"
+      UNSCOPED = "glossary/unscoped"
       UNREADABLE = "glossary/unreadable"
       MISWRITTEN = "glossary/miswritten"
       REJECTED = "glossary/rejected"
@@ -19,6 +20,7 @@ module Sumitsubo
 
       def initialize
         @barren = Check::Reach::Barren.new(BARREN)
+        @unscoped = Check::Reach::Unscoped.new(UNSCOPED)
         @rejected = Check::Region::Rejected.new(REJECTED)
         @stale = Check::Region::Stale.new(STALE)
       end
@@ -77,6 +79,7 @@ module Sumitsubo
         vocabulary = declared(config, specifications)[0]
         @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
+        @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
         scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
         mentions = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, source), vocabulary

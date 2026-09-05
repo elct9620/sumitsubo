@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo/glossary"
+require "sumitsubo/check/reach"
 require "sumitsubo/check/region"
 require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
@@ -65,6 +66,27 @@ shared = Sumitsubo::Specification.new("Glossary", nil, [], WHERE, {}, [
 Sumitsubo::Glossary.covers(shared, WHERE).each do |cover|
   puts "#{cover.path} #{cover.includes.map { |one| "#{one.line} #{one.key}" }.inspect}"
 end
+
+# A section writing no glob holds its words in no file, so they are checked
+# nowhere; one declaring nothing asserts nothing and is passed over. Built here
+# for the same reason the shared glob is: no document a person would keep has
+# either.
+# @behavior G-017
+puts "--- a section that reaches nowhere ---"
+def wordless(name, line)
+  Sumitsubo::Statement.new(name, nil, [], WHERE, line, {}, [])
+end
+
+def worded(name, line, term, at)
+  Sumitsubo::Statement.new(name, nil, [], WHERE, line, {}, [
+    Sumitsubo::Statement.new(term, nil, [], WHERE, at, {}, [])
+  ])
+end
+
+Sumitsubo::Check::Reach::Unscoped.new("glossary/unscoped").run([
+  worded("Everywhere", 5, "Order", 7),
+  wordless("Billing", 11)
+]).each { |one| puts "#{one.place.spoken} #{one.rule} #{one.difference} #{one.message}" }
 
 # @behavior G-002
 puts "--- effective vocabulary per file ---"
