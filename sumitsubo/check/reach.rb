@@ -16,8 +16,8 @@ module Sumitsubo
       # written on, so where to answer is known without asking the parser a
       # second time.
       class Barren
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         def run(covers, base, exclusion)
@@ -36,7 +36,7 @@ module Sumitsubo
           empty = {}
           Source::Scope.barren(base, globs, exclusion).each { |glob| empty[glob] = true }
           covered = cover.includes.select { |one| empty[one.key] }
-          covered.map { |one| Source::Scope.barren_at(@rule, cover.path, one.key, one.line) }
+          covered.map { |one| Source::Scope.barren_at(@check, cover.path, one.key, one.line) }
         end
       end
 
@@ -49,8 +49,8 @@ module Sumitsubo
       # their statements one at a time, so one reaching nothing already says so
       # once for every scenario and every contract it declares.
       class Unscoped
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         # A section declaring nothing is passed over: it asserts nothing about
@@ -62,7 +62,7 @@ module Sumitsubo
             next if section.statements.empty?
 
             found.push(Finding.new(
-              rule: @rule, difference: false,
+              check: @check, difference: false,
               place: Place.of(section.path, section.line),
               message: "#{section.key} names no include; " \
                        "the words it declares are checked nowhere"

@@ -13,8 +13,8 @@ module Sumitsubo
       # A mention the specification set aside is not reported: which side is
       # wrong is not the tool's to decide, and there the project has decided.
       class Rejected
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         # An ignore names a mention by its path under the base, and a finding
@@ -27,7 +27,7 @@ module Sumitsubo
             next unless aside[mention.key].nil?
 
             found.push(Finding.new(
-              rule: @rule, difference: true,
+              check: @check, difference: true,
               place: Place.of(base / mention.path, mention.line),
               message: "#{mention.term} rejects #{mention.used}: #{mention.reason}"
             ))
@@ -40,8 +40,8 @@ module Sumitsubo
       # wording was fixed. Nothing else notices, so one left behind outlives
       # what it was for; the run refuses to certify rather than pass.
       class Stale
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         def run(mentions, aside, path)
@@ -53,7 +53,7 @@ module Sumitsubo
 
             ignore = aside[key]
             found.push(Finding.new(
-              rule: @rule, difference: false,
+              check: @check, difference: false,
               place: Place.of(path, ignore.line),
               message: "nothing at #{ignore.at} has #{ignore.term} rejecting " \
                        "#{ignore.used}; the line moved or the wording was fixed"

@@ -86,7 +86,7 @@ end
 Sumitsubo::Check::Reach::Unscoped.new(Sumitsubo::Mechanism::Glossary::UNSCOPED).run([
   worded("Everywhere", 5, "Order", 7),
   wordless("Billing", 11)
-]).each { |one| puts "#{one.place.spoken} #{one.rule} #{one.difference} #{one.message}" }
+]).each { |one| puts "#{one.place.spoken} #{one.check} #{one.difference} #{one.message}" }
 
 # @behavior G-002
 puts "--- effective vocabulary per file ---"

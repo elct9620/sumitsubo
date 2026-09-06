@@ -27,8 +27,8 @@ module Sumitsubo
       # The specification says a thing exists and no claim that could witness
       # it does, which is a difference between the two sides.
       class Unclaimed
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         # It answers at the specification that declares it, which is also where
@@ -42,7 +42,7 @@ module Sumitsubo
             next unless made[one.key].nil?
 
             found.push(Finding.new(
-              rule: @rule, difference: true, place: one.place,
+              check: @check, difference: true, place: one.place,
               message: "#{one.said} is claimed nowhere this specification includes"
             ))
           end
@@ -56,8 +56,8 @@ module Sumitsubo
       # should have gone with it. Both are comparisons that could not be made
       # rather than differences.
       class Unresolved
-        def initialize(rule, what)
-          @rule = rule
+        def initialize(check, what)
+          @check = check
           @what = what
         end
 
@@ -69,7 +69,7 @@ module Sumitsubo
             next unless declared[claim.key].nil?
 
             found.push(Finding.new(
-              rule: @rule, difference: false, place: claim.place,
+              check: @check, difference: false, place: claim.place,
               message: "#{claim.said} resolves to no #{@what}"
             ))
           end
@@ -97,15 +97,15 @@ module Sumitsubo
       # It answers at the marker rather than at the specification, because the
       # line to fix is the one somebody left hanging.
       class Dangling
-        def initialize(rule, what)
-          @rule = rule
+        def initialize(check, what)
+          @check = check
           @what = what
         end
 
         def run(claims)
           claims.map do |claim|
             Finding.new(
-              rule: @rule, difference: false, place: claim.place,
+              check: @check, difference: false, place: claim.place,
               message: "#{claim.said} stands in front of nothing; " \
                        "a #{@what} is claimed in the comment in front of the code implementing it"
             )
@@ -116,15 +116,15 @@ module Sumitsubo
       # A claim carrying nothing after the marker. It names nothing at all,
       # which is a different thing to say than a name that resolves to none.
       class Nameless
-        def initialize(rule, what)
-          @rule = rule
+        def initialize(check, what)
+          @check = check
           @what = what
         end
 
         def run(claims)
           claims.map do |claim|
             Finding.new(
-              rule: @rule, difference: false, place: claim.place,
+              check: @check, difference: false, place: claim.place,
               message: "#{claim.said} names no #{@what}"
             )
           end
@@ -139,8 +139,8 @@ module Sumitsubo
       # Saying nothing about it would leave the statement reported as claimed
       # nowhere with the claim in plain sight.
       class Misplaced
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         # Named by the specification that declares it rather than by its
@@ -154,7 +154,7 @@ module Sumitsubo
             next unless reach[spec][claim.place.path].nil?
 
             found.push(Finding.new(
-              rule: @rule, difference: false, place: claim.place,
+              check: @check, difference: false, place: claim.place,
               message: "#{claim.said} is claimed outside what #{Place.file(spec)} includes"
             ))
           end
@@ -170,8 +170,8 @@ module Sumitsubo
       # declares are already two findings, and saying they agree with each
       # other adds nothing.
       class Duplicated
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         def run(claims, stated)
@@ -200,7 +200,7 @@ module Sumitsubo
             # every pairing of the places involved.
             group.zip(group.rotate).each do |pair|
               found.push(Finding.new(
-                rule: @rule, difference: true, place: pair[0].place,
+                check: @check, difference: true, place: pair[0].place,
                 message: "#{pair[0].said} is claimed at #{pair[1].place.spoken} as well"
               ))
             end

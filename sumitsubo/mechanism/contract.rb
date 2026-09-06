@@ -118,8 +118,8 @@ module Sumitsubo
       end
 
       # A document this form refused, worded as the finding a run answers
-      # with. The rule is worded here because it is this mechanism's, the way
-      # every other rule of its own is.
+      # with. The check is worded here because it is this mechanism's, the way
+      # every other check of its own is.
       def refused(refusal)
         Finding.refused(UNREADABLE, refusal)
       end

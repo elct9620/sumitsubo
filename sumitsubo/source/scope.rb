@@ -65,9 +65,9 @@ module Sumitsubo
       # Where the pattern was written is the parser's answer and which
       # specification asked is its own, so both arrive from the mechanism: the
       # walk opens no specification and knows of none.
-      def self.barren_at(rule, path, pattern, line)
+      def self.barren_at(check, path, pattern, line)
         Finding.new(
-          rule: rule, difference: false, place: Place.of(path, line),
+          check: check, difference: false, place: Place.of(path, line),
           message: "include #{pattern} covers no file; " \
                    "the pattern is wrong or what it pointed at is gone"
         )

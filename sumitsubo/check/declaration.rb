@@ -33,8 +33,8 @@ module Sumitsubo
       # registers it and no source it reaches defines it, which is the same
       # difference an unclaimed interface is — the other reading of it.
       class Undefined
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         def run(stated, grouped)
@@ -49,7 +49,7 @@ module Sumitsubo
             # each language's own, so this names the shape and
             # `sumi help contract` names them.
             found.push(Finding.new(
-              rule: @rule, difference: true, place: one.place,
+              check: @check, difference: true, place: one.place,
               message: "#{one.said} is defined nowhere this specification " \
                        "includes, and one the reading cannot see never is"
             ))
@@ -67,8 +67,8 @@ module Sumitsubo
       # Definitions agreeing on their shape are one way in, which is what
       # leaves ordinary reopening saying nothing still.
       class Conflicting
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         def run(names, grouped)
@@ -79,7 +79,7 @@ module Sumitsubo
 
             Declaration.paired(group).each do |pair|
               found.push(Finding.new(
-                rule: @rule, difference: true, place: pair[0].place,
+                check: @check, difference: true, place: pair[0].place,
                 message: "#{pair[0].name} takes #{Declaration.spelled(pair[0].shape)} here and " \
                          "#{Declaration.spelled(pair[1].shape)} at #{pair[1].place.spoken}"
               ))
@@ -93,8 +93,8 @@ module Sumitsubo
       # the definitions disagree among themselves that is already answered, and
       # comparing the contract against one of them would add nothing.
       class Mismatched
-        def initialize(rule)
-          @rule = rule
+        def initialize(check)
+          @check = check
         end
 
         def run(registered, grouped)
@@ -108,7 +108,7 @@ module Sumitsubo
             # the two of them; the name is spelled alone, since the reading
             # this comes from shows no word in front of it.
             found.push(Finding.new(
-              rule: @rule, difference: true, place: one.place,
+              check: @check, difference: true, place: one.place,
               message: "#{one.said} takes #{Declaration.spelled(group[0].shape)} " \
                        "where the specification registers #{Declaration.spelled(one.shape)}"
             ))

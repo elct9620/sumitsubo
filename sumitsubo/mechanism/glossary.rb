@@ -45,8 +45,8 @@ module Sumitsubo
       end
 
       # A document this form refused, worded as the finding a run answers
-      # with. The rule is worded here because it is this mechanism's, the way
-      # every other rule of its own is.
+      # with. The check is worded here because it is this mechanism's, the way
+      # every other check of its own is.
       def refused(refusal)
         Finding.refused(UNREADABLE, refusal)
       end
@@ -116,7 +116,7 @@ module Sumitsubo
 
         found.push(Specification::Rewrite.new(
           Finding.new(
-            rule: MISWRITTEN, difference: true,
+            check: MISWRITTEN, difference: true,
             place: Place.of(statement.path, statement.line),
             message: "#{statement.key} is set off with a wide dash where a plain one is written"
           ),
