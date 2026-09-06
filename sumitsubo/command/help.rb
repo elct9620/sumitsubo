@@ -138,9 +138,9 @@ module Sumitsubo
       # @command help contract
       CONTRACT = <<~TEXT
         The interfaces a project means to keep. What this establishes is that a
-        registered interface is implemented somewhere in scope and reached the
-        way the specification says - never that what it does behind that is
-        right.
+        registered interface is implemented among the files its own definition
+        reaches, and reached the way the specification says - never that what
+        it does behind that is right.
 
         Files
             .spec/contract/*.md - one file per kind of interface: the commands
