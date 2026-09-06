@@ -112,6 +112,11 @@ module Sumitsubo
             is not counted. Any other file: entire - prose is a comment for
             its whole length. Matching is whole-word and case sensitive.
 
+            A word is whole where the writing breaks at both ends of it,
+            so in a script that writes no break between words - Chinese,
+            Japanese, Korean - a rejected word is found beside punctuation
+            and nowhere else.
+
             The glossary itself, where its own includes cover it: a word has
             to be spelled to be declared rejected, so the line a term or one
             of its rejections is written on declares that word rather than
