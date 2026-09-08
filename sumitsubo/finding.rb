@@ -13,10 +13,7 @@ module Sumitsubo
     # worded so a reader meets it in the order they walk the file. The check is
     # the mechanism's, and where and what are the refusal's own.
     def self.refused(check, refusal)
-      # The message is interpolated rather than passed on: the send answers
-      # boxed, and the constructor a Data synthesizes takes that uncoerced where
-      # a user method's parameter of the same type does not. matz/spinel#4348.
-      new(check: check, difference: false, place: refusal.place, message: "#{refusal.message}")
+      new(check: check, difference: false, place: refusal.place, message: refusal.message)
     end
 
     # The comparison was made and the two sides disagree. False says it could
