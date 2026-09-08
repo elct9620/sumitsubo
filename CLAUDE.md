@@ -137,16 +137,17 @@ AOT compiler for Ruby. Its constraints shape the design:
 - Dependencies are source trees compiled into the executable. Nothing loads at
   runtime, so what the executable supports is decided when it is built.
 - C is reached through FFI declarations in a package. The tree-sitter binding
-  is one, in `.packages/tree-sitter`: the dot is what keeps spin from
-  compiling its C a second time as part of this application, since a package
-  is scanned for the `.c` it carries. The runtime and the grammars are the
-  application's to link in, which is why a grammar it does not carry fails at
-  link time rather than at run time. One file reaches the binding —
-  `sumitsubo/grammar.rb`, which every query in the program is put through — and
-  only `bin/sumi.rb` decides which of what is linked in a build actually
-  answers. What that bounds is the blast radius: a reading of source
-  or of a specification is handed a grammar rather than reaching for one, so it
-  names no grammar and its snapshot can still be regenerated.
+  is one, in `.packages/tree-sitter`: a `.c` enters a build by being named in
+  its own manifest's `[package] sources`, the way a `.rb` enters by being
+  required, and the dot is what keeps spin from reading the binding's file as
+  an undeclared source of this application as well. The runtime and the
+  grammars are the application's to link in, which is why a grammar it does
+  not carry fails at link time rather than at run time. One file reaches the
+  binding — `sumitsubo/grammar.rb`, which every query in the program is put
+  through — and only `bin/sumi.rb` decides which of what is linked in a build
+  actually answers. What that bounds is the blast radius: a reading of source
+  or of a specification is handed a grammar rather than reaching for one, so
+  it names no grammar and its snapshot can still be regenerated.
 - No frame is ever recorded: `Kernel#caller` and a rescued exception's
   `backtrace` are both empty, and only what `set_backtrace` was handed comes
   back. An error carries whatever context it needs by itself.
