@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.0-preview9](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview8...v0.1.0-preview9) (2026-09-08)
+
+
+### Features
+
+* **glossary:** answer for a section whose words reach no file ([09772a0](https://github.com/elct9620/sumitsubo/commit/09772a031c41b29c125ae308be6f9fb6382673da))
+
+
+### Bug Fixes
+
+* **build:** declare the C each manifest carries ([f0274b0](https://github.com/elct9620/sumitsubo/commit/f0274b0d1f248add73ed93b8b1cb5eb472011b16))
+* **form:** send a reader to the heading that took the term away ([60c0fe3](https://github.com/elct9620/sumitsubo/commit/60c0fe37570b6112fb636306fef623b187099a73))
+
 ## [0.1.0-preview8](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview7...v0.1.0-preview8) (2026-09-05)
 
 
