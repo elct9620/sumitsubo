@@ -316,10 +316,12 @@ Every file has one place, and where it sits is what says what it is.
 │
 ├─ bin/sumi.rb             what this build carries and answers for; never
 │                          compiled into a test
-├─ grammars/               the C a build links in: one translation unit for the
-│                          runtime and one per grammar; fewer will not link
-├─ .packages/tree-sitter/  the FFI binding — the dot is what keeps its C from
-│                          being compiled a second time
+├─ grammars/               the C a build links in, and what spin.toml names:
+│                          one translation unit for the runtime and one per
+│                          grammar; fewer will not link
+├─ .packages/tree-sitter/  the FFI binding, which names its own C — the dot
+│                          is what keeps spin from reading that file as this
+│                          application's as well
 ├─ docs/                   the reference line this tool holds itself to, and
 │                          the prose beside it
 ├─ test/                   *_test.rb, the committed .expected beside each
