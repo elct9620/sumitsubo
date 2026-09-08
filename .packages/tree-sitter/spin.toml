@@ -4,3 +4,4 @@
 [package]
 name = "treesitter"
 version = "0.1.0"
+sources = ["ts_query_shim.c"]

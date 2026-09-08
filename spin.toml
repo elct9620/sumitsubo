@@ -1,7 +1,12 @@
-# spin manifest — an application needs no [package] identity.
+# A `.c` enters this build by being listed here, the way a `.rb` enters by
+# being required: `sources` is the whole of what this application carries.
 #
-# The tree-sitter binding lives in this tree for now, under a dot directory:
-# spin scans a package for the .c it carries, and the dot is what keeps it from
-# compiling the binding a second time as part of this application.
+# The binding's own C is declared in its own manifest, and the dot in
+# `.packages` is what keeps spin from reading that file as an undeclared
+# source of this application as well.
+[package]
+name = "sumitsubo"
+sources = ["grammars/*.c"]
+
 [dependencies]
 treesitter = { path = ".packages/tree-sitter" }
