@@ -29,7 +29,7 @@ G-001 is declared twice, at test/fixtures/specification/behavior/duplicate/one.m
 --- the root arrives absolute, but a message answers where the run started ---
 G-001 is declared twice, at test/fixtures/specification/behavior/duplicate/one.md:7 and test/fixtures/specification/behavior/duplicate/two.md:7
 --- a scenario with no id cannot be referenced at all ---
-test/fixtures/specification/behavior/anonymous/verify.md:7 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
+test/fixtures/specification/behavior/anonymous/verify.md:7 behavior/unreadable declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
 --- several ids on one marker line ---
 ["V-008", "V-009"]
 --- what each feature's include reaches ---

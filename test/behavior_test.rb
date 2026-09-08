@@ -108,7 +108,7 @@ end
 # @behavior B-005
 puts "--- a scenario with no id cannot be referenced at all ---"
 refused("test/fixtures/specification/behavior/anonymous")
-  .each { |one| puts "#{one.place.spoken} #{one.message}" }
+  .each { |one| puts "#{one.place.spoken} #{one.check} #{one.message}" }
 
 # Marker hands back the whole of the line after the keyword; what counts as an
 # id is this mechanism's to say.

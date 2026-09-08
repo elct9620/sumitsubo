@@ -28,7 +28,7 @@ Routes @route ["app/*.rb"]
 --- one name twice under one marker leaves a claim nothing to resolve to ---
 @command verify is declared twice, at test/fixtures/specification/contract/duplicate/one.md:7 and test/fixtures/specification/contract/duplicate/two.md:7
 --- a contract with no name cannot be claimed at all ---
-test/fixtures/specification/contract/nameless/cli.md:7 declares a contract whose heading does not open with a name in backticks; sumi help contract has the form
+test/fixtures/specification/contract/nameless/cli.md:7 contract/unreadable declares a contract whose heading does not open with a name in backticks; sumi help contract has the form
 --- a definition with no marker is read from the syntax tree ---
 1
 --- one name twice with no marker ---

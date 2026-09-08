@@ -183,7 +183,8 @@ fails { loaded("#{FIXTURE}/duplicate") }
 
 # @behavior T-006
 puts "--- a contract with no name cannot be claimed at all ---"
-refused("#{FIXTURE}/nameless").each { |one| puts "#{one.place.spoken} #{one.message}" }
+refused("#{FIXTURE}/nameless")
+  .each { |one| puts "#{one.place.spoken} #{one.check} #{one.message}" }
 
 # A marker is what a route needs because nothing in Ruby points at one. A
 # definition naming none is read from the syntax tree instead.
