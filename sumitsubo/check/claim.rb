@@ -9,10 +9,11 @@ module Sumitsubo
     # said to a reader — which is what lets two mechanisms asking one question
     # run one check under one name.
     module Claim
-      # The claims that can witness what they name: each sitting among the
-      # files the specification declaring it answers for. Filtering once is
-      # what leaves the checks below unchanged.
-      def self.witnessing(claims, declaring, reach)
+      # The claims within the reach of the specification declaring what they
+      # name: each sitting among the files it answers for, which are the only
+      # claims that can answer for what it declares. Filtering once is what
+      # leaves the checks below unchanged.
+      def self.within(claims, declaring, reach)
         found = []
         claims.each do |claim|
           spec = declaring[claim.key]
@@ -24,8 +25,8 @@ module Sumitsubo
         found
       end
 
-      # The specification says a thing exists and no claim that could witness
-      # it does, which is a difference between the two sides.
+      # The specification says a thing exists and no claim within its reach
+      # does, which is a difference between the two sides.
       class Unclaimed
         def initialize(check)
           @check = check
@@ -77,10 +78,10 @@ module Sumitsubo
         end
       end
 
-      # The claims that reach the code they name, and the ones that reach none.
-      # A marker stands in front of what implements it, so one standing in front
-      # of nothing witnesses nothing — and every check below compares the first
-      # group, because a claim that cannot witness has already been answered.
+      # The claims standing in front of code, and the ones standing in front of
+      # nothing. A claim is about the code below it, so one with none says
+      # nothing about any — and every check below compares the first group,
+      # because a claim with no code below it has already been answered.
       def self.reaching(claims)
         claims.select { |claim| claim.reaches_code }
       end
@@ -131,7 +132,7 @@ module Sumitsubo
       # A claim naming something the specification declaring it does not reach.
       # The name resolves, so neither side is wrong about the thing; what could
       # not be made is the comparison, since nothing among the files that
-      # specification answers for says it was implemented.
+      # specification answers for claims it.
       #
       # Saying nothing about it would leave the statement reported as claimed
       # nowhere with the claim in plain sight.

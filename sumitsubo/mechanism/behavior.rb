@@ -86,9 +86,9 @@ module Sumitsubo
         reaching = Check::Claim.reaching(claims)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.
-        witnessing = Check::Claim.witnessing(reaching, declaring, reach)
+        within = Check::Claim.within(reaching, declaring, reach)
 
-        @unclaimed.run(stated, witnessing).each { |one| findings.add(one) }
+        @unclaimed.run(stated, within).each { |one| findings.add(one) }
         @misplaced.run(reaching, declaring, reach).each { |one| findings.add(one) }
         @unresolved.run(Sumitsubo::Behavior.named(reaching), stated).each { |one| findings.add(one) }
         @nameless.run(Sumitsubo::Behavior.nameless(reaching)).each { |one| findings.add(one) }

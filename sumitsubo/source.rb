@@ -94,13 +94,13 @@ module Sumitsubo
       end
     end
 
-    # What source says it implements: the word it claimed with, and the rest of
-    # the line unread. What counts as a name in that rest belongs to whichever
-    # mechanism named the word, so nothing here reads it.
+    # What source claims: the word it claimed with, and the rest of the line
+    # unread. What counts as a name in that rest belongs to whichever mechanism
+    # named the word, so nothing here reads it.
     #
-    # Whether it reaches the code it claims to implement travels with it rather
-    # than being read off again: only the reading knows, and a claim that
-    # reaches none is still a claim somebody wrote.
+    # Whether it stands in front of code travels with it rather than being
+    # read off again: only the reading knows, and a claim standing in front of
+    # nothing is still a claim somebody wrote.
     Claim = Data.define(:path, :line, :keyword, :text, :reaches_code)
   end
 end

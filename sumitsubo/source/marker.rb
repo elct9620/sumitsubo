@@ -4,10 +4,10 @@ require "sumitsubo/place"
 
 module Sumitsubo
   module Source
-    # What a piece of source claims to implement. The claim sits in the comment
-    # in front of the code, which is as far as a mechanical check reaches: it
-    # establishes that a behavior was read and implemented, never that the
-    # implementation is right.
+    # What a piece of source claims. The claim sits in the comment in front of
+    # the code, which is as far as a mechanical check goes: what a claim asserts
+    # about that code is its mechanism's to say, and none of them says the code
+    # is right.
     #
     # The keywords arrive as an argument, and what follows one is handed back
     # unread: the mechanism that names a word owns how the word is read. Behavior
@@ -41,9 +41,10 @@ module Sumitsubo
       end
 
       # Whether each comment stands in front of code, under the line it starts
-      # on. It reaches code through the comments after it, because what a person
-      # wrote between a claim and what implements it is still what they wrote —
-      # and reaches none where the run of them ends the file or the block.
+      # on. It stands in front of code through the comments after it, because
+      # what a person wrote between a claim and the code it is about is still
+      # what they wrote — and in front of nothing where the run of them ends the
+      # file or the block.
       #
       # The comments arrive in the order they were met, so the last is the one
       # that settles the run and the answer is carried backwards from it.

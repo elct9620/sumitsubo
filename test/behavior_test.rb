@@ -137,9 +137,9 @@ claims = [Sumitsubo::Behavior::Claim.new(
 # @behavior B-012
 puts "--- a scenario claimed only from outside its own feature ---"
 declaring = Sumitsubo::Behavior.declaring_in(features)
-witnessing = Sumitsubo::Check::Claim.witnessing(claims, declaring, reach)
+within = Sumitsubo::Check::Claim.within(claims, declaring, reach)
 Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Behavior::UNCLAIMED)
-  .run(Sumitsubo::Behavior.stated_in(features), witnessing).each do |finding|
+  .run(Sumitsubo::Behavior.stated_in(features), within).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 

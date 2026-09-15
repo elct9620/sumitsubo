@@ -49,10 +49,10 @@ module Sumitsubo
           reaching = Check::Claim.reaching(claims)
           # What the two checks below compare is the claims that can implement
           # what they name; the rest answer for themselves further down.
-          witnessing = Check::Claim.witnessing(reaching, registering, reach)
+          within = Check::Claim.within(reaching, registering, reach)
 
-          @unclaimed.run(stated, witnessing).each { |one| findings.add(one) }
-          @duplicated.run(witnessing, stated).each { |one| findings.add(one) }
+          @unclaimed.run(stated, within).each { |one| findings.add(one) }
+          @duplicated.run(within, stated).each { |one| findings.add(one) }
           @misplaced.run(reaching, registering, reach).each { |one| findings.add(one) }
           @unresolved.run(Sumitsubo::Contract.named(reaching), stated).each { |one| findings.add(one) }
           @nameless.run(Sumitsubo::Contract.nameless(reaching)).each { |one| findings.add(one) }

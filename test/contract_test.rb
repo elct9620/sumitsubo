@@ -156,8 +156,8 @@ astray = [claim("test/fixtures/specification/contract/app/controller.rb", 4, "@c
 # @behavior T-036
 puts "--- a contract claimed only from outside its own definition ---"
 registering = Sumitsubo::Contract.registering_claims(definitions)
-witnessing = Sumitsubo::Check::Claim.witnessing(astray, registering, reach)
-unclaimed(definitions, witnessing).each do |finding|
+within = Sumitsubo::Check::Claim.within(astray, registering, reach)
+unclaimed(definitions, within).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
