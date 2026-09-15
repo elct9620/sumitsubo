@@ -1,7 +1,6 @@
 # Marker
 
-What a piece of source claims to implement, read out of the comments a
-language offers.
+What a piece of source claims, read out of the comments a language offers.
 
 A contract is named by the interface itself — `GET /users/:id` — rather than
 by a handle standing in for it, which is why what follows the marker is read
@@ -76,10 +75,10 @@ front of it, which is what keeps an address out of the claims.
 | When | the file is scanned for claims |
 | Then | the first four answer claims and the last answers none |
 
-## `M-012` A claim reaching the code it names, and one reaching none
+## `M-012` A claim standing in front of code, and one standing in front of nothing
 
 | Step | Statement |
 | --- | --- |
 | Given | a run of comments standing in front of code, and a run standing in front of nothing |
 | When | the file is scanned for claims |
-| Then | every claim in the first run answers as reaching code and every claim in the second as reaching none |
+| Then | every claim in the first run answers as standing in front of code and every claim in the second as standing in front of nothing |

@@ -163,11 +163,11 @@ leaves it naming nothing and the run says so.
 
 ### Reach
 
-What something extends to through what it names: a specification through its
-includes, a file through its requires. An include covers the files its pattern
-matches, and a specification reaches what its includes cover less what is
-excluded — the files it answers for. Every specification's reach together is
-what a run reads.
+What something extends to through what it names: an include through its
+pattern, a specification through its includes, a file through its requires.
+What an include reaches is what it covers; a specification reaches what its
+includes cover less what is excluded — the files it answers for. Every
+specification's reach together is what a run reads.
 
 ### Exclude
 

@@ -38,20 +38,20 @@ Which files a specification's include covers, and the walk that finds them.
 | When | the walk runs |
 | Then | it answers nothing rather than refusing to run |
 
-## `W-005` What an include covers
+## `W-005` What the project's exclusions take from an include
 
 | Step | Statement |
 | --- | --- |
 | Given | an include, and what the project excludes |
-| When | the scope is asked what it covers |
-| Then | it answers the files the include reaches, less what the project excludes |
+| When | the scope is asked for its files |
+| Then | it answers the files the include covers, less what the project excludes |
 
 ## `W-007` A wildcard standing between two names
 
 | Step | Statement |
 | --- | --- |
 | Given | an include whose wildcard names a directory in the middle of a path |
-| When | the scope is asked what it covers |
+| When | the scope is asked for its files |
 | Then | the files under every directory it matches are answered |
 
 ## `W-006` A directory the walk refuses, so an emptied include is told from a wrong one

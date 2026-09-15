@@ -3,9 +3,10 @@
 The interfaces a project registers, and what source claims to implement them.
 
 What this establishes is that a registered interface is implemented among the
-files its own definition reaches, and reached the way the specification says — never that what it does
-behind that is right. It is the same sentence Behavior turns on, and it
-licenses everything the mechanism cannot check.
+files its own definition reaches, and entered the way the specification says —
+never that what it does behind that is right, and that one sentence licenses
+everything the mechanism cannot check. What it does is a behavior's to declare
+and a test's to witness: this mechanism stops where Behavior starts.
 
 ### Verification runs one way
 

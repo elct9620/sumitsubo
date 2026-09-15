@@ -2,10 +2,10 @@
 
 The scenarios a project declares, and where each one sits.
 
-What this establishes is that a behavior was read and implemented, never that
-the implementation is right. Nothing mechanical can judge whether the code
-under a claim does what the claim says, so that one sentence licenses
-everything the mechanism cannot check.
+What this establishes is that a behavior was read and a test among the files
+its own feature reaches witnesses it, never that the implementation is right.
+Nothing mechanical can judge whether the code under a claim does what the claim
+says, so that one sentence licenses everything the mechanism cannot check.
 
 The model is Gherkin's, not its file format: these scenarios are read rather
 than executed, so `.feature` would buy nothing the other mechanisms could
@@ -19,6 +19,10 @@ A scenario nothing claims is answered at the line declaring it because that is
 where a reader chooses between writing the test and dropping the scenario.
 Both findings collect before reporting, the way a linter does, so a renamed id
 is fixed in one pass.
+
+Verification runs one way. A test claiming nothing is not a difference: only
+the scenarios that matter are written down, so a test with no claim says
+nothing about the specification.
 
 ## Includes
 
