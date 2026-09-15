@@ -10,7 +10,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -29,7 +29,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -48,7 +48,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -67,7 +67,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -87,7 +87,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -106,7 +106,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -205,7 +205,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -225,7 +225,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -245,7 +245,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -265,7 +265,7 @@ Commands:
 Topics:
     glossary         The vocabulary, and the words it rejects
     contract         The interfaces the project means to keep
-    behavior         The scenarios its tests implement
+    behavior         The scenarios its tests witness
     config           .sumi.json - where things live, and what a run touches
 
 Options:
@@ -275,7 +275,7 @@ exit=2
 --- what each topic opens with ---
   glossary: The vocabulary a project means to use, and the words it rejects in its
   contract: The interfaces a project means to keep. What this establishes is that a
-  behavior: The behaviors a project means its tests to implement. What this
+  behavior: The behaviors a project means its tests to witness. What this
   config: .sumi.json says where. A run takes the nearest one at or above where it
 --- lines wider than a topic wraps its prose to ---
   glossary 77: app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.

@@ -21,7 +21,7 @@ module Sumitsubo
         Topics:
             glossary         The vocabulary, and the words it rejects
             contract         The interfaces the project means to keep
-            behavior         The scenarios its tests implement
+            behavior         The scenarios its tests witness
             config           .sumi.json - where things live, and what a run touches
 
         Options:
@@ -144,8 +144,10 @@ module Sumitsubo
       CONTRACT = <<~TEXT
         The interfaces a project means to keep. What this establishes is that a
         registered interface is implemented among the files its own definition
-        reaches, and reached the way the specification says - never that what
-        it does behind that is right.
+        reaches, and entered the way the specification says - never that what
+        it does behind that is right. What it does is a behavior's to declare
+        and a test's to witness, which `sumi help behavior` has. The paragraph
+        under a contract says what the interface is for, not what it does.
 
         Files
             .spec/contract/*.md - one file per kind of interface: the commands
@@ -184,8 +186,9 @@ module Sumitsubo
             closing on that line ends the name where it closes.
 
             In front of means there is code below it, whether or not more
-            comments stand between. A claim at the end of a file or a block
-            reaches none, and a run reports it where it was written.
+            comments stand between. A claim at the end of a file or a
+            block stands in front of nothing, and a run reports it where
+            it was written.
 
             WITHOUT ONE, the interfaces are read from the syntax tree and
             nothing is written in front of the code. Each contract carries a
@@ -292,7 +295,7 @@ module Sumitsubo
 
         Includes
             The boundary of what a definition answers for. With a marker, a
-            contract is implemented by the files its own definition covers,
+            contract is implemented by the files its own definition reaches,
             and a claim from anywhere else names it without being able to
             implement it. Without one, a definition has to sit among those
             files to count, so a type of the same name in another component
@@ -409,9 +412,10 @@ module Sumitsubo
 
       # @command help behavior
       BEHAVIOR = <<~TEXT
-        The behaviors a project means its tests to implement. What this
-        establishes is that a behavior was read and implemented - never that the
-        implementation is right.
+        The behaviors a project means its tests to witness. What this
+        establishes is that a behavior was read and a test among the files
+        its own feature reaches witnesses it - never that the implementation
+        is right.
 
         Files
             .spec/behavior/*.md - one file per feature, each carrying its own
@@ -467,25 +471,29 @@ module Sumitsubo
 
         Includes
             The boundary of what a feature answers for: a scenario is
-            witnessed by the files its own feature covers, and a claim from
+            witnessed by the files its own feature reaches, and a claim from
             anywhere else names it without being able to witness it. One file
             may sit under two features, which is how a test answering for
             both is written. `sumi help glossary` has the same boundary under
             another word: a subdomain.
 
         Claiming
-            Source claims a scenario in the comment in front of the code
-            implementing it. A claim is read as a list, so one may carry
+            A test claims a scenario in the comment in front of the code
+            witnessing it. A claim is read as a list, so one may carry
             several:
 
                 # @behavior V-008 V-009
 
-            A behavior may be claimed by as many tests as exercise it.
+            A scenario may be witnessed by as many tests as claim it. A test
+            claiming nothing is not a difference: only what the
+            specification declares is checked. What a test witnesses is a
+            scenario; the interface it calls is a contract's, claimed by the
+            code implementing it, which `sumi help contract` has.
 
             In front of means there is code below it, whether or not more
-            comments stand between. A claim at the end of a file or a block
-            reaches none, and a run reports it where it was written rather
-            than counting it as coverage.
+            comments stand between. A claim at the end of a file or a
+            block stands in front of nothing, and a run reports it where
+            it was written rather than counting it as coverage.
 
             The word with nothing behind it names no scenario, which a run
             reports as its own thing: an id that resolves to none is a

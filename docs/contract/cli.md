@@ -108,15 +108,16 @@ Whether a definition names a marker decides how the source is read: with one,
 source claims each interface in the comment in front of the code implementing
 it; without one, the interfaces are read from the syntax tree and each contract
 carries the signature saying how its name is spelled. The two are exclusive,
-and which applies has to be known before a fence is reached.
+and which applies has to be known before a fence is reached. What an interface
+does is left to `help behavior`.
 
 ## `help behavior`
 
-The behaviors a project means its tests to implement.
+The behaviors a project means its tests to witness.
 
 One file per feature, each carrying its own include. A scenario is stated as
-steps under an id unique across the directory, and test code claims one in the
-comment in front of the code implementing it.
+steps under an id unique across the directory, and a test claims one in the
+comment in front of the code witnessing it.
 
 ## `help config`
 
