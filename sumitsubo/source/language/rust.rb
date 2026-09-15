@@ -91,7 +91,11 @@ module Sumitsubo
         end
 
         def comments_in(path, where)
-          regions(captured(path.read, COMMENTS, where))
+          # Held before it is answered: Spinel loses the type of an
+          # Array of objects a method answers straight from a call to
+          # one defined further down.
+          found = regions(captured(path.read, COMMENTS, where))
+          found
         end
 
         def declarations_in(path, where)

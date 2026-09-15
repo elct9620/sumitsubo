@@ -75,7 +75,10 @@ module Sumitsubo
     # Reaching the file is part of that: a parser handed this module opens
     # nothing itself, so what it can be asked stays the whole of what it does.
     def self.captures_in(grammar, path, query, where)
-      captures_of(grammar, path.read, query, where)
+      # Held before it is answered: Spinel loses the type of an Array of objects
+      # a method answers straight from a call to one defined further down.
+      found = captures_of(grammar, path.read, query, where)
+      found
     end
 
     # The same query put to a piece of text nobody wrote to a file. A signature

@@ -56,7 +56,10 @@ module TreeSitter
     raise ParseError, "tree-sitter: #{TreeSitterNative.tsq_error}" if TreeSitterNative.tsq_failed
     raise ParseError, "#{where}: cannot be parsed by the #{grammar} grammar" unless TreeSitterNative.tsq_parse_ok
 
-    decode(raw)
+    # Held before it is answered: Spinel loses the type of an Array of objects a
+    # method answers straight from a call to one defined further down.
+    found = decode(raw)
+    found
   end
 
   # The record format this binding owns, read back without a parser.

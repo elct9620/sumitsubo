@@ -39,7 +39,10 @@ module Sumitsubo
         return held unless held.nil?
 
         path = Pathname.new(directory)
-        found = path.directory? ? read_apart(files_in(path), mechanism) : []
+        # Two statements rather than a ternary: Spinel has no boxed form for an
+        # Array of objects yet, and pairing one with an empty literal asks for it.
+        found = []
+        found = read_apart(files_in(path), mechanism) if path.directory?
         @directories[directory] = found
         found
       end
