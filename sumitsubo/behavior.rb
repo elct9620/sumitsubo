@@ -56,19 +56,19 @@ module Sumitsubo
 
     # The files each feature reaches, held under the specification that wrote
     # them. An `include` is the boundary of what a feature answers for: a
-    # scenario is witnessed by the files its own feature covers, and a claim
+    # scenario is witnessed by the files its own feature reaches, and a claim
     # from anywhere else names it without being able to witness it. That
     # boundary is what lets one root hold several components, the way a
     # glossary subdomain does.
     def self.reach(features, base, exclusion)
       found = {}
-      features.each { |feature| found[feature.path] = covered(feature, base, exclusion) }
+      features.each { |feature| found[feature.path] = reach_of(feature, base, exclusion) }
       found
     end
 
     # One feature's files as a set: what is asked of a claim is whether it
     # sits in there, once per claim.
-    def self.covered(feature, base, exclusion)
+    def self.reach_of(feature, base, exclusion)
       found = {}
       globs = feature.includes.map { |one| one.key }
       Source::Scope.of(base, globs, exclusion).each { |path| found[Place.file(base / path)] = true }

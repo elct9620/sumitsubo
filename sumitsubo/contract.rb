@@ -96,19 +96,19 @@ module Sumitsubo
     # The files each definition reaches, held under the specification that
     # wrote them. As with Behavior, an `include` is the boundary of what a
     # definition answers for: a contract is implemented by the files its own
-    # definition covers, and a claim from anywhere else names it without being
+    # definition reaches, and a claim from anywhere else names it without being
     # able to implement it. That boundary is what tells one component's
     # interfaces from another's under a single root, the way a glossary
     # subdomain tells one vocabulary from another.
     def self.reach(definitions, base, exclusion)
       found = {}
-      definitions.each { |definition| found[definition.path] = covered(definition, base, exclusion) }
+      definitions.each { |definition| found[definition.path] = reach_of(definition, base, exclusion) }
       found
     end
 
     # One definition's files as a set: what is asked of a claim is whether it
     # sits in there, once per claim.
-    def self.covered(definition, base, exclusion)
+    def self.reach_of(definition, base, exclusion)
       found = {}
       globs = definition.includes.map { |one| one.key }
       Source::Scope.of(base, globs, exclusion).each { |path| found[Place.file(base / path)] = true }
