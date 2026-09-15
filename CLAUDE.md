@@ -33,6 +33,11 @@ A term earns a rejected word when the project has actually drifted on it; the
 rest name what the project means and reject nothing, which the tool carries
 without checking.
 
+Start from the neutral word. A mechanism's own word belongs only where the
+sentence would be false of the others, so code every mechanism shares speaks
+only neutral words: one mechanism's word borrowed there is how a reader comes
+to think the other works the same way.
+
 ## Comments
 
 The code says what it does; a comment says why it is that way — the intent it

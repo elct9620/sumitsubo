@@ -2,6 +2,10 @@
 
 The words this project keeps, and the ones it turns down in their place.
 
+Most of them belong to no mechanism. A mechanism has a word of its own only
+where a sentence would turn false with another mechanism in its place, so
+meeting one says the sentence holds for that mechanism alone.
+
 ## Sumitsubo
 
 ### Includes
@@ -86,13 +90,14 @@ each of them is worded.
 ### Contract
 
 An interface a project registers as one it means to keep, found in the source
-that implements it. Source claims one in a comment where no construct of the
-language points at it, and declares it outright where one does.
+implementing it. Source claims one in a comment where no construct of the
+language points at it, and declares it outright where one does — which is why
+registering is a word of its own for how a definition declares one.
 
 ### Behavior
 
-A scenario the specification declares in a BDD style, claimed by the test that
-implements it.
+A scenario the specification declares in a BDD style, claimed by the tests
+witnessing it.
 
 #### Rejected
 
@@ -100,12 +105,23 @@ implements it.
 - `Behaviour` - Behavior is the spelling every identifier here uses.
 - `behaviours` - Behaviors is the spelling every identifier here uses.
 
+### Witness
+
+What a test does for a scenario it claims: it stands as evidence the behavior
+was read, never that the implementation is right. Only a test witnesses, and
+any number of them may witness one scenario, where a contract has one
+implementation.
+
+#### Rejected
+
+- `exercise` - What a claim asserts is that the test stands for the scenario, not that it runs anything.
+
 ### Declare
 
-To say something exists. A specification declares the contracts and behaviors
-it registers; source declares the classes, modules and methods it defines. One
-relation, and the subject is what changes — which is why both sides use the
-word.
+To say something exists. A specification declares what it holds the source to
+— a term, a contract, a scenario; source declares the classes, modules and
+methods it defines. One relation, and the subject is what changes — which is
+why both sides use the word.
 
 ### Check
 
@@ -126,6 +142,13 @@ The word source claims a contract or behavior with, written in the comment in
 front of the code. It is what an interface needs when no construct of the
 language points at it.
 
+### Claim
+
+A comment naming, after the marker, something a specification declares, with
+code below it — which is what standing in front of code means. It is one act in
+every mechanism reading a marker; what it asserts is the mechanism's own, a
+contract implemented or a scenario witnessed.
+
 ### Internal
 
 An interface the project means to keep but not to publish. It is verified like
@@ -138,9 +161,17 @@ One line a rejection does not answer for, and the reason that line is right to
 say what it says. It names a mention and nothing wider, so fixing the line
 leaves it naming nothing and the run says so.
 
+### Reach
+
+What something extends to through what it names: a specification through its
+includes, a file through its requires. An include covers the files its pattern
+matches, and a specification reaches what its includes cover less what is
+excluded — the files it answers for. Every specification's reach together is
+what a run reads.
+
 ### Exclude
 
-A path no mechanism reads, however wide an include reaches. It is written once
+A path no mechanism reads, however much an include covers. It is written once
 for the project because a build directory is the project's rather than any one
 specification's, and it decides what is read where an Ignore decides what is
 answered for.
@@ -149,7 +180,7 @@ answered for.
 
 A part of the problem a project addresses, and what one specification answers
 for there. Its `include` is the boundary: a glossary section's terms hold in
-the files it covers, in place of an earlier section's wherever both name the
+the files it reaches, in place of an earlier section's wherever both name the
 same term; a feature's scenarios are witnessed only there, and a definition's
 contracts implemented only there. One file may sit under two, and answers for
 both.

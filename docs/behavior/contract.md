@@ -25,7 +25,7 @@ draw.
 
 ### A second way in
 
-A behavior may be claimed by as many tests as exercise it, but a contract is
+A scenario may be witnessed by as many tests as claim it, but a contract is
 the way in, so a second one is an entrance the specification does not
 describe. Under the marker reading that is one interface claimed in two
 places; under the other it is one name defined with two shapes.
