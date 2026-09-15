@@ -146,10 +146,12 @@ read as source wherever an include reaches it, and passed over where none does.
 
 Sumitsubo is compiled by [Spinel](https://github.com/matz/spinel), an AOT
 compiler for Ruby, which is built from source rather than installed from
-RubyGems. Two scripts lay down what the tree needs and neither is committed:
-`scripts/vendor.sh` fetches the pinned tree-sitter runtime and grammars,
-and `scripts/build_rev.sh` writes the revision the executable answers for.
-Nothing compiles before both have run.
+RubyGems. The tree builds against its
+[2026.09.12](https://github.com/matz/spinel/releases/tag/2026.09.12) release,
+the one CI pins. Two scripts lay down what the tree needs and neither is
+committed: `scripts/vendor.sh` fetches the pinned tree-sitter runtime and
+grammars, and `scripts/build_rev.sh` writes the revision the executable
+answers for. Nothing compiles before both have run.
 
 ```console
 $ ./scripts/vendor.sh
