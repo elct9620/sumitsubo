@@ -78,7 +78,9 @@ read on the way.
                                      │ every include, as one set
  (2) scan the source                 ▼
                          ┌─────────────────────────┐
-                         │ reach                   │──► barren
+                         │ reach                   │
+                         │  each include covers    │──► barren
+                         │   less what is excluded │
                          │  ├ union → what to read │
                          │  └ per spec → boundary  │──► unscoped
                          └───────────┬─────────────┘
@@ -143,7 +145,7 @@ so the first three steps below can run more than once for a single language.
 
 A reading is asked five things, and its document is written against them: what
 a person wrote in one of its files, what each of those stands next to, how a
-name is spelled as the path that reaches it, what kind each parameter carries,
+name is spelled with the scopes holding it, what kind each parameter carries,
 and what becomes of source the grammar refuses. Which files it claims and what
 a specification calls it belong to the seam, answered once in `language.md` for
 every reading at once.
@@ -183,10 +185,10 @@ Glossary and Contract answer for the implementation, Behavior for the tests.
                                           └─► test/*.rb
 
  contract/cli.md ─── Claim @command ──────►   sumitsubo/command/*.rb
-   what a person types
+   what a person types                         the code implementing each
 
  contract/internal.md ─ Declaration ──────►   sumitsubo/**/*.rb
-   the seams kept to one implementation
+   the seams kept to one implementation        the code implementing each
 
  behavior/behavior.md ─ Claim @behavior ──►   test/behavior_test.rb
  behavior/glossary.md ────────────────────►   test/glossary_test.rb
