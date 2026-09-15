@@ -36,7 +36,7 @@ def claims(path, keywords, regions)
   Sumitsubo::Source::Marker.claims_in(path, keywords, Offered.new(regions))
     .map do |claim|
       "#{claim.path}:#{claim.line} #{claim.keyword} [#{claim.text}]" \
-        "#{claim.reaches_code ? "" : " in front of nothing"}"
+        "#{claim.in_front_of_code ? "" : " in front of nothing"}"
     end
 end
 

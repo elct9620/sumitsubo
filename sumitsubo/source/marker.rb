@@ -32,29 +32,28 @@ module Sumitsubo
         # rendered the path first, so the reading owns how it answers.
         where = Place.file(path)
         comments = languages.comments_in(path, where)
-        reaching = reaching_in(comments)
+        in_front_at = in_front_of_code(comments)
         claims = []
         comments.each do |comment|
-          claimed_in(comment, keywords, where, reaching[comment.line]).each { |one| claims.push(one) }
+          claimed_in(comment, keywords, where, in_front_at[comment.line]).each { |one| claims.push(one) }
         end
         claims
       end
 
-      # Whether each comment stands in front of code, under the line it starts
-      # on. It stands in front of code through the comments after it, because
-      # what a person wrote between a claim and the code it is about is still
-      # what they wrote — and in front of nothing where the run of them ends the
-      # file or the block.
+      # Answered under the line each comment starts on. It stands in front of
+      # code through the comments after it, because what a person wrote between
+      # a claim and the code it is about is still what they wrote — and in
+      # front of nothing where the run of them ends the file or the block.
       #
       # The comments arrive in the order they were met, so the last is the one
       # that settles the run and the answer is carried backwards from it.
-      def self.reaching_in(comments)
+      def self.in_front_of_code(comments)
         found = {}
-        reaches = false
+        below = false
         comments.reverse.each do |comment|
-          reaches = comment.followed_by == Source::Region::CODE ||
-                    (comment.followed_by == Source::Region::COMMENT && reaches)
-          found[comment.line] = reaches
+          below = comment.followed_by == Source::Region::CODE ||
+                  (comment.followed_by == Source::Region::COMMENT && below)
+          found[comment.line] = below
         end
         found
       end
@@ -62,12 +61,12 @@ module Sumitsubo
       # The claims one comment carries. It spans lines whole, so a claim answers
       # at the line its keyword is on rather than where the comment began, while
       # what the comment stands in front of is the same for every line of it.
-      def self.claimed_in(comment, keywords, where, reaches)
+      def self.claimed_in(comment, keywords, where, in_front_of_code)
         found = []
         comment.lines.each do |one|
           keywords.each do |keyword|
             claimed = text_after(one.text, keyword)
-            found.push(Source::Claim.new(where, one.line, keyword, claimed, reaches)) unless claimed.nil?
+            found.push(Source::Claim.new(where, one.line, keyword, claimed, in_front_of_code)) unless claimed.nil?
           end
         end
         found

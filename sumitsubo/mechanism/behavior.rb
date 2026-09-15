@@ -83,15 +83,15 @@ module Sumitsubo
         # A claim standing in front of nothing is answered once, by itself: it
         # names a scenario without witnessing one, so putting it through the
         # comparisons below would say the same thing a second way.
-        reaching = Check::Claim.reaching(claims)
+        in_front = Check::Claim.in_front_of_code(claims)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.
-        within = Check::Claim.within(reaching, declaring, reach)
+        within = Check::Claim.within(in_front, declaring, reach)
 
         @unclaimed.run(stated, within).each { |one| findings.add(one) }
-        @misplaced.run(reaching, declaring, reach).each { |one| findings.add(one) }
-        @unresolved.run(Sumitsubo::Behavior.named(reaching), stated).each { |one| findings.add(one) }
-        @nameless.run(Sumitsubo::Behavior.nameless(reaching)).each { |one| findings.add(one) }
+        @misplaced.run(in_front, declaring, reach).each { |one| findings.add(one) }
+        @unresolved.run(Sumitsubo::Behavior.named(in_front), stated).each { |one| findings.add(one) }
+        @nameless.run(Sumitsubo::Behavior.nameless(in_front)).each { |one| findings.add(one) }
         @dangling.run(Check::Claim.dangling(claims)).each { |one| findings.add(one) }
       end
     end

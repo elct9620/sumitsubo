@@ -46,16 +46,16 @@ module Sumitsubo
           # A claim standing in front of nothing is answered once, by itself: it
           # names an interface without implementing one, so putting it through
           # the comparisons below would say the same thing a second way.
-          reaching = Check::Claim.reaching(claims)
+          in_front = Check::Claim.in_front_of_code(claims)
           # What the two checks below compare is the claims that can implement
           # what they name; the rest answer for themselves further down.
-          within = Check::Claim.within(reaching, registering, reach)
+          within = Check::Claim.within(in_front, registering, reach)
 
           @unclaimed.run(stated, within).each { |one| findings.add(one) }
           @duplicated.run(within, stated).each { |one| findings.add(one) }
-          @misplaced.run(reaching, registering, reach).each { |one| findings.add(one) }
-          @unresolved.run(Sumitsubo::Contract.named(reaching), stated).each { |one| findings.add(one) }
-          @nameless.run(Sumitsubo::Contract.nameless(reaching)).each { |one| findings.add(one) }
+          @misplaced.run(in_front, registering, reach).each { |one| findings.add(one) }
+          @unresolved.run(Sumitsubo::Contract.named(in_front), stated).each { |one| findings.add(one) }
+          @nameless.run(Sumitsubo::Contract.nameless(in_front)).each { |one| findings.add(one) }
           @dangling.run(Check::Claim.dangling(claims)).each { |one| findings.add(one) }
         end
       end

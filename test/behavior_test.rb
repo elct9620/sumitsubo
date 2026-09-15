@@ -131,7 +131,7 @@ puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
 # of it from the file next door names the scenario without being able to
 # witness it, so the scenario stands unclaimed.
 claims = [Sumitsubo::Behavior::Claim.new(
-  path: "test/fixtures/project/behavior/test/verify_test.rb", line: 9, id: "I-001", reaches_code: true
+  path: "test/fixtures/project/behavior/test/verify_test.rb", line: 9, id: "I-001", in_front_of_code: true
 )]
 
 # @behavior B-012
@@ -177,10 +177,10 @@ end
 puts "--- a claim naming no scenario, apart from one resolving to none ---"
 mixed = [
   Sumitsubo::Behavior::Claim.new(
-    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 13, id: "G-404", reaches_code: true
+    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 13, id: "G-404", in_front_of_code: true
   ),
   Sumitsubo::Behavior::Claim.new(
-    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 16, id: "", reaches_code: true
+    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 16, id: "", in_front_of_code: true
   )
 ]
 (Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Behavior::UNRESOLVED, "scenario")

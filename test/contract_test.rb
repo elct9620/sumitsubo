@@ -100,10 +100,10 @@ end
 
 # A claim stands in front of code unless a case says otherwise, since what it
 # stands in front of is the reading's answer rather than this one's subject.
-def claim(path, line, keyword, name, reaches_code = true)
+def claim(path, line, keyword, name, in_front_of_code = true)
   Sumitsubo::Contract::Claim.new(
     path: path, line: line,
-    contract: Sumitsubo::Contract::Name.new(keyword, name), reaches_code: reaches_code
+    contract: Sumitsubo::Contract::Name.new(keyword, name), in_front_of_code: in_front_of_code
   )
 end
 

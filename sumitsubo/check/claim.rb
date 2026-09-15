@@ -78,16 +78,15 @@ module Sumitsubo
         end
       end
 
-      # The claims standing in front of code, and the ones standing in front of
-      # nothing. A claim is about the code below it, so one with none says
-      # nothing about any — and every check below compares the first group,
-      # because a claim with no code below it has already been answered.
-      def self.reaching(claims)
-        claims.select { |claim| claim.reaches_code }
+      # A claim is about the code below it, so one with none says nothing about
+      # any — and every check below compares the first group, because a claim
+      # with no code below it has already been answered.
+      def self.in_front_of_code(claims)
+        claims.select { |claim| claim.in_front_of_code }
       end
 
       def self.dangling(claims)
-        claims.reject { |claim| claim.reaches_code }
+        claims.reject { |claim| claim.in_front_of_code }
       end
 
       # A claim with no code under it. Nothing was compared: the marker is
