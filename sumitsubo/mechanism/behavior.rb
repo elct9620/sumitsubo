@@ -25,7 +25,7 @@ module Sumitsubo
         @misplaced = Check::Claim::Misplaced.new(MISPLACED)
         @unresolved = Check::Claim::Unresolved.new(UNRESOLVED, "scenario")
         @nameless = Check::Claim::Nameless.new(NAMELESS, "scenario")
-        @dangling = Check::Claim::Dangling.new(DANGLING, "scenario")
+        @dangling = Check::Claim::Dangling.new(DANGLING)
       end
 
       def specification

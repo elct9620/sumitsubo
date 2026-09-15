@@ -89,25 +89,22 @@ module Sumitsubo
         claims.reject { |claim| claim.reaches_code }
       end
 
-      # A claim with no code under it. Nothing was compared: the marker says a
-      # thing was implemented and there is nothing where the implementation
-      # would be, so this is a comparison that could not be made rather than a
-      # difference.
+      # A claim with no code under it. Nothing was compared: the marker is
+      # about the code below it and there is none, so this is a comparison that
+      # could not be made rather than a difference.
       #
       # It answers at the marker rather than at the specification, because the
       # line to fix is the one somebody left hanging.
       class Dangling
-        def initialize(check, what)
+        def initialize(check)
           @check = check
-          @what = what
         end
 
         def run(claims)
           claims.map do |claim|
             Finding.new(
               check: @check, difference: false, place: claim.place,
-              message: "#{claim.said} stands in front of nothing; " \
-                       "a #{@what} is claimed in the comment in front of the code implementing it"
+              message: "#{claim.said} stands in front of nothing; a claim needs code below it"
             )
           end
         end

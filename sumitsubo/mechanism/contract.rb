@@ -33,7 +33,7 @@ module Sumitsubo
           @misplaced = Check::Claim::Misplaced.new(MISPLACED)
           @unresolved = Check::Claim::Unresolved.new(UNRESOLVED, "contract")
           @nameless = Check::Claim::Nameless.new(NAMELESS, "contract")
-          @dangling = Check::Claim::Dangling.new(DANGLING, "contract")
+          @dangling = Check::Claim::Dangling.new(DANGLING)
         end
 
         def run(config, findings, definitions, source)
