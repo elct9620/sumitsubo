@@ -8,8 +8,8 @@ require "sumitsubo/mechanism/seed"
 module Sumitsubo
   module Mechanism
     # The scenarios a project declares, checked against the tests claiming
-    # them. What it establishes is that a behavior was read and implemented,
-    # never that the implementation is right.
+    # them. What it establishes is that a behavior was read and a test
+    # witnesses it, never that the implementation is right.
     class Behavior
       BARREN = "behavior/barren"
       UNREADABLE = "behavior/unreadable"

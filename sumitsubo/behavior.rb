@@ -8,9 +8,9 @@ require "sumitsubo/source/repository"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
-  # it establishes is that a behavior was read and implemented, never that the
-  # implementation is right — that is what licenses everything this mechanism
-  # cannot check.
+  # it establishes is that a behavior was read and a test witnesses it, never
+  # that the implementation is right — that is what licenses everything this
+  # mechanism cannot check.
   #
   # Nothing here names the grammar, which is what keeps this file's test on the
   # side that --regen can still write a snapshot for.
@@ -159,7 +159,7 @@ module Sumitsubo
     # A claim naming a scenario the feature declaring it does not reach. The
     # id resolves, so neither side is wrong about the behavior; what could not
     # be made is the comparison, since nothing among the files that feature
-    # answers for says the scenario was implemented.
+    # answers for witnesses the scenario.
     #
     # Saying nothing about it would leave the scenario reported as claimed
     # nowhere with the claim in plain sight.
@@ -174,9 +174,9 @@ module Sumitsubo
       found
     end
 
-    # A scenario nothing claims: the specification says a behavior should be
-    # implemented and no claim that could witness it does, which is a
-    # difference between the two sides.
+    # A scenario nothing claims: the specification declares a behavior and no
+    # claim that could witness it does, which is a difference between the two
+    # sides.
     # A claim resolving to no scenario. Nothing on the specification side can
     # confirm it — either the specification is not there to confirm against, or
     # the behavior was removed and this claim should have gone with it. Both
