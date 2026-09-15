@@ -18,7 +18,7 @@ prose.
 |-----------|----------------------------|------------------|
 | Glossary  | The domain vocabulary, and the words rejected in its place. | Words a person wrote: comments, and prose. |
 | Contract  | The interfaces it means to keep. | Source code claiming an interface, or declaring one the language carries. |
-| Behavior  | Behaviors in a BDD style. | Test code declaring which behavior it implements. |
+| Behavior  | Behaviors in a BDD style. | Test code claiming the behavior it witnesses. |
 
 ## Installation
 
