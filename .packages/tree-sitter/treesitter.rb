@@ -58,6 +58,7 @@ module TreeSitter
 
     # Held before it is answered: Spinel loses the type of an Array of objects a
     # method answers straight from a call to one defined further down.
+    # matz/spinel#4490.
     found = decode(raw)
     found
   end

@@ -77,6 +77,7 @@ module Sumitsubo
     def self.captures_in(grammar, path, query, where)
       # Held before it is answered: Spinel loses the type of an Array of objects
       # a method answers straight from a call to one defined further down.
+      # matz/spinel#4490.
       found = captures_of(grammar, path.read, query, where)
       found
     end
