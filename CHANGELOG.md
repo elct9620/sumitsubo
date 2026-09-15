@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-preview10](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview9...v0.1.0-preview10) (2026-09-15)
+
+
+### Bug Fixes
+
+* **build:** hold an Array of objects where Spinel 2026.09.12 loses its type ([708bebd](https://github.com/elct9620/sumitsubo/commit/708bebddd962a2a047adb0fddd1fc1e7f7bd1561))
+
 ## [0.1.0-preview9](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview8...v0.1.0-preview9) (2026-09-08)
 
 
