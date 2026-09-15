@@ -3,8 +3,7 @@ require "sumitsubo/behavior"
 require "sumitsubo/source/marker"
 require "sumitsubo/source"
 
-# What a piece of source claims to implement, read out of the comments a
-# language offers.
+# What a piece of source claims, read out of the comments a language offers.
 #
 # The comments are written out rather than parsed for. Where they sit in a file
 # and what each stands next to are the language's to answer, and a real grammar
@@ -31,13 +30,13 @@ end
 
 # The text is bracketed because a keyword with nothing after it carries an
 # empty one, and a snapshot cannot hold the trailing space that would leave.
-# Whether the claim reaches the code it names is said outright, because that is
+# Whether the claim stands in front of code is said outright, because that is
 # what a mechanism reads it for.
 def claims(path, keywords, regions)
   Sumitsubo::Source::Marker.claims_in(path, keywords, Offered.new(regions))
     .map do |claim|
       "#{claim.path}:#{claim.line} #{claim.keyword} [#{claim.text}]" \
-        "#{claim.reaches_code ? "" : " reaching no code"}"
+        "#{claim.reaches_code ? "" : " in front of nothing"}"
     end
 end
 
@@ -91,13 +90,13 @@ claims("src/order.rb", BEHAVIOR, [
   region(11, '# mail@behavior.example claims nothing')
 ]).each { |line| puts line }
 
-# A claim reaches the code it names through the comments after it, because
-# what a person wrote between a claim and what implements it is still what they
-# wrote. A run of them ending the file reaches none, and every claim in that run
-# says so — the claim is still made, and whoever asked decides what to do about
-# one that witnesses nothing.
+# A claim stands in front of code through the comments after it, because what
+# a person wrote between a claim and the code it is about is still what they
+# wrote. A run of them ending the file stands in front of nothing, and every
+# claim in that run says so — the claim is still made, and whoever asked
+# decides what to do about one with no code below it.
 # @behavior M-012
-puts "--- a claim reaches code through the comments after it, or reaches none ---"
+puts "--- a claim stands in front of code through the comments after it, or in front of nothing ---"
 claims("src/order.rb", BEHAVIOR, [
   region(2, "# @behavior G-007", Sumitsubo::Source::Region::COMMENT),
   region(3, "# @behavior G-008", Sumitsubo::Source::Region::CODE),
