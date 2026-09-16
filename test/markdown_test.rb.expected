@@ -140,7 +140,26 @@ CLI {} []
 --- one glob written twice ---
   Everywhere ["7 app/**/*.rb"]
   Billing ["13 app/**/*.rb"]
+--- anything beside the globs a feature is scoped by ---
+  refused: init.md:7 writes a paragraph under Includes, which holds its globs alone; sumi help behavior has the form
+  refused: init.md:8 writes a nested item under Includes, which holds its globs alone; sumi help behavior has the form
+  refused: init.md:10 writes a fenced block under Includes, which holds its globs alone; sumi help behavior has the form
+  refused: init.md:15 writes a table row under Includes, which holds its globs alone; sumi help behavior has the form
+  refused: init.md:17 writes a heading under Includes, which holds its globs alone; sumi help behavior has the form
+--- a row under the Includes that follows a scenario ---
+  refused: init.md:11 writes a table row under Includes, which holds its globs alone; sumi help behavior has the form
+--- anything beside the globs a definition is scoped by ---
+  refused: cli.md:11 writes a paragraph under Includes, which holds its globs alone; sumi help contract has the form
+  refused: cli.md:12 writes a nested item under Includes, which holds its globs alone; sumi help contract has the form
+  refused: cli.md:14 writes a fenced block under Includes, which holds its globs alone; sumi help contract has the form
+  refused: cli.md:19 writes a table row under Includes, which holds its globs alone; sumi help contract has the form
+  refused: cli.md:21 writes a heading under Includes, which holds its globs alone; sumi help contract has the form
+--- anything beside the globs a section is scoped by ---
+  refused: test/fixtures/specification/forms/glossary.md:9 writes a paragraph under Includes, which holds its globs alone; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:10 writes a nested item under Includes, which holds its globs alone; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:12 writes a fenced block under Includes, which holds its globs alone; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:17 writes a table row under Includes, which holds its globs alone; sumi help glossary has the form
 --- the reserved word written as a name and as a heading ---
   ["5 test/init_test.rb"] ["Includes"]
 --- a term spelled as the reserved word ---
-  Everywhere ["7 app/**/*.rb"] ["Order"]
+  refused: test/fixtures/specification/forms/glossary.md:11 writes a paragraph under Includes, which holds its globs alone; sumi help glossary has the form

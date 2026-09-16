@@ -647,6 +647,55 @@ sections_of(vocabulary([
   h2(9, "Billing"), h3(11, "Includes"), item(13, "`app/**/*.rb`")
 ]))
 
+# The reserved heading holds its globs and nothing else, so every other block
+# written under it is refused where it stands rather than read as prose.
+NOTE = "```\ntest/**\n```"
+
+# @behavior F-054
+puts "--- anything beside the globs a feature is scoped by ---"
+read([
+  h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"),
+  paragraph(7, "The tests that run init."),
+  nested(8, "`test/fixtures/**`"),
+  fence(10, NOTE), content(11, "test/**\n"),
+  row(15, "| Glob | Why |"), cell(15, "Glob "), cell(15, "Why "),
+  h3(17, "Legacy"),
+  h2(19, "`I-001` A run")
+])
+
+# @behavior F-055
+puts "--- a row under the Includes that follows a scenario ---"
+read([
+  h1(1, "Init"), h2(3, "`I-001` A run"),
+  row(5, "| When | `sumi init` runs |"), cell(5, "When "), cell(5, "`sumi init` runs "),
+  h2(7, "Includes"), item(9, "`test/init_test.rb`"),
+  row(11, "| Given | a directory |"), cell(11, "Given "), cell(11, "a directory ")
+])
+
+# @behavior F-056
+puts "--- anything beside the globs a definition is scoped by ---"
+definition([
+  h1(1, "Seams"), h2(3, "Marker"), paragraph(5, "`@contract`"),
+  h2(7, "Includes"), item(9, "`lib/**`"),
+  paragraph(11, "The library, and nothing it vendors."),
+  nested(12, "`lib/vendor/**`"),
+  fence(14, NOTE), content(15, "test/**\n"),
+  row(19, "| Glob | Why |"), cell(19, "Glob "), cell(19, "Why "),
+  h3(21, "Legacy"),
+  h2(23, "`Store.open`")
+])
+
+# @behavior F-057
+puts "--- anything beside the globs a section is scoped by ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Includes"), item(7, "`app/**/*.rb`"),
+  paragraph(9, "The application, and nothing it vendors."),
+  nested(10, "`app/vendor/**`"),
+  fence(12, NOTE), content(13, "test/**\n"),
+  row(17, "| Glob | Why |"), cell(17, "Glob "), cell(17, "Why "),
+  h3(19, "Order"), paragraph(21, "What a customer asks us to fulfil.")
+])
+
 # A name is taken letter for letter and the reserved heading is not, so one word
 # stands for both at one level without either giving way.
 # @behavior F-051
@@ -657,8 +706,8 @@ named = read([
 ])
 puts "  #{globs_of(named).inspect} #{named.statements.map { |one| one.key }.inspect}"
 
-# A term is prose and the reserved heading is prose too, so the word a section
-# scopes itself with is the one word a vocabulary cannot also define.
+# The word a section scopes itself with is the one word a vocabulary cannot
+# also define: a definition written under it stands where only globs do.
 # @behavior F-052
 puts "--- a term spelled as the reserved word ---"
 vocabulary([
@@ -666,6 +715,4 @@ vocabulary([
   h2(3, "Everywhere"), h3(5, "Includes"), item(7, "`app/**/*.rb`"),
   h3(9, "Includes"), paragraph(11, "What a specification answers for."),
   h3(13, "Order"), paragraph(15, "What a customer asks us to fulfil.")
-]).statements.each do |section|
-  puts "  #{section.key} #{globs_of(section).inspect} #{section.statements.map { |one| one.key }.inspect}"
-end
+])

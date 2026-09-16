@@ -32,9 +32,9 @@ module Sumitsubo
     # forms sharing one syntax, so what to ask for belongs to the form being
     # read, and what a block means belongs there too.
     class Block < Struct.new(:kind, :level, :line, :text, :language, :spans, :cells)
-      # The kinds a document is made of. A form asks for the ones it is written
-      # in and no others, which is what leaves a level it has no use for as
-      # prose.
+      # The kinds a document is made of. A form asks for the ones it reads —
+      # the ones it is written in, and the ones it refuses where they stand —
+      # and a kind it asks nothing of never reaches it.
       HEADING = "heading"
       PARAGRAPH = "paragraph"
       ITEM = "item"

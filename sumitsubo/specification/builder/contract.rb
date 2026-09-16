@@ -122,6 +122,7 @@ module Sumitsubo
 
         def heading(block)
           return named(block) if block.level == NAME
+          return beside(block) if @holding == INCLUDES && block.level > REGISTERS
           return unless block.level == REGISTERS
 
           registers(block)
@@ -178,6 +179,7 @@ module Sumitsubo
         # The marker, the definition's own description, or a contract's. Only the
         # first paragraph under each says what it declares; a second is prose.
         def described(block)
+          return beside(block) if @holding == INCLUDES
           return marked(block) if @holding == MARKER
           return unless @holding.nil?
 
@@ -199,7 +201,8 @@ module Sumitsubo
         end
 
         def item(block)
-          return unless @holding == INCLUDES && block.level == GLOB
+          return unless @holding == INCLUDES
+          return beside(block) unless block.level == GLOB
 
           @includes.push(Builder.scoped(block, @path, TOPIC))
         end
@@ -208,6 +211,8 @@ module Sumitsubo
         # an attribute of the contract it sits under, so one standing above the
         # first is an attribute of nothing rather than of the document.
         def attributed(block)
+          beside(block) if @holding == INCLUDES
+
           cells = block.cells
           return if cells.empty?
 
@@ -235,8 +240,10 @@ module Sumitsubo
         # A fenced block taken as the signature of the contract it sits under. A
         # marker reading has no signature to take, so every fence in such a
         # document is prose; so is a second one under one contract, and so is one
-        # written before any contract.
+        # written before any contract — except where the globs stand, which hold
+        # nothing else.
         def signed(block)
+          beside(block) if @holding == INCLUDES
           return unless @marker_at.nil?
           return if @contract.nil? || !@contract.attributes[SIGNATURE].nil?
 
@@ -322,6 +329,10 @@ module Sumitsubo
 
         def refuse(line, said)
           Builder.refuse(@path, line, said, TOPIC)
+        end
+
+        def beside(block)
+          Builder.beside(block, @path, TOPIC)
         end
       end
     end

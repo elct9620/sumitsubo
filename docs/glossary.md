@@ -68,8 +68,8 @@ the first thing that no longer knows how the document was written.
 
 One kind of specification as the shape a document is written in — a vocabulary,
 a definition, a feature. Three of them share one syntax, so each says which
-kinds of block it is written in and reads what one means for itself: a level
-that states a term in one is prose in another.
+kinds of block it reads and what one means for itself: a level that states a
+term in one is prose in another.
 
 ### Language
 

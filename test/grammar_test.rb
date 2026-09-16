@@ -102,7 +102,7 @@ reading = Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)
 puts "--- which files this parser answers for ---"
 p [reading.reads?("init.md"), reading.reads?("init.json"), reading.reads?(".spec/behavior/init.md")]
 
-# A form says which kinds it is written in and the parser answers with those,
+# A form says which kinds it reads and the parser answers with those,
 # the way a run does through the repository. The kinds are named outright
 # because a constant is reached through the name written here, not through a
 # value handed over.
@@ -176,6 +176,30 @@ vocabulary_of(
   Sumitsubo::Specification::Builder::Glossary.new(VOCABULARY)
     .build(vocabulary_blocks(reading, VOCABULARY))
 )
+
+# A table and a fence are kinds a vocabulary is written in nowhere, so they
+# reach it only because it asks for them — which is what lets one standing
+# where the globs do be refused rather than never seen.
+
+# @behavior MD-051
+puts "--- a table and a fence beside a vocabulary's globs ---"
+BESIDE_VOCABULARY = "test/fixtures/specification/forms/beside_vocabulary.md"
+begin
+  Sumitsubo::Specification::Builder::Glossary.new(BESIDE_VOCABULARY)
+    .build(vocabulary_blocks(reading, BESIDE_VOCABULARY))
+rescue Sumitsubo::Misshapen => e
+  e.refusals.each { |one| puts "  refused: #{one.place.spoken} #{one.message}" }
+end
+
+# @behavior MD-052
+puts "--- a fence beside a feature's globs ---"
+BESIDE_FEATURE = "test/fixtures/specification/forms/beside_feature.md"
+begin
+  Sumitsubo::Specification::Builder::Behavior.new(BESIDE_FEATURE)
+    .build(feature_blocks(reading, BESIDE_FEATURE))
+rescue Sumitsubo::Misshapen => e
+  e.refusals.each { |one| puts "  refused: #{one.place.spoken} #{one.message}" }
+end
 
 def definition(reading, path)
   Sumitsubo::Specification::Builder::Contract.new(path, Sumitsubo::Source::Repository.new(LANGUAGES))

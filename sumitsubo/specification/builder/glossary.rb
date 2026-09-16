@@ -23,7 +23,7 @@ module Sumitsubo
       # standing for it, so the state a walk is in and the heading a reader wrote
       # are the same thing.
       class Glossary
-        KINDS = [Block::HEADING, Block::PARAGRAPH, Block::ITEM]
+        KINDS = [Block::HEADING, Block::PARAGRAPH, Block::ITEM, Block::CODE, Block::ROW]
 
         # The levels this form is written at: a title, a section, a term, and
         # the one heading a term carries.
@@ -101,6 +101,7 @@ module Sumitsubo
           when Block::HEADING then heading(block)
           when Block::PARAGRAPH then defines(block)
           when Block::ITEM then listed(block)
+          when Block::CODE, Block::ROW then passed(block)
           end
         end
 
@@ -187,6 +188,7 @@ module Sumitsubo
         # a feature does under a scenario. The one above every section says what
         # the document itself is for.
         def defines(block)
+          return beside(block) if @holding == INCLUDES
           return unless @holding.nil?
 
           if @section.nil?
@@ -200,14 +202,16 @@ module Sumitsubo
 
         # What a list item is depends on the reserved heading it sits under and
         # on how deep it was written: a glob where the section says what it
-        # covers, a rejected word where a term says what it refuses, a line set
-        # aside under that word, and prose anywhere else.
+        # covers and nothing deeper there, a rejected word where a term says
+        # what it refuses, a line set aside under that word, and prose anywhere
+        # else.
         #
         # The term is the boundary a word is rejected once inside. A mention is
         # held under the term and the word alone, so two of them are one key —
         # one line reported twice with two reasons, and an ignore under either
         # setting both aside.
         def listed(block)
+          return beside(block) if @holding == INCLUDES && block.level != WORD
           return set_aside(block) if block.level == IGNORE
           return unless block.level == WORD
           if @holding == INCLUDES
@@ -282,8 +286,18 @@ module Sumitsubo
           "writes #{said} under #{INCLUDES}, which scopes the section rather than declaring a term"
         end
 
+        # A vocabulary is written in no fenced block and no table, and reads
+        # them only to refuse one standing where the globs do.
+        def passed(block)
+          beside(block) if @holding == INCLUDES
+        end
+
         def refuse(line, said)
           Builder.refuse(@where, line, said, TOPIC)
+        end
+
+        def beside(block)
+          Builder.beside(block, @where, TOPIC)
         end
       end
     end

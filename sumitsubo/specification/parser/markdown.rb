@@ -14,9 +14,9 @@ module Sumitsubo
       # answers, and this file can be read — and its test regenerated — without
       # one.
       #
-      # This is where Markdown stops. A form says which kinds of block it is
-      # written in and gets blocks back, so what a heading level means, or what a
-      # run in backticks is for, is never asked here.
+      # This is where Markdown stops. A form says which kinds of block it reads
+      # and gets blocks back, so what a heading level means, or what a run in
+      # backticks is for, is never asked here.
       #
       # Two grammars answer, and they are put in that order rather than by turns:
       # every document's structure first, then the text inside every block of it.

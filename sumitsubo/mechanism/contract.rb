@@ -105,7 +105,7 @@ module Sumitsubo
         Seed.new(Sumitsubo::Contract.path_in(root), nil)
       end
 
-      # Which kinds of block this form is written in, asked before a document is
+      # Which kinds of block this form reads, asked before a document is
       # read so that a parser answers with those and no others.
       def kinds
         Specification::Builder::Contract::KINDS

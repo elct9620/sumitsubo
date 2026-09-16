@@ -17,7 +17,7 @@ module Sumitsubo
       # numbers.
       class Behavior
         KINDS = [Block::HEADING, Block::PARAGRAPH,
-                 Block::ITEM, Block::ROW]
+                 Block::ITEM, Block::CODE, Block::ROW]
 
         # The levels this form is written at: a title, and a heading that either
         # scopes the feature or states a scenario.
@@ -77,6 +77,7 @@ module Sumitsubo
           when Block::HEADING then heading(block)
           when Block::PARAGRAPH then described(block)
           when Block::ITEM then item(block)
+          when Block::CODE then fenced(block)
           when Block::ROW then stated(block)
           end
         end
@@ -86,6 +87,7 @@ module Sumitsubo
         # the items after it are read as.
         def heading(block)
           return titled(block) if block.level == TITLE
+          return beside(block) if @scoping && block.level > SCENARIO
           return unless block.level == SCENARIO
 
           @scoping = block.text == INCLUDES
@@ -105,15 +107,23 @@ module Sumitsubo
         # scenario says it in its own heading, so a paragraph after one is prose
         # this form passes over.
         def described(block)
+          return beside(block) if @scoping
           return unless @text.nil? && @scenarios.empty?
 
           @text = block.text
         end
 
         def item(block)
-          return unless @scoping && block.level == GLOB
+          return unless @scoping
+          return beside(block) unless block.level == GLOB
 
           @includes.push(Builder.scoped(block, @path, TOPIC))
+        end
+
+        # A fenced block says nothing to a feature anywhere but where the
+        # globs stand.
+        def fenced(block)
+          beside(block) if @scoping
         end
 
         # A scenario's id is what a claim in the source names, so it is taken
@@ -131,6 +141,8 @@ module Sumitsubo
 
         # The cells of one row, stated as the step they make.
         def stated(block)
+          beside(block) if @scoping
+
           cells = block.cells
           return if cells.empty?
 
@@ -161,6 +173,10 @@ module Sumitsubo
 
         def refuse(line, said)
           Builder.refuse(@path, line, said, TOPIC)
+        end
+
+        def beside(block)
+          Builder.beside(block, @path, TOPIC)
         end
       end
     end

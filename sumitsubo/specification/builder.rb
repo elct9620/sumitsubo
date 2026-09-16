@@ -1,6 +1,7 @@
 require "sumitsubo/error"
 require "sumitsubo/place"
 require "sumitsubo/specification"
+require "sumitsubo/specification/block"
 
 module Sumitsubo
   class Specification
@@ -8,9 +9,9 @@ module Sumitsubo
     # against. One builder builds one document, so what a walk is in the middle
     # of is held on it rather than threaded through every method that needs it.
     #
-    # Nothing here names a format. A form says which kinds of block it is
-    # written in and reads what each one means for itself, which is why a level
-    # that states a term in one form is prose in another.
+    # Nothing here names a format. A form says which kinds of block it reads
+    # and what each one means for itself, which is why a level that states a
+    # term in one form is prose in another.
     module Builder
       # The one heading every kind of specification spells alike, since every
       # one of them says what it answers for. Every form knows it by the prose
@@ -30,6 +31,18 @@ module Sumitsubo
         refuse(path, block.line, "writes an include that is not a glob in backticks", topic) if glob.nil?
 
         Statement.new(glob, nil, [], path, block.line, {}, [])
+      end
+
+      # What a block is called when it is written where only globs stand.
+      WRITTEN = { Block::HEADING => "a heading", Block::PARAGRAPH => "a paragraph",
+                  Block::ITEM => "a nested item", Block::CODE => "a fenced block",
+                  Block::ROW => "a table row" }
+
+      # Anything written beside the globs. What a specification reaches is a
+      # set, so the heading holding it holds nothing a reader could take for
+      # part of it, and a note on one glob is written after it on its line.
+      def self.beside(block, path, topic)
+        refuse(path, block.line, "writes #{WRITTEN[block.kind]} under #{INCLUDES}, which holds its globs alone", topic)
       end
 
       # A refusal names the topic that has the form it was written against,

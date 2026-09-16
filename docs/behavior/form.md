@@ -3,9 +3,9 @@
 What each kind of specification makes of the blocks a document is made of.
 
 Three kinds are written in one syntax and each is a form of its own, so each
-says which kinds of block it is written in and reads what one means for itself.
-The same level states a term in one and is prose in another, and a form that
-asked for a kind it does not read would be reading something it never writes.
+says which kinds of block it reads and what one means for itself. The same level
+states a term in one and is prose in another, and a kind a form is written in
+nowhere is read only to refuse one standing where the globs do.
 
 Nothing here names a format. A run taken letter for letter arrives already
 found, so what a form does with one — a name, an id, a word a term turns down —
@@ -424,6 +424,38 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | each section keeps its own, so a reader is sent to the section that wrote it |
 
+## `F-054` Anything beside the globs a feature is scoped by
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature whose Includes holds a paragraph, a nested item, a fenced block, a table row and a subheading beside its glob |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at each of them |
+
+## `F-055` A row under the Includes that follows a scenario
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature whose Includes follows a scenario and holds a row naming Given |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at that row, rather than the scenario before it standing on one more state |
+
+## `F-056` Anything beside the globs a definition is scoped by
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition whose Includes holds a paragraph, a nested item, a fenced block, a table row and a subheading beside its glob |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at each of them |
+
+## `F-057` Anything beside the globs a section is scoped by
+
+| Step | Statement |
+| --- | --- |
+| Given | a section whose Includes holds a paragraph, a nested item, a fenced block and a table row beside its glob |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at each of them |
+
 ## `F-051` The reserved word written as a name and as a heading
 
 | Step | Statement |
@@ -438,7 +470,7 @@ declaring anything else is a contract nobody registered.
 | --- | --- |
 | Given | a vocabulary whose section scopes itself, then declares a term spelled as the reserved word and one of its own |
 | When | the blocks the document is made of are read |
-| Then | the section keeps its globs and declares only its own term, since a term is written as prose and the reserved heading is prose too |
+| Then | the specification is refused at the definition written under it, since the reserved heading holds its globs alone and declares no term |
 
 ## `F-050` Every way a document is out of shape, rather than the first
 

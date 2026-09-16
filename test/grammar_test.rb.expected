@@ -43,6 +43,11 @@ Glossary "The words this fixture keeps, and the ones it turns down. This paragra
   Billing ["app/billing/*.rb"]
     36 Order — The billable set of lines.
       42 rejects Invoice — An invoice is issued later, from an order.
+--- a table and a fence beside a vocabulary's globs ---
+  refused: test/fixtures/specification/forms/beside_vocabulary.md:11 writes a table row under Includes, which holds its globs alone; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/beside_vocabulary.md:13 writes a fenced block under Includes, which holds its globs alone; sumi help glossary has the form
+--- a fence beside a feature's globs ---
+  refused: test/fixtures/specification/forms/beside_feature.md:9 writes a fenced block under Includes, which holds its globs alone; sumi help behavior has the form
 --- a definition whose contracts source claims, read through the grammar ---
 CLI {"marker" => ["@command"]} ["sumitsubo/command/*.rb"]
   The commands `sumi` answers, and what each one is for.

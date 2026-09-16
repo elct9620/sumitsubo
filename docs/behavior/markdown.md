@@ -14,9 +14,9 @@ document marked as taken letter for letter. Every document's structure is read
 before any of their text is, so each grammar is asked for one query rather than
 for two by turns.
 
-A form says which kinds it is written in and no others, which is why a level one
-form has no use for is prose rather than something read and passed over. What a
-block means is never asked here: that belongs to the form reading it.
+A form says which kinds it reads, and a block of any other kind never reaches
+it. What a block means is never asked here: that belongs to the form reading
+it, which is also where a level it has no use for is passed over as prose.
 
 The grammar refuses nothing: every byte sequence is a legal document, so a
 specification written wrong loses the shape a query matches rather than failing
@@ -73,6 +73,22 @@ to parse, and saying so belongs to the form that was reading it.
 | Given | a vocabulary file written as Markdown |
 | When | the reading is asked what it declares |
 | Then | each section answers its globs, its terms, the words they reject, and the lines set aside |
+
+## `MD-051` A table and a fence beside a vocabulary's globs
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary file whose Includes holds a table and a fenced block beside its glob |
+| When | the reading is asked what it declares |
+| Then | the vocabulary is refused at the row and at the fence |
+
+## `MD-052` A fence beside a feature's globs
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature file whose Includes holds a fenced block beside its glob |
+| When | the reading is asked what it declares |
+| Then | the feature is refused at the fence |
 
 ## `MD-048` A definition read through the grammar under a marker
 
