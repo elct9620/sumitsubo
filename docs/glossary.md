@@ -161,6 +161,14 @@ One line a rejection does not answer for, and the reason that line is right to
 say what it says. It names a mention and nothing wider, so fixing the line
 leaves it naming nothing and the run says so.
 
+### Include
+
+One glob a specification answers for, written as a list item opening with it in
+backticks. The heading reserved for them is written once in a specification —
+once in each section, for a vocabulary — and holds that one list alone, each
+glob once: what a specification reaches is a set, and a set says exactly what it
+holds or nothing at all.
+
 ### Reach
 
 What something extends to through what it names: an include through its
