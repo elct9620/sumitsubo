@@ -74,6 +74,9 @@ module Sumitsubo
             section, named by the project: what it covers is its `Includes`,
             what it means is the terms under it.
 
+            `Includes` holds its globs alone, so a note on one follows it on
+            its line.
+
             A file takes every section covering it, in the order the file
             lists them; a later term replaces an earlier one of the same
             name outright, its rejected words included. Order is all that
@@ -305,6 +308,8 @@ module Sumitsubo
             answering for both is written. `sumi help glossary` has the same
             boundary under another word: a subdomain.
 
+            It holds its globs alone, so a note on one follows it on its line.
+
             Two files may share a marker: a project whose routes outgrow one
             file is registering more of one kind, not a second kind. What cannot
             happen is one name twice under one word.
@@ -476,6 +481,8 @@ module Sumitsubo
             may sit under two features, which is how a test answering for
             both is written. `sumi help glossary` has the same boundary under
             another word: a subdomain.
+
+            It holds its globs alone, so a note on one follows it on its line.
 
         Claiming
             A test claims a scenario in the comment in front of the code
