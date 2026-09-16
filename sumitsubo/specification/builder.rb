@@ -23,14 +23,29 @@ module Sumitsubo
       # same way at every depth, and the line goes with it because a glob
       # covering nothing answers where a reader goes to fix it.
       #
-      # Answered rather than pushed into an array handed over. Nothing else
-      # here reaches past what it was given, and which array a statement joins
-      # is for the builder holding it to decide.
-      def self.scoped(block, path, topic)
+      # Answered rather than pushed into the includes handed over, which are
+      # asked only whether this glob is among them: what a specification
+      # reaches is a set, and which array a statement joins is for the builder
+      # holding it to decide.
+      def self.scoped(block, path, topic, held)
         glob = block.taken
         refuse(path, block.line, "writes an include that is not a glob in backticks", topic) if glob.nil?
 
+        first = held.find { |one| one.key == glob }
+        refuse(path, block.line, "writes #{glob} a second time, #{first_written(path, first.line)}", topic) unless first.nil?
+
         Statement.new(glob, nil, [], path, block.line, {}, [])
+      end
+
+      # The reserved heading written again where it was already written once.
+      # Gathered rather than raised: the globs under it are still globs, and
+      # each is asked about on its own.
+      def self.rescoped(path, line, first, topic)
+        refusal(path, line, "writes #{INCLUDES} a second time, #{first_written(path, first)}", topic)
+      end
+
+      def self.first_written(path, line)
+        "first written at #{Place.of(path, line).spoken}"
       end
 
       # What a block is called when it is written where only globs stand.

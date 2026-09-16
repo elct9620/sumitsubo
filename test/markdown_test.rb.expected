@@ -140,6 +140,16 @@ CLI {} []
 --- one glob written twice ---
   Everywhere ["7 app/**/*.rb"]
   Billing ["13 app/**/*.rb"]
+--- Includes written twice in one feature ---
+  refused: init.md:7 writes Includes a second time, first written at init.md:3; sumi help behavior has the form
+--- Includes written twice in one definition ---
+  refused: cli.md:11 writes Includes a second time, first written at cli.md:7; sumi help contract has the form
+--- one glob written twice under a feature's Includes ---
+  refused: init.md:6 writes test/init_test.rb a second time, first written at init.md:5; sumi help behavior has the form
+--- one glob written twice under a definition's Includes ---
+  refused: cli.md:10 writes lib/** a second time, first written at cli.md:9; sumi help contract has the form
+--- one glob written twice under one section's Includes ---
+  refused: test/fixtures/specification/forms/glossary.md:8 writes app/**/*.rb a second time, first written at test/fixtures/specification/forms/glossary.md:7; sumi help glossary has the form
 --- anything beside the globs a feature is scoped by ---
   refused: init.md:7 writes a paragraph under Includes, which holds its globs alone; sumi help behavior has the form
   refused: init.md:8 writes a nested item under Includes, which holds its globs alone; sumi help behavior has the form
@@ -162,4 +172,5 @@ CLI {} []
 --- the reserved word written as a name and as a heading ---
   ["5 test/init_test.rb"] ["Includes"]
 --- a term spelled as the reserved word ---
+  refused: test/fixtures/specification/forms/glossary.md:9 writes Includes a second time, first written at test/fixtures/specification/forms/glossary.md:5; sumi help glossary has the form
   refused: test/fixtures/specification/forms/glossary.md:11 writes a paragraph under Includes, which holds its globs alone; sumi help glossary has the form

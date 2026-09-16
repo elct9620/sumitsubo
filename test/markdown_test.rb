@@ -647,6 +647,43 @@ sections_of(vocabulary([
   h2(9, "Billing"), h3(11, "Includes"), item(13, "`app/**/*.rb`")
 ]))
 
+# What a specification reaches is a set, so the heading saying it and every glob
+# under it are written once; the one written again answers, naming the first.
+# @behavior F-058
+puts "--- Includes written twice in one feature ---"
+read([
+  h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"),
+  h2(7, "Includes"), item(9, "`test/other_test.rb`")
+])
+
+# @behavior F-059
+puts "--- Includes written twice in one definition ---"
+definition([
+  h1(1, "Seams"), h2(3, "Marker"), paragraph(5, "`@contract`"),
+  h2(7, "Includes"), item(9, "`lib/**`"),
+  h2(11, "Includes"), item(13, "`app/**`")
+])
+
+# @behavior F-060
+puts "--- one glob written twice under a feature's Includes ---"
+read([
+  h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"), item(6, "`test/init_test.rb`")
+])
+
+# @behavior F-061
+puts "--- one glob written twice under a definition's Includes ---"
+definition([
+  h1(1, "Seams"), h2(3, "Marker"), paragraph(5, "`@contract`"),
+  h2(7, "Includes"), item(9, "`lib/**`"), item(10, "`lib/**`")
+])
+
+# @behavior F-062
+puts "--- one glob written twice under one section's Includes ---"
+vocabulary([
+  h1(1, "Glossary"), h2(3, "Everywhere"), h3(5, "Includes"),
+  item(7, "`app/**/*.rb`"), item(8, "`app/**/*.rb`")
+])
+
 # The reserved heading holds its globs and nothing else, so every other block
 # written under it is refused where it stands rather than read as prose.
 NOTE = "```\ntest/**\n```"

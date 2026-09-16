@@ -67,6 +67,7 @@ module Sumitsubo
           @marker = nil
           @marker_at = nil
           @includes = []
+          @scoped_at = nil
           @contracts = []
           @contract = nil
           @holding = nil
@@ -145,7 +146,7 @@ module Sumitsubo
           @contract = nil
           @holding = nil
 
-          return @holding = INCLUDES if said == INCLUDES
+          return scoping(block.line) if said == INCLUDES
           return marking(block.line) if said == MARKER
 
           @contract = registered(block)
@@ -204,7 +205,13 @@ module Sumitsubo
           return unless @holding == INCLUDES
           return beside(block) unless block.level == GLOB
 
-          @includes.push(Builder.scoped(block, @path, TOPIC))
+          @includes.push(Builder.scoped(block, @path, TOPIC, @includes))
+        end
+
+        def scoping(line)
+          @refusals.push(Builder.rescoped(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
+          @scoped_at = line if @scoped_at.nil?
+          @holding = INCLUDES
         end
 
         # The cells of one row, held as the attribute they state. A row states

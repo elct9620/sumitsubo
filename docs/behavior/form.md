@@ -424,6 +424,46 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | each section keeps its own, so a reader is sent to the section that wrote it |
 
+## `F-058` Includes written twice in one feature
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature writing the reserved heading twice |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second, naming where the first was written |
+
+## `F-059` Includes written twice in one definition
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition writing the reserved heading twice |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second, naming where the first was written |
+
+## `F-060` One glob written twice under a feature's Includes
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature listing one glob twice |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second, naming where the first was written |
+
+## `F-061` One glob written twice under a definition's Includes
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition listing one glob twice |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second, naming where the first was written |
+
+## `F-062` One glob written twice under one section's Includes
+
+| Step | Statement |
+| --- | --- |
+| Given | a section listing one glob twice |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second, naming where the first was written, since a section is the boundary a glob is written once inside |
+
 ## `F-054` Anything beside the globs a feature is scoped by
 
 | Step | Statement |
@@ -470,7 +510,7 @@ declaring anything else is a contract nobody registered.
 | --- | --- |
 | Given | a vocabulary whose section scopes itself, then declares a term spelled as the reserved word and one of its own |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused at the definition written under it, since the reserved heading holds its globs alone and declares no term |
+| Then | the specification is refused at the second heading, since a section says what it covers once, and at the definition under it |
 
 ## `F-050` Every way a document is out of shape, rather than the first
 

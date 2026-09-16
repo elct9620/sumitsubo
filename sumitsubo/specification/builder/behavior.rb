@@ -41,6 +41,7 @@ module Sumitsubo
           @key = nil
           @text = nil
           @scoping = false
+          @scoped_at = nil
           @includes = []
           @scenarios = []
         end
@@ -91,7 +92,7 @@ module Sumitsubo
           return unless block.level == SCENARIO
 
           @scoping = block.text == INCLUDES
-          return if @scoping
+          return scoping(block.line) if @scoping
 
           @scenarios.push(scenario_from(block))
         end
@@ -117,7 +118,12 @@ module Sumitsubo
           return unless @scoping
           return beside(block) unless block.level == GLOB
 
-          @includes.push(Builder.scoped(block, @path, TOPIC))
+          @includes.push(Builder.scoped(block, @path, TOPIC, @includes))
+        end
+
+        def scoping(line)
+          @refusals.push(Builder.rescoped(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
+          @scoped_at = line if @scoped_at.nil?
         end
 
         # A fenced block says nothing to a feature anywhere but where the

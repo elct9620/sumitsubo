@@ -62,6 +62,7 @@ module Sumitsubo
           @text = nil
           @sections = []
           @section = nil
+          @scoped_at = nil
           @term = nil
           @rejected = nil
           @holding = nil
@@ -141,6 +142,7 @@ module Sumitsubo
 
           @section = Statement.new(said, nil, [], @where, block.line, {}, [])
           @sections.push(@section)
+          @scoped_at = nil
           @term = nil
           @rejected = nil
           @holding = nil
@@ -162,7 +164,7 @@ module Sumitsubo
           @holding = said == INCLUDES ? INCLUDES : nil
           @rejected = nil
           @term = nil
-          return unless @holding.nil?
+          return scoping(block.line) unless @holding.nil?
 
           first = @section.statements.find { |one| one.key == said }
           gathered(block.line, "declares #{said} a second time in #{@section.key}, first declared at #{first_at(first)}") unless first.nil?
@@ -200,6 +202,12 @@ module Sumitsubo
           holder.text = block.text if holder.text.nil?
         end
 
+        # A section says what it covers once.
+        def scoping(line)
+          @refusals.push(Builder.rescoped(@where, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
+          @scoped_at = line if @scoped_at.nil?
+        end
+
         # What a list item is depends on the reserved heading it sits under and
         # on how deep it was written: a glob where the section says what it
         # covers and nothing deeper there, a rejected word where a term says
@@ -215,7 +223,7 @@ module Sumitsubo
           return set_aside(block) if block.level == IGNORE
           return unless block.level == WORD
           if @holding == INCLUDES
-            @section.includes.push(Builder.scoped(block, @where, TOPIC))
+            @section.includes.push(Builder.scoped(block, @where, TOPIC, @section.includes))
             return
           end
           return unless @holding == REJECTED
