@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.0-preview11](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview10...v0.1.0-preview11) (2026-09-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **form:** refuse the reserved heading or a glob written twice where it is written once
+* **form:** refuse anything written beside the globs a specification is scoped by
+
+### Bug Fixes
+
+* **claim:** say what a dangling claim needs without naming what it asserts ([d752662](https://github.com/elct9620/sumitsubo/commit/d7526628754cad3ae9cda69d497aa2bebcb9530d))
+* **form:** refuse anything written beside the globs a specification is scoped by ([b43104c](https://github.com/elct9620/sumitsubo/commit/b43104cf3611d019189497cbb12feef0510c1b4c))
+* **form:** refuse the reserved heading or a glob written twice where it is written once ([f9cd3fe](https://github.com/elct9620/sumitsubo/commit/f9cd3fe8f0791821df987b6ccaef96eadb1e1ad4))
+
 ## [0.1.0-preview10](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview9...v0.1.0-preview10) (2026-09-15)
 
 
