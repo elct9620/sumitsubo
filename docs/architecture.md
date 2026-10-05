@@ -179,8 +179,9 @@ Glossary and Contract answer for the implementation, Behavior for the tests.
  glossary.md ─────── Region ──────────────►   CLAUDE.md   README.md
    the words this project keeps,          ┌─► docs/*.md   ◄── itself, and the
    and the ones it turns down             │                   prose beside it
-                                          ├─► docs/contract/*.md
-                                          ├─► docs/behavior/*.md
+                                          ├─► docs/contract/*.md  ◄── through
+                                          ├─► docs/behavior/*.md      their own
+                                          │                           includes
                                           ├─► sumitsubo/**/*.rb
                                           └─► test/*.rb
 

@@ -13,8 +13,6 @@ meeting one says the sentence holds for that mechanism alone.
 - `CLAUDE.md`
 - `README.md`
 - `docs/*.md`
-- `docs/contract/*.md`
-- `docs/behavior/*.md`
 - `sumitsubo/**/*.rb`
 - `test/*.rb`
 
