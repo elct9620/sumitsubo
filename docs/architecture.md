@@ -222,8 +222,8 @@ word in front, which is the whole of `<mechanism>/<check>`.
  the specification says not,  │ rejected   │     —       │     —
  the source does              │ (G)        │             │
 ──────────────────────────────┼────────────┼─────────────┼─────────────
- what the specification set   │ stale      │     —       │     —
- aside is no longer there     │ (G) ✕      │             │
+ what the specification set   │ stale      │ stale       │ stale
+ aside is no longer there     │ (G) ✕      │ (C, B) ✕    │ (C) ✕
 ──────────────────────────────┼────────────┼─────────────┼─────────────
  the source points at         │     —      │ unresolved  │     —
  nothing                      │            │ (C, B) ✕    │

@@ -296,6 +296,12 @@ module Sumitsubo
             `internal` says the project means to keep the interface but not
             to publish it, and it is verified like any other.
 
+            `unverifiable` and `deprecated` take the reason they are said, and
+            one left empty is refused. The first says no check can hold the
+            contract to the source yet: it is compared with nothing until the
+            source claims or defines it, which answers as stale. The second
+            says what replaces it, and it is verified like any other.
+
         Includes
             The boundary of what a definition answers for. With a marker, a
             contract is implemented by the files its own definition reaches,
@@ -343,6 +349,11 @@ module Sumitsubo
             app/show.rb:1 @route GET /users/:id resolves to no contract      (exit 2)
                 A claim nothing registers is a comparison that could not be made
                 rather than a difference. Usually a renamed name.
+
+            .spec/contract/api.md:9 ruby Store.open is unverifiable, yet defined at lib/store.rb:2   (exit 2)
+                The reason it was set aside no longer stands, whether the
+                source claims it or defines it. Drop the unverifiable row so
+                it is compared again.
 
             app/show.rb:1 @route GET /users/:id is claimed outside what .spec/contract/routes.md includes   (exit 2)
                 The name resolves and the definition registering it does not
@@ -471,6 +482,15 @@ module Sumitsubo
 
             A cell cannot wrap, and a `|` inside one is written `\\|`.
 
+            A row naming `unverifiable` or `deprecated` in place of a step is
+            an attribute of the scenario, written with the reason it is said:
+
+                | unverifiable | no test reads outside the directory |
+
+            An unverifiable scenario is compared with nothing until a test
+            claims it, which answers as stale. A deprecated one says what
+            replaces it, and it is verified like any other.
+
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.
 
@@ -519,6 +539,10 @@ module Sumitsubo
                 The id resolves and the feature declaring it does not reach
                 this file, so nothing here can witness it. Widen that include,
                 or move the claim.
+
+            .spec/behavior/verify.md:9 @behavior V-002 is unverifiable, yet claimed at test/verify_test.rb:13   (exit 2)
+                The reason it was set aside no longer stands. Drop the
+                unverifiable row so the scenario is compared again.
       TEXT
 
       # @command help config
