@@ -156,9 +156,11 @@ is kept for.
 
 ### Unverifiable
 
-A contract or scenario no check can yet hold to the source, and the reason why.
-Nothing is compared against it, so it promises nothing; source claiming or
-defining it leaves the reason standing for nothing and the run says so.
+A contract or scenario the source has where nothing checking it reaches yet,
+and the reason why. No reading sees the contract, or no test can witness the
+scenario. Nothing is compared against it, so it promises nothing; source
+claiming or defining it leaves the reason standing for nothing and the run says
+so. One the source does not have yet is unclaimed, not unverifiable.
 
 ### Deprecated
 

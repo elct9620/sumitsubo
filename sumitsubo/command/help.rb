@@ -306,10 +306,16 @@ module Sumitsubo
             to publish it, and it is verified like any other.
 
             `unverifiable` and `deprecated` take the reason they are said, and
-            one left empty is refused. The first says no check can hold the
-            contract to the source yet: it is compared with nothing until the
-            source claims or defines it, which answers as stale. The second
-            says what replaces it, and it is verified like any other.
+            one left empty is refused.
+
+            `unverifiable` says the source has the contract where no reading
+            sees it, such as a method a macro defines. It is compared with
+            nothing until the source claims or defines it, which answers as
+            stale. A contract not written yet is not unverifiable: it answers
+            as unclaimed or undefined.
+
+            `deprecated` says what replaces the contract, and it is verified
+            like any other.
 
         Includes
             The boundary of what a definition answers for. With a marker, a
@@ -496,9 +502,13 @@ module Sumitsubo
 
                 | unverifiable | no test reads outside the directory |
 
-            An unverifiable scenario is compared with nothing until a test
-            claims it, which answers as stale. A deprecated one says what
-            replaces it, and it is verified like any other.
+            An unverifiable scenario is one the source has where no test can
+            witness it. It is compared with nothing until a test claims it,
+            which answers as stale. A scenario not built yet is not
+            unverifiable: it answers as unclaimed.
+
+            A deprecated scenario says what replaces it, and it is verified
+            like any other.
 
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.
