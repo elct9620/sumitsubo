@@ -134,14 +134,15 @@ module Sumitsubo
             uses it, and nothing is reported there.
 
         Findings
-            app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+            app/order.rb:2: glossary/rejected: Order rejects Purchase: Order is what the domain calls it.
                 The line uses a word the vocabulary rejects, one finding per
                 line however often the word appears on it. Fix the wording, or
                 drop the rejected word from the specification - which side is
                 wrong is not the tool's to decide.
 
-            .spec/glossary.md:19 nothing at app/legacy_import.rb:88 has Order
-            rejecting Purchase; the line moved or the wording was fixed (exit 2)
+            .spec/glossary.md:19: glossary/stale: nothing at
+            app/legacy_import.rb:88 has Order rejecting Purchase; the line moved
+            or the wording was fixed (exit 2)
                 An ignore names a finding that is no longer there. Point it at
                 where the line went, or drop it - nothing was set aside, so
                 nothing was compared either.
@@ -329,52 +330,52 @@ module Sumitsubo
             happen is one name twice under one word.
 
         Findings
-            .spec/contract/routes.md:11 @route GET /users/:id is claimed nowhere this specification includes
+            .spec/contract/routes.md:11: contract/unclaimed: @route GET /users/:id is claimed nowhere this specification includes
                 Registered, and no source this definition reaches claims it.
                 Write the claim the finding leads with, or drop the contract.
 
-            .spec/contract/api.md:9 ruby Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+            .spec/contract/api.md:9: contract/undefined: ruby Store.open is defined nowhere this specification includes, and one the reading cannot see never is
                 Registered, and the syntax tree finds no such definition among
                 the files this definition reaches. The language leads, because
                 it is what the name was looked for as: a definition registering
                 one name in two of them answers twice. Read "What the reading
                 cannot see" before changing the code.
 
-            .spec/contract/api.md:9 Store#read takes (id) where the specification registers (key)
+            .spec/contract/api.md:9: contract/mismatched: Store#read takes (id) where the specification registers (key)
                 The signature and the code describe different calls, answered
                 at the line registering it.
 
-            lib/store.rb:4 Store#read takes (id) here and (key) at lib/other.rb:9
+            lib/store.rb:4: contract/conflicting: Store#read takes (id) here and (key) at lib/other.rb:9
                 One name defined with two shapes is a second way in, and both
                 places answer, each naming the other. Definitions agreeing on
                 their shape are one way in still, so ordinary reopening says
                 nothing.
 
-            app/show.rb:1 @route GET /users/:id is claimed at app/other.rb:7 as well
+            app/show.rb:1: contract/duplicated: @route GET /users/:id is claimed at app/other.rb:7 as well
                 A contract is the way in, so a second claim is an entrance the
                 specification does not describe.
 
-            app/show.rb:1 @route GET /users/:id resolves to no contract      (exit 2)
+            app/show.rb:1: contract/unresolved: @route GET /users/:id resolves to no contract   (exit 2)
                 A claim nothing registers is a comparison that could not be made
                 rather than a difference. Usually a renamed name.
 
-            .spec/contract/api.md:9 ruby Store.open is unverifiable, yet defined at lib/store.rb:2   (exit 2)
+            .spec/contract/api.md:9: contract/stale: ruby Store.open is unverifiable, yet defined at lib/store.rb:2   (exit 2)
                 The reason it was set aside no longer stands, whether the
                 source claims it or defines it. Drop the unverifiable row so
                 it is compared again.
 
-            app/show.rb:1 @route GET /users/:id is claimed outside what .spec/contract/routes.md includes   (exit 2)
+            app/show.rb:1: contract/misplaced: @route GET /users/:id is claimed outside what .spec/contract/routes.md includes   (exit 2)
                 The name resolves and the definition registering it does not
                 reach this file, so nothing here can implement it. Widen that
                 include, or move the claim. A class merely spelling a
                 registered name says nothing this way: only a claim asserts
                 that a contract was implemented.
 
-            .spec/contract/api.md:9 writes a signature declaring open, and not Store.open   (exit 2)
+            .spec/contract/api.md:9: contract/unreadable: writes a signature declaring open, and not Store.open   (exit 2)
                 The heading and the signature name one thing written twice.
                 Usually a signature written without the scopes around it.
 
-            .spec/contract/api.md:9 registers Store.open with no signature, so nothing says how its name is spelled   (exit 2)
+            .spec/contract/api.md:9: contract/unreadable: registers Store.open with no signature, so nothing says how its name is spelled   (exit 2)
                 Every contract read from the syntax tree carries one. Usually a
                 `## Marker` section that went missing.
 
@@ -535,20 +536,20 @@ module Sumitsubo
             different mistake from writing no id.
 
         Findings
-            .spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
+            .spec/behavior/verify.md:9: behavior/unclaimed: @behavior V-002 is claimed nowhere this specification includes
                 Declared, and no test this feature reaches claims it. Write the
                 claim the finding leads with, or drop the scenario.
 
-            test/verify_test.rb:13 V-404 resolves to no scenario             (exit 2)
+            test/verify_test.rb:13: behavior/unresolved: V-404 resolves to no scenario   (exit 2)
                 A claim naming no scenario is a comparison that could not be
                 made rather than a difference. Usually a renamed id.
 
-            test/other_test.rb:13 V-002 is claimed outside what .spec/behavior/verify.md includes   (exit 2)
+            test/other_test.rb:13: behavior/misplaced: V-002 is claimed outside what .spec/behavior/verify.md includes   (exit 2)
                 The id resolves and the feature declaring it does not reach
                 this file, so nothing here can witness it. Widen that include,
                 or move the claim.
 
-            .spec/behavior/verify.md:9 @behavior V-002 is unverifiable, yet claimed at test/verify_test.rb:13   (exit 2)
+            .spec/behavior/verify.md:9: behavior/stale: @behavior V-002 is unverifiable, yet claimed at test/verify_test.rb:13   (exit 2)
                 The reason it was set aside no longer stands. Drop the
                 unverifiable row so the scenario is compared again.
       TEXT
