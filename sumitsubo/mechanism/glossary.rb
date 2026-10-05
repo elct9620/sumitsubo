@@ -95,8 +95,9 @@ module Sumitsubo
       private
 
       # Every specification the mechanisms beside this one keep. One switched
-      # off is never read, and one that cannot be read is its own mechanism's
-      # to answer when that runs, so neither is covered here.
+      # off is never read, and one refused is left out by itself. Where two of
+      # them declare one name, the mechanism answers with none of them, so it
+      # is left out whole and its own run says why.
       def beside(config, specifications)
         found = []
         @beside.each do |mechanism|
