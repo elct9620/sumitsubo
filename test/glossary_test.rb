@@ -6,6 +6,9 @@ require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/grammar"
 require "sumitsubo/specification/parser/markdown"
+require "sumitsubo/source/repository"
+require "sumitsubo/source/language"
+require "sumitsubo/source/language/prose"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reaches a grammar to read a real document, which is what its snapshot is
@@ -178,3 +181,15 @@ end
 # @behavior G-006
 puts "--- and one named absolutely still answers where the run started ---"
 refused(Pathname.new("test/fixtures/specification/glossary/absent.md").expand_path.to_s)
+
+# Prose is read whole, so the line is exactly what the fixture wrote and what
+# is shown is only which uses the longer spelling leaves standing.
+# @behavior G-018
+puts "--- a longer term holding a rejected word is a use of that term ---"
+Dir.chdir("test/fixtures/project/subdomain")
+subdomains = reads("glossary.md")
+prose = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new]))
+Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(subdomains, Pathname.pwd, []), Pathname.pwd, prose).each do |mention|
+  puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
+end
+Dir.chdir(back)

@@ -134,3 +134,11 @@ place.
 | Given | a glossary whose term has two words setting one line aside, and one of them setting it aside twice |
 | When | the glossary is loaded |
 | Then | only the one repeated under a word is named as one the specification cannot carry, naming the line that word first set it aside at |
+
+## `G-018` A longer term holding a rejected word is a use of that term
+
+| Step | Statement |
+| --- | --- |
+| Given | a term rejecting a word that its own name and another term's name each hold |
+| When | a file writing both names and the word on its own is checked |
+| Then | only the line writing the word on its own answers |

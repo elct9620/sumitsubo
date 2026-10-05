@@ -109,7 +109,7 @@ module Sumitsubo
         terms = scope[path]
         terms.keys.sort.each do |name|
           terms[name].statements.each do |entry|
-            mentions.concat(mentions_of(path, regions, name, entry))
+            mentions.concat(mentions_of(path, regions, name, entry, terms.keys))
           end
         end
       end
@@ -174,15 +174,37 @@ module Sumitsubo
     # One mention per line, however often the word appears on it: the line is
     # what a reader goes to, and what an exclusion would one day be written
     # against.
-    def self.mentions_of(path, regions, name, entry)
+    #
+    # A term whose name spells the word inside a longer one is a use of that
+    # term, not of the word: rejecting `Component` is how a file under two
+    # subdomains is made to say `UI Component` or `Backend Component`.
+    def self.mentions_of(path, regions, name, entry, spellings)
       found = []
-      pattern = Regexp.new("\\b" + Regexp.escape(entry.key) + "\\b")
+      pattern = whole_word(entry.key)
+      longer = spellings.reject { |one| one == entry.key || pattern.match(one).nil? }
       regions.each do |region|
         region.lines.each do |one|
-          found.push(Mention.new(path: path, line: one.line, term: name, used: entry.key, reason: entry.text)) unless pattern.match(one.text).nil?
+          found.push(Mention.new(path: path, line: one.line, term: name, used: entry.key, reason: entry.text)) unless pattern.match(masked(one.text, longer)).nil?
         end
       end
       found
+    end
+
+    def self.whole_word(word)
+      Regexp.new("\\b" + Regexp.escape(word) + "\\b")
+    end
+
+    # The text with every longer spelling blanked out, so a match left in it is
+    # the word standing on its own.
+    #
+    # Held as spellings and interpolated first: under Spinel 2026.09.12 a Regexp
+    # taken out of an Array reaches `gsub` as a String, and the text a region
+    # holds has no `gsub` at all. Spinel 30d32f7 answers the first and c6bbdfb
+    # the second.
+    def self.masked(text, longer)
+      held = "#{text}"
+      longer.each { |one| held = held.gsub(whole_word(one), " ") }
+      held
     end
 
     # Every include the vocabulary writes, asked about at once: they are

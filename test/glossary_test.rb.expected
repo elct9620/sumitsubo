@@ -39,3 +39,5 @@ test/fixtures/specification/glossary/secondword.md:27 rejects Purchase a second 
 test/fixtures/specification/glossary/secondignore.md:22 sets app/order.rb:2 aside a second time under Purchase, first set aside at test/fixtures/specification/glossary/secondignore.md:21; sumi help glossary has the form
 --- and one named absolutely still answers where the run started ---
 no glossary at test/fixtures/specification/glossary/absent.md; sumi init lays one down
+--- a longer term holding a rejected word is a use of that term ---
+docs/mixed.md:5 UI Component rejects Component
