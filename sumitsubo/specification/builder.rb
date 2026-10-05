@@ -90,6 +90,11 @@ module Sumitsubo
       end
 
       # What an attribute takes in place of a fixed value when it says why.
+      #
+      # Held in one table where a pair is meant — the fixed values and the
+      # reasoned words as two sets: under Spinel 2026.09.12 a scenario's empty
+      # set of fixed values leaves `key?` on the shared parameter without the
+      # other form's arm, and the run crashes. Spinel c1d108a has the arm.
       REASON = "a reason"
 
       # One attribute as a row wrote it, held under the word its first cell
