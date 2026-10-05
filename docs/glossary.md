@@ -155,6 +155,18 @@ An interface the project means to keep but not to publish. It is verified like
 any other; what it says is that a reader outside the project is not the one it
 is kept for.
 
+### Unverifiable
+
+A contract or scenario no check can yet hold to the source, and the reason why.
+Nothing is compared against it, so it promises nothing; source claiming or
+defining it leaves the reason standing for nothing and the run says so.
+
+### Deprecated
+
+A contract or scenario the project is retiring, and what replaces it or why it
+goes. It is verified like any other until it is removed; what it says is for
+whoever reads the specification.
+
 ### Ignore
 
 One line a rejection does not answer for, and the reason that line is right to

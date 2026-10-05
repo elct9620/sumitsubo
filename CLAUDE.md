@@ -14,7 +14,8 @@ What the rule governs is a claim. A scenario asserts that a behavior was
 implemented, so writing one no mechanism can check is a promise nobody holds.
 A term that rejects nothing asserts nothing about the code — it names what the
 project means — and there is no unchecked promise in naming. A note is the
-same.
+same, and so is a scenario marked unverifiable: it says why nothing checks it
+yet, and the run answers once something can.
 
 `docs/behavior/` therefore arrived with the Behavior mechanism and not before,
 `docs/contract/` with Contract, and `docs/glossary.md` stayed empty until
