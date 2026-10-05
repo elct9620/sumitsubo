@@ -75,3 +75,9 @@ src/store.rb:24 Store#read takes (key:keyword) here and (key:keyword, -:block?) 
   test/fixtures/specification/contract/spelled/handle.md:7 rust Store::Handle is defined nowhere this specification includes, and one the reading cannot see never is
 --- a scope named outside ASCII ---
   Records 記録::write
+--- unverifiable interfaces are compared by none, deprecated ones like any other ---
+test/fixtures/specification/contract/unverifiable/cli.md:19 @command fmt is claimed nowhere this specification includes
+test/fixtures/specification/contract/unverifiable/api.md:29 ruby Store.open is defined nowhere this specification includes, and one the reading cannot see never is
+--- unverifiable interfaces the source claims or defines, and none it does not ---
+contract/stale test/fixtures/specification/contract/unverifiable/cli.md:13 @command init is unverifiable, yet claimed at src/commands.rb:3
+contract/stale test/fixtures/specification/contract/unverifiable/api.md:16 ruby Store#write is unverifiable, yet defined at src/store.rb:2

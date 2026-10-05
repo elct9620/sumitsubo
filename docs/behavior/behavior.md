@@ -127,3 +127,30 @@ nothing about the specification.
 | Given | a claim carrying no id at all |
 | When | the claims are compared against the scenarios |
 | Then | the first answers as resolving to none and the second as naming none |
+
+## `B-017` An unverifiable scenario nothing claims
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario carrying the reason no test can witness it yet |
+| Given | no claim of it |
+| When | the two sides are compared |
+| Then | nothing is answered for it |
+
+## `B-018` An unverifiable scenario a test claims
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario carrying the reason no test can witness it yet |
+| Given | a claim of it among the files its feature includes |
+| When | the two sides are compared |
+| Then | it answers at the scenario as stale, naming where it is claimed |
+
+## `B-019` A deprecated scenario is verified like any other
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario carrying what replaces it |
+| Given | no claim of it |
+| When | the two sides are compared |
+| Then | it answers as one nothing claims |

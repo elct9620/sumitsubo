@@ -18,6 +18,7 @@ module Sumitsubo
       UNRESOLVED = "behavior/unresolved"
       NAMELESS = "behavior/nameless"
       DANGLING = "behavior/dangling"
+      STALE = "behavior/stale"
 
       def initialize
         @barren = Check::Reach::Barren.new(BARREN)
@@ -26,6 +27,7 @@ module Sumitsubo
         @unresolved = Check::Claim::Unresolved.new(UNRESOLVED, "scenario")
         @nameless = Check::Claim::Nameless.new(NAMELESS, "scenario")
         @dangling = Check::Claim::Dangling.new(DANGLING)
+        @stale = Check::Claim::Stale.new(STALE)
       end
 
       def specification
@@ -89,6 +91,7 @@ module Sumitsubo
         within = Check::Claim.within(in_front, declaring, reach)
 
         @unclaimed.run(stated, within).each { |one| findings.add(one) }
+        @stale.run(stated, within).each { |one| findings.add(one) }
         @misplaced.run(in_front, declaring, reach).each { |one| findings.add(one) }
         @unresolved.run(Sumitsubo::Behavior.named(in_front), stated).each { |one| findings.add(one) }
         @nameless.run(Sumitsubo::Behavior.nameless(in_front)).each { |one| findings.add(one) }

@@ -40,6 +40,7 @@ module Sumitsubo
         def run(stated, grouped)
           found = []
           stated.each do |one|
+            next unless one.unverifiable.nil?
             next unless grouped[one.key].nil?
 
             # The caveat rides every one of these because the tree cannot tell
@@ -52,6 +53,31 @@ module Sumitsubo
               check: @check, difference: true, place: one.place,
               message: "#{one.said} is defined nowhere this specification " \
                        "includes, and one the reading cannot see never is"
+            ))
+          end
+          found
+        end
+      end
+
+      # The specification says nothing can hold an interface to the source and
+      # the syntax tree defines it: what a claimed interface set aside answers
+      # when it is claimed, in the other reading.
+      class Stale
+        def initialize(check)
+          @check = check
+        end
+
+        def run(stated, grouped)
+          found = []
+          stated.each do |one|
+            next if one.unverifiable.nil?
+
+            group = grouped[one.key]
+            next if group.nil?
+
+            found.push(Finding.new(
+              check: @check, difference: false, place: one.place,
+              message: "#{one.said} is unverifiable, yet defined at #{group[0].place.spoken}"
             ))
           end
           found

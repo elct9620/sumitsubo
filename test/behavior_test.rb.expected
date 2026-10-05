@@ -52,3 +52,7 @@ test/fixtures/specification/behavior/anonymous/verify.md:7 behavior/unreadable d
 --- a claim naming no scenario, apart from one resolving to none ---
   test/fixtures/project/behavior/test/verify_test.rb:13 G-404 resolves to no scenario
   test/fixtures/project/behavior/test/verify_test.rb:16 @behavior names no scenario
+--- unverifiable scenarios are compared by none, a deprecated one like any other ---
+  test/fixtures/specification/behavior/unverifiable/retired.md:27 @behavior R-003 is claimed nowhere this specification includes
+--- an unverifiable scenario a test claims, and none nothing claims ---
+  behavior/stale test/fixtures/specification/behavior/unverifiable/retired.md:18 @behavior R-002 is unverifiable, yet claimed at test/retired_test.rb:2

@@ -189,3 +189,24 @@ mixed = [
    .run(Sumitsubo::Behavior.nameless(mixed))).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
+
+# R-001 and R-002 each say no test can witness them yet, and only R-002 is
+# claimed; R-003 is retiring and nothing claims it.
+retired = reads("test/fixtures/specification/behavior/unverifiable")
+retired_claims = [Sumitsubo::Behavior::Claim.new(
+  path: "test/retired_test.rb", line: 2, id: "R-002", in_front_of_code: true
+)]
+
+# @behavior B-017 B-019
+puts "--- unverifiable scenarios are compared by none, a deprecated one like any other ---"
+Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Behavior::UNCLAIMED)
+  .run(Sumitsubo::Behavior.stated_in(retired), retired_claims).each do |finding|
+  puts "  #{finding.place.spoken} #{finding.message}"
+end
+
+# @behavior B-017 B-018
+puts "--- an unverifiable scenario a test claims, and none nothing claims ---"
+Sumitsubo::Check::Claim::Stale.new(Sumitsubo::Mechanism::Behavior::STALE)
+  .run(Sumitsubo::Behavior.stated_in(retired), retired_claims).each do |finding|
+  puts "  #{finding.check} #{finding.place.spoken} #{finding.message}"
+end

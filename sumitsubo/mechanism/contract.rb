@@ -26,6 +26,7 @@ module Sumitsubo
         UNRESOLVED = "contract/unresolved"
         NAMELESS = "contract/nameless"
         DANGLING = "contract/dangling"
+        STALE = "contract/stale"
 
         def initialize
           @unclaimed = Check::Claim::Unclaimed.new(UNCLAIMED)
@@ -34,6 +35,7 @@ module Sumitsubo
           @unresolved = Check::Claim::Unresolved.new(UNRESOLVED, "contract")
           @nameless = Check::Claim::Nameless.new(NAMELESS, "contract")
           @dangling = Check::Claim::Dangling.new(DANGLING)
+          @stale = Check::Claim::Stale.new(STALE)
         end
 
         def run(config, findings, definitions, source)
@@ -52,6 +54,7 @@ module Sumitsubo
           within = Check::Claim.within(in_front, registering, reach)
 
           @unclaimed.run(stated, within).each { |one| findings.add(one) }
+          @stale.run(stated, within).each { |one| findings.add(one) }
           @duplicated.run(within, stated).each { |one| findings.add(one) }
           @misplaced.run(in_front, registering, reach).each { |one| findings.add(one) }
           @unresolved.run(Sumitsubo::Contract.named(in_front), stated).each { |one| findings.add(one) }
@@ -67,11 +70,13 @@ module Sumitsubo
         UNDEFINED = "contract/undefined"
         CONFLICTING = "contract/conflicting"
         MISMATCHED = "contract/mismatched"
+        STALE = "contract/stale"
 
         def initialize
           @undefined = Check::Declaration::Undefined.new(UNDEFINED)
           @conflicting = Check::Declaration::Conflicting.new(CONFLICTING)
           @mismatched = Check::Declaration::Mismatched.new(MISMATCHED)
+          @stale = Check::Declaration::Stale.new(STALE)
         end
 
         def run(config, findings, definitions, source)
@@ -83,7 +88,9 @@ module Sumitsubo
           )
           grouped = Sumitsubo::Contract.declared_in(declared)
 
-          @undefined.run(Sumitsubo::Contract.stated_names(definitions), grouped).each { |one| findings.add(one) }
+          stated = Sumitsubo::Contract.stated_names(definitions)
+          @undefined.run(stated, grouped).each { |one| findings.add(one) }
+          @stale.run(stated, grouped).each { |one| findings.add(one) }
           @conflicting.run(Sumitsubo::Contract.spelled_names(definitions), grouped).each { |one| findings.add(one) }
           @mismatched.run(Sumitsubo::Contract.registered_in(definitions, source), grouped).each { |one| findings.add(one) }
         end

@@ -261,7 +261,8 @@ module Sumitsubo
         definition.statements.each do |interface|
           name = Name.new(marker_of(definition), interface.key)
           found.push(Check::Stated.new(
-            key: name, place: Place.of(interface.path, interface.line), said: name.spoken
+            key: name, place: Place.of(interface.path, interface.line), said: name.spoken,
+            unverifiable: Check.unverifiable(interface.attributes)
           ))
         end
       end
@@ -490,7 +491,8 @@ module Sumitsubo
         definition.statements.each do |interface|
           name = Name.new(language_of(definition, interface), interface.key)
           found.push(Check::Stated.new(
-            key: name, place: Place.of(interface.path, interface.line), said: name.spoken
+            key: name, place: Place.of(interface.path, interface.line), said: name.spoken,
+            unverifiable: Check.unverifiable(interface.attributes)
           ))
         end
       end

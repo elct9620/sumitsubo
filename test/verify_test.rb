@@ -198,6 +198,15 @@ Dir.chdir("test/fixtures/project/twice")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# A scenario, a claimed interface and a defined one each say nothing can hold
+# them yet, and the source has each of them. A scenario and an interface saying
+# the same that the source does not have are not compared at all.
+# @behavior V-035
+puts "--- what the source holds of what was set aside ---"
+Dir.chdir("test/fixtures/project/unverifiable")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

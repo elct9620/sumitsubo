@@ -303,3 +303,12 @@ in the order they happened.
 | Given | two features declaring one id, and two definitions registering one name under one marker |
 | When | `sumi verify` runs |
 | Then | each is refused naming both places, and the run leaves the code a comparison could not be made |
+
+## `V-035` What the source holds of what was set aside
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario and two interfaces carrying the reason no check can hold them yet, each claimed or defined in scope |
+| Given | others carrying the same, which the source does not have |
+| When | `sumi verify` runs |
+| Then | each the source has answers as stale, the others say nothing, and the run leaves the code a comparison could not be made |

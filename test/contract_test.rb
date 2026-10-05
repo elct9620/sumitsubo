@@ -373,3 +373,30 @@ puts "--- a scope named outside ASCII ---"
 loaded("#{FIXTURE}/wide").each do |definition|
   definition.statements.each { |interface| puts "  #{definition.key} #{interface.key}" }
 end
+
+# `seed` and `init` each say no claim can hold them yet, and only `init` is
+# claimed; `fmt` is retiring and nothing claims it. In the other reading
+# `Store#read` and `Store#write` each say the same, and only `Store#write` is
+# defined; `Store.open` is retiring and nothing defines it.
+retired = loaded("#{FIXTURE}/unverifiable")
+retired_claims = [claim("src/commands.rb", 3, "@command", "init")]
+retired_declared = Sumitsubo::Contract.declared_in(
+  { "ruby" => [Sumitsubo::Source::Declaration.new(path: "src/store.rb", line: 2, name: "Store#write", shape: shaped)] }
+)
+
+# @behavior T-044 T-046
+puts "--- unverifiable interfaces are compared by none, deprecated ones like any other ---"
+(unclaimed(retired, retired_claims) +
+ Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::Defined::UNDEFINED)
+   .run(Sumitsubo::Contract.stated_names(retired), retired_declared)).each do |finding|
+  puts "#{finding.place.spoken} #{finding.message}"
+end
+
+# @behavior T-044 T-045
+puts "--- unverifiable interfaces the source claims or defines, and none it does not ---"
+(Sumitsubo::Check::Claim::Stale.new(Sumitsubo::Mechanism::Contract::Claimed::STALE)
+   .run(Sumitsubo::Contract.stated_in(retired), retired_claims) +
+ Sumitsubo::Check::Declaration::Stale.new(Sumitsubo::Mechanism::Contract::Defined::STALE)
+   .run(Sumitsubo::Contract.stated_names(retired), retired_declared)).each do |finding|
+  puts "#{finding.check} #{finding.place.spoken} #{finding.message}"
+end

@@ -146,7 +146,8 @@ module Sumitsubo
           found.push(Check::Stated.new(
             key: scenario.key,
             place: Place.of(scenario.path, scenario.line),
-            said: "#{MARKER} #{scenario.key}"
+            said: "#{MARKER} #{scenario.key}",
+            unverifiable: Check.unverifiable(scenario.attributes)
           ))
         end
       end

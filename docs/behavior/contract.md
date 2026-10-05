@@ -332,3 +332,30 @@ wrong spelling.
 | Given | a definition registering contracts in one language, reaching a file another language claims |
 | When | the files to read are worked out |
 | Then | it reaches that file and makes no reading of it, rather than one the grammar would refuse |
+
+## `T-044` An unverifiable interface nothing claims or defines
+
+| Step | Statement |
+| --- | --- |
+| Given | an interface carrying the reason no check can hold it yet, in either reading |
+| Given | no claim of it, and no definition of it |
+| When | the two sides are compared |
+| Then | nothing is answered for it |
+
+## `T-045` An unverifiable interface the source claims or defines
+
+| Step | Statement |
+| --- | --- |
+| Given | an interface carrying the reason no check can hold it yet, in either reading |
+| Given | a claim of it, or a definition of it, among the files in scope |
+| When | the two sides are compared |
+| Then | it answers at the line registering it as stale, naming where the source has it |
+
+## `T-046` A deprecated interface is verified like any other
+
+| Step | Statement |
+| --- | --- |
+| Given | an interface carrying what replaces it, in either reading |
+| Given | no claim of it, and no definition of it |
+| When | the two sides are compared |
+| Then | it answers as claimed or defined nowhere it includes |

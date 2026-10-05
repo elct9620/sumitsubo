@@ -40,11 +40,43 @@ module Sumitsubo
           claims.each { |claim| made[claim.key] = true }
           found = []
           stated.each do |one|
+            next unless one.unverifiable.nil?
             next unless made[one.key].nil?
 
             found.push(Finding.new(
               check: @check, difference: true, place: one.place,
               message: "#{one.said} is claimed nowhere this specification includes"
+            ))
+          end
+          found
+        end
+      end
+
+      # The specification says nothing can hold a thing to the source and a
+      # claim within its reach does. The reason it was set aside no longer
+      # stands, and nothing was compared while it was, so this is a comparison
+      # that could not be made rather than a difference.
+      #
+      # It answers at the specification, where the reason is written, and
+      # names the first claim so a reader can see where the source has it.
+      class Stale
+        def initialize(check)
+          @check = check
+        end
+
+        def run(stated, claims)
+          made = {}
+          claims.each { |claim| made[claim.key] = claim if made[claim.key].nil? }
+          found = []
+          stated.each do |one|
+            next if one.unverifiable.nil?
+
+            claim = made[one.key]
+            next if claim.nil?
+
+            found.push(Finding.new(
+              check: @check, difference: false, place: one.place,
+              message: "#{one.said} is unverifiable, yet claimed at #{claim.place.spoken}"
             ))
           end
           found

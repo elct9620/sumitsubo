@@ -10,7 +10,16 @@ module Sumitsubo
   module Check
     # What a specification says can be claimed: the word a claim names it by,
     # where the specification declares it, and how it is said to a reader.
-    Stated = Data.define(:key, :place, :said)
+    # `unverifiable` is the reason no check can hold it to the source yet, and
+    # nil for everything a check does hold.
+    Stated = Data.define(:key, :place, :said, :unverifiable)
+
+    # The reason a statement's attributes give for setting it aside, or nil
+    # where they give none.
+    def self.unverifiable(attributes)
+      held = attributes["unverifiable"]
+      held.nil? ? nil : held[0]
+    end
 
     # What source claims: the same word, where it says so, and how that is said.
     Made = Data.define(:key, :place, :said)
