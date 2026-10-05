@@ -106,7 +106,12 @@ module Sumitsubo
           end
         end
 
+        # A heading at the depth of Rejected under the globs is answered by
+        # `rejects`, which says Includes declares no term; one deeper is only
+        # something written beside them.
         def heading(block)
+          return beside(block) if @holding == INCLUDES && block.level > REJECTS
+
           case block.level
           when TITLE then titled(block)
           when SECTION then section(block)

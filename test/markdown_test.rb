@@ -47,6 +47,7 @@ def h1(line, text) = block(BLOCK::HEADING, 1, line, text)
 def h2(line, text) = block(BLOCK::HEADING, 2, line, text)
 def h3(line, text) = block(BLOCK::HEADING, 3, line, text)
 def h4(line, text) = block(BLOCK::HEADING, 4, line, text)
+def h5(line, text) = block(BLOCK::HEADING, 5, line, text)
 def paragraph(line, text) = block(BLOCK::PARAGRAPH, 0, line, text)
 def item(line, text) = block(BLOCK::ITEM, 1, line, text)
 def nested(line, text) = block(BLOCK::ITEM, 2, line, text)
@@ -792,7 +793,8 @@ vocabulary([
   nested(10, "`app/vendor/**`"),
   fence(12, NOTE), content(13, "test/**\n"),
   row(17, "| Glob | Why |"), cell(17, "Glob "), cell(17, "Why "),
-  h3(19, "Order"), paragraph(21, "What a customer asks us to fulfil.")
+  h5(19, "Legacy"),
+  h3(21, "Order"), paragraph(23, "What a customer asks us to fulfil.")
 ])
 
 # A name is taken letter for letter and the reserved heading is not, so one word

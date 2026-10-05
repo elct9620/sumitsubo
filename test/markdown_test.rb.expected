@@ -189,6 +189,7 @@ CLI {} []
   refused: test/fixtures/specification/forms/glossary.md:10 writes a nested item under Includes, which holds its globs alone; sumi help glossary has the form
   refused: test/fixtures/specification/forms/glossary.md:12 writes a fenced block under Includes, which holds its globs alone; sumi help glossary has the form
   refused: test/fixtures/specification/forms/glossary.md:17 writes a table row under Includes, which holds its globs alone; sumi help glossary has the form
+  refused: test/fixtures/specification/forms/glossary.md:19 writes a heading under Includes, which holds its globs alone; sumi help glossary has the form
 --- the reserved word written as a name and as a heading ---
   ["5 test/init_test.rb"] ["Includes"]
 --- a term spelled as the reserved word ---

@@ -508,7 +508,7 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a section whose Includes holds a paragraph, a nested item, a fenced block and a table row beside its glob |
+| Given | a section whose Includes holds a paragraph, a nested item, a fenced block, a table row and a heading deeper than Rejected beside its glob |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at each of them |
 
