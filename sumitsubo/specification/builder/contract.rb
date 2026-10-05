@@ -37,10 +37,10 @@ module Sumitsubo
         # The heading naming the word source claims these contracts with.
         MARKER = "Marker"
 
-        # The attributes a contract carries, each with the one value it takes.
-        # A closed set both ways: a word this does not know is a form nobody
-        # reads, and a value nothing answers for is a fact nobody keeps.
-        ATTRIBUTES = { "internal" => "yes" }
+        # The attributes a contract carries, each with the one value it takes or
+        # the reason it is said.
+        ATTRIBUTES = { "internal" => "yes",
+                       "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON }
 
         # What the fence says about a contract, held under the words the
         # mechanism words its own help with. Neither is an attribute a row may
@@ -229,19 +229,9 @@ module Sumitsubo
             refuse(line, "writes an attribute row #{Builder.width_of(cells.length)}")
           end
 
-          carried(line, cells[0].text.strip, cells[1].text.strip)
-        end
-
-        # One attribute as the row wrote it, once the closed set has answered
-        # for both halves. An attribute written twice says which of them it is
-        # nowhere, the way a second name does.
-        def carried(line, said, value)
-          takes = ATTRIBUTES[said]
-          refuse(line, "writes #{said}, which is not an attribute a contract carries") if takes.nil?
-          refuse(line, "writes #{said} as #{value}, where it takes #{takes}") unless value == takes
-          refuse(line, "writes #{said} twice") unless @contract.attributes[said].nil?
-
-          @contract.attributes[said] = [value]
+          Builder.carried(@contract.attributes, ATTRIBUTES,
+                          Builder::Row.new(line: line, said: cells[0].text.strip, value: cells[1].text.strip),
+                          "an attribute a contract carries", @path, TOPIC)
         end
 
         # A fenced block taken as the signature of the contract it sits under. A

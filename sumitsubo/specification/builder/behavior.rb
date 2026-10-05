@@ -28,9 +28,13 @@ module Sumitsubo
         # scopes nothing, the way a list under a scenario is prose.
         GLOB = 1
 
-        # The words a step is spelled with. A row naming another word is refused
-        # rather than passed over: a step nobody reads is a promise nobody keeps.
+        # The words a step is spelled with. A row naming any other word states
+        # an attribute, and one naming none a scenario carries is refused rather
+        # than passed over: a step nobody reads is a promise nobody keeps.
         STEPS = ["Given", "When", "Then"]
+
+        # The attributes a scenario carries, each taking the reason it is said.
+        ATTRIBUTES = { "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON }
 
         # The topic a refusal from this form sends a reader to.
         TOPIC = "behavior"
@@ -145,7 +149,7 @@ module Sumitsubo
                         { "given" => [] }, [])
         end
 
-        # The cells of one row, stated as the step they make.
+        # The cells of one row, stated as the step or the attribute they make.
         def stated(block)
           beside(block) if @scoping
 
@@ -153,20 +157,18 @@ module Sumitsubo
           return if cells.empty?
 
           line = cells[0].line
-          refuse(line, "writes a step outside any scenario") if @scenarios.empty?
-          hold(step_of(line, cells.length, cells[0].text.strip), cells[1].text.strip)
-        end
+          refuse(line, "writes a row outside any scenario") if @scenarios.empty?
+          refuse(line, "writes a row #{Builder.width_of(cells.length)}") unless cells.length == 2
 
-        # Which step a row states, given how many cells it turned out to have. A
-        # row of any other width is a separator lost or an unescaped one gained,
-        # and either way what it says cannot be told apart from what it means.
-        def step_of(line, count, name)
-          unless count == 2
-            refuse(line, "writes a step row #{Builder.width_of(count)}")
+          name = cells[0].text.strip
+          value = cells[1].text.strip
+          if STEPS.include?(name)
+            hold(name.downcase, value)
+          else
+            Builder.carried(@scenarios[-1].attributes, ATTRIBUTES,
+                            Builder::Row.new(line: line, said: name, value: value),
+                            "a step or an attribute a scenario carries", @path, TOPIC)
           end
-          refuse(line, "writes a step named #{name} rather than Given, When or Then") unless STEPS.include?(name)
-
-          name.downcase
         end
 
         # A step joins the ones already stated under that word, so a scenario

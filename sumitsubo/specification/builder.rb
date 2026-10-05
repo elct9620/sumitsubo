@@ -89,6 +89,36 @@ module Sumitsubo
         "#{said}, where a | inside a cell is written \\|"
       end
 
+      # What an attribute takes in place of a fixed value when it says why.
+      REASON = "a reason"
+
+      # One attribute as a row wrote it, held under the word its first cell
+      # names. The set is closed both ways: a word nothing knows is a form
+      # nobody reads, and a fixed value nothing answers for is a fact nobody
+      # keeps. An attribute taking a reason with nothing in its second cell
+      # says nothing at all.
+      #
+      # An attribute written twice says which of them it is nowhere, the way a
+      # second name does.
+      def self.carried(attributes, takes, row, carries, path, topic)
+        line = row.line
+        said = row.said
+        value = row.value
+        taken = takes[said]
+        refuse(path, line, "writes #{said}, which is not #{carries}", topic) if taken.nil?
+        if taken == REASON
+          refuse(path, line, "writes #{said} with no reason", topic) if value.empty?
+        elsif value != taken
+          refuse(path, line, "writes #{said} as #{value}, where it takes #{taken}", topic)
+        end
+        refuse(path, line, "writes #{said} twice", topic) unless attributes[said].nil?
+
+        attributes[said] = [value]
+      end
+
+      # A row of two cells, as the first names it and the second says it.
+      Row = Data.define(:line, :said, :value)
+
       def self.empty_to_nil(said)
         said.empty? ? nil : said
       end

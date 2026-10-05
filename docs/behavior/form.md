@@ -96,19 +96,27 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that row |
 
-## `F-010` A row naming something that is not a step
+## `F-010` A row naming neither a step nor an attribute
 
 | Step | Statement |
 | --- | --- |
-| Given | a step row whose first cell is neither Given, When nor Then |
+| Given | a row whose first cell is neither Given, When nor Then, nor an attribute a scenario carries |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, naming the word it was given |
 
-## `F-011` A step with no scenario to belong to
+## `F-063` What a scenario's attributes are written as
 
 | Step | Statement |
 | --- | --- |
-| Given | a step row written before any scenario heading |
+| Given | a row under a scenario naming unverifiable or deprecated, and the reason it is said |
+| When | the blocks the document is made of are read |
+| Then | the scenario carries it beside its steps, held under the word the first cell names |
+
+## `F-011` A row with no scenario to belong to
+
+| Step | Statement |
+| --- | --- |
+| Given | a step or attribute row written before any scenario heading |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that row |
 
@@ -316,9 +324,17 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | two rows under one contract naming the same attribute |
+| Given | two rows under one contract or one scenario naming the same attribute |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, since an attribute written twice says which of them it is nowhere |
+
+## `F-064` An attribute written with no reason
+
+| Step | Statement |
+| --- | --- |
+| Given | a row under a contract or a scenario naming unverifiable or deprecated, its second cell empty |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since what such an attribute says is its reason |
 
 ## `F-032` A marker named after a contract is already registered
 

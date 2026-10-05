@@ -182,11 +182,38 @@ read([
   row(5, "| Where | a directory |"), cell(5, "Where "), cell(5, "a directory ")
 ])
 
+# A contract's attribute is a word a scenario does not carry, so it is refused
+# the way a misspelt step is.
+# @behavior F-010
+puts "--- a row naming an attribute a scenario does not carry ---"
+read([
+  h1(1, "Init"), h2(3, "`I-007` A run"),
+  row(5, "| internal | yes |"), cell(5, "internal "), cell(5, "yes ")
+])
+
+# @behavior F-063
+puts "--- a scenario carrying its attributes beside its steps ---"
+read([
+  h1(1, "Init"), h2(3, "`I-008` A run"),
+  row(5, "| Given | a directory |"), cell(5, "Given "), cell(5, "a directory "),
+  row(6, "| unverifiable | no reading sees the directory |"),
+  cell(6, "unverifiable "), cell(6, "no reading sees the directory "),
+  row(7, "| deprecated | init lays down nothing soon |"),
+  cell(7, "deprecated "), cell(7, "init lays down nothing soon ")
+]).statements.each { |scenario| steps_of(scenario) }
+
 # @behavior F-011
 puts "--- a step before any scenario ---"
 read([
   h1(1, "Init"),
   row(3, "| Given | a directory |"), cell(3, "Given "), cell(3, "a directory ")
+])
+
+# @behavior F-011
+puts "--- an attribute before any scenario ---"
+read([
+  h1(1, "Init"),
+  row(3, "| unverifiable | why |"), cell(3, "unverifiable "), cell(3, "why ")
 ])
 
 # @behavior F-012
@@ -491,6 +518,19 @@ registered_by(definition([
   content(10, INIT)
 ], { INIT => [declares("init")] }))
 
+# An attribute taking a reason holds whatever the reason says.
+# @behavior F-045
+puts "--- a contract carrying the reason it is retired ---"
+registered_by(definition([
+  h1(1, "CLI"),
+  h2(3, "`init`"),
+  row(7, "| deprecated | sumi seed replaces it |"),
+  cell(7, "deprecated "), cell(7, "sumi seed replaces it "),
+  fence(9, "```ruby\n#{INIT}```"),
+  language(9, "ruby"),
+  content(10, INIT)
+], { INIT => [declares("init")] }))
+
 # @behavior F-030
 puts "--- an attribute a contract does not carry ---"
 definition([
@@ -525,6 +565,28 @@ definition([
   h1(1, "CLI"), h2(3, "`init`"),
   row(7, "| internal | yes |"), cell(7, "internal "), cell(7, "yes "),
   row(8, "| internal | yes |"), cell(8, "internal "), cell(8, "yes ")
+])
+
+# @behavior F-049
+puts "--- one attribute written twice under a scenario ---"
+read([
+  h1(1, "Init"), h2(3, "`I-009` A run"),
+  row(5, "| deprecated | one |"), cell(5, "deprecated "), cell(5, "one "),
+  row(6, "| deprecated | two |"), cell(6, "deprecated "), cell(6, "two ")
+])
+
+# @behavior F-064
+puts "--- an attribute under a contract written with no reason ---"
+definition([
+  h1(1, "CLI"), h2(3, "`init`"),
+  row(7, "| unverifiable |  |"), cell(7, "unverifiable "), cell(7, " ")
+])
+
+# @behavior F-064
+puts "--- an attribute under a scenario written with no reason ---"
+read([
+  h1(1, "Init"), h2(3, "`I-010` A run"),
+  row(5, "| deprecated |  |"), cell(5, "deprecated "), cell(5, " ")
 ])
 
 # @behavior F-032

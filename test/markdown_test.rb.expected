@@ -18,21 +18,29 @@ Init ["test/init_test.rb", "test/other_test.rb"]
 --- an include that is not a glob in backticks ---
   refused: init.md:5 writes an include that is not a glob in backticks; sumi help behavior has the form
 --- a step row that lost a separator ---
-  refused: init.md:5 writes a step row of 1 cell rather than two; sumi help behavior has the form
+  refused: init.md:5 writes a row of 1 cell rather than two; sumi help behavior has the form
 --- a step row carrying an unescaped separator ---
-  refused: init.md:5 writes a step row of 3 cells rather than two, where a | inside a cell is written \|; sumi help behavior has the form
+  refused: init.md:5 writes a row of 3 cells rather than two, where a | inside a cell is written \|; sumi help behavior has the form
 --- a row naming something that is not a step ---
-  refused: init.md:5 writes a step named Where rather than Given, When or Then; sumi help behavior has the form
+  refused: init.md:5 writes Where, which is not a step or an attribute a scenario carries; sumi help behavior has the form
+--- a row naming an attribute a scenario does not carry ---
+  refused: init.md:5 writes internal, which is not a step or an attribute a scenario carries; sumi help behavior has the form
+--- a scenario carrying its attributes beside its steps ---
+    given a directory
+    unverifiable no reading sees the directory
+    deprecated init lays down nothing soon
 --- a step before any scenario ---
-  refused: init.md:3 writes a step outside any scenario; sumi help behavior has the form
+  refused: init.md:3 writes a row outside any scenario; sumi help behavior has the form
+--- an attribute before any scenario ---
+  refused: init.md:3 writes a row outside any scenario; sumi help behavior has the form
 --- a document with no title ---
   refused: init.md:1 declares no title; sumi help behavior has the form
 --- a document with two titles ---
   refused: init.md:3 declares a second title; sumi help behavior has the form
 --- every way a document is out of shape, rather than the first ---
   refused: init.md:3 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
-  refused: init.md:5 writes a step named Wen rather than Given, When or Then; sumi help behavior has the form
-  refused: init.md:9 writes a step named Whenever rather than Given, When or Then; sumi help behavior has the form
+  refused: init.md:5 writes Wen, which is not a step or an attribute a scenario carries; sumi help behavior has the form
+  refused: init.md:9 writes Whenever, which is not a step or an attribute a scenario carries; sumi help behavior has the form
 --- a vocabulary read into sections, terms and the words they reject ---
 Glossary "Prose above every section."
   Everywhere ["app/**/*.rb"] "What this section is for."
@@ -96,6 +104,11 @@ CLI {} []
   
   cli.md:3 init {"internal" => ["yes"], "language" => ["ruby"], "signature" => ["def init\nend\n"]}
     
+--- a contract carrying the reason it is retired ---
+CLI {} []
+  
+  cli.md:3 init {"deprecated" => ["sumi seed replaces it"], "language" => ["ruby"], "signature" => ["def init\nend\n"]}
+    
 --- an attribute a contract does not carry ---
   refused: cli.md:7 writes hidden, which is not an attribute a contract carries; sumi help contract has the form
   refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
@@ -110,6 +123,13 @@ CLI {} []
 --- one attribute written twice ---
   refused: cli.md:8 writes internal twice; sumi help contract has the form
   refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
+--- one attribute written twice under a scenario ---
+  refused: init.md:6 writes deprecated twice; sumi help behavior has the form
+--- an attribute under a contract written with no reason ---
+  refused: cli.md:7 writes unverifiable with no reason; sumi help contract has the form
+  refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
+--- an attribute under a scenario written with no reason ---
+  refused: init.md:5 writes deprecated with no reason; sumi help behavior has the form
 --- a marker named after a contract has already been registered ---
   refused: cli.md:5 names Marker after a contract, which is read one way or the other; sumi help contract has the form
 --- a marker heading with no word under it ---
