@@ -268,3 +268,14 @@ puts "exit=#{cli.run(["verify"])}"
 
 Dir.chdir(back)
 root.rmtree
+
+# No fixture has two checks answering about one line, so the findings are built
+# here: what is shown is how a report words and orders them, whichever check
+# made them.
+# @behavior V-040
+puts "--- a finding names the check that found it ---"
+found = Sumitsubo::Finding::Repository.new
+at = Sumitsubo::Place.of("app/order.rb", 2)
+found.add(Sumitsubo::Finding.new(check: "glossary/rejected", difference: true, place: at, message: "a word turned down"))
+found.add(Sumitsubo::Finding.new(check: "contract/mismatched", difference: true, place: at, message: "the shape drifted"))
+Sumitsubo::Finding::Report.new(found).lines.each { |line| puts line }

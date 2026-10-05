@@ -100,7 +100,7 @@ to it. `sumi fmt --check` says the same thing and changes nothing:
 
 ```console
 $ sumi fmt --check
-.spec/glossary.md:15 Purchase is set off with a wide dash where a plain one is written
+.spec/glossary.md:15: glossary/miswritten: Purchase is set off with a wide dash where a plain one is written
 1 difference
 
 $ sumi fmt
@@ -112,15 +112,16 @@ wrote .spec/glossary.md
 
 ```console
 $ sumi verify
-.spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
-app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+.spec/behavior/verify.md:9: behavior/unclaimed: @behavior V-002 is claimed nowhere this specification includes
+app/order.rb:2: glossary/rejected: Order rejects Purchase: Order is what the domain calls it.
 2 differences
 ```
 
 A run answers `0` where the two sides agree, `1` where they differ, and `2`
 where the comparison could not be made — whatever had to be read first was
-absent, unreadable, or ambiguous. Findings answer as `path:line`, relative to
-where the run started.
+absent, unreadable, or ambiguous. Findings answer as `path:line: check:
+message`, relative to where the run started. A check's first half names its
+mechanism in `.sumi.json`.
 
 ## Where the rest is
 

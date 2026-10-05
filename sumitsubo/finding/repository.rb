@@ -2,9 +2,9 @@ require "sumitsubo/finding"
 
 module Sumitsubo
   class Finding
-    # Everything a run found, and the answer it leaves with. Two mechanisms can
-    # answer about the same line, so the message is part of the order: it is
-    # what separates them.
+    # Everything a run found, and the answer it leaves with. Two checks can
+    # answer about the same line, and one check twice, so the check and then the
+    # message are part of the order: they are what separates them.
     class Repository
       def initialize
         @differences = []
@@ -30,7 +30,7 @@ module Sumitsubo
       # alike: which of the two a finding is decides the exit code and not where
       # it is printed.
       def found
-        (@differences + @failures).sort_by { |one| [one.place.path, one.place.line, one.message] }
+        (@differences + @failures).sort_by { |one| [one.place.path, one.place.line, one.check, one.message] }
       end
 
       def unread

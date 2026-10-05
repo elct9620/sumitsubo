@@ -10,8 +10,11 @@ module Sumitsubo
         @repository = repository
       end
 
+      # A finding names the check that found it after its place, the way a
+      # linter names its rule, so a reader knows which mechanism answered and
+      # which .sumi.json switch it answers to.
       def lines
-        said = @repository.found.map { |one| "#{one.place.spoken} #{one.message}" }
+        said = @repository.found.map { |one| "#{one.place.spoken}: #{one.check}: #{one.message}" }
         said.concat(@repository.unread)
         said.push(counted)
         said

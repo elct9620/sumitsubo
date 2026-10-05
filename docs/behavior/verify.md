@@ -4,8 +4,8 @@ Checking the source against the verifiable part of the specification, and
 answering what was found.
 
 The reader is an agent working in the codebase, with a person reading over its
-shoulder. Findings answer as `path:line` relative to where the run started,
-one per line, sorted on a key that leaves no ties.
+shoulder. Findings answer as `path:line: check: message` relative to where the
+run started, one per line, sorted on a key that leaves no ties.
 
 One finding per line however often the word appears on it: the line is what a
 reader goes to, and what an exclusion would one day be written against.
@@ -348,3 +348,12 @@ in the order they happened.
 | Given | two features reaching the screens, declaring one id and using a word the screens reject |
 | When | `sumi verify` runs |
 | Then | the id declared twice is answered once, and the word in neither feature |
+
+## `V-040` A finding names the check that found it
+
+| Step | Statement |
+| --- | --- |
+| Given | two checks answering about the same line |
+| When | the findings are reported |
+| Then | each line answers as its place, the check, then the message |
+| Then | the two are ordered by check before message |

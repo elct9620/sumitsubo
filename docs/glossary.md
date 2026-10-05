@@ -130,9 +130,10 @@ one check under one name.
 
 ### Finding
 
-One thing a comparison has to say about one place, answered as `path:line`. It
-is a difference where the comparison was made and the two sides disagree, and a
-failure where it could not be made at all.
+One thing a comparison has to say about one place, answered at `path:line` and
+named by the check that made it. It is a difference where the comparison was
+made and the two sides disagree, and a failure where it could not be made at
+all.
 
 ### Marker
 

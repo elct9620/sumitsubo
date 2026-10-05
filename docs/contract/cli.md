@@ -59,7 +59,7 @@ a person it answers instead, at the line that broke it.
 
 ```console
 $ sumi fmt --check
-.spec/glossary.md:15 Purchase is set off with a wide dash where a plain one is written
+.spec/glossary.md:15: glossary/miswritten: Purchase is set off with a wide dash where a plain one is written
 1 difference
 
 $ sumi fmt
@@ -73,12 +73,12 @@ Verify the source code is aligned with the verifiable specification.
 
 Reports the difference and does not decide which side is wrong — correcting
 the specification is as valid an outcome as correcting the code. A finding
-answers as `path:line`, relative to where the run started.
+answers as `path:line: check: message`, relative to where the run started.
 
 ```console
 $ sumi verify
-.spec/behavior/verify.md:9 @behavior V-002 is claimed nowhere this specification includes
-app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+.spec/behavior/verify.md:9: behavior/unclaimed: @behavior V-002 is claimed nowhere this specification includes
+app/order.rb:2: glossary/rejected: Order rejects Purchase: Order is what the domain calls it.
 2 differences
 ```
 
