@@ -305,7 +305,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │  mechanism.rb                                 the register
 │  │  mechanism/seed.rb
 │  │  mechanism/{glossary,contract,behavior}.rb    name, seed, checks, wording
-│  │  check/{region,claim,declaration,reach}.rb    eleven checks
+│  │  check/{region,claim,declaration,reach}.rb    fifteen checks
 │  │
 │  ├─ (3) the answer leaves
 │  │  finding/repository.rb                        collect, order, count, code
