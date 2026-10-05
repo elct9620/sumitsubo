@@ -155,11 +155,12 @@ module Sumitsubo
       # @command help contract
       CONTRACT = <<~TEXT
         The interfaces a project means to keep. What this establishes is that a
-        registered interface is implemented among the files its own definition
-        reaches, and entered the way the specification says - never that what
-        it does behind that is right. What it does is a behavior's to declare
-        and a test's to witness, which `sumi help behavior` has. The paragraph
-        under a contract says what the interface is for, not what it does.
+        registered interface is implemented among the files its own
+        definition reaches, and is entered the way the specification says. It
+        never establishes that what the interface does is right. What it does
+        is a behavior's to declare and a test's to witness, which `sumi help
+        behavior` has. The paragraph under a contract says what the interface
+        is for, not what it does.
 
         Files
             .spec/contract/*.md - one file per kind of interface: the commands
@@ -319,11 +320,11 @@ module Sumitsubo
 
         Includes
             The boundary of what a definition answers for. With a marker, a
-            contract is implemented by the files its own definition reaches,
-            and a claim from anywhere else names it without being able to
-            implement it. Without one, a definition has to sit among those
-            files to count, so a type of the same name in another component
-            does not answer for it.
+            contract is implemented by the files its own definition reaches. A
+            claim from anywhere else names it without implementing it.
+            Without one, a definition has to sit among those files to count.
+            A type of the same name in another component does not answer for
+            it.
 
             One file may sit under two definitions, which is how a module
             answering for both is written. `sumi help glossary` has the same
@@ -444,9 +445,9 @@ module Sumitsubo
       # @command help behavior
       BEHAVIOR = <<~TEXT
         The behaviors a project means its tests to witness. What this
-        establishes is that a behavior was read and a test among the files
-        its own feature reaches witnesses it - never that the implementation
-        is right.
+        establishes is that a behavior was read, and that a test its own
+        feature reaches witnesses it. It never establishes that the
+        implementation is right.
 
         Files
             .spec/behavior/*.md - one file per feature, each carrying its own
@@ -514,9 +515,9 @@ module Sumitsubo
             id, and a referent that is not unique resolves to nothing.
 
         Includes
-            The boundary of what a feature answers for: a scenario is
-            witnessed by the files its own feature reaches, and a claim from
-            anywhere else names it without being able to witness it. One file
+            The boundary of what a feature answers for. A scenario is
+            witnessed by the files its own feature reaches. A claim from
+            anywhere else names it without witnessing it. One file
             may sit under two features, which is how a test answering for
             both is written. `sumi help glossary` has the same boundary under
             another word: a subdomain.
@@ -538,8 +539,8 @@ module Sumitsubo
 
             In front of means there is code below it, whether or not more
             comments stand between. A claim at the end of a file or a
-            block stands in front of nothing, and a run reports it where
-            it was written rather than counting it as coverage.
+            block stands in front of nothing. A run reports it where it was
+            written rather than counting it as coverage.
 
             The word with nothing behind it names no scenario, which a run
             reports as its own thing: an id that resolves to none is a
