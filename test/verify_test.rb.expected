@@ -104,6 +104,12 @@ exit=2
 .spec/contract/cli.md:11 @command init is unverifiable, yet claimed at src/commands.rb:1
 0 differences
 exit=2
+--- a vocabulary refused in two places, beside a feature that answers ---
+.spec/behavior/order.md:9 @behavior O-001 is claimed nowhere this specification includes
+.spec/glossary.md:9 writes Includes a second time, first written at .spec/glossary.md:5; sumi help glossary has the form
+.spec/glossary.md:17 declares a second title; sumi help glossary has the form
+1 difference
+exit=2
 --- no specification at all ---
 no specification at .spec; sumi init lays one down
 exit=2

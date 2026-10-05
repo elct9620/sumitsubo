@@ -312,3 +312,14 @@ in the order they happened.
 | Given | others carrying the same, which the source does not have |
 | When | `sumi verify` runs |
 | Then | each the source has answers as stale, the others say nothing, and the run leaves the code a comparison could not be made |
+
+## `V-036` A vocabulary refused in two places, beside a feature that answers
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| Given | a feature declaring a scenario nothing claims |
+| When | `sumi verify` runs |
+| Then | each refusal answers at its own line |
+| Then | the difference is answered beside them |
+| Then | the run leaves the code a comparison could not be made |

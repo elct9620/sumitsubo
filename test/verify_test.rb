@@ -207,6 +207,15 @@ Dir.chdir("test/fixtures/project/unverifiable")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# A vocabulary is one document, so its refusals reach the run all at once
+# rather than one per file. Two of them is what tells each being answered
+# from only the first.
+# @behavior V-036
+puts "--- a vocabulary refused in two places, beside a feature that answers ---"
+Dir.chdir("test/fixtures/project/misshapen")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

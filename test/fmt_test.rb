@@ -36,6 +36,12 @@ Dir.chdir("test/fixtures/project/beside")
 puts "exit=#{cli.run(["fmt", "--check"])}"
 Dir.chdir(back)
 
+# @behavior FM-008
+puts "--- a vocabulary refused in two places ---"
+Dir.chdir("test/fixtures/project/misshapen")
+puts "exit=#{cli.run(["fmt", "--check"])}"
+Dir.chdir(back)
+
 # The project keeps no glossary file and switched the glossary off, so nothing
 # is said about the one that is not there.
 # @behavior FM-003 FM-005

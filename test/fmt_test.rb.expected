@@ -8,6 +8,11 @@ exit=1
 .spec/behavior/broken.md:9 declares a scenario whose heading does not open with an id in backticks; sumi help behavior has the form
 0 differences
 exit=2
+--- a vocabulary refused in two places ---
+.spec/glossary.md:9 writes Includes a second time, first written at .spec/glossary.md:5; sumi help glossary has the form
+.spec/glossary.md:17 declares a second title; sumi help glossary has the form
+0 differences
+exit=2
 --- one name declared twice, and a specification the project does not keep ---
 @command verify is declared twice, at .spec/contract/one.md:13 and .spec/contract/two.md:13
 B-001 is declared twice, at .spec/behavior/one.md:9 and .spec/behavior/two.md:9
