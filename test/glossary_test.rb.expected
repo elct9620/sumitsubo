@@ -43,3 +43,6 @@ no glossary at test/fixtures/specification/glossary/absent.md; sumi init lays on
 docs/mixed.md:5 UI Component rejects Component
 --- a specification beside the vocabulary takes the sections its includes reach ---
 .spec/behavior/checkout.md Component
+--- a longer term a line break cuts in two is still that term ---
+app/wrapped.rb:4 UI Component rejects Component
+docs/wrapped.md:8 UI Component rejects Component

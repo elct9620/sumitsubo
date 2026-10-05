@@ -9,6 +9,7 @@ require "sumitsubo/specification/parser/markdown"
 require "sumitsubo/source/repository"
 require "sumitsubo/source/language"
 require "sumitsubo/source/language/prose"
+require "sumitsubo/source/language/ruby"
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reaches a grammar to read a real document, which is what its snapshot is
@@ -203,4 +204,17 @@ screens = Sumitsubo::Statement.new("app/ui/*.rb", "", [], ".spec/behavior/checko
 checkout = Sumitsubo::Specification.new("Checkout", "", [screens], ".spec/behavior/checkout.md", {}, [])
 reached = Sumitsubo::Glossary.scope(reads(".spec/glossary.md"), Pathname.pwd, [], [checkout])
 reached[".spec/behavior/checkout.md"].keys.sort.each { |name| puts ".spec/behavior/checkout.md #{name}" }
+Dir.chdir(back)
+
+# Ruby answers a run of line comments one region a line, which is where a
+# wrapped sentence is split across regions rather than inside one.
+# @behavior G-020
+puts "--- a longer term a line break cuts in two is still that term ---"
+Dir.chdir("test/fixtures/project/wrapped")
+wrapped = reads("glossary.md")
+both = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new,
+                                                                          Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar)]))
+Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(wrapped, Pathname.pwd, [], []), Pathname.pwd, both).each do |mention|
+  puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
+end
 Dir.chdir(back)

@@ -213,12 +213,23 @@ module Sumitsubo
       found = []
       pattern = whole_word(entry.key)
       longer = spellings.reject { |one| one == entry.key || pattern.match(one).nil? }
-      regions.each do |region|
-        region.lines.each do |one|
-          found.push(Mention.new(path: path, line: one.line, term: name, used: entry.key, reason: entry.text)) unless pattern.match(masked(one.text, longer)).nil?
-        end
+      lines = []
+      regions.each { |region| lines.concat(region.lines) }
+      written = by_line(lines)
+      lines.each do |one|
+        left = masked(one.text, longer, written[one.line - 1] || "", written[one.line + 1] || "")
+        found.push(Mention.new(path: path, line: one.line, term: name, used: entry.key, reason: entry.text)) unless pattern.match(left).nil?
       end
       found
+    end
+
+    # What each line of a file says, whichever region said it. A run of line
+    # comments is one region per line, and a sentence wrapped across them is
+    # still one sentence.
+    def self.by_line(lines)
+      written = {}
+      lines.each { |one| written[one.line] = "#{written[one.line]} #{one.text}" }
+      written
     end
 
     def self.whole_word(word)
@@ -226,15 +237,32 @@ module Sumitsubo
     end
 
     # The text with every longer spelling blanked out, so a match left in it is
-    # the word standing on its own.
+    # the word standing on its own — including a spelling a line break cut in
+    # two, whose other half ends the line before or opens the line after.
     #
     # Held as spellings and interpolated first: under Spinel 2026.09.12 a Regexp
     # taken out of an Array reaches `gsub` as a String, and the text a region
     # holds has no `gsub` at all. Spinel 30d32f7 answers the first and c6bbdfb
     # the second.
-    def self.masked(text, longer)
+    def self.masked(text, longer, before, after)
       held = "#{text}"
-      longer.each { |one| held = held.gsub(whole_word(one), " ") }
+      longer.each do |one|
+        held = held.gsub(whole_word(one), " ")
+        held = unwrapped(held, one.split(" "), before, after)
+      end
+      held
+    end
+
+    # Each place a spelling can be cut, asked of both neighbours. A line opens
+    # past its comment marker but ends only at whitespace, so a sentence closed
+    # on the first half does not run on into the next line.
+    def self.unwrapped(held, words, before, after)
+      (1...words.length).each do |cut|
+        ending = Regexp.new("\\b" + Regexp.escape(words[0, cut].join(" ")) + "\\s*\\z")
+        opening = Regexp.new("\\A\\W*" + Regexp.escape(words[cut, words.length - cut].join(" ")) + "\\b")
+        held = held.sub(opening, " ") unless ending.match(before).nil?
+        held = held.sub(ending, " ") unless opening.match(after).nil?
+      end
       held
     end
 

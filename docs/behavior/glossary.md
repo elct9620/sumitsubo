@@ -150,3 +150,12 @@ place.
 | Given | two sections, and a specification whose includes reach a file only the first covers |
 | When | the effective vocabulary is worked out with that specification beside it |
 | Then | the specification's own file takes the first section's terms and not the second's |
+
+## `G-020` A longer term a line break cuts in two is still that term
+
+| Step | Statement |
+| --- | --- |
+| Given | a term rejecting a word that its own name and another term's name each hold |
+| When | prose and a run of line comments wrapping both names are checked |
+| Then | only the lines writing the word on its own answer |
+| Then | a sentence ending on the first half does not carry it into the next line |
