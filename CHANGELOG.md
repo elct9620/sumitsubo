@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.1.0-preview11](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview10...v0.1.0-preview11) (2026-10-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **form:** refuse a heading deeper than Rejected under a vocabulary's Includes
+* **finding:** anything parsing `path:line message` now meets
+* **glossary:** hold a contract or feature to the subdomain its includes reach
+* **form:** refuse the reserved heading or a glob written twice where it is written once
+* **form:** refuse anything written beside the globs a specification is scoped by
+
+### Features
+
+* **check:** leave an unverifiable contract or scenario uncompared until the source has it ([5bd5b1b](https://github.com/elct9620/sumitsubo/commit/5bd5b1bb376cbcb7a921b1dc67f199450d855350))
+* **finding:** name the check that found each finding on its line ([26fe2e4](https://github.com/elct9620/sumitsubo/commit/26fe2e485ef8f947b4688ef254befc33eb0b03e8))
+* **form:** let a contract or a scenario say it is unverifiable or deprecated ([42e06a7](https://github.com/elct9620/sumitsubo/commit/42e06a78c55756f860c9a22b3da1ef02fe03229f))
+* **glossary:** count a longer term holding a rejected word as that term ([1cc8bb8](https://github.com/elct9620/sumitsubo/commit/1cc8bb8a69e679ca1d43a27582a57db88d5e55fa))
+* **glossary:** hold a contract or feature to the subdomain its includes reach ([8216c2b](https://github.com/elct9620/sumitsubo/commit/8216c2b907ef3b6c84e178278b45ac90110978b8))
+
+
+### Bug Fixes
+
+* **claim:** say what a dangling claim needs without naming what it asserts ([d752662](https://github.com/elct9620/sumitsubo/commit/d7526628754cad3ae9cda69d497aa2bebcb9530d))
+* **form:** refuse a heading deeper than Rejected under a vocabulary's Includes ([c6234ff](https://github.com/elct9620/sumitsubo/commit/c6234ff0071b25e3194d033fc7aac7cc34adcdc2))
+* **form:** refuse anything written beside the globs a specification is scoped by ([b43104c](https://github.com/elct9620/sumitsubo/commit/b43104cf3611d019189497cbb12feef0510c1b4c))
+* **form:** refuse the reserved heading or a glob written twice where it is written once ([f9cd3fe](https://github.com/elct9620/sumitsubo/commit/f9cd3fe8f0791821df987b6ccaef96eadb1e1ad4))
+* **glossary:** count a longer term a line break cuts in two as that term ([878632c](https://github.com/elct9620/sumitsubo/commit/878632cfaa44efc8c1b72670ec4f13f6caaa1592))
+
 ## [0.1.0-preview10](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview9...v0.1.0-preview10) (2026-09-15)
 
 
