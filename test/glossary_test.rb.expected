@@ -41,3 +41,5 @@ test/fixtures/specification/glossary/secondignore.md:22 sets app/order.rb:2 asid
 no glossary at test/fixtures/specification/glossary/absent.md; sumi init lays one down
 --- a longer term holding a rejected word is a use of that term ---
 docs/mixed.md:5 UI Component rejects Component
+--- a specification beside the vocabulary takes the sections its includes reach ---
+.spec/behavior/checkout.md Component

@@ -20,7 +20,7 @@ PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 # mechanism that keeps it reads it.
 def reads(path)
   Sumitsubo::Specification::Repository.new(PARSERS, nil)
-    .one(Sumitsubo::Glossary.at(path), Sumitsubo::Mechanism::Glossary.new)
+    .one(Sumitsubo::Glossary.at(path), Sumitsubo::Mechanism::Glossary.new([]))
 end
 
 # What a vocabulary could not be read as, however it was refused: a form points
@@ -93,7 +93,7 @@ Sumitsubo::Check::Reach::Unscoped.new(Sumitsubo::Mechanism::Glossary::UNSCOPED).
 
 # @behavior G-002
 puts "--- effective vocabulary per file ---"
-scope = Sumitsubo::Glossary.scope(vocabulary, Pathname.pwd, [])
+scope = Sumitsubo::Glossary.scope(vocabulary, Pathname.pwd, [], [])
 scope.keys.sort.each do |path|
   terms = scope[path]
   terms.keys.sort.each do |name|
@@ -113,7 +113,7 @@ reversed = Sumitsubo::Specification.new(
   vocabulary.key, vocabulary.text, vocabulary.includes,
   vocabulary.path, vocabulary.attributes, vocabulary.statements.reverse
 )
-backwards = Sumitsubo::Glossary.scope(reversed, Pathname.pwd, [])
+backwards = Sumitsubo::Glossary.scope(reversed, Pathname.pwd, [], [])
 puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].text}"
 
 # A mention is built here rather than read out of a run: what is being shown
@@ -189,7 +189,18 @@ puts "--- a longer term holding a rejected word is a use of that term ---"
 Dir.chdir("test/fixtures/project/subdomain")
 subdomains = reads("glossary.md")
 prose = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new]))
-Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(subdomains, Pathname.pwd, []), Pathname.pwd, prose).each do |mention|
+Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(subdomains, Pathname.pwd, [], []), Pathname.pwd, prose).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
 end
+Dir.chdir(back)
+
+# The specification is built here rather than read: what is shown is which
+# section its includes choose, and a feature's form is not what decides it.
+# @behavior G-019
+puts "--- a specification beside the vocabulary takes the sections its includes reach ---"
+Dir.chdir("test/fixtures/project/reached")
+screens = Sumitsubo::Statement.new("app/ui/*.rb", "", [], ".spec/behavior/checkout.md", 7, {}, [])
+checkout = Sumitsubo::Specification.new("Checkout", "", [screens], ".spec/behavior/checkout.md", {}, [])
+reached = Sumitsubo::Glossary.scope(reads(".spec/glossary.md"), Pathname.pwd, [], [checkout])
+reached[".spec/behavior/checkout.md"].keys.sort.each { |name| puts ".spec/behavior/checkout.md #{name}" }
 Dir.chdir(back)

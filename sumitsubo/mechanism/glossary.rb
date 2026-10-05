@@ -18,7 +18,10 @@ module Sumitsubo
       REJECTED = "glossary/rejected"
       STALE = "glossary/stale"
 
-      def initialize
+      # The mechanisms whose specifications the vocabulary covers beside its
+      # own files.
+      def initialize(beside)
+        @beside = beside
         @barren = Check::Reach::Barren.new(BARREN)
         @unscoped = Check::Reach::Unscoped.new(UNSCOPED)
         @rejected = Check::Region::Rejected.new(REJECTED)
@@ -80,7 +83,7 @@ module Sumitsubo
         @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
-        scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion)
+        scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion, beside(config, specifications))
         mentions = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, source), vocabulary
         )
@@ -90,6 +93,23 @@ module Sumitsubo
       end
 
       private
+
+      # Every specification the mechanisms beside this one keep. One switched
+      # off is never read, and one that cannot be read is its own mechanism's
+      # to answer when that runs, so neither is covered here.
+      def beside(config, specifications)
+        found = []
+        @beside.each do |mechanism|
+          next unless config.verify?(mechanism.specification)
+
+          begin
+            found.concat(mechanism.declared(config, specifications))
+          rescue Sumitsubo::Error
+            next
+          end
+        end
+        found
+      end
 
       # Every statement a vocabulary sets off from the reason it carries: a
       # word a term turns down, and each line set aside under one. A section

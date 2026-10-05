@@ -110,6 +110,17 @@ exit=2
 .spec/glossary.md:17 declares a second title; sumi help glossary has the form
 1 difference
 exit=2
+--- a feature speaks the words of the subdomain its includes reach ---
+.spec/behavior/checkout.md:3 Component rejects Widget: Component is what the screens call it.
+1 difference
+exit=1
+--- a feature switched off is not held to the vocabulary ---
+0 differences
+exit=0
+--- features refused together are not held to the vocabulary ---
+C-001 is declared twice, at .spec/behavior/checkout.md:9 and .spec/behavior/refund.md:9
+0 differences
+exit=2
 --- no specification at all ---
 no specification at .spec; sumi init lays one down
 exit=2

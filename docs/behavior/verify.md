@@ -323,3 +323,28 @@ in the order they happened.
 | Then | each refusal answers at its own line |
 | Then | the difference is answered beside them |
 | Then | the run leaves the code a comparison could not be made |
+
+## `V-037` A feature speaks the words of the subdomain its includes reach
+
+| Step | Statement |
+| --- | --- |
+| Given | a glossary with one section for the screens and one for the services |
+| Given | a feature whose includes reach only the screens, using a word each section rejects |
+| When | `sumi verify` runs |
+| Then | only the word the screens reject is reported, at the feature's line |
+
+## `V-038` A feature switched off is not held to the vocabulary
+
+| Step | Statement |
+| --- | --- |
+| Given | the project of V-037 with Behavior switched off |
+| When | `sumi verify` runs |
+| Then | nothing is reported against the feature |
+
+## `V-039` Features refused together are not held to the vocabulary
+
+| Step | Statement |
+| --- | --- |
+| Given | two features reaching the screens, declaring one id and using a word the screens reject |
+| When | `sumi verify` runs |
+| Then | the id declared twice is answered once, and the word in neither feature |

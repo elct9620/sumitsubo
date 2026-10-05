@@ -19,8 +19,12 @@ module Sumitsubo
   # grammar or names a format, which is what leaves a snapshot of it one
   # `--regen` can write.
   module Mechanism
+    CONTRACT = Contract.new
+    BEHAVIOR = Behavior.new
+
     # The order a run reaches them in, which is the order init lays them down,
-    # and the order the README sets them out in.
-    ALL = [Glossary.new, Contract.new, Behavior.new]
+    # and the order the README sets them out in. A vocabulary also covers the
+    # specifications the others keep, so it is handed them.
+    ALL = [Glossary.new([CONTRACT, BEHAVIOR]), CONTRACT, BEHAVIOR]
   end
 end

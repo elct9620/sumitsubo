@@ -142,3 +142,11 @@ place.
 | Given | a term rejecting a word that its own name and another term's name each hold |
 | When | a file writing both names and the word on its own is checked |
 | Then | only the line writing the word on its own answers |
+
+## `G-019` A specification beside the vocabulary takes the sections its includes reach
+
+| Step | Statement |
+| --- | --- |
+| Given | two sections, and a specification whose includes reach a file only the first covers |
+| When | the effective vocabulary is worked out with that specification beside it |
+| Then | the specification's own file takes the first section's terms and not the second's |

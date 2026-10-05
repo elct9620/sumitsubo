@@ -216,6 +216,30 @@ Dir.chdir("test/fixtures/project/misshapen")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# The feature names a word from each subdomain and reaches only the screens,
+# so the one answering is what shows its includes chose the section.
+# @behavior V-037
+puts "--- a feature speaks the words of the subdomain its includes reach ---"
+Dir.chdir("test/fixtures/project/reached")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+# The same project with Behavior switched off: the feature is never read, so
+# the word it uses answers nowhere.
+# @behavior V-038
+puts "--- a feature switched off is not held to the vocabulary ---"
+Dir.chdir("test/fixtures/project/reached-off")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+# Two features declaring one id are refused as a set, and the refusal is
+# Behavior's to answer: it answers once, and neither is held to a word.
+# @behavior V-039
+puts "--- features refused together are not held to the vocabulary ---"
+Dir.chdir("test/fixtures/project/reached-twice")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 root = Pathname.new("/tmp/sumi_verify_test_#{Process.pid}")
 root.rmtree if root.exist?
 root.mkpath

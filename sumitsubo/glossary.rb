@@ -75,14 +75,45 @@ module Sumitsubo
     # included, since a term meaning something else here rejects different
     # words. Order is all that decides which way the laying goes, which is why
     # the sections share one specification: the order is written in it.
-    def self.scope(spec, base, exclusion)
+    #
+    # A specification beside the vocabulary is covered wherever a file its own
+    # includes reach is, so it speaks the words of the subdomain it answers for
+    # without the vocabulary listing it.
+    def self.scope(spec, base, exclusion, beside)
+      reached = reaches(beside, base, exclusion)
       effective = {}
       spec.statements.each do |section|
-        paths_for(section, base, exclusion).each do |path|
+        covering(section, reached, base, exclusion).each do |path|
           effective[path] = laid_over(effective[path], section.statements)
         end
       end
       effective
+    end
+
+    # What one section covers: the files its globs match, and each
+    # specification beside it reaching any of them.
+    def self.covering(section, reached, base, exclusion)
+      found = paths_for(section, base, exclusion)
+      matched = {}
+      found.each { |path| matched[path] = true }
+      reached.keys.each do |file|
+        found.push(file) if reached[file].any? { |path| matched[path] }
+      end
+      found.uniq.sort
+    end
+
+    # The files each specification beside the vocabulary reaches, held under
+    # that specification's own path, both relative to the base the way a
+    # section's are.
+    def self.reaches(beside, base, exclusion)
+      found = {}
+      root = Pathname.new(base).expand_path
+      beside.each do |spec|
+        globs = spec.includes.map { |one| one.key }
+        at = "#{Pathname.new(spec.path).expand_path.relative_path_from(root)}"
+        found[at] = Source::Scope.of(base, globs, exclusion)
+      end
+      found
     end
 
     # One section's terms laid over what a path already had, a later term of

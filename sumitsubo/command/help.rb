@@ -120,10 +120,13 @@ module Sumitsubo
             Japanese, Korean - a rejected word is found beside punctuation
             and nowhere else.
 
-            A term covering the file whose name holds a rejected word is a
-            use of that term: with `Component` rejected, `UI Component` is
-            not counted. That is how a file two subdomains share is made to
-            say which one it means.
+            A rejected word inside a longer term covering the file is not
+            counted, so `UI Component` passes where `Component` is rejected.
+            That is how a file two subdomains share says which it means.
+
+            A contract or a feature: under each section covering a file its
+            includes reach, so the vocabulary need not list it. One switched
+            off or refused is passed over.
 
             The glossary itself, where its own includes cover it: a word has
             to be spelled to be declared rejected, so the line a term or one
