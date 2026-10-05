@@ -199,8 +199,8 @@ puts "--- one name twice with no marker ---"
 fails { loaded("#{FIXTURE}/twice") }
 
 
-# `Store.open` is registered as internal and answers here all the same: what
-# internal keeps it out of is the document, not the comparison.
+# `Store.open` is registered as internal and answers here all the same:
+# internal says who an interface is kept for, not whether it is compared.
 # @behavior T-016 T-018
 puts "--- an interface the syntax tree does not define ---"
 undefined(
