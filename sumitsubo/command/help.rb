@@ -309,12 +309,12 @@ module Sumitsubo
             `unverifiable` and `deprecated` take the reason they are said, and
             one left empty is refused.
 
-            `unverifiable` says the source has the contract where no reading
-            sees it, such as one of the constructs listed under What the
-            reading cannot see. It is compared with nothing until the source
-            claims or defines it, which answers as stale. A contract not
-            written yet is not unverifiable: it answers as unclaimed or
-            undefined.
+            `unverifiable` says the source has the contract where nothing
+            checking it reaches, and its reason says why. A construct listed
+            under What the reading cannot see is one such reason. It is
+            compared with nothing until the source claims or defines it, which
+            answers as stale. A contract not written yet is not unverifiable:
+            it answers as unclaimed or undefined.
 
             `deprecated` says what replaces the contract, and it is verified
             like any other.
@@ -438,9 +438,8 @@ module Sumitsubo
             read only where it is written on the definition itself, so a bare
             `private` above a method says nothing about it.
 
-            A contract one of these defines is written as `unverifiable`, with
-            the construct as its reason. Once a reading sees it, it answers as
-            stale.
+            A contract one of these defines can be written as `unverifiable`,
+            naming the construct as its reason.
       TEXT
 
       # @command help behavior
