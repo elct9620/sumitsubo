@@ -310,10 +310,11 @@ module Sumitsubo
             one left empty is refused.
 
             `unverifiable` says the source has the contract where no reading
-            sees it, such as a method a macro defines. It is compared with
-            nothing until the source claims or defines it, which answers as
-            stale. A contract not written yet is not unverifiable: it answers
-            as unclaimed or undefined.
+            sees it, such as one of the constructs listed under What the
+            reading cannot see. It is compared with nothing until the source
+            claims or defines it, which answers as stale. A contract not
+            written yet is not unverifiable: it answers as unclaimed or
+            undefined.
 
             `deprecated` says what replaces the contract, and it is verified
             like any other.
@@ -437,9 +438,9 @@ module Sumitsubo
             read only where it is written on the definition itself, so a bare
             `private` above a method says nothing about it.
 
-            A project leaning on these registers the contracts it can check and
-            leaves the rest unregistered: an interface nobody registered is not
-            a difference.
+            A contract one of these defines is written as `unverifiable`, with
+            the construct as its reason. Once a reading sees it, it answers as
+            stale.
       TEXT
 
       # @command help behavior
