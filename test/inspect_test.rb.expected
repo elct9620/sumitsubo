@@ -12,5 +12,20 @@ exit=0
 nothing declares or claims X-999
 exit=0
 --- nothing to look at ---
-inspect takes the id of a scenario
+inspect takes the id of a scenario, or a path with an optional line
 exit=2
+--- a line inside a comment ---
+test/order_test.rb:2  claims 3
+  O-001  .spec/behavior/order.md:9  An order is placed
+  O-002  .spec/behavior/order.md:17  An order is numbered
+  O-005  .spec/behavior/order.md:42  An order is printed
+exit=0
+--- a whole file ---
+test/refund_test.rb:1  claims 1
+  R-001  .spec/behavior/refund.md:9  An order is refunded
+test/refund_test.rb:4  claims 1
+  R-002  .spec/behavior/refund.md:17  Part of an order is refunded
+exit=0
+--- a place claiming nothing ---
+nothing claimed at test/other_test.rb:1
+exit=0

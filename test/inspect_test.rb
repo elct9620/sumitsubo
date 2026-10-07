@@ -30,4 +30,18 @@ puts "exit=#{cli.run(["inspect", "X-999"])}"
 puts "--- nothing to look at ---"
 puts "exit=#{cli.run(["inspect"])}"
 
+# The comment begins a line before its first claim, and the line asked for
+# is neither of the claims, so only the comment's own span can answer it.
+# @behavior IN-005
+puts "--- a line inside a comment ---"
+puts "exit=#{cli.run(["inspect", "test/order_test.rb:1"])}"
+
+# @behavior IN-006
+puts "--- a whole file ---"
+puts "exit=#{cli.run(["inspect", "test/refund_test.rb"])}"
+
+# @behavior IN-007
+puts "--- a place claiming nothing ---"
+puts "exit=#{cli.run(["inspect", "test/other_test.rb:1"])}"
+
 Dir.chdir(back)

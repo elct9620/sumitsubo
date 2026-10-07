@@ -102,17 +102,25 @@ behavior                    statements  claims  most
 
 ## `inspect`
 
-Show where a scenario is declared and every place claiming it.
+Show where a scenario is declared and every place claiming it, or every
+scenario one place claims.
 
 A count from `stats` raises a question about one place; this answers it from
-the scenario's end, with how many others each claiming comment names beside it.
-What is missing is said rather than counted, so it never answers `1`.
+either end. A key naming a file, with or without a line, is a place, and any
+line of a comment answers for the whole comment. What is missing is said
+rather than counted, so it never answers `1`.
 
 ```console
 $ sumi inspect O-001
 O-001  An order is placed
   declared  .spec/behavior/order.md:9
   claimed   test/order_test.rb:2  with 2 others
+
+$ sumi inspect test/order_test.rb:2
+test/order_test.rb:2  claims 3
+  O-001  .spec/behavior/order.md:9  An order is placed
+  O-002  .spec/behavior/order.md:17  An order is numbered
+  O-005  .spec/behavior/order.md:42  An order is printed
 ```
 
 ## `help`

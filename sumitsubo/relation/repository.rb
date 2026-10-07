@@ -10,8 +10,12 @@ module Sumitsubo
         @all = []
       end
 
+      # Answers the relation rather than the list: Spinel master at e527d205d
+      # gives the list two array types in a whole program and refuses it, where
+      # the 2026.09.12 release accepts either.
       def add(relation)
         @all.push(relation)
+        relation
       end
 
       # The files a specification reaches, in the order it reached them.

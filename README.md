@@ -138,13 +138,19 @@ behavior                    statements  claims  most
     test/other_test.rb
 ```
 
-`sumi inspect` answers from the other end, for one scenario:
+`sumi inspect` answers from either end — one scenario, or one place:
 
 ```console
 $ sumi inspect O-001
 O-001  An order is placed
   declared  .spec/behavior/order.md:9
   claimed   test/order_test.rb:2  with 2 others
+
+$ sumi inspect test/order_test.rb:2
+test/order_test.rb:2  claims 3
+  O-001  .spec/behavior/order.md:9  An order is placed
+  O-002  .spec/behavior/order.md:17  An order is numbered
+  O-005  .spec/behavior/order.md:42  An order is printed
 ```
 
 ## Where the rest is

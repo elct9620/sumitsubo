@@ -1,8 +1,8 @@
 # Inspect
 
-Everything a run relates to one scenario, asked for by its id. A count from
-`sumi stats` raises a question about a place; this answers it from the
-scenario's end.
+Everything a run relates to one scenario, or to one place in source. A count
+from `sumi stats` raises a question about a place; this answers it from either
+end. A key naming a file, with or without a line, is a place.
 
 Nothing is compared, so what is missing is said rather than counted as a
 difference.
@@ -39,6 +39,30 @@ difference.
 
 | Step | Statement |
 | --- | --- |
-| Given | no id |
+| Given | no id and no path |
 | When | `sumi inspect` runs |
 | Then | it says what it takes, and the run answers 2 |
+
+## `IN-005` A line inside a comment
+
+| Step | Statement |
+| --- | --- |
+| Given | a comment whose first line names no scenario and whose next two do |
+| When | `sumi inspect` is given any of its lines |
+| Then | it answers every scenario the comment claims, with where each is declared |
+
+## `IN-006` A whole file
+
+| Step | Statement |
+| --- | --- |
+| Given | a file with two comments claiming scenarios |
+| When | `sumi inspect` is given its path alone |
+| Then | it answers each comment in turn |
+
+## `IN-007` A place claiming nothing
+
+| Step | Statement |
+| --- | --- |
+| Given | a file with no claim in it |
+| When | `sumi inspect` is given a line of it |
+| Then | it says nothing is claimed there, and the run answers 0 |
