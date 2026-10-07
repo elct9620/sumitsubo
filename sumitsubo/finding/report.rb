@@ -14,10 +14,17 @@ module Sumitsubo
       # linter names its rule, so a reader knows which mechanism answered and
       # which .sumi.json switch it answers to.
       def lines
-        said = @repository.found.map { |one| "#{one.place.spoken}: #{one.check}: #{one.message}" }
-        said.concat(@repository.unread)
-        said.push(counted)
-        said
+        found = said
+        found.push(counted)
+        found
+      end
+
+      # Every finding and what could not be read, without the count: a run that
+      # compares nothing has no differences to count.
+      def said
+        found = @repository.found.map { |one| "#{one.place.spoken}: #{one.check}: #{one.message}" }
+        found.concat(@repository.unread)
+        found
       end
 
       private

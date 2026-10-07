@@ -82,6 +82,24 @@ app/order.rb:2: glossary/rejected: Order rejects Purchase: Order is what the dom
 2 differences
 ```
 
+## `stats`
+
+Count how each behavior specification is witnessed, for a person to read.
+
+A place is a comment, so one naming many scenarios counts once, and the most
+any one place claims is shown with where it begins. Nothing is compared, so it
+never answers `1`; a specification it cannot read answers `2`.
+
+```console
+$ sumi stats
+behavior                    statements  claims  most
+  .spec/behavior/order.md            5       2     3  test/order_test.rb:2
+  .spec/behavior/refund.md           3       2     1  test/refund_test.rb:1
+  2 specifications, 8 statements, 1 unclaimed, 1 unverifiable, 1 deprecated
+  reached, nothing claimed
+    test/other_test.rb
+```
+
 ## `help`
 
 Explain how to write a specification, without a document beside the executable.

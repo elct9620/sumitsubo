@@ -16,6 +16,7 @@ module Sumitsubo
             init             Lay down an empty specification to start from
             fmt [--check]    Write the specification the way a reference line is
             verify           Check the source against the specification
+            stats            Count how each specification is witnessed
             help <topic>     Explain how to write a specification
 
         Topics:

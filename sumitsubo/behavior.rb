@@ -33,7 +33,7 @@ module Sumitsubo
 
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.
-    class Claim < Data.define(:path, :line, :id, :in_front_of_code)
+    class Claim < Data.define(:path, :line, :comment_line, :id, :in_front_of_code)
       def key
         id
       end
@@ -135,8 +135,8 @@ module Sumitsubo
       found = []
       relations.claims_of(mechanism).each do |one|
         found.push(Claim.new(
-          path: one.subject.path, line: one.subject.line, id: one.object.key,
-          in_front_of_code: one.subject.in_front_of_code
+          path: one.subject.path, line: one.subject.line, comment_line: one.subject.comment_line,
+          id: one.object.key, in_front_of_code: one.subject.in_front_of_code
         ))
       end
       found

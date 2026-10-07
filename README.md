@@ -123,6 +123,21 @@ absent, unreadable, or ambiguous. Findings answer as `path:line: check:
 message`, relative to where the run started. A check's first half names its
 mechanism in `.sumi.json`.
 
+### Witness Counts
+
+`sumi stats` counts how each behavior specification is witnessed, so a test
+standing for many scenarios is seen before it breaks:
+
+```console
+$ sumi stats
+behavior                    statements  claims  most
+  .spec/behavior/order.md            5       2     3  test/order_test.rb:2
+  .spec/behavior/refund.md           3       2     1  test/refund_test.rb:1
+  2 specifications, 8 statements, 1 unclaimed, 1 unverifiable, 1 deprecated
+  reached, nothing claimed
+    test/other_test.rb
+```
+
 ## Where the rest is
 
 The forms live in the executable, so a project has them wherever `sumi` is
