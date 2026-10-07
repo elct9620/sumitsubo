@@ -1,11 +1,7 @@
 require "pathname"
 require "sumitsubo/place"
-require "sumitsubo/finding"
-require "sumitsubo/finding/repository"
 require "sumitsubo/finding/report"
-require "sumitsubo/mechanism"
-require "sumitsubo/specification/repository"
-require "sumitsubo/source/repository"
+require "sumitsubo/command/run"
 
 module Sumitsubo
   module Command
@@ -25,42 +21,19 @@ module Sumitsubo
       CHECK = "--check"
 
       def run(config, languages, parsers, checking)
-        # With no root there is no reference line to check the shape of, which
-        # is not a document written the wrong way either.
-        unless config.root.directory?
-          puts "no specification at #{Place.file(config.root)}; sumi init lays one down"
-          return 2
-        end
+        current = Run.new(config, languages, parsers)
+        return 2 if current.rootless?
 
-        findings = Finding::Repository.new
-        specifications = Specification::Repository.new(parsers, Source::Repository.new(languages))
-        Mechanism::ALL.each { |mechanism| asked(mechanism, config, findings, specifications, checking) }
-        # A document read beside others never reached the mechanism that asked
-        # for it, so its refusal is answered here rather than there.
-        specifications.unread.each { |one| findings.add(one) }
-        Finding::Report.new(findings).lines.each { |line| puts line }
-        findings.code
+        current.each_mechanism do |mechanism|
+          mechanism.declared(config, current.specifications).each do |document|
+            written(mechanism, document, current.findings, checking)
+          end
+        end
+        Finding::Report.new(current.findings).lines.each { |line| puts line }
+        current.findings.code
       end
 
       private
-
-      # What one mechanism says about its own specification. One that cannot be
-      # read leaves the others still able to answer, the way a linter reports
-      # every file it managed to parse.
-      def asked(mechanism, config, findings, specifications, checking)
-        # A specification the configuration switched off is one the project
-        # does not keep, and a reference line nobody keeps is not one to hold
-        # to a form.
-        return unless config.verify?(mechanism.specification)
-
-        mechanism.declared(config, specifications).each do |document|
-          written(mechanism, document, findings, checking)
-        end
-      rescue Sumitsubo::Misshapen => e
-        e.refusals.each { |one| findings.add(mechanism.refused(one)) }
-      rescue Sumitsubo::Error => e
-        findings.unreadable(e.message)
-      end
 
       # What one document writes otherwise than a reference line is written,
       # answered as findings where the run is only to say so, and put in the

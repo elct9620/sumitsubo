@@ -1,10 +1,5 @@
-require "sumitsubo/place"
-require "sumitsubo/finding/repository"
 require "sumitsubo/finding/report"
-require "sumitsubo/mechanism"
-require "sumitsubo/specification/repository"
-require "sumitsubo/source/repository"
-require "sumitsubo/relation/repository"
+require "sumitsubo/command/run"
 
 module Sumitsubo
   module Command
@@ -16,39 +11,15 @@ module Sumitsubo
     # @command verify
     class Verify
       def run(config, languages, parsers)
-        # With no root there is no reference line at all to verify from, which
-        # is not a difference between the two sides either.
-        unless config.root.directory?
-          puts "no specification at #{Place.file(config.root)}; sumi init lays one down"
-          return 2
-        end
+        current = Run.new(config, languages, parsers)
+        return 2 if current.rootless?
 
-        findings = Finding::Repository.new
-        source = Source::Repository.new(languages)
-        specifications = Specification::Repository.new(parsers, source)
-        relations = Relation::Repository.new
-        Mechanism::ALL.each do |mechanism|
-          # A specification the configuration switched off is never read, so the
-          # code it covers answers nothing rather than answering clean.
-          next unless config.verify?(mechanism.specification)
-
-          # One mechanism that cannot be read leaves the others still able to
-          # answer, the way a linter reports every file it managed to parse.
-          # What it compares is its own, so what it could not compare is too.
-          begin
-            mechanism.relate(config, specifications, source, relations)
-            mechanism.verify(config, findings, specifications, source, relations)
-          rescue Sumitsubo::Misshapen => e
-            e.refusals.each { |one| findings.add(mechanism.refused(one)) }
-          rescue Sumitsubo::Error => e
-            findings.unreadable(e.message)
-          end
+        current.each_mechanism do |mechanism|
+          mechanism.relate(config, current.specifications, current.source, current.relations)
+          mechanism.verify(config, current.findings, current.specifications, current.source, current.relations)
         end
-        # A document read beside others never reached the mechanism that asked
-        # for it, so its refusal is answered here rather than there.
-        specifications.unread.each { |one| findings.add(one) }
-        Finding::Report.new(findings).lines.each { |line| puts line }
-        findings.code
+        Finding::Report.new(current.findings).lines.each { |line| puts line }
+        current.findings.code
       end
     end
   end
