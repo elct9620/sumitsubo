@@ -77,7 +77,12 @@ module Sumitsubo
         found
       end
 
-      def verify(config, findings, specifications, source)
+      # Nothing this mechanism compares is kept yet: its checks still read the
+      # source themselves, so a run asking what it relates hears nothing.
+      def relate(config, specifications, source, relations)
+      end
+
+      def verify(config, findings, specifications, source, relations)
         path = Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root))
         vocabulary = declared(config, specifications)[0]
         @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)

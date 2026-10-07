@@ -4,6 +4,7 @@ require "sumitsubo/finding/report"
 require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/source/repository"
+require "sumitsubo/relation/repository"
 
 module Sumitsubo
   module Command
@@ -25,6 +26,7 @@ module Sumitsubo
         findings = Finding::Repository.new
         source = Source::Repository.new(languages)
         specifications = Specification::Repository.new(parsers, source)
+        relations = Relation::Repository.new
         Mechanism::ALL.each do |mechanism|
           # A specification the configuration switched off is never read, so the
           # code it covers answers nothing rather than answering clean.
@@ -34,7 +36,8 @@ module Sumitsubo
           # answer, the way a linter reports every file it managed to parse.
           # What it compares is its own, so what it could not compare is too.
           begin
-            mechanism.verify(config, findings, specifications, source)
+            mechanism.relate(config, specifications, source, relations)
+            mechanism.verify(config, findings, specifications, source, relations)
           rescue Sumitsubo::Misshapen => e
             e.refusals.each { |one| findings.add(mechanism.refused(one)) }
           rescue Sumitsubo::Error => e

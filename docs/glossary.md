@@ -205,3 +205,24 @@ the files it reaches, in place of an earlier section's wherever both name the
 same term; a feature's scenarios are witnessed only there, and a definition's
 contracts implemented only there. One file may sit under two, and answers for
 both.
+
+### Relation
+
+What a run found to correspond, with a kind and two ends. A claim runs from
+an anchor to a reference, a reach from one artifact to another. It is kept
+once, so every question asked after the run reads the same answer.
+
+### Reference
+
+A statement as a relation names it: the mechanism keeping it, and its key. It
+names the statement whether or not one was declared, which is how a claim
+naming nothing is still kept.
+
+### Anchor
+
+A place in source a relation runs from: the line, and the line its comment
+began on. Claims sharing that comment were written in one place.
+
+### Artifact
+
+A file as one end of a relation, taken whole rather than at a line.

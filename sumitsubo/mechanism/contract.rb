@@ -150,9 +150,14 @@ module Sumitsubo
         definitions
       end
 
+      # Nothing this mechanism compares is kept yet: its checks still read the
+      # source themselves, so a run asking what it relates hears nothing.
+      def relate(config, specifications, source, relations)
+      end
+
       # An include covers no file whichever reading the definition writing it
       # chose, so it is asked once for all of them.
-      def verify(config, findings, specifications, source)
+      def verify(config, findings, specifications, source, relations)
         definitions = declared(config, specifications)
         @barren.run(Sumitsubo::Contract.covers(definitions), config.base, config.exclusion)
                .each { |one| findings.add(one) }

@@ -74,12 +74,20 @@ module Sumitsubo
         features
       end
 
-      def verify(config, findings, specifications, source)
+      # What the source says about each scenario, kept for whoever asks after:
+      # the files every feature reaches, and every claim the marker leaves there.
+      def relate(config, specifications, source, relations)
+        features = declared(config, specifications)
+        reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
+        Sumitsubo::Behavior.relate(reach, source, relations, specification)
+      end
+
+      def verify(config, findings, specifications, source, relations)
         features = declared(config, specifications)
         @barren.run(Sumitsubo::Behavior.covers(features), config.base, config.exclusion)
                .each { |one| findings.add(one) }
-        reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
-        claims = Sumitsubo::Behavior.claimed_in(reach, source)
+        reach = Sumitsubo::Behavior.reach_in(features, relations)
+        claims = Sumitsubo::Behavior.claimed_in(relations, specification)
         stated = Sumitsubo::Behavior.stated_in(features)
         declaring = Sumitsubo::Behavior.declaring_in(features)
         # A claim standing in front of nothing is answered once, by itself: it

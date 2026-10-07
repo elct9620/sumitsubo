@@ -5,6 +5,7 @@ require "sumitsubo/finding"
 require "sumitsubo/check"
 require "sumitsubo/source/scope"
 require "sumitsubo/source/repository"
+require "sumitsubo/relation"
 
 module Sumitsubo
   # The structured specification the Behavior mechanism verifies against. What
@@ -96,17 +97,47 @@ module Sumitsubo
       text.split(" ")
     end
 
-    # Every claim the marker leaves in the files in reach. Marker finds the
-    # word and hands back the rest of the line; splitting that into ids is this
-    # mechanism's, which is what lets Contract read the same line as one name.
-    def self.claimed_in(reach, source)
+    # What each feature reaches and every claim the marker leaves there, kept as
+    # relations under the mechanism's name. Marker finds the word and hands back
+    # the rest of the line; splitting that into ids is this mechanism's, which is
+    # what lets Contract read the same line as one name.
+    def self.relate(reach, source, relations, mechanism)
+      reach.keys.each do |spec|
+        reach[spec].keys.each { |file| relations.add(Relation.reach(spec, file)) }
+      end
+      source.claims(scope(reach), [MARKER]).each { |claim| related(claim, relations, mechanism) }
+    end
+
+    # One claim as the relations it makes, one for each id it names. Every one
+    # runs from the same anchor, since they were written in the same place.
+    def self.related(claim, relations, mechanism)
+      anchor = Relation::Anchor.new(
+        path: claim.path, line: claim.line, comment_line: claim.comment_line, in_front_of_code: claim.in_front_of_code
+      )
+      named_in(claim).each do |id|
+        relations.add(Relation.claim(anchor, Relation::Reference.new(mechanism: mechanism, key: id)))
+      end
+    end
+
+    # The files each feature reaches, read back from what the run kept.
+    def self.reach_in(features, relations)
+      found = {}
+      features.each do |feature|
+        files = {}
+        relations.reached_from(feature.path).each { |file| files[file] = true }
+        found[feature.path] = files
+      end
+      found
+    end
+
+    # The claims the run kept for this mechanism, read back as it compares them.
+    def self.claimed_in(relations, mechanism)
       found = []
-      source.claims(scope(reach), [MARKER]).each do |claim|
-        named_in(claim).each do |id|
-          found.push(Claim.new(
-            path: claim.path, line: claim.line, id: id, in_front_of_code: claim.in_front_of_code
-          ))
-        end
+      relations.claims_of(mechanism).each do |one|
+        found.push(Claim.new(
+          path: one.subject.path, line: one.subject.line, id: one.object.key,
+          in_front_of_code: one.subject.in_front_of_code
+        ))
       end
       found
     end
