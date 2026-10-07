@@ -1,9 +1,10 @@
 # Architecture
 
-A specification is read into one place, source into another, and what the
-comparison says into a third. A run takes as much of that as it needs: `verify`
-takes all three, and `fmt` the first and the last, which is what lets a
-reference line be got right before any code is held to it.
+A specification is read into one place, source into another, what the two
+correspond on into a third, and what the comparison says into a fourth. A run
+takes as much of that as it needs: `verify` takes all four, `stats` and
+`inspect` the first three, and `fmt` the first and the last, which is what lets
+a reference line be got right before any code is held to it.
 
 Writing a specification back is the one thing a run does that is none of the
 three. It is the shell's, the way laying a seed down is: `init` and `fmt` reach
@@ -11,9 +12,9 @@ the filesystem where every stage below reads from it, and neither reaches
 through a port, because there is one implementation of a file and nothing to
 choose between.
 
-Revisit this when a fifth thing appears — anything a run does that is not
-reading a specification, scanning source, answering, or writing a
-specification back — or when a mechanism needs a source none of the three
+Revisit this when a sixth thing appears — anything a run does that is not
+reading a specification, scanning source, relating the two, answering, or
+writing a specification back — or when a mechanism needs a source none of the three
 below can be read as.
 
 ## Layers
@@ -43,6 +44,11 @@ edge and handed in.
 └──────────┘  └────────────────┘  │ ║  Repository    ║ │  │  Place       │
                                   │ ╚═══════╤════════╝ │  │              │
                                   │ Mechanism×3        │  │              │
+                                  │   └► relate        │  │              │
+                                  │ ╔═══════▼════════╗ │  │              │
+                                  │ ║   Relation     ║─┼─►│  Relation    │
+                                  │ ║  Repository    ║ │  │              │
+                                  │ ╚═══════╤════════╝ │  │              │
 ┌──────────┐  ┌────────────────┐  │   └► the checks    │  │              │
 │  stdout  │◄─┤ Report         │◄─┤         │          │  │              │
 └──────────┘  ├────────────────┤  │ ╔═══════▼════════╗ │  │              │
@@ -63,9 +69,13 @@ Nothing inner reaches it, so the direction the layers are named for holds.
 ## One run
 
 Each stage keeps what it read in one place, so no stage has to know what the
-next one will ask of it. Below is `verify`, which takes all three. `fmt` takes
+next one will ask of it. Below is `verify`, which takes all of it. `stats` and
+`inspect` stop once the relations are kept and answer from them. `fmt` takes
 (1) and (3), and puts what it can write for a person back into the document it
 read on the way.
+
+Behavior's checks read the relations back; Contract's and Glossary's still
+read the source themselves, so they keep nothing yet for anyone to ask.
 
 ```
  (1) read the specification
@@ -90,6 +100,12 @@ read on the way.
                          │  ├ Region       comment │
                          │  ├ Claim        marker  │
                          │  └ Declaration  syntax  │
+                         └───────────┬─────────────┘
+                                     │ each mechanism relates
+                         ┌───────────▼─────────────┐
+                         │   Relation Repository   │  what corresponds,
+                         │  ├ reach    spec → file │  kept for whoever asks
+                         │  └ claim   place → key  │──► stats, inspect
                          └───────────┬─────────────┘
                                      │
                      specification × source ─► a check ─► Finding
@@ -275,7 +291,7 @@ Every file has one place, and where it sits is what says what it is.
 ├─ sumitsubo/
 │  ├─ the words            entities; they reach nothing outward
 │  │  specification.rb  source.rb  finding.rb  check.rb
-│  │  error.rb          version.rb
+│  │  relation.rb       error.rb   version.rb
 │  │  place.rb            the one place a path a reader is handed is made:
 │  │                      a place in a file, or the file alone
 │  │
@@ -298,6 +314,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │  source/language/nodes.rb                     captures → what no language owns
 │  │  source/marker.rb                             answers Source::Claim
 │  │  source/scope.rb  source/patterns.rb          reach
+│  │  relation/repository.rb                       what corresponds, kept
 │  │
 │  ├─ what a specification means to its own mechanism
 │  │  glossary.rb  contract.rb  behavior.rb
@@ -313,7 +330,8 @@ Every file has one place, and where it sits is what says what it is.
 │  │  finding/report.rb                            adapter, to stdout
 │  │
 │  ├─ the shell
-│  │  cli.rb  command/{fmt,help,init,verify}.rb
+│  │  cli.rb  command/run.rb                       what every command walks
+│  │  command/{init,fmt,verify,stats,inspect,help}.rb
 │  │
 │  └─ grammar.rb                                   the one driver, both sides
 │
