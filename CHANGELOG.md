@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.0-preview12](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview11...v0.1.0-preview12) (2026-10-07)
+
+
+### Features
+
+* **inspect:** answer what one place in source claims ([85dfd1c](https://github.com/elct9620/sumitsubo/commit/85dfd1cb8a0f3f61a51089ca481f92ab95c2b85d))
+* **inspect:** show where a scenario is declared and every place claiming it ([b3300ef](https://github.com/elct9620/sumitsubo/commit/b3300ef563e6b72acd1032df816ec2a4583d87e4))
+* **marker:** say which comment each claim sits in ([e2ae2d6](https://github.com/elct9620/sumitsubo/commit/e2ae2d65d4823d460346fba5a66bdeb07c021a98))
+* **stats:** count how each behavior specification is witnessed ([cf9260e](https://github.com/elct9620/sumitsubo/commit/cf9260efd9b4b764b1be04143f82c83bc8132ef5))
+
 ## [0.1.0-preview11](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview10...v0.1.0-preview11) (2026-10-05)
 
 
