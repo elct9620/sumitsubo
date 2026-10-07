@@ -98,9 +98,9 @@ module Sumitsubo
     # unread. What counts as a name in that rest belongs to whichever mechanism
     # named the word, so nothing here reads it.
     #
-    # `in_front_of_code` travels with it rather than being read off again: only
-    # the reading knows, and a claim in front of nothing is still a claim
-    # somebody wrote.
-    Claim = Data.define(:path, :line, :keyword, :text, :in_front_of_code)
+    # `comment_line` and `in_front_of_code` travel with it rather than being
+    # read off again: only the reading knows which comment a claim sits in and
+    # what that comment stands in front of.
+    Claim = Data.define(:path, :line, :comment_line, :keyword, :text, :in_front_of_code)
   end
 end

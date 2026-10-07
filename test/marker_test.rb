@@ -112,3 +112,15 @@ claims("src/routes.rb", ["@command", "@route"], [
   region(2, "# @command verify", Sumitsubo::Source::Region::CODE),
   region(4, "# @command init @route GET /users", Sumitsubo::Source::Region::NOTHING)
 ]).each { |line| puts line }
+
+# A language may hand a comment over a line at a time; what a person wrote as
+# one is the run those lines make, so that is what the claims name.
+# @behavior M-013
+puts "--- claims in one comment name the line it began on ---"
+Sumitsubo::Source::Marker.claims_in("src/ruby.rb", BEHAVIOR, Offered.new([
+  region(2, "# What the sample declares.", Sumitsubo::Source::Region::COMMENT),
+  region(3, "# @behavior RB-005 RB-006", Sumitsubo::Source::Region::COMMENT),
+  region(4, "# @behavior RB-007", Sumitsubo::Source::Region::CODE),
+  region(9, "# @behavior RB-008", Sumitsubo::Source::Region::CODE)
+])).each { |claim| puts "#{claim.path}:#{claim.line} in the comment from #{claim.comment_line}" }
+

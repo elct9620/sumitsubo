@@ -23,3 +23,7 @@ src/order.rb:7 @behavior [G-010] in front of nothing
 src/routes.rb:2 @command [verify]
 src/routes.rb:4 @command [init @route GET /users] in front of nothing
 src/routes.rb:4 @route [GET /users] in front of nothing
+--- claims in one comment name the line it began on ---
+src/ruby.rb:3 in the comment from 2
+src/ruby.rb:4 in the comment from 2
+src/ruby.rb:9 in the comment from 9

@@ -33,11 +33,28 @@ module Sumitsubo
         where = Place.file(path)
         comments = languages.comments_in(path, where)
         in_front_at = in_front_of_code(comments)
+        begun_at = begins(comments)
         claims = []
         comments.each do |comment|
-          claimed_in(comment, keywords, where, in_front_at[comment.line]).each { |one| claims.push(one) }
+          claimed_in(comment, keywords, where, begun_at[comment.line], in_front_at[comment.line])
+            .each { |one| claims.push(one) }
         end
         claims
+      end
+
+      # Answered under the line each comment starts on: the line its run
+      # began, which is the comment a person wrote however many a language
+      # split it into. Claims sharing that line were written as one.
+      def self.begins(comments)
+        found = {}
+        begun = 0
+        joined = false
+        comments.each do |comment|
+          begun = comment.line unless joined
+          found[comment.line] = begun
+          joined = comment.followed_by == Source::Region::COMMENT
+        end
+        found
       end
 
       # Answered under the line each comment starts on. It stands in front of
@@ -61,12 +78,14 @@ module Sumitsubo
       # The claims one comment carries. It spans lines whole, so a claim answers
       # at the line its keyword is on rather than where the comment began, while
       # what the comment stands in front of is the same for every line of it.
-      def self.claimed_in(comment, keywords, where, in_front_of_code)
+      def self.claimed_in(comment, keywords, where, comment_line, in_front_of_code)
         found = []
         comment.lines.each do |one|
           keywords.each do |keyword|
             claimed = text_after(one.text, keyword)
-            found.push(Source::Claim.new(where, one.line, keyword, claimed, in_front_of_code)) unless claimed.nil?
+            next if claimed.nil?
+
+            found.push(Source::Claim.new(where, one.line, comment_line, keyword, claimed, in_front_of_code))
           end
         end
         found

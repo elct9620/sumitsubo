@@ -82,3 +82,11 @@ front of it, which is what keeps an address out of the claims.
 | Given | a run of comments standing in front of code, and a run standing in front of nothing |
 | When | the file is scanned for claims |
 | Then | every claim in the first run answers as standing in front of code and every claim in the second as standing in front of nothing |
+
+## `M-013` Claims in one comment are one claim
+
+| Step | Statement |
+| --- | --- |
+| Given | claims on two lines of one comment a language splits by line |
+| When | the file is scanned for claims |
+| Then | each answers at its own line and names the line the comment began on |
