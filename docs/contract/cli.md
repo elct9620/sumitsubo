@@ -100,6 +100,21 @@ behavior                    statements  claims  most
     test/other_test.rb
 ```
 
+## `inspect`
+
+Show where a scenario is declared and every place claiming it.
+
+A count from `stats` raises a question about one place; this answers it from
+the scenario's end, with how many others each claiming comment names beside it.
+What is missing is said rather than counted, so it never answers `1`.
+
+```console
+$ sumi inspect O-001
+O-001  An order is placed
+  declared  .spec/behavior/order.md:9
+  claimed   test/order_test.rb:2  with 2 others
+```
+
 ## `help`
 
 Explain how to write a specification, without a document beside the executable.

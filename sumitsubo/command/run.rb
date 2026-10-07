@@ -1,6 +1,7 @@
 require "sumitsubo/place"
 require "sumitsubo/error"
 require "sumitsubo/finding/repository"
+require "sumitsubo/finding/report"
 require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/source/repository"
@@ -65,6 +66,21 @@ module Sumitsubo
         # A document read beside others never reached the mechanism that asked
         # for it, so its refusal is answered here rather than there.
         @specifications.unread.each { |one| @findings.add(one) }
+      end
+
+      # Every relation the switched-on mechanisms keep, for a command that asks
+      # of them rather than comparing.
+      def relate
+        each_mechanism { |mechanism| mechanism.relate(@config, @specifications, @source, @relations) }
+      end
+
+      # What could not be read, said where there is any. A command that only
+      # counts or looks has nothing else to say about it.
+      def unread?
+        return false if @findings.code == 0
+
+        Finding::Report.new(@findings).said.each { |line| puts line }
+        true
       end
     end
   end

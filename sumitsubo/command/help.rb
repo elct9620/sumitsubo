@@ -17,6 +17,7 @@ module Sumitsubo
             fmt [--check]    Write the specification the way a reference line is
             verify           Check the source against the specification
             stats            Count how each specification is witnessed
+            inspect <id>     Show where a scenario is declared and claimed
             help <topic>     Explain how to write a specification
 
         Topics:

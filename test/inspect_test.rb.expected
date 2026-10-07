@@ -1,0 +1,16 @@
+--- a scenario claimed from a busy place ---
+O-001  An order is placed
+  declared  .spec/behavior/order.md:9
+  claimed   test/order_test.rb:2  with 2 others
+exit=0
+--- a scenario nothing claims ---
+R-003  A refund is refused
+  declared  .spec/behavior/refund.md:25
+  claimed nowhere
+exit=0
+--- an id nothing knows ---
+nothing declares or claims X-999
+exit=0
+--- nothing to look at ---
+inspect takes the id of a scenario
+exit=2

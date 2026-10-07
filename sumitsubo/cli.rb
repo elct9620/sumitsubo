@@ -8,12 +8,14 @@ require "sumitsubo/command/help"
 require "sumitsubo/command/init"
 require "sumitsubo/command/verify"
 require "sumitsubo/command/stats"
+require "sumitsubo/command/inspect"
 
 module Sumitsubo
   class CLI
     # How many words each command takes after its own name: `help` takes a
-    # topic, and the rest take nothing at all.
-    TAKES = { "init" => 0, "verify" => 0, "stats" => 0, "fmt" => 1, "help" => 1 }
+    # topic, `inspect` what to look at, `fmt` its one flag, and the rest take
+    # nothing at all.
+    TAKES = { "init" => 0, "verify" => 0, "stats" => 0, "inspect" => 1, "fmt" => 1, "help" => 1 }
 
     # The revision, the languages and the parsers are handed in rather than
     # read, because all three are what a build says of itself and `spin test`
@@ -34,6 +36,7 @@ module Sumitsubo
       when "init" then Command::Init.new.run(Config.load(switches))
       when "verify" then Command::Verify.new.run(Config.load(switches), @languages, @parsers)
       when "stats" then Command::Stats.new.run(Config.load(switches), @languages, @parsers)
+      when "inspect" then Command::Inspect.new.run(Config.load(switches), @languages, @parsers, argv[1])
       when "fmt" then fmt(argv)
       when "help" then Command::Help.new.run(argv[1])
       else unknown?(argv.first) ? refuse(argv.first) : flags(argv)

@@ -47,7 +47,7 @@ said, since a count missing a specification is not one.
 
 | Step | Statement |
 | --- | --- |
-| Given | one id declared by two features |
+| Given | one id declared twice, or a scenario heading with no id |
 | When | `sumi stats` runs |
 | Then | that is said instead of a count, and the run answers 2 |
 

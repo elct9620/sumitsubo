@@ -1,5 +1,4 @@
 require "sumitsubo/place"
-require "sumitsubo/finding/report"
 require "sumitsubo/command/run"
 require "sumitsubo/behavior"
 require "sumitsubo/check"
@@ -23,17 +22,11 @@ module Sumitsubo
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
-        features = []
-        current.each_mechanism do |mechanism|
-          mechanism.relate(config, current.specifications, current.source, current.relations)
-          features.concat(mechanism.declared(config, current.specifications)) if mechanism == Mechanism::BEHAVIOR
-        end
-        unless current.findings.code == 0
-          Finding::Report.new(current.findings).said.each { |line| puts line }
-          return 2
-        end
+        current.relate
+        return 2 if current.unread?
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)
 
+        features = Mechanism::BEHAVIOR.declared(config, current.specifications)
         tallied(features, current.relations, Mechanism::BEHAVIOR.specification).each { |line| puts line }
         0
       end

@@ -123,7 +123,7 @@ absent, unreadable, or ambiguous. Findings answer as `path:line: check:
 message`, relative to where the run started. A check's first half names its
 mechanism in `.sumi.json`.
 
-### Witness Counts
+### Witnesses
 
 `sumi stats` counts how each behavior specification is witnessed, so a test
 standing for many scenarios is seen before it breaks:
@@ -136,6 +136,15 @@ behavior                    statements  claims  most
   2 specifications, 8 statements, 1 unclaimed, 1 unverifiable, 1 deprecated
   reached, nothing claimed
     test/other_test.rb
+```
+
+`sumi inspect` answers from the other end, for one scenario:
+
+```console
+$ sumi inspect O-001
+O-001  An order is placed
+  declared  .spec/behavior/order.md:9
+  claimed   test/order_test.rb:2  with 2 others
 ```
 
 ## Where the rest is

@@ -22,9 +22,14 @@ Dir.chdir("test/fixtures/project/stats")
 puts "exit=#{cli.run(["stats"])}"
 Dir.chdir(back)
 
+# One refusal is raised and the other kept beside a feature that reads, so
+# a count leaving the second out would otherwise pass for a whole one.
 # @behavior SA-005
 puts "--- a feature that cannot be read ---"
 Dir.chdir("test/fixtures/project/twice")
+puts "exit=#{cli.run(["stats"])}"
+Dir.chdir(back)
+Dir.chdir("test/fixtures/project/beside")
 puts "exit=#{cli.run(["stats"])}"
 Dir.chdir(back)
 
