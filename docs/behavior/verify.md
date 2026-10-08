@@ -321,7 +321,23 @@ in the order they happened.
 | Given | a feature declaring a scenario nothing claims |
 | When | `sumi verify` runs |
 | Then | each refusal answers at its own line |
-| Then | the difference is answered beside them |
+
+## `V-041` A difference beside a refused vocabulary is still answered
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| Given | a feature declaring a scenario nothing claims |
+| When | `sumi verify` runs |
+| Then | the difference is answered beside the refusals |
+
+## `V-042` A refused vocabulary leaves the run unable to compare
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| Given | a feature declaring a scenario nothing claims |
+| When | `sumi verify` runs |
 | Then | the run leaves the code a comparison could not be made |
 
 ## `V-037` A feature speaks the words of the subdomain its includes reach
@@ -356,4 +372,11 @@ in the order they happened.
 | Given | two checks answering about the same line |
 | When | the findings are reported |
 | Then | each line answers as its place, the check, then the message |
+
+## `V-043` Findings at one line are ordered by their check
+
+| Step | Statement |
+| --- | --- |
+| Given | two checks answering about the same line |
+| When | the findings are reported |
 | Then | the two are ordered by check before message |

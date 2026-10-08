@@ -46,6 +46,13 @@ covers is opened.
 | Given | a vocabulary writing two titles and its section's include heading twice |
 | When | `sumi fmt --check` runs |
 | Then | each refusal answers at its own line |
+
+## `FM-009` A refused vocabulary leaves the check unable to compare
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| When | `sumi fmt --check` runs |
 | Then | the run leaves the code a comparison could not be made |
 
 ## `FM-003` One name declared twice
@@ -88,4 +95,11 @@ covers is opened.
 | Given | the same vocabulary |
 | When | `sumi fmt` runs |
 | Then | the file is named as written, both dashes are the plain one, and a second run has nothing to say |
+
+## `FM-010` The run that writes it leaves the prose alone
+
+| Step | Statement |
+| --- | --- |
+| Given | the same vocabulary |
+| When | `sumi fmt` runs |
 | Then | both dashes in the prose stand, because what sets a word off is where it sits |

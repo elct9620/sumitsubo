@@ -36,7 +36,7 @@ Dir.chdir("test/fixtures/project/beside")
 puts "exit=#{cli.run(["fmt", "--check"])}"
 Dir.chdir(back)
 
-# @behavior FM-008
+# @behavior FM-008 FM-009
 puts "--- a vocabulary refused in two places ---"
 Dir.chdir("test/fixtures/project/misshapen")
 puts "exit=#{cli.run(["fmt", "--check"])}"
@@ -90,7 +90,7 @@ File.write(".spec/glossary.md", WIDE)
 puts "exit=#{cli.run(["fmt", "--check"])}"
 puts "still written that way: #{File.read(".spec/glossary.md").include?("—")}"
 
-# @behavior FM-007
+# @behavior FM-007 FM-010
 puts "--- and the run that writes it ---"
 puts "exit=#{cli.run(["fmt"])}"
 File.read(".spec/glossary.md").split("\n").each do |line|

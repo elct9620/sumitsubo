@@ -210,7 +210,7 @@ Dir.chdir(back)
 # A vocabulary is one document, so its refusals reach the run all at once
 # rather than one per file. Two of them is what tells each being answered
 # from only the first.
-# @behavior V-036
+# @behavior V-036 V-041 V-042
 puts "--- a vocabulary refused in two places, beside a feature that answers ---"
 Dir.chdir("test/fixtures/project/misshapen")
 puts "exit=#{cli.run(["verify"])}"
@@ -272,7 +272,7 @@ root.rmtree
 # No fixture has two checks answering about one line, so the findings are built
 # here: what is shown is how a report words and orders them, whichever check
 # made them.
-# @behavior V-040
+# @behavior V-040 V-043
 puts "--- a finding names the check that found it ---"
 found = Sumitsubo::Finding::Repository.new
 at = Sumitsubo::Place.of("app/order.rb", 2)

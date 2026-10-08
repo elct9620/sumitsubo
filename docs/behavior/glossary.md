@@ -158,4 +158,11 @@ place.
 | Given | a term rejecting a word that its own name and another term's name each hold |
 | When | prose and a run of line comments wrapping both names are checked |
 | Then | only the lines writing the word on its own answer |
+
+## `G-021` A sentence ending on half a term does not carry it on
+
+| Step | Statement |
+| --- | --- |
+| Given | a term rejecting a word that its own name and another term's name each hold |
+| When | prose and a run of line comments wrapping both names are checked |
 | Then | a sentence ending on the first half does not carry it into the next line |

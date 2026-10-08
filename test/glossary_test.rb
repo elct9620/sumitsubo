@@ -208,7 +208,7 @@ Dir.chdir(back)
 
 # Ruby answers a run of line comments one region a line, which is where a
 # wrapped sentence is split across regions rather than inside one.
-# @behavior G-020
+# @behavior G-020 G-021
 puts "--- a longer term a line break cuts in two is still that term ---"
 Dir.chdir("test/fixtures/project/wrapped")
 wrapped = reads("glossary.md")
