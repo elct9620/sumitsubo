@@ -385,7 +385,7 @@ in the order they happened.
 
 | Step | Statement |
 | --- | --- |
-| Given | scenarios relating to one declared and one not, and to a contract declared and one not |
+| Given | scenarios relating to declared and undeclared scenarios and contracts |
 | When | `sumi verify` runs |
 | Then | only the two naming nothing answer, each at the heading of the scenario writing it |
 

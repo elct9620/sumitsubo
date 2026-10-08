@@ -124,7 +124,7 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a row in the steps naming no step, or in the attributes naming no attribute a scenario carries |
+| Given | a row naming no step in the steps, or no attribute in the attributes |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, naming the word it was given |
 
@@ -132,7 +132,7 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a table headed Attribute and Value under a scenario, naming unverifiable or deprecated and the reason |
+| Given | an attributes table under a scenario, naming unverifiable and deprecated with reasons |
 | When | the blocks the document is made of are read |
 | Then | the scenario carries it, held under the word the first cell names |
 
@@ -372,7 +372,7 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a scenario or a contract whose attributes name relates and refines, each with keys in backticks |
+| Given | a scenario or contract whose relates and refines name keys in backticks |
 | When | the blocks the document is made of are read |
 | Then | the statement carries each key under the word that names it, in the order written |
 
