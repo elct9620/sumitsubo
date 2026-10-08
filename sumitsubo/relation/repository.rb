@@ -29,6 +29,11 @@ module Sumitsubo
         found
       end
 
+      # Every relation of this kind, in the order it was kept.
+      def of(kind)
+        @all.select { |one| one.kind == kind }
+      end
+
       # Every relation of this kind naming a statement this mechanism keeps.
       def naming(kind, mechanism)
         found = []

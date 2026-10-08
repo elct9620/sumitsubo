@@ -5,13 +5,16 @@ module Sumitsubo
   # question about the join asks the same answer.
   #
   # The ends are not one shape: a claim and a dangling marker run from an
-  # anchor to a reference, a reach from one artifact to another. Which pair a
+  # anchor to a reference, a reach from one artifact to another, and what one
+  # statement says of another from one reference to the next. Which pair a
   # relation carries is what its kind says, so a caller asks the kind before it
   # asks an end anything only that shape answers.
   class Relation < Data.define(:kind, :subject, :object)
     CLAIM = "claim"
     DANGLING = "dangling"
     REACH = "reach"
+    RELATES = "relates"
+    REFINES = "refines"
 
     # A specification reaching a file, both taken whole.
     def self.reach(specification, file)
@@ -26,6 +29,18 @@ module Sumitsubo
     # A place in source naming a statement, with no code below it.
     def self.dangling(anchor, reference)
       new(kind: DANGLING, subject: anchor, object: reference)
+    end
+
+    # Two statements a specification says belong together. Which of them
+    # wrote it says nothing, so it reads the same from either end.
+    def self.relates(subject, object)
+      new(kind: RELATES, subject: subject, object: object)
+    end
+
+    # A statement saying it narrows another, from the narrower to the one it
+    # refines.
+    def self.refines(subject, object)
+      new(kind: REFINES, subject: subject, object: object)
     end
 
     # A statement as a relation names it: the mechanism keeping it, and its

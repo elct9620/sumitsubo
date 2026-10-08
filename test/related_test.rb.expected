@@ -1,0 +1,7 @@
+--- a scenario relating to another of its own ---
+  relates behavior IN-001 -> behavior IN-002
+--- a key naming another mechanism's statement ---
+  relates behavior IN-001 -> contract inspect
+  relates behavior IN-001 -> behavior nobody inspect
+--- a refinement runs from the narrower statement ---
+  refines behavior IN-002 -> behavior IN-001
