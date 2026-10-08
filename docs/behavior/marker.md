@@ -81,7 +81,7 @@ front of it, which is what keeps an address out of the claims.
 | --- | --- |
 | Given | a run of comments standing in front of code, and a run standing in front of nothing |
 | When | the file is scanned for claims |
-| Then | every marker in the first run answers as a claim and every marker in the second as dangling |
+| Then | the markers in the first run claim, and those in the second dangle |
 
 ## `M-013` Claims in one comment are one claim
 
