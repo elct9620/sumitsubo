@@ -37,3 +37,7 @@ X-003  A scenario relating to a declared contract  .spec/behavior/inspect.md:33
 └─ claimed beside  X-004  A scenario refining a contract nobody declares  test/inspect_test.rb:1  (derived)
 .spec/contract/cli.md:19: contract/unreadable: writes an attribute row of 3 cells rather than two, where a | inside a cell is written \|; sumi help contract has the form
 exit=2
+--- a key asked for where its document was refused ---
+nothing declares contract inspect
+.spec/contract/cli.md:19: contract/unreadable: writes an attribute row of 3 cells rather than two, where a | inside a cell is written \|; sumi help contract has the form
+exit=2

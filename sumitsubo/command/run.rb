@@ -137,9 +137,11 @@ module Sumitsubo
         @findings.add(Related.unresolved(relation, writing.find { |one| one.key == relation.subject.key }))
       end
 
+      # Whether any of this mechanism's documents was refused, which is where
+      # a key looked for and not found may stand.
       def refused?(mechanism)
         prefix = "#{mechanism.specification}/"
-        @specifications.unread.any? { |one| one.check.start_with?(prefix) }
+        !@refused[mechanism.specification].nil? || @specifications.unread.any? { |one| one.check.start_with?(prefix) }
       end
 
       # A mechanism's statements whether or not it is switched on. Whatever a

@@ -43,4 +43,10 @@ Dir.chdir(back)
 puts "--- a switched-off mechanism the answer names and cannot read ---"
 Dir.chdir("test/fixtures/project/related-unread")
 puts "exit=#{cli.run(["relate", "X-003"])}"
+
+# Nothing is found, and the one place it could stand was refused, so the
+# answer is not left as a plain no.
+# @behavior RL-013
+puts "--- a key asked for where its document was refused ---"
+puts "exit=#{cli.run(["relate", "contract inspect"])}"
 Dir.chdir(back)
