@@ -156,6 +156,20 @@ module Sumitsubo
       found
     end
 
+    # The other scenarios named in the comment holding this claim, each once,
+    # in the order they were written. A comment is one place, so what it
+    # names besides is what a reader asks about a busy one.
+    def self.beside(claim, claims)
+      found = []
+      claims.each do |one|
+        next unless one.path == claim.path && one.comment_line == claim.comment_line
+        next if one.key == claim.key || found.include?(one.key)
+
+        found.push(one.key)
+      end
+      found
+    end
+
     # The ids one claim carries, or the empty one where it carries none. A
     # marker written with nothing behind it still claims: dropping it would be
     # this mechanism deciding nobody meant to write the word.

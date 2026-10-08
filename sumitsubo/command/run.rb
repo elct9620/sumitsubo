@@ -24,6 +24,7 @@ module Sumitsubo
         @statements = {}
         @refused = {}
         @failed = {}
+        @told = {}
       end
 
       def findings
@@ -128,7 +129,7 @@ module Sumitsubo
       # refusal answers for it instead.
       def resolved(relation)
         target = Mechanism::ALL.find { |one| one.specification == relation.object.mechanism }
-        named = target_statements(target)
+        named = statements_named(target)
         return if named.nil? || refused?(target)
         return if named.any? { |one| one.key == relation.object.key }
 
@@ -141,15 +142,16 @@ module Sumitsubo
         @specifications.unread.any? { |one| one.check.start_with?(prefix) }
       end
 
-      # A switched-off mechanism's statements, with whatever reading them
-      # refused answered as it is first read.
-      def target_statements(mechanism)
+      # A mechanism's statements whether or not it is switched on. Whatever a
+      # switched-off one refused is answered as it is first read; a switched-on
+      # one has answered for itself already.
+      def statements_named(mechanism)
         name = mechanism.specification
-        return statements_of(mechanism) if @statements.key?(name) || @config.verify?(name)
-
-        before = @specifications.unread.length
         named = statements_of(mechanism)
-        @specifications.unread[before, @specifications.unread.length - before].each { |one| @findings.add(one) }
+        return named if @config.verify?(name) || !@told[name].nil?
+
+        @told[name] = true
+        @specifications.unread.each { |one| @findings.add(one) if one.check.start_with?("#{name}/") }
         (@refused[name] || []).each { |one| @findings.add(one) }
         @findings.unreadable(@failed[name]) unless @failed[name].nil?
         named

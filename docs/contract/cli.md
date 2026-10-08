@@ -120,7 +120,27 @@ $ sumi inspect test/order_test.rb:2
 test/order_test.rb:2  claims 3
   O-001  .spec/behavior/order.md:9  An order is placed
   O-002  .spec/behavior/order.md:17  An order is numbered
-  O-005  .spec/behavior/order.md:42  An order is printed
+  O-005  .spec/behavior/order.md:45  An order is printed
+```
+
+## `relate`
+
+Show a statement and what it is related to, two relations out.
+
+What the specifications say of one another, so a feature can be read whole
+from any statement in it. A key another mechanism keeps opens with its name,
+quoted as one word. Scenarios claimed in the same comment are added under the
+statement asked about, marked as read off the source. Nothing is compared, so
+it never answers `1`.
+
+```console
+$ sumi relate IN-001
+IN-001  A scenario at the center  .spec/behavior/inspect.md:9
+├─ relates  contract inspect  Answer what one place claims.  .spec/contract/cli.md:14
+│  └─ relates  IN-004  A scenario the contract relates to  .spec/behavior/inspect.md:22
+├─ refines  SA-001  A scenario the center refines  .spec/behavior/stats.md:9
+│  └─ refined by  SA-002  A scenario refining what the center refines  .spec/behavior/stats.md:21
+└─ claimed beside  IN-005  A scenario claimed beside the center  test/inspect_test.rb:1  (derived)
 ```
 
 ## `help`

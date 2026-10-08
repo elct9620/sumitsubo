@@ -1,0 +1,39 @@
+--- a statement and what it is related to ---
+IN-001  A scenario at the center  .spec/behavior/inspect.md:9
+├─ relates  contract inspect  Answer what one place claims.  .spec/contract/cli.md:14
+│  └─ relates  IN-004  A scenario the contract relates to  .spec/behavior/inspect.md:22
+├─ relates  IN-404  declared nowhere
+├─ refines  SA-001  A scenario the center refines  .spec/behavior/stats.md:9
+│  ├─ relates  IN-004  (above)
+│  └─ refined by  SA-002  A scenario refining what the center refines  .spec/behavior/stats.md:21
+└─ claimed beside  IN-005  A scenario claimed beside the center  test/inspect_test.rb:1  (derived)
+exit=0
+--- a statement another mechanism keeps ---
+inspect  Answer what one place claims.  .spec/contract/cli.md:14
+├─ relates  behavior IN-004  A scenario the contract relates to  .spec/behavior/inspect.md:22
+│  └─ relates  behavior SA-001  A scenario the center refines  .spec/behavior/stats.md:9
+└─ relates  behavior IN-001  A scenario at the center  .spec/behavior/inspect.md:9
+   ├─ relates  behavior IN-404  declared nowhere
+   └─ refines  behavior SA-001  (above)
+exit=0
+--- a refinement read from the statement it narrows ---
+SA-002  A scenario refining what the center refines  .spec/behavior/stats.md:21
+├─ refines  SA-001  A scenario the center refines  .spec/behavior/stats.md:9
+│  ├─ relates  IN-004  A scenario the contract relates to  .spec/behavior/inspect.md:22
+│  └─ refined by  IN-001  A scenario at the center  .spec/behavior/inspect.md:9
+└─ refined by  SA-003  A scenario three relations away  .spec/behavior/stats.md:33
+exit=0
+--- a key nothing declares ---
+nothing declares IN-999
+exit=0
+--- nothing to relate ---
+relate takes the key of a statement, quoted where another mechanism keeps it
+exit=2
+--- a switched-off mechanism the answer names and cannot read ---
+X-003  A scenario relating to a declared contract  .spec/behavior/inspect.md:33
+├─ relates  contract inspect  in a specification that could not be read
+├─ claimed beside  X-001  A scenario relating to one declared beside it  test/inspect_test.rb:1  (derived)
+├─ claimed beside  X-002  A scenario relating to one nobody declares  test/inspect_test.rb:1  (derived)
+└─ claimed beside  X-004  A scenario refining a contract nobody declares  test/inspect_test.rb:1  (derived)
+.spec/contract/cli.md:19: contract/unreadable: writes an attribute row of 3 cells rather than two, where a | inside a cell is written \|; sumi help contract has the form
+exit=2

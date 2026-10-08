@@ -8,6 +8,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -30,6 +31,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -52,6 +54,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -74,6 +77,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -97,6 +101,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -119,6 +124,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -221,6 +227,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -244,6 +251,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -267,6 +275,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:
@@ -290,6 +299,7 @@ Commands:
     stats            Count how each specification is witnessed
     inspect <id>     Show where a scenario is declared and claimed,
                      or what a <path[:line]> claims
+    relate <key>     Show what a statement relates to, two relations out
     help <topic>     Explain how to write a specification
 
 Topics:

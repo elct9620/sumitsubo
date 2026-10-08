@@ -19,6 +19,7 @@ module Sumitsubo
             stats            Count how each specification is witnessed
             inspect <id>     Show where a scenario is declared and claimed,
                              or what a <path[:line]> claims
+            relate <key>     Show what a statement relates to, two relations out
             help <topic>     Explain how to write a specification
 
         Topics:
@@ -294,8 +295,8 @@ module Sumitsubo
 
         Attributes
             A heading carries the contract's name alone. What the contract is
-            besides its name is a table under it, a row to an attribute - the
-            heading and delimiter rows a reader writes state nothing:
+            besides its name is a table under it, a row to an attribute. Its
+            heading and delimiter rows state nothing:
 
                 | Attribute | Value |
                 | --- | --- |
@@ -514,12 +515,13 @@ module Sumitsubo
             A cell cannot wrap, and a `|` inside one is written `\\|`.
 
             A scenario's attributes are a second table under its steps,
-            headed `Attribute` and `Value`, each written with the reason it is
-            said:
+            headed `Attribute` and `Value`:
 
                 | Attribute | Value |
                 | --- | --- |
                 | unverifiable | no test reads outside the directory |
+
+            `unverifiable` and `deprecated` take the reason they are said.
 
             An unverifiable scenario is one the source has where no test can
             witness it. It is compared with nothing until a test claims it,

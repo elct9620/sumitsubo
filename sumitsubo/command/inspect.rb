@@ -130,13 +130,7 @@ module Sumitsubo
       # How many other scenarios the comment holding this claim names, and
       # whether it stands in front of anything at all.
       def beside(claim, claims, dangling)
-        others = {}
-        claims.each do |one|
-          next unless one.path == claim.path && one.comment_line == claim.comment_line
-          next if one.key == claim.key
-
-          others[one.key] = true
-        end
+        others = Sumitsubo::Behavior.beside(claim, claims)
         said = ""
         said += "  with #{others.length} #{others.length == 1 ? "other" : "others"}" unless others.empty?
         said += "  in front of nothing" if dangling.any? { |one| one.place.spoken == claim.place.spoken }
