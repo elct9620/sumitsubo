@@ -412,3 +412,19 @@ in the order they happened.
 | Given | contracts switched off and written out of shape, and scenarios relating to them |
 | When | `sumi verify` runs |
 | Then | the refusal answers once, and no relation into them answers as naming nothing |
+
+## `V-048` A relation a contract writes that names nothing
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract relating to one declared scenario and one undeclared |
+| When | `sumi verify` runs |
+| Then | the undeclared one answers under the contract's word, at the contract's heading |
+
+## `V-049` A relation naming a term
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario relating to one declared term and one undeclared |
+| When | `sumi verify` runs |
+| Then | only the undeclared term answers |

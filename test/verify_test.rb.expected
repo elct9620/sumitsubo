@@ -125,6 +125,11 @@ exit=2
 .spec/contract/cli.md:19: contract/unreadable: writes an attribute row of 3 cells rather than two, where a | inside a cell is written \|; sumi help contract has the form
 0 differences
 exit=2
+--- relations a contract writes, and relations naming a term ---
+.spec/behavior/inspect.md:9: behavior/unresolved: T-001 relates glossary Render, which no glossary specification declares
+.spec/contract/cli.md:13: contract/unresolved: inspect relates behavior T-404, which no behavior specification declares
+0 differences
+exit=2
 --- a feature speaks the words of the subdomain its includes reach ---
 .spec/behavior/checkout.md:3: glossary/rejected: Component rejects Widget: Component is what the screens call it.
 1 difference

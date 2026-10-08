@@ -242,6 +242,14 @@ Dir.chdir("test/fixtures/project/related-unread")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# A contract writes relations too, and a scenario names a term, which the
+# vocabulary keeps a level deeper than a feature keeps its scenarios.
+# @behavior V-048 V-049
+puts "--- relations a contract writes, and relations naming a term ---"
+Dir.chdir("test/fixtures/project/related-terms")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 # The feature names a word from each subdomain and reaches only the screens,
 # so the one answering is what shows its includes chose the section.
 # @behavior V-037
