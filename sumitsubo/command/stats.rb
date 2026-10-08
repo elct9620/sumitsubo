@@ -49,7 +49,7 @@ module Sumitsubo
         said = ["#{padded(mechanism, width + 4)}statements  claims  most"]
         rows.each { |one| said.push(spoken(one, width)) }
         said.push("  #{totals(features, within)}")
-        said.concat(unclaimed_files(reach, claims + Sumitsubo::Behavior.dangling_in(relations, mechanism)))
+        said.concat(unclaimed_files(reach, claims))
         said
       end
 

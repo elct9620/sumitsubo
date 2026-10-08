@@ -15,7 +15,8 @@ cli = Sumitsubo::CLI.new(
 back = Dir.pwd
 
 # One run answers all four: the fixture holds a comment naming three
-# scenarios, a scenario of each kind set apart, and a file claiming nothing.
+# scenarios, a scenario of each kind set apart, and a file claiming nothing —
+# its one marker ends the file, so it dangles rather than claims.
 # @behavior SA-001 SA-002 SA-003 SA-004
 puts "--- how each specification is witnessed ---"
 Dir.chdir("test/fixtures/project/stats")
