@@ -37,8 +37,9 @@ module Sumitsubo
         # What each kind is written as.
         #
         # A fence, a row and a table are each asked for as well as their parts,
-        # and arrive ahead of them, so one carrying neither is still itself — and where one
-        # ends is the grammar's answer rather than a comparison of line numbers.
+        # and arrive ahead of them, so one carrying neither is still itself —
+        # and where one ends is the grammar's answer rather than a comparison
+        # of line numbers.
         PATTERNS = {
           Block::HEADING => <<~QUERY,
             (atx_heading (atx_h1_marker) (inline) @h1)
@@ -80,8 +81,8 @@ module Sumitsubo
           "paragraph" => 0, "item" => 1, "nested" => 2
         }
 
-        # The captures a fence, a row and a table are assembled from, which are the ones
-        # that are not a block of their own.
+        # The captures a fence, a row and a table are assembled from, which are
+        # the ones that are not a block of their own.
         FENCE = "fence"
         LANGUAGE = "language"
         CONTENT = "content"
@@ -155,8 +156,8 @@ module Sumitsubo
         end
 
         # The blocks these captures make. A fence, a row and a table are each
-        # closed by the first capture that is not one of their own parts, and by the
-        # document ending — the one close nothing in the run announces.
+        # closed by the first capture that is not one of their own parts, and
+        # by the document ending — the one close nothing in the run announces.
         def built(captures, spanned)
           found = []
           holding = nil
