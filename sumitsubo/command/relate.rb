@@ -191,7 +191,7 @@ module Sumitsubo
       end
 
       def unread?(reference)
-        mechanism = Mechanism::ALL.find { |one| one.specification == reference.mechanism }
+        mechanism = Mechanism.named(reference.mechanism)
         !mechanism.nil? && @current.refused?(mechanism)
       end
 
@@ -201,14 +201,11 @@ module Sumitsubo
       end
 
       def declared(reference)
-        found = nil
-        Mechanism::ALL.each do |mechanism|
-          next unless mechanism.specification == reference.mechanism
+        mechanism = Mechanism.named(reference.mechanism)
+        return nil if mechanism.nil?
 
-          held = @current.statements_named(mechanism)
-          found = held.find { |one| one.key == reference.key } unless held.nil?
-        end
-        found
+        held = @current.statements_named(mechanism)
+        held.nil? ? nil : held.find { |one| one.key == reference.key }
       end
     end
   end

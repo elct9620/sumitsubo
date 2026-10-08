@@ -128,12 +128,12 @@ module Sumitsubo
       # documents was refused, what it names may stand in that one, so the
       # refusal answers for it instead.
       def resolved(relation)
-        target = Mechanism::ALL.find { |one| one.specification == relation.object.mechanism }
+        target = Mechanism.named(relation.object.mechanism)
         named = statements_named(target)
         return if named.nil? || refused?(target)
         return if named.any? { |one| one.key == relation.object.key }
 
-        writing = statements_of(Mechanism::ALL.find { |one| one.specification == relation.subject.mechanism })
+        writing = statements_of(Mechanism.named(relation.subject.mechanism))
         @findings.add(Related.unresolved(relation, writing.find { |one| one.key == relation.subject.key }))
       end
 

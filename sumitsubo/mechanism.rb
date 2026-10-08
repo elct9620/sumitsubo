@@ -26,5 +26,11 @@ module Sumitsubo
     # and the order the README sets them out in. A vocabulary also covers the
     # specifications the others keep, so it is handed them.
     ALL = [Glossary.new([CONTRACT, BEHAVIOR]), CONTRACT, BEHAVIOR]
+
+    # The mechanism a specification's name switches, or nil where this build
+    # carries none by that name.
+    def self.named(name)
+      ALL.find { |one| one.specification == name }
+    end
   end
 end
