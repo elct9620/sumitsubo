@@ -105,8 +105,8 @@ module Sumitsubo
       # One attribute as a row wrote it, held under the word its first cell
       # names. The set is closed both ways: a word nothing knows is a form
       # nobody reads, and a fixed value nothing answers for is a fact nobody
-      # keeps. An attribute taking a reason with nothing in its second cell
-      # says nothing at all.
+      # keeps. An attribute taking a reason or keys with nothing in its second
+      # cell says nothing at all.
       #
       # An attribute written twice says which of them it is nowhere, the way a
       # second name does.
