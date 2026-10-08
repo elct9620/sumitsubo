@@ -186,7 +186,7 @@ module Sumitsubo
         # rows answer for themselves.
         def tabled(block)
           @table = block.cells.map { |cell| cell.text.strip }
-          return if @scoping || @scenarios.empty?
+          return if @scoping || @open.nil?
           return if @table == STEPPED || @table == ATTRIBUTED
 
           misstep(block.line, "writes a table headed #{@table.join(" and ")}, " \
@@ -201,7 +201,7 @@ module Sumitsubo
           return if cells.empty?
 
           line = cells[0].line
-          refuse(line, "writes a row outside any scenario") if @scenarios.empty?
+          refuse(line, "writes a row outside any scenario") if @open.nil?
           unless cells.length == 2
             said = "writes a row #{Builder.width_of(cells.length)}"
             @table == STEPPED ? misstep(line, said) : refuse(line, said)
@@ -212,7 +212,7 @@ module Sumitsubo
           if @table == STEPPED
             stage(line, name, value)
           elsif @table == ATTRIBUTED
-            Builder.carried(@scenarios[-1].attributes, ATTRIBUTES,
+            Builder.carried(@open.attributes, ATTRIBUTES,
                             Builder::Row.new(line: line, said: name, value: value),
                             "an attribute a scenario carries", @path, TOPIC)
           end
@@ -239,7 +239,7 @@ module Sumitsubo
         # Once a step stood out of order, where the rows after it stand follows
         # from that one, so they are held without being placed again.
         def held(line, name, said)
-          @scenarios[-1].statements.push(Statement.new(name, said, [], @path, line, {}, []))
+          @open.statements.push(Statement.new(name, said, [], @path, line, {}, []))
         end
 
         # A refusal standing where a step would, which says what is wrong with
