@@ -211,14 +211,15 @@ both.
 
 What a run found to correspond, with a kind and two ends. A claim and a
 dangling marker run from an anchor to a reference. A reach runs from one
-artifact to another. It is kept
+artifact to another. What one statement relates to or refines runs from one
+reference to another. It is kept
 once, so every question asked after the run reads the same answer.
 
 ### Reference
 
 A statement as a relation names it: the mechanism keeping it, and its key. It
-names the statement whether or not one was declared, which is how a claim
-naming nothing is still kept.
+names the statement whether or not one was declared, which is how a claim or
+a relation naming nothing is still kept.
 
 ### Anchor
 

@@ -1,10 +1,11 @@
 # Architecture
 
 A specification is read into one place, source into another, what the two
-correspond on into a third, and what the comparison says into a fourth. A run
-takes as much of that as it needs: `verify` takes all four, `stats` and
-`inspect` the first three, and `fmt` the first and the last, which is what lets
-a reference line be got right before any code is held to it.
+correspond on into a third, and what the comparison says into a fourth. The
+third also keeps what specifications say of one another. A run takes as much of that as it
+needs: `verify` takes all four, `stats`, `inspect` and `relate` the first three,
+and `fmt` the first and the last, which is what lets a reference line be got
+right before any code is held to it.
 
 Writing a specification back is the one thing a run does that is none of the
 three. It is the shell's, the way laying a seed down is: `init` and `fmt` reach
@@ -69,8 +70,10 @@ Nothing inner reaches it, so the direction the layers are named for holds.
 ## One run
 
 Each stage keeps what it read in one place, so no stage has to know what the
-next one will ask of it. Below is `verify`, which takes all of it. `stats` and
-`inspect` stop once the relations are kept and answer from them. `fmt` takes
+next one will ask of it. Below is `verify`, which takes all of it. `stats`,
+`inspect` and `relate` stop once the relations are kept and answer from them.
+What specifications say of one another is read off (1) rather than the source.
+Every mechanism's is kept, switched on or not. `fmt` takes
 (1) and (3), and puts what it can write for a person back into the document it
 read on the way.
 
@@ -106,7 +109,9 @@ read the source themselves, so they keep nothing yet for anyone to ask.
                          │   Relation Repository   │  what corresponds,
                          │  ├ reach    spec → file │  kept for whoever asks
                          │  ├ claim   place → key  │──► stats, inspect
-                         │  └ dangling place → key │
+                         │  ├ dangling place → key │
+                         │  ├ relates   key → key  │◄── (1), read apart
+                         │  └ refines   key → key  │──► relate, unresolved
                          └───────────┬─────────────┘
                                      │
                      specification × source ─► a check ─► Finding
@@ -273,6 +278,9 @@ word in front, which is the whole of `<mechanism>/<check>`.
    what `fmt` writes for a person, and `fmt --check` answers instead
  a specification nothing could open answers for itself, at no line ✕
    no parser reads it, it is not there, or it names one thing twice
+ a relation a specification wrote that names nothing:  unresolved  (C, B) ✕
+   answered at the statement writing it, and looked up whether or not the
+   mechanism it names is switched on
 
  G glossary   C contract   B behavior
  ✕ a failure: the comparison could not be made
@@ -316,6 +324,8 @@ Every file has one place, and where it sits is what says what it is.
 │  │  source/marker.rb                             answers Source::Claim
 │  │  source/scope.rb  source/patterns.rb          reach
 │  │  relation/repository.rb                       what corresponds, kept
+│  │  related.rb                                   what specifications say of
+│  │                                               one another
 │  │
 │  ├─ what a specification means to its own mechanism
 │  │  glossary.rb  contract.rb  behavior.rb
@@ -332,7 +342,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │
 │  ├─ the shell
 │  │  cli.rb  command/run.rb                       what every command walks
-│  │  command/{init,fmt,verify,stats,inspect,help}.rb
+│  │  command/{init,fmt,verify,stats,inspect,relate,help}.rb
 │  │
 │  └─ grammar.rb                                   the one driver, both sides
 │
