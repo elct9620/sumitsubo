@@ -8,5 +8,6 @@
 
 | Step | Statement |
 | --- | --- |
+| Given | a project |
 | When | `sumi verify` runs |
 | Then | the difference is reported though the glossary could not be read |

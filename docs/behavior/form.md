@@ -36,9 +36,33 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a scenario stating Given twice and no Then |
+| Given | a scenario stating Given twice, then When and Then |
 | When | the blocks the document is made of are read |
-| Then | both states are held under given, and no then is held at all |
+| Then | the scenario holds its four steps in the order they were written |
+
+## `F-065` A scenario missing a step
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario stating Given and When and no Then |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at that scenario's heading, naming the step it lacks |
+
+## `F-066` A step stated twice that a scenario states once
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario stating Then twice |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second Then |
+
+## `F-067` A step stated out of order
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario stating When before any Given |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at that row alone, naming the step it came before |
 
 ## `F-003` An id with nothing written after it
 
@@ -96,11 +120,11 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that row |
 
-## `F-010` A row naming neither a step nor an attribute
+## `F-010` A row naming a word its table does not hold
 
 | Step | Statement |
 | --- | --- |
-| Given | a row whose first cell is neither Given, When nor Then, nor an attribute a scenario carries |
+| Given | a row in the steps naming no step, or in the attributes naming no attribute a scenario carries |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, naming the word it was given |
 
@@ -108,9 +132,17 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a row under a scenario naming unverifiable or deprecated, and the reason it is said |
+| Given | a table headed Attribute and Value under a scenario, naming unverifiable or deprecated and the reason |
 | When | the blocks the document is made of are read |
-| Then | the scenario carries it beside its steps, held under the word the first cell names |
+| Then | the scenario carries it, held under the word the first cell names |
+
+## `F-068` A table holding neither steps nor attributes
+
+| Step | Statement |
+| --- | --- |
+| Given | a table under a scenario headed by columns other than the steps' or the attributes' |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the table's heading row |
 
 ## `F-011` A row with no scenario to belong to
 

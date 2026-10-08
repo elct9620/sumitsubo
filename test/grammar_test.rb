@@ -119,12 +119,7 @@ def definition_blocks(reading, path)
 end
 
 def steps_of(scenario)
-  steps = scenario.attributes
-  steps.keys.each { |name| said(name, steps[name]) }
-end
-
-def said(name, holding)
-  holding.each { |one| puts "    #{name} #{one}" }
+  scenario.statements.each { |step| puts "    #{step.key} #{step.text}" }
 end
 
 # The document breaks its description up with a subheading, and wraps that

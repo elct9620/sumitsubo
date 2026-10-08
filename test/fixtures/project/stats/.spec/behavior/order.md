@@ -37,6 +37,9 @@ What placing an order does.
 | Given | a placed order |
 | When | a courier collects it |
 | Then | it leaves the warehouse |
+
+| Attribute | Value |
+| --- | --- |
 | unverifiable | no test reaches the courier |
 
 ## `O-005` An order is printed
@@ -46,4 +49,7 @@ What placing an order does.
 | Given | a placed order |
 | When | it is printed |
 | Then | the slip lists the item |
+
+| Attribute | Value |
+| --- | --- |
 | deprecated | O-002 replaces it |

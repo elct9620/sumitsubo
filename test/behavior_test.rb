@@ -63,8 +63,20 @@ class Other
       Sumitsubo::Specification::Block.new(heading, 1, 1, TITLE, nil, [], []),
       Sumitsubo::Specification::Block.new(
         heading, 2, 1, SCENARIO, nil, [Sumitsubo::Specification::Span.new("O-001", 0, 7)], []
-      )
+      ),
+      cells_of(Sumitsubo::Specification::Block::TABLE, "Step", "Statement"),
+      cells_of(Sumitsubo::Specification::Block::ROW, "Given", "another format"),
+      cells_of(Sumitsubo::Specification::Block::ROW, "When", "it is read"),
+      cells_of(Sumitsubo::Specification::Block::ROW, "Then", "a feature answers")
     ]
+  end
+
+  def cells_of(kind, first, second)
+    cell = Sumitsubo::Specification::Block::CELL
+    Sumitsubo::Specification::Block.new(kind, 0, 1, "", nil, [], [
+      Sumitsubo::Specification::Block.new(cell, 0, 1, first, nil, [], []),
+      Sumitsubo::Specification::Block.new(cell, 0, 1, second, nil, [], [])
+    ])
   end
 end
 
@@ -78,10 +90,7 @@ reads("test/fixtures/project/behavior/.spec/behavior").each do |feature|
   puts "#{feature.key} #{feature.includes.map { |one| one.key }.inspect}"
   feature.statements.each do |scenario|
     puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
-    steps = scenario.attributes
-    steps["given"].each { |state| puts "    given #{state}" }
-    puts "    when  #{steps["when"][0]}"
-    puts "    then  #{steps["then"][0]}"
+    scenario.statements.each { |step| puts "    #{step.key} #{step.text}" }
   end
 end
 

@@ -14,10 +14,11 @@ module Sumitsubo
       #
       # A row arrives whole, with the cells under it, so where one row ends and
       # the next begins is the grammar's answer rather than a comparison of line
-      # numbers.
+      # numbers. A table arrives ahead of its rows, and the row naming its
+      # columns is what says whether they are steps or attributes.
       class Behavior
         KINDS = [Block::HEADING, Block::PARAGRAPH,
-                 Block::ITEM, Block::CODE, Block::ROW]
+                 Block::ITEM, Block::CODE, Block::TABLE, Block::ROW]
 
         # The levels this form is written at: a title, and a heading that either
         # scopes the feature or states a scenario.
@@ -28,13 +29,18 @@ module Sumitsubo
         # scopes nothing, the way a list under a scenario is prose.
         GLOB = 1
 
-        # The words a step is spelled with. A row naming any other word states
-        # an attribute, and one naming none a scenario carries is refused rather
-        # than passed over: a step nobody reads is a promise nobody keeps.
+        # The words a step is spelled with, in the order a scenario states them:
+        # as many states as it stands on, the one operation under test, and the
+        # one outcome that operation settles. One outcome a scenario keeps a
+        # scenario to one observation, so a second is a scenario of its own.
         STEPS = ["Given", "When", "Then"]
 
         # The attributes a scenario carries, each taking the reason it is said.
         ATTRIBUTES = { "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON }
+
+        # The columns each table a scenario holds is headed by.
+        STEPPED = ["Step", "Statement"]
+        ATTRIBUTED = ["Attribute", "Value"]
 
         # The topic a refusal from this form sends a reader to.
         TOPIC = "behavior"
@@ -48,10 +54,15 @@ module Sumitsubo
           @scoped_at = nil
           @includes = []
           @scenarios = []
+          @open = nil
+          @table = nil
+          @step = 0
+          @misstepped = false
         end
 
         def build(blocks)
           blocks.each { |block| taken(block) }
+          closed
           gathered(1, "declares no title") if @key.nil?
           raise Sumitsubo::Misshapen.new(@refusals) unless @refusals.empty?
 
@@ -83,6 +94,7 @@ module Sumitsubo
           when Block::PARAGRAPH then described(block)
           when Block::ITEM then item(block)
           when Block::CODE then fenced(block)
+          when Block::TABLE then tabled(block)
           when Block::ROW then stated(block)
           end
         end
@@ -95,10 +107,29 @@ module Sumitsubo
           return beside(block) if @scoping && block.level > SCENARIO
           return unless block.level == SCENARIO
 
+          closed
           @scoping = block.text == INCLUDES
           return scoping(block.line) if @scoping
 
-          @scenarios.push(scenario_from(block))
+          @open = scenario_from(block)
+          @scenarios.push(@open)
+          @misstepped = @open.key.nil? || @open.key.empty?
+        end
+
+        # A scenario ends where the next heading at its level begins, and the
+        # steps it never stated are said at its heading. One whose heading or
+        # step rows were already refused has said what is wrong with it.
+        def closed
+          scenario = @open
+          @open = nil
+          @table = nil
+          stepped = @step
+          misstepped = @misstepped
+          @step = 0
+          @misstepped = false
+          return if scenario.nil? || misstepped || stepped == STEPS.length
+
+          gathered(scenario.line, "declares a scenario stating no #{STEPS[stepped]}")
         end
 
         # A file naming two titles says which of them it is nowhere.
@@ -145,8 +176,19 @@ module Sumitsubo
             gathered(block.line, "declares a scenario whose heading does not open with an id in backticks")
           end
 
-          Statement.new(id, Builder.empty_to_nil(block.rest), [], @path, block.line,
-                        { "given" => [] }, [])
+          Statement.new(id, Builder.empty_to_nil(block.rest), [], @path, block.line, {}, [])
+        end
+
+        # Which table the rows after this one belong to, as the row naming its
+        # columns says. Where no scenario holds it, or the globs stand, its
+        # rows answer for themselves.
+        def tabled(block)
+          @table = block.cells.map { |cell| cell.text.strip }
+          return if @scoping || @scenarios.empty?
+          return if @table == STEPPED || @table == ATTRIBUTED
+
+          misstep(block.line, "writes a table headed #{@table.join(" and ")}, " \
+                              "where a scenario holds its steps and its attributes")
         end
 
         # The cells of one row, stated as the step or the attribute they make.
@@ -158,25 +200,51 @@ module Sumitsubo
 
           line = cells[0].line
           refuse(line, "writes a row outside any scenario") if @scenarios.empty?
-          refuse(line, "writes a row #{Builder.width_of(cells.length)}") unless cells.length == 2
+          unless cells.length == 2
+            said = "writes a row #{Builder.width_of(cells.length)}"
+            @table == STEPPED ? misstep(line, said) : refuse(line, said)
+          end
 
           name = cells[0].text.strip
           value = cells[1].text.strip
-          if STEPS.include?(name)
-            hold(name.downcase, value)
-          else
+          if @table == STEPPED
+            stage(line, name, value)
+          elsif @table == ATTRIBUTED
             Builder.carried(@scenarios[-1].attributes, ATTRIBUTES,
                             Builder::Row.new(line: line, said: name, value: value),
-                            "a step or an attribute a scenario carries", @path, TOPIC)
+                            "an attribute a scenario carries", @path, TOPIC)
           end
         end
 
-        # A step joins the ones already stated under that word, so a scenario
-        # standing on two states reads as two rows and is held as two.
-        def hold(under, said)
-          steps = @scenarios[-1].attributes
-          holding = steps[under]
-          steps[under] = holding.nil? ? [said] : holding + [said]
+        # One step, held under the scenario as what it states, where the order
+        # says it may stand. A state may follow a state, and the operation and
+        # its outcome are each stated once, in that order.
+        def stage(line, name, said)
+          # Compared in a block: Spinel 2026.09.12 hands `index(name)` a boxed
+          # string where it takes a C one and refuses it. Master 0e8befeb does not.
+          at = STEPS.index { |one| one == name }
+          misstep(line, "writes #{name} among the steps, where Given, When and Then are written") if at.nil?
+          return held(line, name, said) if @misstepped
+
+          misstep(line, "writes #{name} after #{STEPS[@step - 1]}") if at + 1 < @step
+          misstep(line, "writes #{name} a second time") if at + 1 == @step && at > 0
+          misstep(line, "writes #{name} before #{STEPS[@step]}") if at > @step
+
+          @step = at + 1
+          held(line, name, said)
+        end
+
+        # Once a step stood out of order, where the rows after it stand follows
+        # from that one, so they are held without being placed again.
+        def held(line, name, said)
+          @scenarios[-1].statements.push(Statement.new(name, said, [], @path, line, {}, []))
+        end
+
+        # A refusal standing where a step would, which says what is wrong with
+        # the steps already.
+        def misstep(line, said)
+          @misstepped = true
+          refuse(line, said)
         end
 
         def refuse(line, said)

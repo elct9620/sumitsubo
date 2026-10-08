@@ -14,4 +14,6 @@ test/fixtures/**
 
 | Step | Statement |
 | --- | --- |
+| Given | a directory |
 | When | `sumi init` runs |
+| Then | a glossary is written |

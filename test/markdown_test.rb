@@ -54,9 +54,29 @@ def nested(line, text) = block(BLOCK::ITEM, 2, line, text)
 def row(line, text) = block(BLOCK::ROW, 0, line, text)
 def cell(line, text) = block(BLOCK::CELL, 0, line, text)
 
+# The row naming a table's columns, with its cells, the way a parser hands it
+# over ahead of the rows beneath it.
+def table(line, first, second)
+  head = block(BLOCK::TABLE, 0, line, "| #{first} | #{second} |")
+  head.cells.push(cell(line, "#{first} "))
+  head.cells.push(cell(line, "#{second} "))
+  head
+end
+
+def stepped(line) = table(line, "Step", "Statement")
+
+# Every step a scenario states, for a case pinning something else about it.
+def whole(line)
+  [stepped(line),
+   row(line + 2, "| Given | a directory |"), cell(line + 2, "Given "), cell(line + 2, "a directory "),
+   row(line + 3, "| When | it runs |"), cell(line + 3, "When "), cell(line + 3, "it runs "),
+   row(line + 4, "| Then | it answers |"), cell(line + 4, "Then "), cell(line + 4, "it answers ")]
+end
+def attributed(line) = table(line, "Attribute", "Value")
+
 # A row carries its cells and a fenced block its language and content, so a case
 # writes them in the order a reader would and this gathers them the way a parser
-# hands them over.
+# hands them over. A table's own cells are written with it.
 def document(blocks)
   found = []
   blocks.each { |one| gathered(found, one) }
@@ -75,12 +95,8 @@ def gathered(found, one)
 end
 
 def steps_of(scenario)
-  steps = scenario.attributes
-  steps.keys.each { |name| printed(name, steps[name]) }
-end
-
-def printed(name, holding)
-  holding.each { |one| puts "    #{name} #{one}" }
+  scenario.statements.each { |step| puts "    #{step.line} #{step.key} #{step.text}" }
+  scenario.attributes.keys.each { |name| puts "    #{name} #{scenario.attributes[name][0]}" }
 end
 
 def read(blocks)
@@ -99,6 +115,7 @@ feature = read([
   item(7, "`test/init_test.rb`"),
   item(8, "`test/other_test.rb`"),
   h2(10, "`I-001` The first run lays down an empty glossary"),
+  stepped(12),
   row(14, "| Given | a directory with no specification |"),
   cell(14, "Given "),
   cell(14, "a directory with no specification "),
@@ -116,24 +133,65 @@ feature.statements.each do |scenario|
   steps_of(scenario)
 end
 
-# Two Given rows are two states, and a step nobody wrote is no step rather than
-# an empty one.
+# Two Given rows are two states, held in the order they were written.
 # @behavior F-002
-puts "--- a scenario stating two Givens and no Then ---"
+puts "--- a scenario standing on two states ---"
 read([
   h1(1, "Init"),
-  h2(3, "`I-002` A second run"),
-  row(5, "| Given | a directory |"), cell(5, "Given "), cell(5, "a directory "),
-  row(6, "| Given | a glossary already there |"),
-  cell(6, "Given "), cell(6, "a glossary already there "),
-  row(7, "| When | `sumi init` runs |"), cell(7, "When "), cell(7, "`sumi init` runs ")
-]).statements.each { |scenario| puts "  #{scenario.attributes.inspect}" }
+  h2(3, "`I-002` A second run"), stepped(5),
+  row(7, "| Given | a directory |"), cell(7, "Given "), cell(7, "a directory "),
+  row(8, "| Given | a glossary already there |"),
+  cell(8, "Given "), cell(8, "a glossary already there "),
+  row(9, "| When | `sumi init` runs |"), cell(9, "When "), cell(9, "`sumi init` runs "),
+  row(10, "| Then | the glossary stays |"), cell(10, "Then "), cell(10, "the glossary stays ")
+]).statements.each { |scenario| steps_of(scenario) }
+
+# A step nobody wrote is answered at the scenario missing it, since no row
+# stands where it would.
+# @behavior F-065
+puts "--- a scenario stating no Then ---"
+read([
+  h1(1, "Init"),
+  h2(3, "`I-002` A second run"), stepped(5),
+  row(7, "| Given | a directory |"), cell(7, "Given "), cell(7, "a directory "),
+  row(8, "| When | `sumi init` runs |"), cell(8, "When "), cell(8, "`sumi init` runs "),
+  h2(10, "`I-009` A run stating nothing"),
+  h2(12, "`I-010` A run stating its outcome"), stepped(14),
+  row(16, "| Given | a directory |"), cell(16, "Given "), cell(16, "a directory "),
+  row(17, "| When | `sumi init` runs |"), cell(17, "When "), cell(17, "`sumi init` runs "),
+  row(18, "| Then | a glossary is written |"), cell(18, "Then "), cell(18, "a glossary is written ")
+])
+
+# One outcome keeps a scenario to one observation, so a second Then is a
+# scenario of its own rather than a row of this one.
+# @behavior F-066
+puts "--- a scenario stating Then twice ---"
+read([
+  h1(1, "Init"),
+  h2(3, "`I-002` A second run"), stepped(5),
+  row(7, "| Given | a directory |"), cell(7, "Given "), cell(7, "a directory "),
+  row(8, "| When | `sumi init` runs |"), cell(8, "When "), cell(8, "`sumi init` runs "),
+  row(9, "| Then | a glossary is written |"), cell(9, "Then "), cell(9, "a glossary is written "),
+  row(10, "| Then | a feature is written |"), cell(10, "Then "), cell(10, "a feature is written ")
+])
+
+# The first step out of place is the one answered: where the rows after it
+# stand follows from it.
+# @behavior F-067
+puts "--- the operation stated before any state ---"
+read([
+  h1(1, "Init"),
+  h2(3, "`I-002` A second run"), stepped(5),
+  row(7, "| When | `sumi init` runs |"), cell(7, "When "), cell(7, "`sumi init` runs "),
+  row(8, "| Given | a directory |"), cell(8, "Given "), cell(8, "a directory "),
+  row(9, "| Then | a glossary is written |"), cell(9, "Then "), cell(9, "a glossary is written ")
+])
 
 # The title is the whole heading, so a scenario's own title is whatever follows
 # its id — and a scenario with nothing after the id has none.
 # @behavior F-003
 puts "--- an id with no title after it ---"
-read([h1(1, "Init"), h2(3, "`I-003`")]).statements.each do |scenario|
+read([h1(1, "Init"), h2(3, "`I-003`")] + whole(5)).statements.each do |scenario|
   puts "  #{scenario.key} #{scenario.text.inspect}"
 end
 
@@ -146,7 +204,7 @@ noted = read([
   paragraph(3, "What init lays down."),
   h2(5, "`I-004` A run"),
   paragraph(7, "Something a reader wanted said.")
-])
+] + whole(9))
 puts "  #{noted.text}"
 
 # @behavior F-005
@@ -164,23 +222,27 @@ read([h1(1, "Init"), h2(3, "Includes"), item(5, "test/init_test.rb")])
 # @behavior F-008
 puts "--- a step row that lost a separator ---"
 read([
-  h1(1, "Init"), h2(3, "`I-005` A run"),
+  h1(1, "Init"), h2(3, "`I-005` A run"), stepped(4),
   row(5, "| Given a directory |"), cell(5, "Given a directory ")
 ])
 
 # @behavior F-009
 puts "--- a step row carrying an unescaped separator ---"
 read([
-  h1(1, "Init"), h2(3, "`I-006` A run"),
+  h1(1, "Init"), h2(3, "`I-006` A run"), stepped(4),
   row(5, "| Given | a directory | and a glossary |"),
   cell(5, "Given "), cell(5, "a directory "), cell(5, "and a glossary ")
 ])
 
+# The steps hold steps alone, so an attribute written among them is refused
+# the way a misspelt step is: each table says what its rows are.
 # @behavior F-010
 puts "--- a row naming something that is not a step ---"
 read([
-  h1(1, "Init"), h2(3, "`I-007` A run"),
-  row(5, "| Where | a directory |"), cell(5, "Where "), cell(5, "a directory ")
+  h1(1, "Init"), h2(3, "`I-007` A run"), stepped(4),
+  row(5, "| Where | a directory |"), cell(5, "Where "), cell(5, "a directory "),
+  h2(7, "`I-008` Another run"), stepped(8),
+  row(9, "| unverifiable | why |"), cell(9, "unverifiable "), cell(9, "why ")
 ])
 
 # A contract's attribute is a word a scenario does not carry, so it is refused
@@ -188,32 +250,44 @@ read([
 # @behavior F-010
 puts "--- a row naming an attribute a scenario does not carry ---"
 read([
-  h1(1, "Init"), h2(3, "`I-007` A run"),
-  row(5, "| internal | yes |"), cell(5, "internal "), cell(5, "yes ")
+  h1(1, "Init"), h2(3, "`I-007` A run")
+] + whole(4) + [
+  attributed(10),
+  row(12, "| internal | yes |"), cell(12, "internal "), cell(12, "yes ")
 ])
 
 # @behavior F-063
 puts "--- a scenario carrying its attributes beside its steps ---"
 read([
-  h1(1, "Init"), h2(3, "`I-008` A run"),
+  h1(1, "Init"), h2(3, "`I-008` A run"), stepped(4),
   row(5, "| Given | a directory |"), cell(5, "Given "), cell(5, "a directory "),
-  row(6, "| unverifiable | no reading sees the directory |"),
-  cell(6, "unverifiable "), cell(6, "no reading sees the directory "),
-  row(7, "| deprecated | init lays down nothing soon |"),
-  cell(7, "deprecated "), cell(7, "init lays down nothing soon ")
+  row(6, "| When | it is read |"), cell(6, "When "), cell(6, "it is read "),
+  row(7, "| Then | nothing is seen |"), cell(7, "Then "), cell(7, "nothing is seen "),
+  attributed(9),
+  row(11, "| unverifiable | no reading sees the directory |"),
+  cell(11, "unverifiable "), cell(11, "no reading sees the directory "),
+  row(12, "| deprecated | init lays down nothing soon |"),
+  cell(12, "deprecated "), cell(12, "init lays down nothing soon ")
 ]).statements.each { |scenario| steps_of(scenario) }
+
+# @behavior F-068
+puts "--- a table that is neither the steps nor the attributes ---"
+read([
+  h1(1, "Init"), h2(3, "`I-008` A run"), table(4, "Case", "Outcome"),
+  row(6, "| empty | nothing |"), cell(6, "empty "), cell(6, "nothing ")
+])
 
 # @behavior F-011
 puts "--- a step before any scenario ---"
 read([
-  h1(1, "Init"),
+  h1(1, "Init"), stepped(2),
   row(3, "| Given | a directory |"), cell(3, "Given "), cell(3, "a directory ")
 ])
 
 # @behavior F-011
 puts "--- an attribute before any scenario ---"
 read([
-  h1(1, "Init"),
+  h1(1, "Init"), attributed(2),
   row(3, "| unverifiable | why |"), cell(3, "unverifiable "), cell(3, "why ")
 ])
 
@@ -232,9 +306,9 @@ read([h1(1, "Init"), h1(3, "Verify")])
 # @behavior F-050
 puts "--- every way a document is out of shape, rather than the first ---"
 read([
-  h1(1, "Init"), h2(3, "A run"),
+  h1(1, "Init"), h2(3, "A run"), stepped(4),
   row(5, "| Wen | a directory |"), cell(5, "Wen "), cell(5, "a directory "),
-  h2(7, "`I-008` Another run"),
+  h2(7, "`I-008` Another run"), stepped(8),
   row(9, "| Whenever | a directory |"), cell(9, "Whenever "), cell(9, "a directory ")
 ])
 
@@ -571,9 +645,11 @@ definition([
 # @behavior F-049
 puts "--- one attribute written twice under a scenario ---"
 read([
-  h1(1, "Init"), h2(3, "`I-009` A run"),
-  row(5, "| deprecated | one |"), cell(5, "deprecated "), cell(5, "one "),
-  row(6, "| deprecated | two |"), cell(6, "deprecated "), cell(6, "two ")
+  h1(1, "Init"), h2(3, "`I-009` A run")
+] + whole(4) + [
+  attributed(10),
+  row(12, "| deprecated | one |"), cell(12, "deprecated "), cell(12, "one "),
+  row(13, "| deprecated | two |"), cell(13, "deprecated "), cell(13, "two ")
 ])
 
 # @behavior F-064
@@ -586,8 +662,10 @@ definition([
 # @behavior F-064
 puts "--- an attribute under a scenario written with no reason ---"
 read([
-  h1(1, "Init"), h2(3, "`I-010` A run"),
-  row(5, "| deprecated |  |"), cell(5, "deprecated "), cell(5, " ")
+  h1(1, "Init"), h2(3, "`I-010` A run")
+] + whole(4) + [
+  attributed(10),
+  row(12, "| deprecated |  |"), cell(12, "deprecated "), cell(12, " ")
 ])
 
 # @behavior F-032
@@ -689,7 +767,7 @@ puts "--- includes written at the level a feature writes them ---"
 p globs_of(read([
   h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"), item(6, "`test/other_test.rb`"),
   h2(8, "`I-001` A run"), item(10, "`not an include`")
-]))
+] + whole(12)))
 
 # @behavior F-043
 puts "--- includes written at the level a vocabulary writes them ---"
@@ -761,15 +839,15 @@ read([
   row(15, "| Glob | Why |"), cell(15, "Glob "), cell(15, "Why "),
   h3(17, "Legacy"),
   h2(19, "`I-001` A run")
-])
+] + whole(21))
 
 # @behavior F-055
 puts "--- a row under the Includes that follows a scenario ---"
 read([
-  h1(1, "Init"), h2(3, "`I-001` A run"),
-  row(5, "| When | `sumi init` runs |"), cell(5, "When "), cell(5, "`sumi init` runs "),
-  h2(7, "Includes"), item(9, "`test/init_test.rb`"),
-  row(11, "| Given | a directory |"), cell(11, "Given "), cell(11, "a directory ")
+  h1(1, "Init"), h2(3, "`I-001` A run")
+] + whole(5) + [
+  h2(11, "Includes"), item(13, "`test/init_test.rb`"), stepped(15),
+  row(17, "| Given | a directory |"), cell(17, "Given "), cell(17, "a directory ")
 ])
 
 # @behavior F-056
@@ -804,7 +882,7 @@ puts "--- the reserved word written as a name and as a heading ---"
 named = read([
   h1(1, "Init"), h2(3, "Includes"), item(5, "`test/init_test.rb`"),
   h2(7, "`Includes` A scenario named for the reserved word")
-])
+] + whole(9))
 puts "  #{globs_of(named).inspect} #{named.statements.map { |one| one.key }.inspect}"
 
 # The word a section scopes itself with is the one word a vocabulary cannot

@@ -8,6 +8,7 @@
 
 | Step | Statement |
 | --- | --- |
+| Given | a project |
 | When | `sumi verify` runs |
 | Then | the two sides agree about it |
 
@@ -15,5 +16,6 @@
 
 | Step | Statement |
 | --- | --- |
+| Given | a project |
 | When | `sumi verify` runs |
 | Then | the difference is reported at the specification |

@@ -1,27 +1,27 @@
 --- what the directory declares, and where ---
 Init ["test/init_test.rb"]
   test/fixtures/project/behavior/.spec/behavior/init.md:9 I-001 The first run lays down an empty glossary
-    given a directory with no specification
-    when  `sumi init` runs
-    then  an empty glossary specification is written at the configured root
+    Given a directory with no specification
+    When `sumi init` runs
+    Then an empty glossary specification is written at the configured root
   test/fixtures/project/behavior/.spec/behavior/init.md:17 I-002 A second run leaves what is there alone
-    given a directory init has already run in
-    when  `sumi init` runs
-    then  the existing specification is reported as already there
+    Given a directory init has already run in
+    When `sumi init` runs
+    Then the existing specification is reported as already there
   test/fixtures/project/behavior/.spec/behavior/init.md:25 I-003 A configured root is created however deep it is
-    given a .sumi.json naming a root two levels down
-    when  `sumi init` runs
-    then  every directory on the way to that root is created
+    Given a .sumi.json naming a root two levels down
+    When `sumi init` runs
+    Then every directory on the way to that root is created
 Glossary Verification ["test/*_test.rb"]
   test/fixtures/project/behavior/.spec/behavior/verify.md:9 G-001 Code that drifted from its glossary
-    given a glossary declaring a word its term rejects
-    given a comment using that word
-    when  `sumi verify` runs
-    then  one finding is reported for the line the word appears on
+    Given a glossary declaring a word its term rejects
+    Given a comment using that word
+    When `sumi verify` runs
+    Then one finding is reported for the line the word appears on
   test/fixtures/project/behavior/.spec/behavior/verify.md:18 G-002 A specification the configuration switched off
-    given a .sumi.json declaring glossary verify false
-    when  `sumi verify` runs
-    then  the glossary contributes no findings
+    Given a .sumi.json declaring glossary verify false
+    When `sumi verify` runs
+    Then the glossary contributes no findings
 --- a directory nobody wrote declares no scenarios ---
 []
 --- one id under two scenarios leaves a marker nothing to resolve to ---
@@ -53,6 +53,6 @@ test/fixtures/specification/behavior/anonymous/verify.md:7: behavior/unreadable:
   test/fixtures/project/behavior/test/verify_test.rb:13 G-404 resolves to no scenario
   test/fixtures/project/behavior/test/verify_test.rb:16 @behavior names no scenario
 --- unverifiable scenarios are compared by none, a deprecated one like any other ---
-  test/fixtures/specification/behavior/unverifiable/retired.md:27 @behavior R-003 is claimed nowhere this specification includes
+  test/fixtures/specification/behavior/unverifiable/retired.md:33 @behavior R-003 is claimed nowhere this specification includes
 --- an unverifiable scenario a test claims, and none nothing claims ---
-  behavior/stale test/fixtures/specification/behavior/unverifiable/retired.md:18 @behavior R-002 is unverifiable, yet claimed at test/retired_test.rb:2
+  behavior/stale test/fixtures/specification/behavior/unverifiable/retired.md:21 @behavior R-002 is unverifiable, yet claimed at test/retired_test.rb:2

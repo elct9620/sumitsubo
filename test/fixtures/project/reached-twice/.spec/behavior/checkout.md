@@ -10,5 +10,6 @@ The Widget a buyer pays through.
 
 | Step | Statement |
 | --- | --- |
+| Given | a project |
 | When | a buyer pays |
 | Then | the order is placed |

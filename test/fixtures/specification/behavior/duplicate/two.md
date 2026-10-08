@@ -8,5 +8,6 @@
 
 | Step | Statement |
 | --- | --- |
+| Given | a project |
 | When | a run |
 | Then | an answer |

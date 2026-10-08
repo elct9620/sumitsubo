@@ -25,11 +25,8 @@ module Sumitsubo
     class Error < Sumitsubo::Error; end
 
     # A feature is a Specification and its scenarios are Statements: an id is
-    # the key a claim names, and the title is what the scenario says.
-    #
-    # The steps are attributes, held under the words the specification spells
-    # them with. `when` and `then` could not be members — one is a keyword and
-    # the other is Kernel's — and as keys they need no second spelling.
+    # the key a claim names, and the title is what the scenario says. Its steps
+    # are Statements under it, each keyed by the word it is spelled with.
 
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.

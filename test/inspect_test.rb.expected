@@ -18,7 +18,7 @@ exit=2
 test/order_test.rb:2  claims 3
   O-001  .spec/behavior/order.md:9  An order is placed
   O-002  .spec/behavior/order.md:17  An order is numbered
-  O-005  .spec/behavior/order.md:42  An order is printed
+  O-005  .spec/behavior/order.md:45  An order is printed
 exit=0
 --- a whole file ---
 test/refund_test.rb:1  claims 1

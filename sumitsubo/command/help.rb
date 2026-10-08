@@ -486,9 +486,11 @@ module Sumitsubo
             The model is Gherkin's, not its file format: these scenarios are
             read rather than executed.
 
-            The steps are a two-column table. `Given` may be written as many
-            times as the scenario stands on states; `When` and `Then` are one
-            row each, which three disciplines make reachable:
+            The steps are a table headed `Step` and `Statement`, written in
+            that order. `Given` may be written as many times as the scenario
+            stands on states; `When` and `Then` are one row each. A scenario
+            missing one, or stating them out of order, is refused. Three
+            disciplines keep one row each reachable:
 
                 The operation under test is the last one; everything before it
                 is `Given`.
@@ -501,9 +503,12 @@ module Sumitsubo
 
             A cell cannot wrap, and a `|` inside one is written `\\|`.
 
-            A row naming `unverifiable` or `deprecated` in place of a step is
-            an attribute of the scenario, written with the reason it is said:
+            A scenario's attributes are a second table under its steps,
+            headed `Attribute` and `Value`, each written with the reason it is
+            said:
 
+                | Attribute | Value |
+                | --- | --- |
                 | unverifiable | no test reads outside the directory |
 
             An unverifiable scenario is one the source has where no test can

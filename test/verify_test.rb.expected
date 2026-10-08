@@ -34,7 +34,7 @@ exit=0
 0 differences
 exit=0
 --- a scenario nothing claims answers at the specification ---
-.spec/behavior/verify.md:14: behavior/unclaimed: @behavior V-002 is claimed nowhere this specification includes
+.spec/behavior/verify.md:15: behavior/unclaimed: @behavior V-002 is claimed nowhere this specification includes
 1 difference
 exit=1
 --- claims that resolve to nothing a run can compare against ---
@@ -99,7 +99,7 @@ B-001 is declared twice, at .spec/behavior/one.md:9 and .spec/behavior/two.md:9
 0 differences
 exit=2
 --- what the source holds of what was set aside ---
-.spec/behavior/retired.md:18: behavior/stale: @behavior U-002 is unverifiable, yet claimed at test/retired_test.rb:2
+.spec/behavior/retired.md:21: behavior/stale: @behavior U-002 is unverifiable, yet claimed at test/retired_test.rb:2
 .spec/contract/api.md:20: contract/stale: ruby Store#write is unverifiable, yet defined at src/store.rb:2
 .spec/contract/cli.md:11: contract/stale: @command init is unverifiable, yet claimed at src/commands.rb:1
 0 differences
