@@ -120,6 +120,7 @@ module Sumitsubo
         if taken == REASON
           refuse(path, line, "writes #{said} with no reason", topic) if value.empty?
         elsif taken == KEYS
+          refuse(path, line, "writes #{said} naming nothing", topic) if value.empty?
           held = keys_in(value)
           refuse(path, line, "writes #{said} as #{value}, where it takes #{taken}", topic) if held.empty?
         elsif value != taken

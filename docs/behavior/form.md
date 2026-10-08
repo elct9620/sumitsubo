@@ -380,7 +380,7 @@ declaring anything else is a contract nobody registered.
 
 | Step | Statement |
 | --- | --- |
-| Given | a relates row whose cell holds one key in backticks and one outside them |
+| Given | a relates row holding a key outside backticks, or nothing at all |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused at that row, naming what the attribute takes |
 

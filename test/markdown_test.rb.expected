@@ -154,6 +154,8 @@ CLI {"marker" => ["@command"]} []
     
 --- a key written outside backticks ---
   refused: init.md:12 writes relates as `IN-002`, IN-003, where it takes keys in backticks; sumi help behavior has the form
+--- a relates row naming nothing ---
+  refused: init.md:12 writes relates naming nothing; sumi help behavior has the form
 --- a marker named after a contract has already been registered ---
   refused: cli.md:5 names Marker after a contract, which is read one way or the other; sumi help contract has the form
 --- a marker heading with no word under it ---

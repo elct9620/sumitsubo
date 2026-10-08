@@ -700,6 +700,15 @@ read([
   row(12, "| relates | `IN-002`, IN-003 |"), cell(12, "relates "), cell(12, "`IN-002`, IN-003 ")
 ])
 
+# @behavior F-070
+puts "--- a relates row naming nothing ---"
+read([
+  h1(1, "Inspect"), h2(3, "`IN-001` A run")
+] + whole(4) + [
+  attributed(10),
+  row(12, "| relates |  |"), cell(12, "relates "), cell(12, " ")
+])
+
 # @behavior F-032
 puts "--- a marker named after a contract has already been registered ---"
 definition([h1(1, "CLI"), h2(3, "`init`"), h2(5, "Marker"), paragraph(7, "`@command`")])
