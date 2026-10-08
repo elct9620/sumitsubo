@@ -36,8 +36,8 @@ module Sumitsubo
 
         # What each kind is written as.
         #
-        # A fence and a row are each asked for as well as their parts, and arrive
-        # ahead of them, so one carrying neither is still itself — and where one
+        # A fence, a row and a table are each asked for as well as their parts,
+        # and arrive ahead of them, so one carrying neither is still itself — and where one
         # ends is the grammar's answer rather than a comparison of line numbers.
         PATTERNS = {
           Block::HEADING => <<~QUERY,
@@ -56,9 +56,13 @@ module Sumitsubo
             (section (fenced_code_block (info_string (language) @language)))
             (section (fenced_code_block (code_fence_content) @content))
           QUERY
-          Block::ROW => <<~QUERY
+          Block::ROW => <<~QUERY,
             (pipe_table_row) @row
             (pipe_table_row (pipe_table_cell) @cell)
+          QUERY
+          Block::TABLE => <<~QUERY
+            (pipe_table_header) @table
+            (pipe_table_header (pipe_table_cell) @cell)
           QUERY
         }
 
@@ -76,12 +80,13 @@ module Sumitsubo
           "paragraph" => 0, "item" => 1, "nested" => 2
         }
 
-        # The captures a fence and a row are assembled from, which are the ones
+        # The captures a fence, a row and a table are assembled from, which are the ones
         # that are not a block of their own.
         FENCE = "fence"
         LANGUAGE = "language"
         CONTENT = "content"
         ROW = "row"
+        TABLE = "table"
         CELL = "cell"
 
         # Every run of text a document marked as taken letter for letter, asked
@@ -149,8 +154,8 @@ module Sumitsubo
           letters[marks..(-1 - marks)]
         end
 
-        # The blocks these captures make. A fence and a row are each closed by
-        # the first capture that is not one of their own parts, and by the
+        # The blocks these captures make. A fence, a row and a table are each
+        # closed by the first capture that is not one of their own parts, and by the
         # document ending — the one close nothing in the run announces.
         def built(captures, spanned)
           found = []
@@ -167,7 +172,7 @@ module Sumitsubo
         def closed(found, holding, name)
           return holding if holding.nil?
           return holding if holding.kind == Block::CODE && (name == LANGUAGE || name == CONTENT)
-          return holding if holding.kind == Block::ROW && name == CELL
+          return holding if (holding.kind == Block::ROW || holding.kind == Block::TABLE) && name == CELL
 
           found.push(holding)
           nil
@@ -179,6 +184,7 @@ module Sumitsubo
           case capture.name
           when FENCE then return Block.new(Block::CODE, 0, capture.line, "", nil, [], [])
           when ROW then return Block.new(Block::ROW, 0, capture.line, "", nil, [], [])
+          when TABLE then return Block.new(Block::TABLE, 0, capture.line, "", nil, [], [])
           when LANGUAGE then holding.language = capture.text.strip unless holding.nil?
           when CONTENT then holding.text = capture.text unless holding.nil?
           when CELL then holding.cells.push(cell(capture)) unless holding.nil?

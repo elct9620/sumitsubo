@@ -32,6 +32,18 @@ Init ["test/init_test.rb"]
     given a directory with no specification
     when `sumi init` runs
     then a contract directory is created at the configured root
+--- rows alone ---
+  7 row ["Given", "a scenario"]
+  8 row ["When", "it is read"]
+  9 row ["Then", "its steps are held"]
+  13 row ["deprecated", "`T-002` replaces it"]
+--- tables and their rows ---
+  5 table ["Step", "Statement"]
+  7 row ["Given", "a scenario"]
+  8 row ["When", "it is read"]
+  9 row ["Then", "its steps are held"]
+  11 table ["Attribute", "Value"]
+  13 row ["deprecated", "`T-002` replaces it"]
 --- a vocabulary read through the grammar ---
 Glossary "The words this fixture keeps, and the ones it turns down. This paragraph is prose: nothing above a section declares anything."
   Everywhere ["app/**/*.rb", "docs/*.md"]

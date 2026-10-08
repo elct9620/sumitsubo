@@ -131,14 +131,9 @@ end
 # description over two lines. This form is not written at that level, so no
 # scenario comes of the subheading; the wrapping is a space by the time the form
 # sees the paragraph, which is what the one line below says.
-#
-# The steps are the rows the reader wrote. A table is drawn with a heading row
-# and a delimiter row above them, and neither is a row the grammar answers, so
-# a form reading rows has nothing to skip.
 # @behavior MD-002
 # @behavior MD-015
 # @behavior MD-018
-# @behavior MD-050
 PATH = "test/fixtures/specification/forms/init.md"
 feature = Sumitsubo::Specification::Builder::Behavior.new(PATH)
   .build(feature_blocks(reading, PATH))
@@ -149,6 +144,25 @@ feature.statements.each do |scenario|
   puts "  #{scenario.path}:#{scenario.line} #{scenario.key} #{scenario.text}"
   steps_of(scenario)
 end
+
+# A table is drawn with a heading row and a delimiter row above the rows a
+# reader wrote. Neither is a row, so a form reading rows has nothing to skip;
+# one asking for tables as well hears each heading row ahead of its rows, which
+# is what tells two tables under one heading apart.
+def table_blocks(reading, kinds)
+  path = "test/fixtures/specification/forms/tables.md"
+  reading.blocks([path], kinds)[path].each do |block|
+    puts "  #{block.line} #{block.kind} #{block.cells.map { |cell| cell.text.strip }.inspect}"
+  end
+end
+
+# @behavior MD-050
+puts "--- rows alone ---"
+table_blocks(reading, [Sumitsubo::Specification::Block::ROW])
+
+# @behavior MD-053
+puts "--- tables and their rows ---"
+table_blocks(reading, [Sumitsubo::Specification::Block::TABLE, Sumitsubo::Specification::Block::ROW])
 
 # A vocabulary and a definition, read from real documents through a real
 # grammar. What each builder makes of a block is pinned where a canned one can

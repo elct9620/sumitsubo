@@ -6,7 +6,8 @@ A specification written this way is the document a person reads as well as the
 reference line the tool compares against, so what is recovered is the structure
 a reader already sees: headings and the levels they sit at, paragraphs, the
 items of a list and how deep each is, the rows of a table and the cells under
-them, and a fenced block with the language it declares.
+them with the heading row naming its columns, and a fenced block with the
+language it declares.
 
 Two grammars answer. The block one gives that structure and hands back the text
 each block holds unparsed; the inline one reads inside that text for the runs a
@@ -47,8 +48,16 @@ to parse, and saying so belongs to the form that was reading it.
 | Step | Statement |
 | --- | --- |
 | Given | a document whose table carries a heading row and a delimiter row above its own |
-| When | the blocks the document is made of are read |
-| Then | only the rows beneath them answer, so a form never reads the shape a table is drawn with |
+| When | a form asking for rows alone reads it |
+| Then | only the rows beneath them answer |
+
+## `MD-053` A table opens with the row naming its columns
+
+| Step | Statement |
+| --- | --- |
+| Given | a document holding two tables under one heading |
+| When | a form asking for tables and rows reads it |
+| Then | each table answers its heading row ahead of the rows beneath it |
 
 ## `MD-016` Which reading answers for a file
 

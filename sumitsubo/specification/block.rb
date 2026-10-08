@@ -41,9 +41,14 @@ module Sumitsubo
       CODE = "code"
       ROW = "row"
 
+      # The heading row a table opens with, and the cells naming its columns.
+      # Two tables under one heading are told apart by it, so it arrives as a
+      # block of its own ahead of the rows beneath it.
+      TABLE = "table"
+
       # A cell arrives under the row holding it rather than on its own, since
       # where one row ends and the next begins is what a form has to know. It is
-      # asked for with the row and never apart from it.
+      # asked for with the row, or the table, and never apart from them.
       CELL = "cell"
 
       # The run this block opens with, or nil where it opens with anything else.

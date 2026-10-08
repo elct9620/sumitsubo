@@ -59,8 +59,9 @@ rather than by an extension written into a mechanism.
 What a document is made of, said in the words a specification is written in
 rather than any one format's: a heading and the level it sits at, a paragraph,
 an item of a list and how deep it is, a fenced block and the language it
-declares, a row and the cells under it. It is what a parser answers with, and
-the first thing that no longer knows how the document was written.
+declares, a table's heading row, and a row and the cells under it. It is what
+a parser answers with, and the first thing that no longer knows how the
+document was written.
 
 ### Form
 
