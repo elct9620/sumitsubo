@@ -322,6 +322,16 @@ module Sumitsubo
             `deprecated` says what replaces the contract, and it is verified
             like any other.
 
+            `relates` and `refines` name other statements by key, each in
+            backticks and set apart by commas. A key kept by another mechanism
+            opens with its name:
+
+                | relates | `behavior IN-001`, `help` |
+
+            `refines` says this contract narrows the one it names. A key
+            nobody declares answers as unresolved, even where its mechanism is
+            switched off.
+
         Includes
             The boundary of what a definition answers for. With a marker, a
             contract is implemented by the files its own definition reaches. A
@@ -518,6 +528,16 @@ module Sumitsubo
 
             A deprecated scenario says what replaces it, and it is verified
             like any other.
+
+            `relates` and `refines` name other statements by key, each in
+            backticks and set apart by commas. A key kept by another mechanism
+            opens with its name:
+
+                | refines | `IN-001`, `contract inspect` |
+
+            `refines` says this scenario narrows the one it names. A key
+            nobody declares answers as unresolved, even where its mechanism is
+            switched off.
 
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.

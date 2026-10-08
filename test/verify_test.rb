@@ -216,6 +216,32 @@ Dir.chdir("test/fixtures/project/misshapen")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
 
+# Each scenario names one statement by key: one declared and one not, of its
+# own mechanism and of the contracts. Only the two naming nothing answer.
+# @behavior V-044
+puts "--- a relation naming a statement nobody declares ---"
+Dir.chdir("test/fixtures/project/related")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+# The same scenarios with the contracts switched off. What a relation names is
+# looked up all the same, and the one contract relating to a scenario nobody
+# declares is not compared, since its own mechanism is off.
+# @behavior V-045 V-046
+puts "--- relations beside a switched-off mechanism ---"
+Dir.chdir("test/fixtures/project/related-off")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
+# The switched-off contracts are written out of shape. Reading them for what
+# a relation names is the first time they are read, so the refusal is answered
+# there, and a relation into them names what nobody could look up.
+# @behavior V-047
+puts "--- a switched-off mechanism named by a relation and refused ---"
+Dir.chdir("test/fixtures/project/related-unread")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)
+
 # The feature names a word from each subdomain and reaches only the screens,
 # so the one answering is what shows its includes chose the section.
 # @behavior V-037

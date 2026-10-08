@@ -74,6 +74,12 @@ module Sumitsubo
         features
       end
 
+      # Every scenario the specifications declare, which is what a statement
+      # elsewhere names by its key.
+      def statements(config, specifications)
+        declared(config, specifications).map { |one| one.statements }.flatten
+      end
+
       # What the source says about each scenario, kept for whoever asks after:
       # the files every feature reaches, and every claim the marker leaves there.
       def relate(config, specifications, source, relations)

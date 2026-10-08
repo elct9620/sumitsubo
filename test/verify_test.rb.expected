@@ -110,6 +110,21 @@ exit=2
 .spec/glossary.md:17: glossary/unreadable: declares a second title; sumi help glossary has the form
 1 difference
 exit=2
+--- a relation naming a statement nobody declares ---
+.spec/behavior/inspect.md:21: behavior/unresolved: X-002 relates behavior X-404, which no behavior specification declares
+.spec/behavior/inspect.md:45: behavior/unresolved: X-004 refines contract render, which no contract specification declares
+0 differences
+exit=2
+--- relations beside a switched-off mechanism ---
+.spec/behavior/inspect.md:21: behavior/unresolved: X-002 relates behavior X-404, which no behavior specification declares
+.spec/behavior/inspect.md:45: behavior/unresolved: X-004 refines contract render, which no contract specification declares
+0 differences
+exit=2
+--- a switched-off mechanism named by a relation and refused ---
+.spec/behavior/inspect.md:21: behavior/unresolved: X-002 relates behavior X-404, which no behavior specification declares
+.spec/contract/cli.md:19: contract/unreadable: writes an attribute row of 3 cells rather than two, where a | inside a cell is written \|; sumi help contract has the form
+0 differences
+exit=2
 --- a feature speaks the words of the subdomain its includes reach ---
 .spec/behavior/checkout.md:3: glossary/rejected: Component rejects Widget: Component is what the screens call it.
 1 difference

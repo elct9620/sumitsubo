@@ -18,6 +18,8 @@ module Sumitsubo
           mechanism.relate(config, current.specifications, current.source, current.relations)
           mechanism.verify(config, current.findings, current.specifications, current.source, current.relations)
         end
+        current.declare(current.switched_on)
+        current.resolve
         Finding::Report.new(current.findings).lines.each { |line| puts line }
         current.findings.code
       end

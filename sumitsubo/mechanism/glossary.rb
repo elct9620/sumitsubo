@@ -66,6 +66,13 @@ module Sumitsubo
         [specifications.one(Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root)), self)]
       end
 
+      # Every term the vocabulary declares, which is what a statement
+      # elsewhere names by its key.
+      def statements(config, specifications)
+        declared(config, specifications).map { |one| one.statements }.flatten
+                                         .map { |section| section.statements }.flatten
+      end
+
       # Every line this vocabulary writes otherwise than a reference line is
       # written. Only what it declares something on is looked at, and only
       # directly after the word taken letter for letter: a dash in the prose

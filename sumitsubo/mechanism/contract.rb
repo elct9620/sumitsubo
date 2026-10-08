@@ -150,6 +150,12 @@ module Sumitsubo
         definitions
       end
 
+      # Every contract the specifications declare, which is what a statement
+      # elsewhere names by its key.
+      def statements(config, specifications)
+        declared(config, specifications).map { |one| one.statements }.flatten
+      end
+
       # Nothing this mechanism compares is kept yet: its checks still read the
       # source themselves, so a run asking what it relates hears nothing.
       def relate(config, specifications, source, relations)

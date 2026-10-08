@@ -380,3 +380,35 @@ in the order they happened.
 | Given | two checks answering about the same line |
 | When | the findings are reported |
 | Then | the two are ordered by check before message |
+
+## `V-044` A relation naming a statement nobody declares
+
+| Step | Statement |
+| --- | --- |
+| Given | scenarios relating to one declared and one not, and to a contract declared and one not |
+| When | `sumi verify` runs |
+| Then | only the two naming nothing answer, each at the heading of the scenario writing it |
+
+## `V-045` A relation into a switched-off mechanism still resolves
+
+| Step | Statement |
+| --- | --- |
+| Given | contracts switched off, and scenarios relating to one declared and one not |
+| When | `sumi verify` runs |
+| Then | only the one naming nothing answers |
+
+## `V-046` A relation written under a switched-off mechanism is not compared
+
+| Step | Statement |
+| --- | --- |
+| Given | contracts switched off, and one relating to a scenario nobody declares |
+| When | `sumi verify` runs |
+| Then | nothing answers for it |
+
+## `V-047` A switched-off mechanism named by a relation and refused
+
+| Step | Statement |
+| --- | --- |
+| Given | contracts switched off and written out of shape, and scenarios relating to them |
+| When | `sumi verify` runs |
+| Then | the refusal answers once, and no relation into them answers as naming nothing |
