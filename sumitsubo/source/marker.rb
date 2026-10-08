@@ -27,7 +27,7 @@ module Sumitsubo
       # A whole set of keywords is read in one pass because parsing is the cost:
       # a project declaring several kinds of contract would otherwise read every
       # file once per kind.
-      def self.claims_in(path, keywords, languages)
+      def self.marked_in(path, keywords, languages)
         # A caller reaching a mechanism other than Behavior has no reason to have
         # rendered the path first, so the reading owns how it answers.
         where = Place.file(path)

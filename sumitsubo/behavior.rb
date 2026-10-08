@@ -103,7 +103,7 @@ module Sumitsubo
       reach.keys.each do |spec|
         reach[spec].keys.each { |file| relations.add(Relation.reach(spec, file)) }
       end
-      marked = source.claims(scope(reach), [MARKER])
+      marked = source.marked(scope(reach), [MARKER])
       marked.claims.each do |claim|
         anchor = anchored(claim)
         referred(claim, mechanism).each { |one| relations.add(Relation.claim(anchor, one)) }

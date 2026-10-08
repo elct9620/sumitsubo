@@ -206,7 +206,7 @@ module Sumitsubo
     # claims is not worth reading comments for.
     # Every word every definition claims, and every one it leaves dangling.
     def self.marked_in(definitions, reach, source)
-      source.claims(scope(reach), keywords(definitions))
+      source.marked(scope(reach), keywords(definitions))
     end
 
     # The words source marked, read as this mechanism reads them: a contract

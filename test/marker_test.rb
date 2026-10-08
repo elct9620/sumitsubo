@@ -34,7 +34,7 @@ end
 # mechanism reads the two lists apart for. Each list is in line order and one
 # line sits in one of them, so merging puts them back as the file reads.
 def claims(path, keywords, regions)
-  marked = Sumitsubo::Source::Marker.claims_in(path, keywords, Offered.new(regions))
+  marked = Sumitsubo::Source::Marker.marked_in(path, keywords, Offered.new(regions))
   said = []
   left = 0
   right = 0
@@ -132,7 +132,7 @@ claims("src/routes.rb", ["@command", "@route"], [
 # one is the run those lines make, so that is what the claims name.
 # @behavior M-013
 puts "--- claims in one comment name the line it began on ---"
-Sumitsubo::Source::Marker.claims_in("src/ruby.rb", BEHAVIOR, Offered.new([
+Sumitsubo::Source::Marker.marked_in("src/ruby.rb", BEHAVIOR, Offered.new([
   region(2, "# What the sample declares.", Sumitsubo::Source::Region::COMMENT),
   region(3, "# @behavior RB-005 RB-006", Sumitsubo::Source::Region::COMMENT),
   region(4, "# @behavior RB-007", Sumitsubo::Source::Region::CODE),

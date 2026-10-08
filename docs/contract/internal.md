@@ -133,9 +133,9 @@ class Sumitsubo::Source::Language
 end
 ```
 
-## `Sumitsubo::Source::Marker.claims_in`
+## `Sumitsubo::Source::Marker.marked_in`
 
-The reading of what a piece of source claims, for an interface no construct of the language points at.
+The reading of what a piece of source claims, and what it leaves dangling, for an interface no construct of the language points at.
 
 | Attribute | Value |
 | --- | --- |
@@ -143,7 +143,7 @@ The reading of what a piece of source claims, for an interface no construct of t
 
 ```ruby
 module Sumitsubo::Source::Marker
-  def self.claims_in(path, keywords, languages)
+  def self.marked_in(path, keywords, languages)
   end
 end
 ```
