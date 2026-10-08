@@ -98,9 +98,13 @@ module Sumitsubo
     # unread. What counts as a name in that rest belongs to whichever mechanism
     # named the word, so nothing here reads it.
     #
-    # `comment_line` and `in_front_of_code` travel with it rather than being
-    # read off again: only the reading knows which comment a claim sits in and
-    # what that comment stands in front of.
-    Claim = Data.define(:path, :line, :comment_line, :keyword, :text, :in_front_of_code)
+    # `comment_line` travels with it rather than being read off again: only
+    # the reading knows which comment a claim sits in.
+    Claim = Data.define(:path, :line, :comment_line, :keyword, :text)
+
+    # What a pass over source marks, held apart by what the comment stands in
+    # front of: a claim is about the code below it, so a marker with none below
+    # is dangling rather than a claim, and nothing downstream has to ask again.
+    Marked = Data.define(:claims, :dangling)
   end
 end

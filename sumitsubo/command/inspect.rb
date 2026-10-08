@@ -29,8 +29,10 @@ module Sumitsubo
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)
 
         features = Mechanism::BEHAVIOR.declared(config, current.specifications)
-        claims = Sumitsubo::Behavior.claimed_in(current.relations, Mechanism::BEHAVIOR.specification)
-        said = place?(key) ? at(key, features, claims) : about(key, features, claims)
+        mechanism = Mechanism::BEHAVIOR.specification
+        dangling = Sumitsubo::Behavior.dangling_in(current.relations, mechanism)
+        claims = Sumitsubo::Behavior.claimed_in(current.relations, mechanism) + dangling
+        said = place?(key) ? at(key, features, claims) : about(key, features, claims, dangling)
         said.each { |line| puts line }
         0
       end
@@ -106,7 +108,7 @@ module Sumitsubo
         found
       end
 
-      def about(key, features, claims)
+      def about(key, features, claims, dangling)
         said = []
         features.each do |feature|
           feature.statements.each do |scenario|
@@ -121,13 +123,13 @@ module Sumitsubo
 
         said.push("  declared nowhere") if said.empty?
         said.push("  claimed nowhere") if claiming.empty?
-        claiming.each { |claim| said.push("  claimed   #{claim.place.spoken}#{beside(claim, claims)}") }
+        claiming.each { |claim| said.push("  claimed   #{claim.place.spoken}#{beside(claim, claims, dangling)}") }
         said
       end
 
       # How many other scenarios the comment holding this claim names, and
       # whether it stands in front of anything at all.
-      def beside(claim, claims)
+      def beside(claim, claims, dangling)
         others = {}
         claims.each do |one|
           next unless one.path == claim.path && one.comment_line == claim.comment_line
@@ -137,7 +139,7 @@ module Sumitsubo
         end
         said = ""
         said += "  with #{others.length} #{others.length == 1 ? "other" : "others"}" unless others.empty?
-        said += "  in front of nothing" unless claim.in_front_of_code
+        said += "  in front of nothing" if dangling.any? { |one| one.place.spoken == claim.place.spoken }
         said
       end
     end

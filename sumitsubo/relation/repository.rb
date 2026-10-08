@@ -29,11 +29,11 @@ module Sumitsubo
         found
       end
 
-      # Every claim naming a statement this mechanism keeps.
-      def claims_of(mechanism)
+      # Every relation of this kind naming a statement this mechanism keeps.
+      def naming(kind, mechanism)
         found = []
         @all.each do |one|
-          next unless one.kind == CLAIM && one.object.mechanism == mechanism
+          next unless one.kind == kind && one.object.mechanism == mechanism
 
           found.push(one)
         end

@@ -39,7 +39,7 @@ module Sumitsubo
         reach = Sumitsubo::Behavior.reach_in(features, relations)
         declaring = Sumitsubo::Behavior.declaring_in(features)
         claims = Sumitsubo::Behavior.claimed_in(relations, mechanism)
-        within = Check::Claim.within(Check::Claim.in_front_of_code(claims), declaring, reach)
+        within = Check::Claim.within(claims, declaring, reach)
 
         rows = []
         features.each { |feature| rows.push(row(feature, within, declaring)) }
@@ -49,7 +49,7 @@ module Sumitsubo
         said = ["#{padded(mechanism, width + 4)}statements  claims  most"]
         rows.each { |one| said.push(spoken(one, width)) }
         said.push("  #{totals(features, within)}")
-        said.concat(unclaimed_files(reach, claims))
+        said.concat(unclaimed_files(reach, claims + Sumitsubo::Behavior.dangling_in(relations, mechanism)))
         said
       end
 

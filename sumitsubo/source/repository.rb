@@ -24,15 +24,18 @@ module Sumitsubo
         @languages.comments_in(path, Place.file(path))
       end
 
-      # What these files claim with any of these words, read in one pass per
-      # file: parsing is the cost, so a project registering several kinds still
-      # reads each of them once.
+      # What these files claim with any of these words, and what they leave
+      # dangling, read in one pass per file: parsing is the cost, so a project
+      # registering several kinds still reads each of them once.
       def claims(paths, keywords)
-        found = []
+        claims = []
+        dangling = []
         paths.each do |path|
-          Marker.claims_in(path, keywords, @languages).each { |one| found.push(one) }
+          marked = Marker.claims_in(path, keywords, @languages)
+          claims.concat(marked.claims)
+          dangling.concat(marked.dangling)
         end
-        found
+        Marked.new(claims: claims, dangling: dangling)
       end
 
       # What a file declares, read as the language a specification named.

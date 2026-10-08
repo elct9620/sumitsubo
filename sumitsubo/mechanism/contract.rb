@@ -42,24 +42,24 @@ module Sumitsubo
           reach = Sumitsubo::Contract.reach(
             Sumitsubo::Contract.claimed(definitions), config.base, config.exclusion
           )
-          claims = Sumitsubo::Contract.claimed_in(definitions, reach, source)
+          marked = Sumitsubo::Contract.marked_in(definitions, reach, source)
+          claims = Sumitsubo::Contract.read(marked.claims)
           stated = Sumitsubo::Contract.stated_in(definitions)
           registering = Sumitsubo::Contract.registering_claims(definitions)
-          # A claim standing in front of nothing is answered once, by itself: it
-          # names an interface without implementing one, so putting it through
-          # the comparisons below would say the same thing a second way.
-          in_front = Check::Claim.in_front_of_code(claims)
           # What the two checks below compare is the claims that can implement
           # what they name; the rest answer for themselves further down.
-          within = Check::Claim.within(in_front, registering, reach)
+          within = Check::Claim.within(claims, registering, reach)
 
           @unclaimed.run(stated, within).each { |one| findings.add(one) }
           @stale.run(stated, within).each { |one| findings.add(one) }
           @duplicated.run(within, stated).each { |one| findings.add(one) }
-          @misplaced.run(in_front, registering, reach).each { |one| findings.add(one) }
-          @unresolved.run(Sumitsubo::Contract.named(in_front), stated).each { |one| findings.add(one) }
-          @nameless.run(Sumitsubo::Contract.nameless(in_front)).each { |one| findings.add(one) }
-          @dangling.run(Check::Claim.dangling(claims)).each { |one| findings.add(one) }
+          @misplaced.run(claims, registering, reach).each { |one| findings.add(one) }
+          @unresolved.run(Sumitsubo::Contract.named(claims), stated).each { |one| findings.add(one) }
+          @nameless.run(Sumitsubo::Contract.nameless(claims)).each { |one| findings.add(one) }
+          # A marker standing in front of nothing names an interface without
+          # implementing one, so it is answered once, by itself, rather than
+          # through the comparisons above.
+          @dangling.run(Sumitsubo::Contract.read(marked.dangling)).each { |one| findings.add(one) }
         end
       end
 

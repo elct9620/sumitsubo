@@ -30,14 +30,29 @@ end
 
 # The text is bracketed because a keyword with nothing after it carries an
 # empty one, and a snapshot cannot hold the trailing space that would leave.
-# Whether the claim stands in front of code is said outright, because that is
-# what a mechanism reads it for.
+# A marker with nothing below it is said outright, because that is what a
+# mechanism reads the two lists apart for. Each list is in line order and one
+# line sits in one of them, so merging puts them back as the file reads.
 def claims(path, keywords, regions)
-  Sumitsubo::Source::Marker.claims_in(path, keywords, Offered.new(regions))
-    .map do |claim|
-      "#{claim.path}:#{claim.line} #{claim.keyword} [#{claim.text}]" \
-        "#{claim.in_front_of_code ? "" : " in front of nothing"}"
+  marked = Sumitsubo::Source::Marker.claims_in(path, keywords, Offered.new(regions))
+  said = []
+  left = 0
+  right = 0
+  while left < marked.claims.length || right < marked.dangling.length
+    if right >= marked.dangling.length ||
+       (left < marked.claims.length && marked.claims[left].line < marked.dangling[right].line)
+      said.push(spoken(marked.claims[left], ""))
+      left += 1
+    else
+      said.push(spoken(marked.dangling[right], " in front of nothing"))
+      right += 1
     end
+  end
+  said
+end
+
+def spoken(claim, beside)
+  "#{claim.path}:#{claim.line} #{claim.keyword} [#{claim.text}]#{beside}"
 end
 
 # @behavior M-001 M-005
@@ -122,5 +137,5 @@ Sumitsubo::Source::Marker.claims_in("src/ruby.rb", BEHAVIOR, Offered.new([
   region(3, "# @behavior RB-005 RB-006", Sumitsubo::Source::Region::COMMENT),
   region(4, "# @behavior RB-007", Sumitsubo::Source::Region::CODE),
   region(9, "# @behavior RB-008", Sumitsubo::Source::Region::CODE)
-])).each { |claim| puts "#{claim.path}:#{claim.line} in the comment from #{claim.comment_line}" }
+])).claims.each { |claim| puts "#{claim.path}:#{claim.line} in the comment from #{claim.comment_line}" }
 

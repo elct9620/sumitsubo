@@ -90,20 +90,19 @@ module Sumitsubo
         claims = Sumitsubo::Behavior.claimed_in(relations, specification)
         stated = Sumitsubo::Behavior.stated_in(features)
         declaring = Sumitsubo::Behavior.declaring_in(features)
-        # A claim standing in front of nothing is answered once, by itself: it
-        # names a scenario without witnessing one, so putting it through the
-        # comparisons below would say the same thing a second way.
-        in_front = Check::Claim.in_front_of_code(claims)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.
-        within = Check::Claim.within(in_front, declaring, reach)
+        within = Check::Claim.within(claims, declaring, reach)
 
         @unclaimed.run(stated, within).each { |one| findings.add(one) }
         @stale.run(stated, within).each { |one| findings.add(one) }
-        @misplaced.run(in_front, declaring, reach).each { |one| findings.add(one) }
-        @unresolved.run(Sumitsubo::Behavior.named(in_front), stated).each { |one| findings.add(one) }
-        @nameless.run(Sumitsubo::Behavior.nameless(in_front)).each { |one| findings.add(one) }
-        @dangling.run(Check::Claim.dangling(claims)).each { |one| findings.add(one) }
+        @misplaced.run(claims, declaring, reach).each { |one| findings.add(one) }
+        @unresolved.run(Sumitsubo::Behavior.named(claims), stated).each { |one| findings.add(one) }
+        @nameless.run(Sumitsubo::Behavior.nameless(claims)).each { |one| findings.add(one) }
+        # A marker standing in front of nothing names a scenario without
+        # witnessing one, so it is answered once, by itself, rather than through
+        # the comparisons above.
+        @dangling.run(Sumitsubo::Behavior.dangling_in(relations, specification)).each { |one| findings.add(one) }
       end
     end
   end

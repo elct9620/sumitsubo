@@ -33,7 +33,7 @@ module Sumitsubo
 
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, so what counts as an id is this mechanism's to say.
-    class Claim < Data.define(:path, :line, :comment_line, :id, :in_front_of_code)
+    class Claim < Data.define(:path, :line, :comment_line, :id)
       def key
         id
       end
@@ -97,26 +97,35 @@ module Sumitsubo
       text.split(" ")
     end
 
-    # What each feature reaches and every claim the marker leaves there, kept as
-    # relations under the mechanism's name. Marker finds the word and hands back
-    # the rest of the line; splitting that into ids is this mechanism's, which is
-    # what lets Contract read the same line as one name.
+    # What each feature reaches and every marker left there, kept as relations
+    # under the mechanism's name: a claim where code stands below it, dangling
+    # where nothing does. Marker finds the word and hands back the rest of the
+    # line; splitting that into ids is this mechanism's, which is what lets
+    # Contract read the same line as one name.
     def self.relate(reach, source, relations, mechanism)
       reach.keys.each do |spec|
         reach[spec].keys.each { |file| relations.add(Relation.reach(spec, file)) }
       end
-      source.claims(scope(reach), [MARKER]).each { |claim| related(claim, relations, mechanism) }
+      marked = source.claims(scope(reach), [MARKER])
+      marked.claims.each do |claim|
+        anchor = anchored(claim)
+        referred(claim, mechanism).each { |one| relations.add(Relation.claim(anchor, one)) }
+      end
+      marked.dangling.each do |claim|
+        anchor = anchored(claim)
+        referred(claim, mechanism).each { |one| relations.add(Relation.dangling(anchor, one)) }
+      end
     end
 
-    # One claim as the relations it makes, one for each id it names. Every one
-    # runs from the same anchor, since they were written in the same place.
-    def self.related(claim, relations, mechanism)
-      anchor = Relation::Anchor.new(
-        path: claim.path, line: claim.line, comment_line: claim.comment_line, in_front_of_code: claim.in_front_of_code
-      )
-      named_in(claim).each do |id|
-        relations.add(Relation.claim(anchor, Relation::Reference.new(mechanism: mechanism, key: id)))
-      end
+    # Where a marker was written. Every id it names runs from here, since they
+    # were written in the same place.
+    def self.anchored(claim)
+      Relation::Anchor.new(path: claim.path, line: claim.line, comment_line: claim.comment_line)
+    end
+
+    # The statements one marker names, one for each id.
+    def self.referred(claim, mechanism)
+      named_in(claim).map { |id| Relation::Reference.new(mechanism: mechanism, key: id) }
     end
 
     # The files each feature reaches, read back from what the run kept.
@@ -132,11 +141,19 @@ module Sumitsubo
 
     # The claims the run kept for this mechanism, read back as it compares them.
     def self.claimed_in(relations, mechanism)
+      read(relations.naming(Relation::CLAIM, mechanism))
+    end
+
+    # The markers the run kept for this mechanism with no code below them.
+    def self.dangling_in(relations, mechanism)
+      read(relations.naming(Relation::DANGLING, mechanism))
+    end
+
+    def self.read(relations)
       found = []
-      relations.claims_of(mechanism).each do |one|
+      relations.each do |one|
         found.push(Claim.new(
-          path: one.subject.path, line: one.subject.line, comment_line: one.subject.comment_line,
-          id: one.object.key, in_front_of_code: one.subject.in_front_of_code
+          path: one.subject.path, line: one.subject.line, comment_line: one.subject.comment_line, id: one.object.key
         ))
       end
       found

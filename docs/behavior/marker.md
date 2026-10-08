@@ -75,13 +75,13 @@ front of it, which is what keeps an address out of the claims.
 | When | the file is scanned for claims |
 | Then | the first four answer claims and the last answers none |
 
-## `M-012` A claim standing in front of code, and one standing in front of nothing
+## `M-012` A marker standing in front of code claims, and one in front of nothing dangles
 
 | Step | Statement |
 | --- | --- |
 | Given | a run of comments standing in front of code, and a run standing in front of nothing |
 | When | the file is scanned for claims |
-| Then | every claim in the first run answers as standing in front of code and every claim in the second as standing in front of nothing |
+| Then | every marker in the first run answers as a claim and every marker in the second as dangling |
 
 ## `M-013` Claims in one comment are one claim
 

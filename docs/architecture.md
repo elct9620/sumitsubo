@@ -105,7 +105,8 @@ read the source themselves, so they keep nothing yet for anyone to ask.
                          ┌───────────▼─────────────┐
                          │   Relation Repository   │  what corresponds,
                          │  ├ reach    spec → file │  kept for whoever asks
-                         │  └ claim   place → key  │──► stats, inspect
+                         │  ├ claim   place → key  │──► stats, inspect
+                         │  └ dangling place → key │
                          └───────────┬─────────────┘
                                      │
                      specification × source ─► a check ─► Finding

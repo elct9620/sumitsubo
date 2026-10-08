@@ -98,13 +98,10 @@ def unclaimed(definitions, claims)
     .run(Sumitsubo::Contract.stated_in(definitions), claims)
 end
 
-# A claim stands in front of code unless a case says otherwise, since what it
-# stands in front of is the reading's answer rather than this one's subject.
-def claim(path, line, keyword, name, in_front_of_code = true)
-  Sumitsubo::Contract::Claim.new(
-    path: path, line: line,
-    contract: Sumitsubo::Contract::Name.new(keyword, name), in_front_of_code: in_front_of_code
-  )
+# A claim as the mechanism reads one. What it stands in front of was settled
+# by the reading, which is what put it among the claims at all.
+def claim(path, line, keyword, name)
+  Sumitsubo::Contract::Claim.new(path: path, line: line, contract: Sumitsubo::Contract::Name.new(keyword, name))
 end
 
 def fails

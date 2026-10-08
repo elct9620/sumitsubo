@@ -35,11 +35,12 @@ module Sumitsubo
         in_front_at = in_front_of_code(comments)
         begun_at = begins(comments)
         claims = []
+        dangling = []
         comments.each do |comment|
-          claimed_in(comment, keywords, where, begun_at[comment.line], in_front_at[comment.line])
-            .each { |one| claims.push(one) }
+          held = in_front_at[comment.line] ? claims : dangling
+          claimed_in(comment, keywords, where, begun_at[comment.line]).each { |one| held.push(one) }
         end
-        claims
+        Source::Marked.new(claims: claims, dangling: dangling)
       end
 
       # Answered under the line each comment starts on: the line its run
@@ -76,16 +77,15 @@ module Sumitsubo
       end
 
       # The claims one comment carries. It spans lines whole, so a claim answers
-      # at the line its keyword is on rather than where the comment began, while
-      # what the comment stands in front of is the same for every line of it.
-      def self.claimed_in(comment, keywords, where, comment_line, in_front_of_code)
+      # at the line its keyword is on rather than where the comment began.
+      def self.claimed_in(comment, keywords, where, comment_line)
         found = []
         comment.lines.each do |one|
           keywords.each do |keyword|
             claimed = text_after(one.text, keyword)
             next if claimed.nil?
 
-            found.push(Source::Claim.new(where, one.line, comment_line, keyword, claimed, in_front_of_code))
+            found.push(Source::Claim.new(where, one.line, comment_line, keyword, claimed))
           end
         end
         found

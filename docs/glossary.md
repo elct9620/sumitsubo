@@ -208,8 +208,9 @@ both.
 
 ### Relation
 
-What a run found to correspond, with a kind and two ends. A claim runs from
-an anchor to a reference, a reach from one artifact to another. It is kept
+What a run found to correspond, with a kind and two ends. A claim, and a
+marker dangling with no code below it, run from an anchor to a reference; a
+reach runs from one artifact to another. It is kept
 once, so every question asked after the run reads the same answer.
 
 ### Reference

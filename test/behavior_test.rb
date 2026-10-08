@@ -131,7 +131,7 @@ puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
 # of it from the file next door names the scenario without being able to
 # witness it, so the scenario stands unclaimed.
 claims = [Sumitsubo::Behavior::Claim.new(
-  path: "test/fixtures/project/behavior/test/verify_test.rb", line: 9, comment_line: 9, id: "I-001", in_front_of_code: true
+  path: "test/fixtures/project/behavior/test/verify_test.rb", line: 9, comment_line: 9, id: "I-001"
 )]
 
 # @behavior B-012
@@ -177,10 +177,10 @@ end
 puts "--- a claim naming no scenario, apart from one resolving to none ---"
 mixed = [
   Sumitsubo::Behavior::Claim.new(
-    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 13, comment_line: 13, id: "G-404", in_front_of_code: true
+    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 13, comment_line: 13, id: "G-404"
   ),
   Sumitsubo::Behavior::Claim.new(
-    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 16, comment_line: 16, id: "", in_front_of_code: true
+    path: "test/fixtures/project/behavior/test/verify_test.rb", line: 16, comment_line: 16, id: ""
   )
 ]
 (Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Behavior::UNRESOLVED, "scenario")
@@ -194,7 +194,7 @@ end
 # claimed; R-003 is retiring and nothing claims it.
 retired = reads("test/fixtures/specification/behavior/unverifiable")
 retired_claims = [Sumitsubo::Behavior::Claim.new(
-  path: "test/retired_test.rb", line: 2, comment_line: 2, id: "R-002", in_front_of_code: true
+  path: "test/retired_test.rb", line: 2, comment_line: 2, id: "R-002"
 )]
 
 # @behavior B-017 B-019

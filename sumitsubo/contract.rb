@@ -73,7 +73,7 @@ module Sumitsubo
     # A claim as this mechanism reads it. Marker hands back what follows the
     # keyword unread, and a contract is named by the interface itself, so the
     # whole of that is the name it carries.
-    class Claim < Data.define(:path, :line, :contract, :in_front_of_code)
+    class Claim < Data.define(:path, :line, :contract)
       def key
         contract
       end
@@ -204,16 +204,18 @@ module Sumitsubo
     # read from the syntax tree. Each reading searches only its own files: a
     # marker nobody wrote is not worth parsing for, and a definition nobody
     # claims is not worth reading comments for.
-    # Every word every definition claims, read as this mechanism reads them:
-    # a contract is named by the interface itself, so the whole of what follows
-    # the marker is the name it carries.
-    def self.claimed_in(definitions, reach, source)
+    # Every word every definition claims, and every one it leaves dangling.
+    def self.marked_in(definitions, reach, source)
+      source.claims(scope(reach), keywords(definitions))
+    end
+
+    # The words source marked, read as this mechanism reads them: a contract
+    # is named by the interface itself, so the whole of what follows the
+    # marker is the name it carries.
+    def self.read(marked)
       found = []
-      source.claims(scope(reach), keywords(definitions)).each do |claim|
-        found.push(Claim.new(
-          path: claim.path, line: claim.line,
-          contract: Name.new(claim.keyword, claim.text), in_front_of_code: claim.in_front_of_code
-        ))
+      marked.each do |claim|
+        found.push(Claim.new(path: claim.path, line: claim.line, contract: Name.new(claim.keyword, claim.text)))
       end
       found
     end
