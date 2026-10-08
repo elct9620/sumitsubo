@@ -43,12 +43,13 @@ module Sumitsubo
         current.declare(Mechanism::ALL)
         @current = current
         @names = Mechanism::ALL.map { |one| one.specification }
-        roots = rooted(key)
+        written = Related.reference(key, "", @names)
+        roots = rooted(written)
         if roots.empty?
           puts "nothing declares #{key}"
           # It may stand in a document that could not be read, which is then
           # said rather than left as the answer.
-          searched(key).each { |mechanism| @current.statements_named(mechanism) if @current.refused?(mechanism) }
+          searched(written).each { |mechanism| @current.statements_named(mechanism) if @current.refused?(mechanism) }
         end
         roots.each { |root| answered(root).each { |line| puts line } }
         # A switched-off mechanism is read for what the answer shows, so what
@@ -60,10 +61,9 @@ module Sumitsubo
 
       # Every statement the key names: the one under the mechanism it opens
       # with, or, written bare, the one under whichever mechanism declares it.
-      def rooted(key)
-        written = Related.reference(key, "", @names)
+      def rooted(written)
         found = []
-        searched(key).each do |mechanism|
+        searched(written).each do |mechanism|
           held = @current.statements_of(mechanism)
           next if held.nil? || held.none? { |one| one.key == written.key }
 
@@ -73,8 +73,7 @@ module Sumitsubo
       end
 
       # The mechanisms a key is looked for under.
-      def searched(key)
-        written = Related.reference(key, "", @names)
+      def searched(written)
         Mechanism::ALL.select { |one| written.mechanism.empty? || written.mechanism == one.specification }
       end
 
