@@ -668,6 +668,38 @@ read([
   row(12, "| deprecated |  |"), cell(12, "deprecated "), cell(12, " ")
 ])
 
+# A statement names the ones it relates to and refines by their keys, each in
+# backticks. One of another mechanism carries that mechanism's name first,
+# inside the same backticks, since the key is taken letter for letter.
+# @behavior F-069
+puts "--- a scenario naming what it relates to and refines ---"
+read([
+  h1(1, "Inspect"), h2(3, "`IN-001` A run")
+] + whole(4) + [
+  attributed(10),
+  row(12, "| relates | `contract inspect`, `IN-002` |"),
+  cell(12, "relates "), cell(12, "`contract inspect`, `IN-002` "),
+  row(13, "| refines | `SA-001` |"), cell(13, "refines "), cell(13, "`SA-001` ")
+]).statements.each { |scenario| p scenario.attributes }
+
+# @behavior F-069
+puts "--- a contract naming what it relates to ---"
+registered_by(definition([
+  h1(1, "CLI"), h2(3, "Marker"), paragraph(5, "`@command`"), h2(7, "`inspect`"),
+  row(11, "| relates | `behavior IN-001` |"), cell(11, "relates "), cell(11, "`behavior IN-001` ")
+]))
+
+# Every key is in backticks or the cell names nothing: one read in part would
+# name less than its writer meant, and the run would say nothing of the rest.
+# @behavior F-070
+puts "--- a key written outside backticks ---"
+read([
+  h1(1, "Inspect"), h2(3, "`IN-001` A run")
+] + whole(4) + [
+  attributed(10),
+  row(12, "| relates | `IN-002`, IN-003 |"), cell(12, "relates "), cell(12, "`IN-002`, IN-003 ")
+])
+
 # @behavior F-032
 puts "--- a marker named after a contract has already been registered ---"
 definition([h1(1, "CLI"), h2(3, "`init`"), h2(5, "Marker"), paragraph(7, "`@command`")])

@@ -97,6 +97,11 @@ module Sumitsubo
       # other form's arm, and the run crashes. Spinel c1d108a has the arm.
       REASON = "a reason"
 
+      # What an attribute takes when it names other statements: their keys,
+      # each in backticks, set apart by commas. A key is taken letter for
+      # letter, so one carrying a space or a comma is still one key.
+      KEYS = "keys in backticks"
+
       # One attribute as a row wrote it, held under the word its first cell
       # names. The set is closed both ways: a word nothing knows is a form
       # nobody reads, and a fixed value nothing answers for is a fact nobody
@@ -111,14 +116,34 @@ module Sumitsubo
         value = row.value
         taken = takes[said]
         refuse(path, line, "writes #{said}, which is not #{carries}", topic) if taken.nil?
+        held = [value]
         if taken == REASON
           refuse(path, line, "writes #{said} with no reason", topic) if value.empty?
+        elsif taken == KEYS
+          held = keys_in(value)
+          refuse(path, line, "writes #{said} as #{value}, where it takes #{taken}", topic) if held.empty?
         elsif value != taken
           refuse(path, line, "writes #{said} as #{value}, where it takes #{taken}", topic)
         end
         refuse(path, line, "writes #{said} twice", topic) unless attributes[said].nil?
 
-        attributes[said] = [value]
+        attributes[said] = held
+      end
+
+      # The keys a cell names, or none where any part of it is not one key in
+      # backticks: a cell half read would name less than its writer meant.
+      def self.keys_in(value)
+        found = []
+        # Interpolated first: in this program Spinel 2026.09.12 splits the boxed
+        # cell text into an array it then reads as C strings, and C refuses it.
+        # Master 0e8befeb compiles `value.split`.
+        parts = "#{value}".split(",").map { |one| one.strip }
+        parts.each do |part|
+          return [] unless part.length > 2 && part.start_with?("`") && part.end_with?("`")
+
+          found.push(part[1, part.length - 2])
+        end
+        found
       end
 
       # A row of two cells, as the first names it and the second says it.

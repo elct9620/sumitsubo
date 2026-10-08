@@ -35,8 +35,10 @@ module Sumitsubo
         # scenario to one observation, so a second is a scenario of its own.
         STEPS = ["Given", "When", "Then"]
 
-        # The attributes a scenario carries, each taking the reason it is said.
-        ATTRIBUTES = { "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON }
+        # The attributes a scenario carries: the two taking the reason they are
+        # said, and the two naming the statements it relates to and refines.
+        ATTRIBUTES = { "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON,
+                       "relates" => Builder::KEYS, "refines" => Builder::KEYS }
 
         # The columns each table a scenario holds is headed by.
         STEPPED = ["Step", "Statement"]

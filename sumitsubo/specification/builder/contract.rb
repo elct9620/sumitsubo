@@ -37,10 +37,11 @@ module Sumitsubo
         # The heading naming the word source claims these contracts with.
         MARKER = "Marker"
 
-        # The attributes a contract carries, each with the one value it takes or
-        # the reason it is said.
+        # The attributes a contract carries, each with the one value it takes,
+        # the reason it is said, or the statements it names.
         ATTRIBUTES = { "internal" => "yes",
-                       "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON }
+                       "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON,
+                       "relates" => Builder::KEYS, "refines" => Builder::KEYS }
 
         # What the fence says about a contract, held under the words the
         # mechanism words its own help with. Neither is an attribute a row may

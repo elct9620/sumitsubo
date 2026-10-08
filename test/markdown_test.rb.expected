@@ -145,6 +145,15 @@ CLI {} []
   refused: cli.md:3 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
 --- an attribute under a scenario written with no reason ---
   refused: init.md:12 writes deprecated with no reason; sumi help behavior has the form
+--- a scenario naming what it relates to and refines ---
+{"relates" => ["contract inspect", "IN-002"], "refines" => ["SA-001"]}
+--- a contract naming what it relates to ---
+CLI {"marker" => ["@command"]} []
+  
+  cli.md:7 inspect {"relates" => ["behavior IN-001"]}
+    
+--- a key written outside backticks ---
+  refused: init.md:12 writes relates as `IN-002`, IN-003, where it takes keys in backticks; sumi help behavior has the form
 --- a marker named after a contract has already been registered ---
   refused: cli.md:5 names Marker after a contract, which is read one way or the other; sumi help contract has the form
 --- a marker heading with no word under it ---

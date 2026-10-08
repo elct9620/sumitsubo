@@ -368,6 +368,22 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, since what such an attribute says is its reason |
 
+## `F-069` What a statement relates to and refines
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario or a contract whose attributes name relates and refines, each with keys in backticks |
+| When | the blocks the document is made of are read |
+| Then | the statement carries each key under the word that names it, in the order written |
+
+## `F-070` A related key written outside backticks
+
+| Step | Statement |
+| --- | --- |
+| Given | a relates row whose cell holds one key in backticks and one outside them |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at that row, naming what the attribute takes |
+
 ## `F-032` A marker named after a contract is already registered
 
 | Step | Statement |
