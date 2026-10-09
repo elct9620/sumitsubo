@@ -27,6 +27,10 @@ module Sumitsubo
   # Nothing here names the grammar. What that keeps regenerable is no longer
   # this file's own test, which reads real documents now, but the three that
   # reach this file through `require "sumitsubo"` alone.
+  #
+  # A module beside Mechanism::Contract rather than its class methods: Spinel
+  # 2026.09.12 cannot type a class method's parameter where another shares its
+  # name. Master 7232a802 can, so fold these in once the pin moves past it.
   module Definition
     DIRECTORY = "contract"
 

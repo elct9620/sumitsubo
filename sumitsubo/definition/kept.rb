@@ -8,6 +8,7 @@ require "sumitsubo/check"
 require "sumitsubo/source"
 require "sumitsubo/source/repository"
 require "sumitsubo/specification"
+require "sumitsubo/definition/declared"
 
 module Sumitsubo
   # What the Contract mechanism keeps from the source for a definition, and reads back.
@@ -28,6 +29,11 @@ module Sumitsubo
         end
       end
       found
+    end
+
+    # The files one definition reached, in a fixed order.
+    def self.reached(reach, definition)
+      reach[definition.path].keys.sort
     end
 
     # The files among these that could carry a name spelled as this language

@@ -9,6 +9,10 @@ require "sumitsubo/relation"
 
 module Sumitsubo
   # What a feature declares, and how it is read.
+  #
+  # A module beside Mechanism::Behavior rather than its class methods: Spinel
+  # 2026.09.12 cannot type a class method's parameter where another shares its
+  # name. Master 7232a802 can, so fold these in once the pin moves past it.
   module Feature
     DIRECTORY = "behavior"
 

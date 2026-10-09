@@ -6,6 +6,7 @@ require "sumitsubo/check"
 require "sumitsubo/reach"
 require "sumitsubo/source/repository"
 require "sumitsubo/relation"
+require "sumitsubo/feature/declared"
 
 module Sumitsubo
   # What the Behavior mechanism keeps from the source for a feature, and reads back.

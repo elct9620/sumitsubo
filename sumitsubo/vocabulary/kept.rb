@@ -8,6 +8,7 @@ require "sumitsubo/specification"
 require "sumitsubo/place"
 require "sumitsubo/relation"
 require "sumitsubo/source"
+require "sumitsubo/vocabulary/declared"
 
 module Sumitsubo
   # What the Glossary mechanism keeps from the source for a vocabulary, and reads back.

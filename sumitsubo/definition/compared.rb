@@ -8,6 +8,7 @@ require "sumitsubo/check"
 require "sumitsubo/source"
 require "sumitsubo/source/repository"
 require "sumitsubo/specification"
+require "sumitsubo/definition/declared"
 
 module Sumitsubo
   # What a definition hands the Contract mechanism's checks.
@@ -120,11 +121,6 @@ module Sumitsubo
         end
       end
       found
-    end
-
-    # The files one definition reached, in a fixed order.
-    def self.reached(reach, definition)
-      reach[definition.path].keys.sort
     end
 
     # An interface the syntax tree does not define. The specification

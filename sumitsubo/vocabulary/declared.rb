@@ -14,6 +14,10 @@ module Sumitsubo
   # Reading it can fail in a way that is not a difference between the
   # specification and the code: with no file, or an unreadable one, there is
   # no reference line to verify from at all.
+  #
+  # A module beside Mechanism::Glossary rather than its class methods: Spinel
+  # 2026.09.12 cannot type a class method's parameter where another shares its
+  # name. Master 7232a802 can, so fold these in once the pin moves past it.
   module Vocabulary
     FILE = "glossary.md"
 
