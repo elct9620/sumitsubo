@@ -11,7 +11,8 @@ same files either way.
 
 A document is rewritten in place, and in place is the reference line itself,
 so `--check` is what says the same thing and changes nothing. What each form
-has to say about how its own documents are written is that form's own.
+has to say about how its own documents are written is that form's own. How long
+the prose of any of them may run is the budget's.
 
 A signature is still read as the language it names — that is what says how a
 name is spelled, and a definition registering a name no reading can find is

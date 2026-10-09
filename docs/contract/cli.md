@@ -14,9 +14,9 @@ read a mistyped flag as consent to rewrite it.
 What a run answers is one ladder throughout: `0` where it did what it was
 asked, `1` where the two sides differ, and `2` where the comparison could not
 be made — whatever had to be read first was absent, unreadable, or ambiguous.
-Two runs have a second side to differ from, so two answer `1`: `fmt --check`,
-whose sides are the document as it is written and as a reference line is
-written, and `verify`, whose sides are the specification and the source.
+Two runs have a second side to differ from, so two answer `1`: `fmt`, whose
+sides are the document as it is written and as a reference line is written,
+and `verify`, whose sides are the specification and the source.
 
 ## Includes
 
@@ -49,13 +49,14 @@ cannot be written that way.
 Answers the half of a run that is about the specification alone, so a reference
 line can be got right before any code is held to it. No file a specification
 covers is opened: a signature is still read as the language it names, since
-that is what says how the name is spelled, and nothing else of the source is.
-A specification the configuration switched off is one the project does not
-keep, so it is passed over here as it is under `verify`.
+that says how the name is spelled, and nothing else of the source is.
+A specification switched off is one the project does not keep, so it is passed
+over here as under `verify`.
 
 A document is rewritten in place, and in place is the reference line itself, so
-`--check` says the same thing and changes nothing. What a form cannot write for
-a person it answers instead, at the line that broke it.
+`--check` says the same thing and changes nothing. Either run answers what
+cannot be written for a person at the line that broke it: a form's refusal, or
+prose over the budget.
 
 Scenarios go in id order.
 

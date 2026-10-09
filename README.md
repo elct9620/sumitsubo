@@ -90,9 +90,11 @@ created .spec/behavior
 ```
 
 Those files are where the project writes what it means to keep. `sumi help
-glossary`, `sumi help contract` and `sumi help behavior` have the form of each,
-and `sumi help config` has `.sumi.json` — where the specifications live, what
-no mechanism reads, and which of them a run touches.
+glossary`, `sumi help contract` and `sumi help behavior` have the form of each.
+`sumi help config` has `.sumi.json`: where the specifications live, what no
+mechanism reads, which of them a run touches, and how long their prose may run.
+
+### Formatting
 
 `sumi fmt` writes them the way a reference line is written, without asking what
 the source does — so a reference line can be got right before any code is held
@@ -110,6 +112,8 @@ wrote .spec/behavior/fmt.md
 0 differences
 ```
 
+### Verification
+
 `sumi verify` checks the source against them:
 
 ```console
@@ -122,8 +126,8 @@ app/order.rb:2: glossary/rejected: Order rejects Purchase: Order is what the dom
 A run answers `0` where the two sides agree, `1` where they differ, and `2`
 where the comparison could not be made — whatever had to be read first was
 absent, unreadable, or ambiguous. Findings answer as `path:line: check:
-message`, relative to where the run started. A check's first half names its
-mechanism in `.sumi.json`.
+message`, relative to where the run started. A check's first half is the word
+`.sumi.json` knows what ran it by: a mechanism, or `budget`.
 
 ### Witnesses
 

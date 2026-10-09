@@ -75,7 +75,8 @@ next one will ask of it. Below is `verify`, which takes all of it. `stats`,
 What specifications say of one another is read off (1) rather than the source.
 Every mechanism's is kept, switched on or not. `fmt` takes
 (1) and (3), and puts what it can write for a person back into the document it
-read on the way.
+read on the way. Where the project wrote a budget, each of those documents is
+measured against it too.
 
 Behavior's checks read the relations back; Contract's and Glossary's still
 read the source themselves, so they keep nothing yet for anyone to ask.
@@ -232,8 +233,8 @@ Glossary and Contract answer for the implementation, Behavior for the tests.
 ## The checks, grouped by the Source they consume
 
 A check is named for what it finds, so one word is one check and one check is
-one word however many mechanisms run it. The mechanism running it puts its own
-word in front, which is the whole of `<mechanism>/<check>`.
+one word however many mechanisms run it. Whatever runs it puts its own word in
+front — a mechanism, or the budget — which is the whole of `<word>/<check>`.
 
 ```
                               │ Source::   │ Source::    │ Source::
@@ -278,6 +279,9 @@ word in front, which is the whole of `<mechanism>/<check>`.
    what `fmt` writes for a person, and `fmt --check` answers instead
  a scenario written before a lower id:  unordered  (B) ✻
    what `fmt` moves for a person, unless `order` is switched off
+ prose running over its budget:  sentence, paragraph  (budget) ✻
+   measured over every form, and answered by `fmt` whether it writes or
+   not, since nothing can be written for it
  a specification nothing could open answers for itself, at no line ✕
    no parser reads it, it is not there, or it names one thing twice
  a relation a specification wrote that names nothing:  unresolved  (C, B) ✕

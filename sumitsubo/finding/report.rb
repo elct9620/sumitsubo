@@ -11,8 +11,8 @@ module Sumitsubo
       end
 
       # A finding names the check that found it after its place, the way a
-      # linter names its rule, so a reader knows which mechanism answered and
-      # which .sumi.json switch it answers to.
+      # linter names its rule, so a reader knows what answered and which word in
+      # .sumi.json it answers to.
       def lines
         found = said
         found.push(counted)

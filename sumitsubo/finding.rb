@@ -3,8 +3,8 @@ module Sumitsubo
   # every part is still in hand, so a finding carries the sentence rather than
   # the pieces to build one from, and every check answers with this one shape.
   #
-  # A check answers under `<mechanism>/<check>`, the first half being the word
-  # .sumi.json already switches that mechanism by.
+  # A check answers under `<word>/<check>`, the first half being the word
+  # .sumi.json knows what ran it by: a mechanism's name, or `budget`.
   #
   # Nothing is required here. A reading that reached a grammar would cost every
   # check's test its snapshot.

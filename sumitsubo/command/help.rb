@@ -614,13 +614,16 @@ module Sumitsubo
               "root": ".spec",
               "exclude": ["vendor/"],
               "gitignore": true,
-              "specifications": { "glossary": { "verify": false } }
+              "specifications": { "glossary": { "verify": false } },
+              "budget": { "sentence": 25, "paragraph": 6 }
             }
 
             root        where the specifications live, `.spec` by default
             exclude     paths no mechanism reads, whatever an include covers
             gitignore   whether the .gitignore beside this file is read too,
                         which it is unless this says false
+            budget      the most words a sentence and sentences a paragraph
+                        may run to, measured by `sumi fmt`
 
             All are read against the directory holding the .sumi.json, so
             wherever under it a run starts it reaches the same files. Findings
@@ -632,6 +635,11 @@ module Sumitsubo
             `verify: false` keeps a specification the project means to hold
             without a run being checked against it yet. `order: false` on
             behavior leaves its scenarios where they were written.
+
+            `budget` measures only the limits it writes, so a project writing
+            none is measured for nothing. A table cell is measured for its
+            sentences alone. A word is Latin letters or digits, so prose in
+            another script counts nothing yet.
 
             The set is closed both ways. A key nothing here reads, and a
             value the one named does not take, are each refused - and all

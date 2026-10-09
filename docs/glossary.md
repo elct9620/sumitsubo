@@ -124,10 +124,9 @@ why both sides use the word.
 
 ### Check
 
-One comparison a mechanism runs, answering a finding wherever the two sides
-have something to say about each other. It is named for what it finds rather
-than for the mechanism running it, so two mechanisms asking one question run
-one check under one name.
+One question a run puts to what it reads, answering a finding at each place
+with something to say. It is named for what it finds rather than for what asks
+it, so two mechanisms asking one question run one check under one name.
 
 ### Finding
 
@@ -136,6 +135,12 @@ named by the check that made it. It is a difference where the comparison was
 made and the two sides disagree, and a failure where it could not be made at
 all.
 
+
+### Budget
+
+The most a specification's prose may run to: the words in a sentence, and the
+sentences in a paragraph. It asks nothing of what a document means, so it
+belongs to no mechanism and is measured over every form.
 ### Marker
 
 The word source claims a contract or behavior with, written in the comment in
