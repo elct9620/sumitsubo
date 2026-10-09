@@ -47,7 +47,8 @@ TEXT
   {
     "root": 123,
     "gitignore": "no",
-    "exclude": "target/"
+    "exclude": "target/",
+    "budget": 25
   }
 JSON
 (here / "switching").mkpath
@@ -75,6 +76,18 @@ JSON
       "contract": { "order": false },
       "behavior": { "order": "no" }
     }
+  }
+JSON
+(here / "budgeted").mkpath
+(here / "budgeted" / ".sumi.json").write(<<~JSON)
+  {
+    "budget": { "sentence": 25 }
+  }
+JSON
+(here / "overbudget").mkpath
+(here / "overbudget" / ".sumi.json").write(<<~JSON)
+  {
+    "budget": { "words": 25, "sentence": 0, "paragraph": "six" }
   }
 JSON
 (here / "unread").mkpath
@@ -122,7 +135,7 @@ rescue Sumitsubo::Error => e
   puts e.message
 end
 
-# Three faults are written and three are answered, in this file's order rather
+# Four faults are written and four are answered, in this file's order rather
 # than the document's, which is what shows a run is not stopping at the first.
 # @behavior C-015
 puts "--- a value no key takes stops the run, and every one of them answers ---"
@@ -198,6 +211,26 @@ puts "  a project that said nothing: #{Sumitsubo::Config.load(NAMES).switched?("
 # @behavior C-019
 puts "--- a word set on a specification that does not take it, or to what it does not take ---"
 Dir.chdir(here / "misordered")
+begin
+  Sumitsubo::Config.load(NAMES)
+rescue Sumitsubo::Error => e
+  puts e.message
+end
+
+# A limit is read only where a number was written for it, so a budget saying
+# one thing measures that one thing.
+# @behavior C-020
+puts "--- a budget limits what it writes a number for ---"
+Dir.chdir(here / "budgeted")
+config = Sumitsubo::Config.load(NAMES)
+puts "  sentence=#{config.limit("sentence").inspect} paragraph=#{config.limit("paragraph").inspect}"
+Dir.chdir(here / "loose")
+config = Sumitsubo::Config.load(NAMES)
+puts "  a project that said nothing: sentence=#{config.limit("sentence").inspect} paragraph=#{config.limit("paragraph").inspect}"
+
+# @behavior C-021
+puts "--- a limit nothing measures, or one that is no whole number above zero ---"
+Dir.chdir(here / "overbudget")
 begin
   Sumitsubo::Config.load(NAMES)
 rescue Sumitsubo::Error => e

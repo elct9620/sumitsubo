@@ -15,6 +15,7 @@ loose: base=. root=.spec
 .sumi.json writes root as 123, where it takes a path
 .sumi.json writes exclude as "target/", where it takes a list of paths
 .sumi.json writes gitignore as "no", where it takes true or false
+.sumi.json writes budget as 25, where it takes the limits to measure
 --- a key no configuration says stops the run too ---
 .sumi.json writes exlude, which is not something a configuration says
 .sumi.json writes rot, which is not something a configuration says
@@ -36,3 +37,10 @@ loose: base=. root=.spec
 --- a word set on a specification that does not take it, or to what it does not take ---
 .sumi.json sets order on behavior as "no", where it takes true or false
 .sumi.json sets order on contract, which is not something contract is switched by
+--- a budget limits what it writes a number for ---
+  sentence=25 paragraph=nil
+  a project that said nothing: sentence=nil paragraph=nil
+--- a limit nothing measures, or one that is no whole number above zero ---
+.sumi.json sets words on budget, which is not something a budget limits
+.sumi.json sets sentence on budget as 0, where it takes a whole number above zero
+.sumi.json sets paragraph on budget as "six", where it takes a whole number above zero

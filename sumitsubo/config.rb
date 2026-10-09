@@ -18,6 +18,11 @@ module Sumitsubo
     DEFAULT_ROOT = ".spec"
     SPECIFICATIONS = "specifications"
     VERIFY = "verify"
+    BUDGET = "budget"
+
+    # What a budget limits, each by a number a project writes. One left out is
+    # not measured, so a budget is as strict as what it says and no stricter.
+    LIMITS = ["sentence", "paragraph"]
 
     # What a configuration says, and what each of them takes. Held in order
     # rather than by name because it is also the order a refusal answers in,
@@ -26,7 +31,8 @@ module Sumitsubo
     KEYS = [["root", "a path"],
             ["exclude", "a list of paths"],
             ["gitignore", "true or false"],
-            ["specifications", "the specifications to switch"]]
+            ["specifications", "the specifications to switch"],
+            [BUDGET, "the limits to measure"]]
 
     attr_reader :base, :root, :exclusion
 
@@ -82,6 +88,13 @@ module Sumitsubo
       patterns.concat(document["exclude"] || [])
       @exclusion = Source::Patterns.read(patterns)
       @specifications = document["specifications"] || {}
+      @budget = document[BUDGET] || {}
+    end
+
+    # The most a budget allows of one thing it limits, or nil where the project
+    # wrote no number for it.
+    def limit(name)
+      @budget[name]
     end
 
     # Only the exceptions are listed, so a specification nobody mentioned is
@@ -119,6 +132,24 @@ module Sumitsubo
         said.push("#{where} writes #{key} as #{JSON.generate(written)}, where it takes #{takes}")
       end
       said.concat(unread(where, document)).concat(switched(where, document, switches))
+          .concat(budgeted(where, document))
+    end
+
+    # What a budget limits, and by how much. A limit is a count, so a number
+    # that could not be one says nothing a run could measure against.
+    def budgeted(where, document)
+      written = document[BUDGET]
+      return [] unless written.is_a?(Hash)
+
+      said = written.keys.select { |key| !LIMITS.include?(key) }.sort
+                    .map { |key| "#{where} sets #{key} on budget, which is not something a budget limits" }
+      LIMITS.each do |key|
+        held = written[key]
+        next if held.nil? || (held.is_a?(Integer) && held > 0)
+
+        said.push("#{where} sets #{key} on budget as #{JSON.generate(held)}, where it takes a whole number above zero")
+      end
+      said
     end
 
     # The specifications a configuration switches, and how. A name is answered
@@ -174,7 +205,7 @@ module Sumitsubo
       when "root" then written.is_a?(String)
       when "exclude" then written.is_a?(Array) && written.all? { |one| one.is_a?(String) }
       when "gitignore" then written == true || written == false
-      when SPECIFICATIONS then written.is_a?(Hash)
+      when SPECIFICATIONS, BUDGET then written.is_a?(Hash)
       end
     end
 
