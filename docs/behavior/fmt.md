@@ -83,16 +83,17 @@ covers is opened.
 
 | Step | Statement |
 | --- | --- |
-| Given | a vocabulary setting a rejected word and the line it sets aside off with a wide dash |
-| Given | a wide dash in the reason that word carries, and one in the definition above it |
+| Given | a rejected word and the line it sets aside, set off with wide dashes |
+| Given | a wide dash in the word's reason and in the definition above it |
 | When | `sumi fmt --check` runs |
 | Then | both lines are answered as written otherwise than a reference line is, and the file is left alone |
 
-## `FM-007` And the run that writes it
+## `FM-007` A word set off with a wide dash, and the run that writes it
 
 | Step | Statement |
 | --- | --- |
-| Given | the same vocabulary |
+| Given | a rejected word and the line it sets aside, set off with wide dashes |
+| Given | a wide dash in the word's reason and in the definition above it |
 | When | `sumi fmt` runs |
 | Then | the file is named as written, both dashes are the plain one, and a second run has nothing to say |
 
@@ -100,6 +101,7 @@ covers is opened.
 
 | Step | Statement |
 | --- | --- |
-| Given | the same vocabulary |
+| Given | a rejected word and the line it sets aside, set off with wide dashes |
+| Given | a wide dash in the word's reason and in the definition above it |
 | When | `sumi fmt` runs |
 | Then | both dashes in the prose stand, because what sets a word off is where it sits |
