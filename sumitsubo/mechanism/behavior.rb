@@ -53,7 +53,7 @@ module Sumitsubo
         Specification::Builder::Behavior::KINDS
       end
 
-      def read(blocks, path, source)
+      def read(blocks, path, languages)
         Specification::Builder::Behavior.new(path).build(blocks)
       end
 

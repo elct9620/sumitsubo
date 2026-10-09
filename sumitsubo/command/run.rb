@@ -19,7 +19,7 @@ module Sumitsubo
         @config = config
         @findings = Finding::Repository.new
         @source = Source::Repository.new(languages)
-        @specifications = Specification::Repository.new(parsers, @source)
+        @specifications = Specification::Repository.new(parsers, languages)
         @relations = Relation::Repository.new
         @statements = {}
         @refused = {}

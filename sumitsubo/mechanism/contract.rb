@@ -122,10 +122,10 @@ module Sumitsubo
         Specification::Builder::Contract::KINDS
       end
 
-      # The source arrives with the blocks because a contract's signature is
+      # The languages arrive with the blocks because a contract's signature is
       # read by the very reading that reads the source it describes.
-      def read(blocks, path, source)
-        Specification::Builder::Contract.new(path, source).build(blocks)
+      def read(blocks, path, languages)
+        Specification::Builder::Contract.new(path, languages).build(blocks)
       end
 
       # A document this form refused, worded as the finding a run answers

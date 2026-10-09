@@ -48,7 +48,7 @@ module Sumitsubo
         Specification::Builder::Glossary::KINDS
       end
 
-      def read(blocks, path, source)
+      def read(blocks, path, languages)
         Specification::Builder::Glossary.new(path).build(blocks)
       end
 

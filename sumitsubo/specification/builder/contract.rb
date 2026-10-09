@@ -60,10 +60,10 @@ module Sumitsubo
         # a scope sharing a prefix with the contract is not read as holding it.
         SEPARATORS = [":", ".", "#"]
 
-        def initialize(path, source)
+        def initialize(path, languages)
           @path = Place.file(path)
           @refusals = []
-          @source = source
+          @languages = languages
           @key = nil
           @text = nil
           @marker = nil
@@ -269,7 +269,7 @@ module Sumitsubo
           return if named.nil?
 
           language = named[0]
-          refuse(contract.line, "names #{language}, which this sumi does not carry") unless @source.carries?(language)
+          refuse(contract.line, "names #{language}, which this sumi does not carry") unless @languages.carries?(language)
           registering(contract, language)
         end
 
@@ -297,7 +297,7 @@ module Sumitsubo
         end
 
         def declarations_of(contract, language)
-          @source.declarations_of(contract.attributes[SIGNATURE][0], @path, language)
+          @languages.declarations_of(contract.attributes[SIGNATURE][0], @path, language)
         rescue Sumitsubo::Error
           # Named rather than passed on: the reading's message is about a piece
           # of source, and what a reader has is a specification. Caught as the

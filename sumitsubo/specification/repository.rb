@@ -15,9 +15,9 @@ module Sumitsubo
     # because a specification switched off is never read and one that cannot be
     # read leaves the others still answering.
     class Repository
-      def initialize(parsers, source)
+      def initialize(parsers, languages)
         @parsers = parsers
-        @source = source
+        @languages = languages
         @directories = {}
         @files = {}
         @unread = []
@@ -76,10 +76,10 @@ module Sumitsubo
       # left to compare where it cannot be read, so the refusal is raised rather
       # than kept and the mechanism that asked for it answers.
       #
-      # The source goes with the reading because a contract's signature is read
+      # The languages go with the reading because a contract's signature is read
       # by the very reading that reads the source it describes.
       def read_one(path, mechanism)
-        mechanism.read(blocks_of([path], mechanism)[path], path, @source)
+        mechanism.read(blocks_of([path], mechanism)[path], path, @languages)
       end
 
       # Every specification a directory holds, each answering for itself.
@@ -98,7 +98,7 @@ module Sumitsubo
       # is what a run needs to answer it. A document no reading answers for at
       # all is raised before any of them is built.
       def read_into(found, blocks, path, mechanism)
-        found.push(mechanism.read(blocks, path, @source))
+        found.push(mechanism.read(blocks, path, @languages))
       rescue Sumitsubo::Misshapen => e
         e.refusals.each { |one| @unread.push(mechanism.refused(one)) }
       end

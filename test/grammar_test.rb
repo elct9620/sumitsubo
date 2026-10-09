@@ -211,7 +211,7 @@ rescue Sumitsubo::Misshapen => e
 end
 
 def definition(reading, path)
-  Sumitsubo::Specification::Builder::Contract.new(path, Sumitsubo::Source::Repository.new(LANGUAGES))
+  Sumitsubo::Specification::Builder::Contract.new(path, LANGUAGES)
     .build(definition_blocks(reading, path))
 end
 

@@ -82,7 +82,7 @@ end
 def loaded(directory, parsers = PARSERS)
   # A signature is read by the reading that reads the source, so what a
   # definition is checked against is the languages this build carries.
-  definitions = Sumitsubo::Specification::Repository.new(parsers, SOURCE)
+  definitions = Sumitsubo::Specification::Repository.new(parsers, LANGUAGES)
                   .all(directory, Sumitsubo::Mechanism::Contract.new)
   Sumitsubo::Contract.refuse_ambiguity(definitions)
   definitions
@@ -114,7 +114,7 @@ end
 # is kept rather than raised, so the ones beside it still answer and the
 # refusal is asked for rather than rescued.
 def refused(directory)
-  repository = Sumitsubo::Specification::Repository.new(PARSERS, SOURCE)
+  repository = Sumitsubo::Specification::Repository.new(PARSERS, LANGUAGES)
   repository.all(directory, Sumitsubo::Mechanism::Contract.new)
   repository.unread
 end
