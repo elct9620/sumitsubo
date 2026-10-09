@@ -61,6 +61,11 @@ module Sumitsubo
       end
     end
 
+    # A declaration with the language that read it, for whoever asks after
+    # the caller holding the two apart is gone.
+    class Spelled < Data.define(:declaration, :language)
+    end
+
     # What a caller has to write to reach a declaration. Two of them saying the
     # same thing are the same shape, which is how one name declared twice is
     # asked whether it is one way in or two.

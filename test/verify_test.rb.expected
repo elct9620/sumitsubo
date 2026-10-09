@@ -168,3 +168,7 @@ exit=1
 order.rb:1: glossary/rejected: Order rejects Purchase: Order is what the domain calls it.
 1 difference
 exit=1
+--- a contract claim with no code under it ---
+src/commands.rb:7: contract/dangling: @command verify stands in front of nothing; a claim needs code below it
+0 differences
+exit=2

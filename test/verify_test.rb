@@ -321,3 +321,9 @@ puts "exit=#{cli.run(["verify"])}"
 Dir.chdir("app")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
+
+# @behavior V-051
+puts "--- a contract claim with no code under it ---"
+Dir.chdir("test/fixtures/project/contract-dangling")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)

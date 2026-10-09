@@ -3,6 +3,7 @@ require "sumitsubo/error"
 require "sumitsubo/place"
 require "sumitsubo/finding"
 require "sumitsubo/reach"
+require "sumitsubo/relation"
 require "sumitsubo/check"
 require "sumitsubo/source"
 require "sumitsubo/source/repository"
@@ -67,23 +68,6 @@ module Sumitsubo
       # anything may reach for.
       def spoken
         namespace.nil? ? bare : "#{namespace} #{bare}"
-      end
-    end
-
-    # A claim as this mechanism reads it. Marker hands back what follows the
-    # keyword unread, and a contract is named by the interface itself, so the
-    # whole of that is the name it carries.
-    class Claim < Data.define(:path, :line, :contract)
-      def key
-        contract
-      end
-
-      def place
-        Place.new(path: path, line: line)
-      end
-
-      def said
-        contract.spoken
       end
     end
 
@@ -173,13 +157,45 @@ module Sumitsubo
       source.marked(Reach.files(reach), keywords(definitions))
     end
 
-    # The words source marked, read as this mechanism reads them: a contract
-    # is named by the interface itself, so the whole of what follows the
-    # marker is the name it carries.
-    def self.read(marked)
+    # Every claim and dangling marker in the files the claimed definitions
+    # reach, and every declaration in the files the others reach, kept under
+    # this mechanism's name. A contract is named by the interface itself, so
+    # the whole of what follows the marker is the key a claim names.
+    def self.relate(definitions, source, relations, mechanism)
+      marked = marked_in(definitions, Reach.of(claimed(definitions), relations), source)
+      marked.claims.each { |one| relations.add(Relation.claim(one, Relation::Reference.new(mechanism: mechanism, key: one.text))) }
+      marked.dangling.each { |one| relations.add(Relation.dangling(one, Relation::Reference.new(mechanism: mechanism, key: one.text))) }
+      declared = defined_in(definitions, Reach.of(defined(definitions), relations), source)
+      declared.keys.each do |language|
+        declared[language].each do |one|
+          spelled = Source::Spelled.new(declaration: one, language: language)
+          relations.add(Relation.declares(spelled, Relation::Reference.new(mechanism: mechanism, key: one.name)))
+        end
+      end
+    end
+
+    # The claims of one kind the run kept, read as the checks compare them:
+    # under the marker the claim was written with, as the interface it names.
+    def self.read(relations)
       found = []
-      marked.each do |claim|
-        found.push(Claim.new(path: claim.path, line: claim.line, contract: Name.new(claim.keyword, claim.text)))
+      relations.each do |one|
+        name = Name.new(one.subject.keyword, one.subject.text)
+        found.push(Check::Made.new(key: name, place: Place.new(path: one.subject.path, line: one.subject.line), said: name.spoken))
+      end
+      found
+    end
+
+    # What the run kept as declared, held again under the language that read
+    # each, in the order it was read.
+    def self.declared_from(relations)
+      found = {}
+      relations.each do |one|
+        holding = found[one.subject.language]
+        if holding.nil?
+          holding = []
+          found[one.subject.language] = holding
+        end
+        holding.push(one.subject.declaration)
       end
       found
     end
@@ -241,10 +257,10 @@ module Sumitsubo
     def self.nameless(claims)
       found = []
       claims.each do |claim|
-        next unless claim.contract.bare.empty?
+        next unless claim.key.bare.empty?
 
         found.push(Check::Made.new(
-          key: claim.key, place: claim.place, said: claim.contract.namespace
+          key: claim.key, place: claim.place, said: claim.key.namespace
         ))
       end
       found
@@ -252,7 +268,7 @@ module Sumitsubo
 
     def self.named(claims)
       found = []
-      claims.each { |claim| found.push(claim) unless claim.contract.bare.empty? }
+      claims.each { |claim| found.push(claim) unless claim.key.bare.empty? }
       found
     end
 

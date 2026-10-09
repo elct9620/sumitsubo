@@ -4,9 +4,10 @@ module Sumitsubo
   # kept here rather than inside the check that first needed it, so every later
   # question about the join asks the same answer.
   #
-  # The ends are not one shape: a claim and a dangling marker run from an
-  # anchor to a reference, a reach from one artifact to another, and what one
-  # statement says of another from one reference to the next. Which pair a
+  # The ends are not one shape: a claim and a dangling marker run from where
+  # the marker was written to a reference, a declaration from what a language
+  # read, a reach from one artifact to another, and what one statement says of
+  # another from one reference to the next. Which pair a
   # relation carries is what its kind says, so a caller asks the kind before it
   # asks an end anything only that shape answers.
   class Relation < Data.define(:kind, :subject, :object)
@@ -15,6 +16,7 @@ module Sumitsubo
     REACH = "reach"
     RELATES = "relates"
     REFINES = "refines"
+    DECLARES = "declares"
 
     # A specification reaching a file, both taken whole.
     def self.reach(specification, file)
@@ -24,6 +26,12 @@ module Sumitsubo
     # A place in source naming a statement, with code below it.
     def self.claim(anchor, reference)
       new(kind: CLAIM, subject: anchor, object: reference)
+    end
+
+    # A declaration in source naming a statement as the language that read it
+    # spells it.
+    def self.declares(spelled, reference)
+      new(kind: DECLARES, subject: spelled, object: reference)
     end
 
     # A place in source naming a statement, with no code below it.

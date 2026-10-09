@@ -436,3 +436,11 @@ in the order they happened.
 | Given | a glossary whose includes cover its own file, and source using a word it rejects |
 | When | `sumi verify` runs from a subdirectory |
 | Then | only the source answers, the same as a run from the root |
+
+## `V-051` A contract claim with no code under it
+
+| Step | Statement |
+| --- | --- |
+| Given | a source file ending on a contract's marker, with nothing after it |
+| When | `sumi verify` runs |
+| Then | the marker is reported at its line, as standing in front of nothing |

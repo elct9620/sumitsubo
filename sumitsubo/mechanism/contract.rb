@@ -3,6 +3,7 @@ require "sumitsubo/check/declaration"
 require "sumitsubo/check/reach"
 require "sumitsubo/contract"
 require "sumitsubo/reach"
+require "sumitsubo/relation"
 require "sumitsubo/specification/builder/contract"
 require "sumitsubo/finding"
 require "sumitsubo/mechanism/seed"
@@ -39,10 +40,9 @@ module Sumitsubo
           @stale = Check::Claim::Stale.new(STALE)
         end
 
-        def run(findings, definitions, source, relations)
+        def run(findings, definitions, relations, mechanism)
           reach = Reach.of(Sumitsubo::Contract.claimed(definitions), relations)
-          marked = Sumitsubo::Contract.marked_in(definitions, reach, source)
-          claims = Sumitsubo::Contract.read(marked.claims)
+          claims = Sumitsubo::Contract.read(relations.naming(Relation::CLAIM, mechanism))
           stated = Sumitsubo::Contract.stated_in(definitions)
           registering = Sumitsubo::Contract.registering_claims(definitions)
           # What the two checks below compare is the claims that can implement
@@ -58,7 +58,7 @@ module Sumitsubo
           # A marker standing in front of nothing names an interface without
           # implementing one, so it is answered once, by itself, rather than
           # through the comparisons above.
-          @dangling.run(Sumitsubo::Contract.read(marked.dangling)).each { |one| findings.add(one) }
+          @dangling.run(Sumitsubo::Contract.read(relations.naming(Relation::DANGLING, mechanism))).each { |one| findings.add(one) }
         end
       end
 
@@ -78,10 +78,10 @@ module Sumitsubo
           @stale = Check::Declaration::Stale.new(STALE)
         end
 
-        def run(findings, definitions, source, relations)
+        def run(findings, definitions, source, relations, mechanism)
           reach = Reach.of(Sumitsubo::Contract.defined(definitions), relations)
           declared = Sumitsubo::Contract.defining(
-            definitions, Sumitsubo::Contract.defined_in(definitions, reach, source), reach
+            definitions, Sumitsubo::Contract.declared_from(relations.naming(Relation::DECLARES, mechanism)), reach
           )
           grouped = Sumitsubo::Contract.declared_in(declared)
 
@@ -157,10 +157,13 @@ module Sumitsubo
         declared(config, specifications).map { |one| one.statements }.flatten
       end
 
-      # The files every definition reaches. What the source says about each
-      # contract is not kept yet: its checks still read the source themselves.
+      # What the source says about each contract, kept for whoever asks after:
+      # the files every definition reaches, and every claim and declaration
+      # found there.
       def relate(config, specifications, source, relations)
-        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations)
+        definitions = declared(config, specifications)
+        Reach.keep(definitions, config.base, config.exclusion, relations)
+        Sumitsubo::Contract.relate(definitions, source, relations, specification)
       end
 
       # An include covers no file whichever reading the definition writing it
@@ -169,8 +172,8 @@ module Sumitsubo
         definitions = declared(config, specifications)
         @barren.run(Reach.covers(definitions), config.base, config.exclusion)
                .each { |one| findings.add(one) }
-        @claimed.run(findings, definitions, source, relations)
-        @defined.run(findings, definitions, source, relations)
+        @claimed.run(findings, definitions, relations, specification)
+        @defined.run(findings, definitions, source, relations, specification)
       end
     end
   end

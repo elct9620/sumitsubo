@@ -110,7 +110,8 @@ end
 # A claim as the mechanism reads one. What it stands in front of was settled
 # by the reading, which is what put it among the claims at all.
 def claim(path, line, keyword, name)
-  Sumitsubo::Contract::Claim.new(path: path, line: line, contract: Sumitsubo::Contract::Name.new(keyword, name))
+  said = Sumitsubo::Contract::Name.new(keyword, name)
+  Sumitsubo::Check::Made.new(key: said, place: Sumitsubo::Place.new(path: path, line: line), said: said.spoken)
 end
 
 def fails
