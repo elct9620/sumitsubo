@@ -45,7 +45,7 @@ edge and handed in.
 └──────────┘  └────────────────┘  │ ║  Repository    ║ │  │  Place       │
                                   │ ╚═══════╤════════╝ │  │              │
                                   │ Mechanism×3        │  │              │
-                                  │   └► relate        │  │              │
+                                  │   └► keep          │  │              │
                                   │ ╔═══════▼════════╗ │  │              │
                                   │ ║   Relation     ║─┼─►│  Relation    │
                                   │ ║  Repository    ║ │  │              │
@@ -72,14 +72,15 @@ Nothing inner reaches it, so the direction the layers are named for holds.
 Each stage keeps what it read in one place, so no stage has to know what the
 next one will ask of it. Below is `verify`, which takes all of it. `stats`,
 `inspect` and `relate` stop once the relations are kept and answer from them.
-What specifications say of one another is read off (1) rather than the source.
-Every mechanism's is kept, switched on or not. `fmt` takes
-(1) and (3), and puts what it can write for a person back into the document it
-read on the way. Where the project wrote a budget, each of those documents is
-measured against it too.
+`fmt` takes (1) and (3), and puts what it can write for a person back into the
+document it read on the way. Where the project wrote a budget, each of those
+documents is measured against it too.
 
-Behavior's checks read the relations back; Contract's and Glossary's still
-read the source themselves, so they keep nothing yet for anyone to ask.
+Every mechanism keeps what the source says as relations, and its checks read
+them back rather than the source. What each specification reaches is kept
+first, since a vocabulary covers what the others reach. What specifications
+say of one another is read off (1) rather than the source, and every
+mechanism's is kept, switched on or not.
 
 ```
  (1) read the specification
@@ -92,28 +93,29 @@ read the source themselves, so they keep nothing yet for anyone to ask.
                                      │ every include, as one set
  (2) scan the source                 ▼
                          ┌─────────────────────────┐
-                         │ reach                   │
+                         │ Reach                   │
                          │  each include covers    │──► barren
                          │   less what is excluded │
-                         │  ├ union → what to read │
-                         │  └ per spec → boundary  │──► unscoped
+                         │  └ per spec → its files │──► unscoped
                          └───────────┬─────────────┘
-                                     │ file list
+                                     │ kept as reach, first
                          ┌───────────▼─────────────┐
                          │    Source Repository    │  where source is read
                          │  ├ Region       comment │
                          │  ├ Claim        marker  │
                          │  └ Declaration  syntax  │
                          └───────────┬─────────────┘
-                                     │ each mechanism relates
+                                     │ each mechanism keeps
                          ┌───────────▼─────────────┐
                          │   Relation Repository   │  what corresponds,
                          │  ├ reach    spec → file │  kept for whoever asks
-                         │  ├ claim   place → key  │──► stats, inspect
-                         │  ├ dangling place → key │
-                         │  ├ relates   key → key  │◄── (1), read apart
-                         │  └ refines   key → key  │──► relate, unresolved
-                         └───────────┬─────────────┘
+                         │  ├ claim  marker → key  │──► stats, inspect
+                         │  ├ dangling marker → key│
+                         │  ├ declares  read → key │
+                         │  ├ mentions  word → key │
+                         │  ├ relates   key → key  │◄── (1), Relation::Written
+                         │  └ refines   key → key  │──► relate, unresolved,
+                         └───────────┬─────────────┘    ambiguous
                                      │
                      specification × source ─► a check ─► Finding
  (3) answer                          ▼
@@ -287,6 +289,10 @@ front — a mechanism, or the budget — which is the whole of `<word>/<check>`.
  a relation a specification wrote that names nothing:  unresolved  (C, B) ✕
    answered at the statement writing it, and looked up whether or not the
    mechanism it names is switched on
+ a relation naming a key more than one statement answers to:
+   ambiguous  (C, B) ✕
+   a term means what the section covering the writer says, and only where
+   no section covers it does every section answer
 
  G glossary   C contract   B behavior
  ✕ a failure: the comparison could not be made
@@ -328,19 +334,24 @@ Every file has one place, and where it sits is what says what it is.
 │  │  source/language/<lang>.rb                    adapter, Prose last
 │  │  source/language/nodes.rb                     captures → what no language owns
 │  │  source/marker.rb                             answers Source::Claim
-│  │  source/scope.rb  source/patterns.rb          reach
+│  │  source/scope.rb  source/patterns.rb          which files a glob covers
+│  │  reach.rb                                     what each specification
+│  │                                               reaches, kept first
 │  │  relation/repository.rb                       what corresponds, kept
-│  │  related.rb                                   what specifications say of
+│  │  relation/written.rb                          what specifications say of
 │  │                                               one another
 │  │
-│  ├─ what a specification means to its own mechanism
-│  │  glossary.rb  contract.rb  behavior.rb
+│  ├─ what a form means to its own mechanism, a file to each stage
+│  │  {vocabulary,definition,feature}/declared.rb  what a document declares
+│  │  {vocabulary,definition,feature}/kept.rb      what is kept from source
+│  │  {definition,feature}/compared.rb             what the checks are handed
 │  │
 │  ├─ the comparison
 │  │  mechanism.rb                                 the register
 │  │  mechanism/seed.rb
 │  │  mechanism/{glossary,contract,behavior}.rb    name, seed, checks, wording
-│  │  check/{region,claim,declaration,reach}.rb    fifteen checks
+│  │  check/{region,claim,declaration,reach}.rb    a check to each word
+│  │  check/related.rb                             what a relation names
 │  │  budget.rb                                    how long prose may run,
 │  │                                               over every form
 │  │
