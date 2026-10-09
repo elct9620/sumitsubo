@@ -46,14 +46,6 @@ Which files a specification's include covers, and the walk that finds them.
 | When | the scope is asked for its files |
 | Then | it answers the files the include covers, less what the project excludes |
 
-## `W-007` A wildcard standing between two names
-
-| Step | Statement |
-| --- | --- |
-| Given | an include whose wildcard names a directory in the middle of a path |
-| When | the scope is asked for its files |
-| Then | the files under every directory it matches are answered |
-
 ## `W-006` A directory the walk refuses, so an emptied include is told from a wrong one
 
 | Step | Statement |
@@ -61,3 +53,11 @@ Which files a specification's include covers, and the walk that finds them.
 | Given | an excluded directory holding files an include would otherwise reach |
 | When | the walk runs |
 | Then | it is not walked into at all, and what was refused is carried forward |
+
+## `W-007` A wildcard standing between two names
+
+| Step | Statement |
+| --- | --- |
+| Given | an include whose wildcard names a directory in the middle of a path |
+| When | the scope is asked for its files |
+| Then | the files under every directory it matches are answered |

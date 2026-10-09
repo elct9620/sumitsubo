@@ -15,22 +15,6 @@ place.
 | When | the sections are resolved against the base |
 | Then | each answers the files its own globs cover, under the name it was written with |
 
-## `G-012` A glob two sections share is one mistake rather than two
-
-| Step | Statement |
-| --- | --- |
-| Given | two sections whose includes name one glob |
-| When | the vocabulary is asked what its includes cover |
-| Then | the glob is asked about once, at the line the first section wrote it on |
-
-## `G-017` A section that declares words and reaches nowhere
-
-| Step | Statement |
-| --- | --- |
-| Given | a vocabulary with one section declaring a term and writing no glob, and one writing neither |
-| When | the vocabulary is asked what its includes cover |
-| Then | only the one declaring a term answers, as a failure at the section, since a word held in no file is checked nowhere |
-
 ## `G-002` A later section stands in for an earlier one where both name a term
 
 | Step | Statement |
@@ -103,6 +87,14 @@ place.
 | When | the glossary is loaded |
 | Then | each is named as one the specification cannot carry |
 
+## `G-012` A glob two sections share is one mistake rather than two
+
+| Step | Statement |
+| --- | --- |
+| Given | two sections whose includes name one glob |
+| When | the vocabulary is asked what its includes cover |
+| Then | the glob is asked about once, at the line the first section wrote it on |
+
 ## `G-013` A section opened twice under one name is refused where the second is written
 
 | Step | Statement |
@@ -134,6 +126,14 @@ place.
 | Given | a glossary whose term has two words setting one line aside, and one of them setting it aside twice |
 | When | the glossary is loaded |
 | Then | only the one repeated under a word is named as one the specification cannot carry, naming the line that word first set it aside at |
+
+## `G-017` A section that declares words and reaches nowhere
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary with one section declaring a term and writing no glob, and one writing neither |
+| When | the vocabulary is asked what its includes cover |
+| Then | only the one declaring a term answers, as a failure at the section, since a word held in no file is checked nowhere |
 
 ## `G-018` A longer term holding a rejected word is a use of that term
 

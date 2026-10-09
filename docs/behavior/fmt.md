@@ -38,22 +38,6 @@ covers is opened.
 | When | `sumi fmt --check` runs |
 | Then | the refusal answers at the line that broke it, and the run leaves the code a comparison could not be made |
 
-## `FM-008` A vocabulary refused in two places
-
-| Step | Statement |
-| --- | --- |
-| Given | a vocabulary writing two titles and its section's include heading twice |
-| When | `sumi fmt --check` runs |
-| Then | each refusal answers at its own line |
-
-## `FM-009` A refused vocabulary leaves the check unable to compare
-
-| Step | Statement |
-| --- | --- |
-| Given | a vocabulary writing two titles and its section's include heading twice |
-| When | `sumi fmt --check` runs |
-| Then | the run leaves the code a comparison could not be made |
-
 ## `FM-003` One name declared twice
 
 | Step | Statement |
@@ -95,6 +79,22 @@ covers is opened.
 | Given | a wide dash in the word's reason and in the definition above it |
 | When | `sumi fmt` runs |
 | Then | the file is named as written, both dashes are the plain one, and a second run has nothing to say |
+
+## `FM-008` A vocabulary refused in two places
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| When | `sumi fmt --check` runs |
+| Then | each refusal answers at its own line |
+
+## `FM-009` A refused vocabulary leaves the check unable to compare
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| When | `sumi fmt --check` runs |
+| Then | the run leaves the code a comparison could not be made |
 
 ## `FM-010` The run that writes it leaves the prose alone
 

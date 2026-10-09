@@ -189,41 +189,6 @@ wrong spelling.
 | When | the scope is asked for |
 | Then | the union of what every definition reaches answers, without repeats |
 
-## `T-035` What each definition's include reaches
-
-| Step | Statement |
-| --- | --- |
-| Given | two definitions writing different includes over the same tree |
-| When | the files each one reaches are taken |
-| Then | each answers the files its own include covers and no other definition's |
-
-## `T-036` A contract claimed only from outside its own definition
-
-| Step | Statement |
-| --- | --- |
-| Given | a contract whose definition includes one directory |
-| Given | a claim of it sitting in a file that definition does not include |
-| When | the two sides are compared |
-| Then | the contract answers as one nothing claims |
-
-## `T-037` The claim that could not implement it
-
-| Step | Statement |
-| --- | --- |
-| Given | a contract whose definition includes one directory |
-| Given | a claim of it sitting in a file that definition does not include |
-| When | the two sides are compared |
-| Then | the claim answers at the line it sits on, naming the specification that registers it |
-
-## `T-038` A declaration outside the definition registering its name
-
-| Step | Statement |
-| --- | --- |
-| Given | a name registered by a definition that includes one directory |
-| Given | a declaration of that name from a file the definition does not include |
-| When | the declarations that can define what they name are taken |
-| Then | that declaration is left out, and nothing answers for it |
-
 ## `T-016` An interface the syntax tree does not define
 
 | Step | Statement |
@@ -290,6 +255,41 @@ wrong spelling.
 | Given | a registered interface defined twice with the same parameters |
 | When | the two are compared |
 | Then | nothing answers |
+
+## `T-035` What each definition's include reaches
+
+| Step | Statement |
+| --- | --- |
+| Given | two definitions writing different includes over the same tree |
+| When | the files each one reaches are taken |
+| Then | each answers the files its own include covers and no other definition's |
+
+## `T-036` A contract claimed only from outside its own definition
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract whose definition includes one directory |
+| Given | a claim of it sitting in a file that definition does not include |
+| When | the two sides are compared |
+| Then | the contract answers as one nothing claims |
+
+## `T-037` The claim that could not implement it
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract whose definition includes one directory |
+| Given | a claim of it sitting in a file that definition does not include |
+| When | the two sides are compared |
+| Then | the claim answers at the line it sits on, naming the specification that registers it |
+
+## `T-038` A declaration outside the definition registering its name
+
+| Step | Statement |
+| --- | --- |
+| Given | a name registered by a definition that includes one directory |
+| Given | a declaration of that name from a file the definition does not include |
+| When | the declarations that can define what they name are taken |
+| Then | that declaration is left out, and nothing answers for it |
 
 ## `T-039` Which files a directory holds that this build can read
 

@@ -40,30 +40,6 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the scenario holds its four steps in the order they were written |
 
-## `F-065` A scenario missing a step
-
-| Step | Statement |
-| --- | --- |
-| Given | a scenario stating Given and When and no Then |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused at that scenario's heading, naming the step it lacks |
-
-## `F-066` A step stated twice that a scenario states once
-
-| Step | Statement |
-| --- | --- |
-| Given | a scenario stating Then twice |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused at the second Then |
-
-## `F-067` A step stated out of order
-
-| Step | Statement |
-| --- | --- |
-| Given | a scenario stating When before any Given |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused at that row alone, naming the step it came before |
-
 ## `F-003` An id with nothing written after it
 
 | Step | Statement |
@@ -127,22 +103,6 @@ declaring anything else is a contract nobody registered.
 | Given | a row naming no step in the steps, or no attribute in the attributes |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, naming the word it was given |
-
-## `F-063` What a scenario's attributes are written as
-
-| Step | Statement |
-| --- | --- |
-| Given | an attributes table under a scenario, naming unverifiable and deprecated with reasons |
-| When | the blocks the document is made of are read |
-| Then | the scenario carries it, held under the word the first cell names |
-
-## `F-068` A table holding neither steps nor attributes
-
-| Step | Statement |
-| --- | --- |
-| Given | a table under a scenario headed by columns other than the steps' or the attributes' |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused at the table's heading row |
 
 ## `F-011` A row with no scenario to belong to
 
@@ -232,14 +192,6 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that heading |
 
-## `F-053` Rejected written under the heading a section scopes itself with
-
-| Step | Statement |
-| --- | --- |
-| Given | the rejected words written under the reserved heading rather than under a term |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused, naming the heading they were written under rather than the term they have none of |
-
 ## `F-022` A rejected word not taken letter for letter
 
 | Step | Statement |
@@ -304,22 +256,6 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, answering at that heading |
 
-## `F-031` Anything written after a contract's name
-
-| Step | Statement |
-| --- | --- |
-| Given | a contract heading carrying a sentence, or a second run in backticks, after its name |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused, since a heading carries the name alone |
-
-## `F-045` What a contract's attributes are written as
-
-| Step | Statement |
-| --- | --- |
-| Given | a row under a contract naming an attribute and the value it takes |
-| When | the blocks the document is made of are read |
-| Then | the contract carries it, held under the word the first cell names |
-
 ## `F-030` An attribute a contract does not carry
 
 | Step | Statement |
@@ -328,61 +264,13 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused, naming the word it was given |
 
-## `F-046` An attribute given a value it does not take
+## `F-031` Anything written after a contract's name
 
 | Step | Statement |
 | --- | --- |
-| Given | a row writing a known attribute with a value that attribute does not take |
+| Given | a contract heading carrying a sentence, or a second run in backticks, after its name |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused, naming the value it was given and the one it takes |
-
-## `F-047` An attribute row standing under no contract
-
-| Step | Statement |
-| --- | --- |
-| Given | a row written above the first contract |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused, since a row states an attribute of the contract it sits under |
-
-## `F-048` An attribute row of another width
-
-| Step | Statement |
-| --- | --- |
-| Given | a row under a contract carrying one cell rather than two |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused, naming how many cells it turned out to have |
-
-## `F-049` One attribute written twice
-
-| Step | Statement |
-| --- | --- |
-| Given | two rows under one contract or one scenario naming the same attribute |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused, since an attribute written twice says which of them it is nowhere |
-
-## `F-064` An attribute written with no reason
-
-| Step | Statement |
-| --- | --- |
-| Given | a row under a contract or a scenario naming unverifiable or deprecated, its second cell empty |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused, since what such an attribute says is its reason |
-
-## `F-069` What a statement relates to and refines
-
-| Step | Statement |
-| --- | --- |
-| Given | a scenario or contract whose relates and refines name keys in backticks |
-| When | the blocks the document is made of are read |
-| Then | the statement carries each key under the word that names it, in the order written |
-
-## `F-070` A related key written outside backticks
-
-| Step | Statement |
-| --- | --- |
-| Given | a relates row holding a key outside backticks, or nothing at all |
-| When | the blocks the document is made of are read |
-| Then | the specification is refused at that row, naming what the attribute takes |
+| Then | the specification is refused, since a heading carries the name alone |
 
 ## `F-032` A marker named after a contract is already registered
 
@@ -488,6 +376,110 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | each section keeps its own, so a reader is sent to the section that wrote it |
 
+## `F-045` What a contract's attributes are written as
+
+| Step | Statement |
+| --- | --- |
+| Given | a row under a contract naming an attribute and the value it takes |
+| When | the blocks the document is made of are read |
+| Then | the contract carries it, held under the word the first cell names |
+
+## `F-046` An attribute given a value it does not take
+
+| Step | Statement |
+| --- | --- |
+| Given | a row writing a known attribute with a value that attribute does not take |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, naming the value it was given and the one it takes |
+
+## `F-047` An attribute row standing under no contract
+
+| Step | Statement |
+| --- | --- |
+| Given | a row written above the first contract |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since a row states an attribute of the contract it sits under |
+
+## `F-048` An attribute row of another width
+
+| Step | Statement |
+| --- | --- |
+| Given | a row under a contract carrying one cell rather than two |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, naming how many cells it turned out to have |
+
+## `F-049` One attribute written twice
+
+| Step | Statement |
+| --- | --- |
+| Given | two rows under one contract or one scenario naming the same attribute |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, since an attribute written twice says which of them it is nowhere |
+
+## `F-050` Every way a document is out of shape, rather than the first
+
+| Step | Statement |
+| --- | --- |
+| Given | a document whose scenario heading opens with no id, and two rows naming a step that is not one |
+| When | the blocks the document is made of are read |
+| Then | all three are answered, and no fourth follows from the scenario the reading could not name |
+
+## `F-051` The reserved word written as a name and as a heading
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature scoping itself under the reserved heading, and a scenario named with that same word in backticks |
+| When | the blocks the document is made of are read |
+| Then | the heading answers the globs and the scenario answers its id, since a name is taken letter for letter and the reserved heading is not |
+
+## `F-052` A term spelled as the reserved word
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary whose section scopes itself, then declares a term spelled as the reserved word and one of its own |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second heading, since a section says what it covers once, and at the definition under it |
+
+## `F-053` Rejected written under the heading a section scopes itself with
+
+| Step | Statement |
+| --- | --- |
+| Given | the rejected words written under the reserved heading rather than under a term |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, naming the heading they were written under rather than the term they have none of |
+
+## `F-054` Anything beside the globs a feature is scoped by
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature whose Includes holds a paragraph, a nested item, a fenced block, a table row and a subheading beside its glob |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at each of them |
+
+## `F-055` A row under the Includes that follows a scenario
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature whose Includes follows a scenario and holds a row naming Given |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at that row, rather than the scenario before it standing on one more state |
+
+## `F-056` Anything beside the globs a definition is scoped by
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition whose Includes holds a paragraph, a nested item, a fenced block, a table row and a subheading beside its glob |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at each of them |
+
+## `F-057` Anything beside the globs a section is scoped by
+
+| Step | Statement |
+| --- | --- |
+| Given | a section whose Includes holds a paragraph, a nested item, a fenced block, a table row and a heading deeper than Rejected beside its glob |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused, answering at each of them |
+
 ## `F-058` Includes written twice in one feature
 
 | Step | Statement |
@@ -528,58 +520,66 @@ declaring anything else is a contract nobody registered.
 | When | the blocks the document is made of are read |
 | Then | the specification is refused at the second, naming where the first was written, since a section is the boundary a glob is written once inside |
 
-## `F-054` Anything beside the globs a feature is scoped by
+## `F-063` What a scenario's attributes are written as
 
 | Step | Statement |
 | --- | --- |
-| Given | a feature whose Includes holds a paragraph, a nested item, a fenced block, a table row and a subheading beside its glob |
+| Given | an attributes table under a scenario, naming unverifiable and deprecated with reasons |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused, answering at each of them |
+| Then | the scenario carries it, held under the word the first cell names |
 
-## `F-055` A row under the Includes that follows a scenario
+## `F-064` An attribute written with no reason
 
 | Step | Statement |
 | --- | --- |
-| Given | a feature whose Includes follows a scenario and holds a row naming Given |
+| Given | a row under a contract or a scenario naming unverifiable or deprecated, its second cell empty |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused at that row, rather than the scenario before it standing on one more state |
+| Then | the specification is refused, since what such an attribute says is its reason |
 
-## `F-056` Anything beside the globs a definition is scoped by
+## `F-065` A scenario missing a step
 
 | Step | Statement |
 | --- | --- |
-| Given | a definition whose Includes holds a paragraph, a nested item, a fenced block, a table row and a subheading beside its glob |
+| Given | a scenario stating Given and When and no Then |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused, answering at each of them |
+| Then | the specification is refused at that scenario's heading, naming the step it lacks |
 
-## `F-057` Anything beside the globs a section is scoped by
+## `F-066` A step stated twice that a scenario states once
 
 | Step | Statement |
 | --- | --- |
-| Given | a section whose Includes holds a paragraph, a nested item, a fenced block, a table row and a heading deeper than Rejected beside its glob |
+| Given | a scenario stating Then twice |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused, answering at each of them |
+| Then | the specification is refused at the second Then |
 
-## `F-051` The reserved word written as a name and as a heading
+## `F-067` A step stated out of order
 
 | Step | Statement |
 | --- | --- |
-| Given | a feature scoping itself under the reserved heading, and a scenario named with that same word in backticks |
+| Given | a scenario stating When before any Given |
 | When | the blocks the document is made of are read |
-| Then | the heading answers the globs and the scenario answers its id, since a name is taken letter for letter and the reserved heading is not |
+| Then | the specification is refused at that row alone, naming the step it came before |
 
-## `F-052` A term spelled as the reserved word
+## `F-068` A table holding neither steps nor attributes
 
 | Step | Statement |
 | --- | --- |
-| Given | a vocabulary whose section scopes itself, then declares a term spelled as the reserved word and one of its own |
+| Given | a table under a scenario headed by columns other than the steps' or the attributes' |
 | When | the blocks the document is made of are read |
-| Then | the specification is refused at the second heading, since a section says what it covers once, and at the definition under it |
+| Then | the specification is refused at the table's heading row |
 
-## `F-050` Every way a document is out of shape, rather than the first
+## `F-069` What a statement relates to and refines
 
 | Step | Statement |
 | --- | --- |
-| Given | a document whose scenario heading opens with no id, and two rows naming a step that is not one |
+| Given | a scenario or contract whose relates and refines name keys in backticks |
 | When | the blocks the document is made of are read |
-| Then | all three are answered, and no fourth follows from the scenario the reading could not name |
+| Then | the statement carries each key under the word that names it, in the order written |
+
+## `F-070` A related key written outside backticks
+
+| Step | Statement |
+| --- | --- |
+| Given | a relates row holding a key outside backticks, or nothing at all |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at that row, naming what the attribute takes |

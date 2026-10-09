@@ -32,76 +32,13 @@ in the order they happened.
 | When | `sumi verify` runs |
 | Then | one finding is reported for the line the word appears on |
 
-## `V-019` A finding set aside by hand, and an ignore that no longer names one
-
-| Step | Statement |
-| --- | --- |
-| Given | a rejection carrying an ignore for the line a comment trips on |
-| Given | and a second ignore naming a line nothing trips on |
-| When | `sumi verify` runs |
-| Then | the first line is not reported, and the stale ignore answers at the specification |
-
-## `V-020` A build directory the project excludes
-
-| Step | Statement |
-| --- | --- |
-| Given | a project whose configuration excludes a directory |
-| Given | source under it drifted from the glossary the same way source outside it did |
-| When | the run verifies |
-| Then | only the line outside the excluded directory answers |
-
-## `V-021` A build directory the .gitignore already leaves out
-
-| Step | Statement |
-| --- | --- |
-| Given | a project keeping a .gitignore that names a build directory |
-| Given | source under it drifted from the glossary the same way source outside it did |
-| When | the run verifies |
-| Then | only the line outside that directory answers, without the configuration saying so again |
-
-## `V-022` An include covering no file
-
-| Step | Statement |
-| --- | --- |
-| Given | a vocabulary whose include matches nothing |
-| Given | a second vocabulary whose only file the project excludes |
-| When | the run verifies |
-| Then | the first refuses to certify at the line that wrote it, and the second says nothing |
-
-## `V-023` A claim the feature declaring it does not reach
-
-| Step | Statement |
-| --- | --- |
-| Given | a scenario declared by a feature that includes one test file |
-| Given | a claim of that scenario sitting in another test file the run reads |
-| When | `sumi verify` runs |
-| Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
-
-## `V-024` A contract claimed where the definition registering it does not reach
-
-| Step | Statement |
-| --- | --- |
-| Given | a contract registered by a definition that includes one directory |
-| Given | a claim of that contract sitting in a file another definition includes |
-| When | `sumi verify` runs |
-| Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
-
-## `V-025` A registered name spelled in another definition's files
-
-| Step | Statement |
-| --- | --- |
-| Given | a name registered by a definition that includes one directory |
-| Given | a class spelling that name in a file another definition includes |
-| When | `sumi verify` runs |
-| Then | the interface still answers at the line registering it as one the reading does not define |
-
-## `V-002` The same run from a subdirectory
+## `V-002` A run from a subdirectory
 
 | Step | Statement |
 | --- | --- |
 | Given | a project whose source has drifted from its glossary |
 | When | `sumi verify` runs from a subdirectory of that project |
-| Then | the same findings answer with paths relative to where the run started |
+| Then | the findings match a run from its base, with paths relative to where it started |
 
 ## `V-003` A specification the configuration switched off
 
@@ -237,14 +174,68 @@ in the order they happened.
 | When | the run verifies |
 | Then | nothing answers for it |
 
-## `V-028` A contract registered through a class body a call writes
+## `V-019` A finding set aside by hand, and an ignore that no longer names one
 
 | Step | Statement |
 | --- | --- |
-| Given | a project whose signature writes a constant assigned a call carrying a block |
-| Given | source declaring the method inside it with another shape |
+| Given | a rejection carrying an ignore for the line a comment trips on |
+| Given | and a second ignore naming a line nothing trips on |
+| When | `sumi verify` runs |
+| Then | the first line is not reported, and the stale ignore answers at the specification |
+
+## `V-020` A build directory the project excludes
+
+| Step | Statement |
+| --- | --- |
+| Given | a project whose configuration excludes a directory |
+| Given | source under it drifted from the glossary the same way source outside it did |
 | When | the run verifies |
-| Then | it answers as a difference, the way one written with a class body would |
+| Then | only the line outside the excluded directory answers |
+
+## `V-021` A build directory the .gitignore already leaves out
+
+| Step | Statement |
+| --- | --- |
+| Given | a project keeping a .gitignore that names a build directory |
+| Given | source under it drifted from the glossary the same way source outside it did |
+| When | the run verifies |
+| Then | only the line outside that directory answers, without the configuration saying so again |
+
+## `V-022` An include covering no file
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary whose include matches nothing |
+| Given | a second vocabulary whose only file the project excludes |
+| When | the run verifies |
+| Then | the first refuses to certify at the line that wrote it, and the second says nothing |
+
+## `V-023` A claim the feature declaring it does not reach
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario declared by a feature that includes one test file |
+| Given | a claim of that scenario sitting in another test file the run reads |
+| When | `sumi verify` runs |
+| Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
+
+## `V-024` A contract claimed where the definition registering it does not reach
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract registered by a definition that includes one directory |
+| Given | a claim of that contract sitting in a file another definition includes |
+| When | `sumi verify` runs |
+| Then | the claim is reported at the line it sits on as sitting outside what that specification includes |
+
+## `V-025` A registered name spelled in another definition's files
+
+| Step | Statement |
+| --- | --- |
+| Given | a name registered by a definition that includes one directory |
+| Given | a class spelling that name in a file another definition includes |
+| When | `sumi verify` runs |
+| Then | the interface still answers at the line registering it as one the reading does not define |
 
 ## `V-027` An include a Markdown specification writes that covers no file
 
@@ -253,6 +244,15 @@ in the order they happened.
 | Given | a feature written as Markdown whose include covers no file |
 | When | `sumi verify` runs |
 | Then | the include answers at the line of the list item that wrote it |
+
+## `V-028` A contract registered through a class body a call writes
+
+| Step | Statement |
+| --- | --- |
+| Given | a project whose signature writes a constant assigned a call carrying a block |
+| Given | source declaring the method inside it with another shape |
+| When | the run verifies |
+| Then | it answers as a difference, the way one written with a class body would |
 
 ## `V-029` A root the project also keeps its prose in
 
@@ -322,24 +322,6 @@ in the order they happened.
 | When | `sumi verify` runs |
 | Then | each refusal answers at its own line |
 
-## `V-041` A difference beside a refused vocabulary is still answered
-
-| Step | Statement |
-| --- | --- |
-| Given | a vocabulary writing two titles and its section's include heading twice |
-| Given | a feature declaring a scenario nothing claims |
-| When | `sumi verify` runs |
-| Then | the difference is answered beside the refusals |
-
-## `V-042` A refused vocabulary leaves the run unable to compare
-
-| Step | Statement |
-| --- | --- |
-| Given | a vocabulary writing two titles and its section's include heading twice |
-| Given | a feature declaring a scenario nothing claims |
-| When | `sumi verify` runs |
-| Then | the run leaves the code a comparison could not be made |
-
 ## `V-037` A feature speaks the words of the subdomain its includes reach
 
 | Step | Statement |
@@ -372,6 +354,24 @@ in the order they happened.
 | Given | two checks answering about the same line |
 | When | the findings are reported |
 | Then | each line answers as its place, the check, then the message |
+
+## `V-041` A difference beside a refused vocabulary is still answered
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| Given | a feature declaring a scenario nothing claims |
+| When | `sumi verify` runs |
+| Then | the difference is answered beside the refusals |
+
+## `V-042` A refused vocabulary leaves the run unable to compare
+
+| Step | Statement |
+| --- | --- |
+| Given | a vocabulary writing two titles and its section's include heading twice |
+| Given | a feature declaring a scenario nothing claims |
+| When | `sumi verify` runs |
+| Then | the run leaves the code a comparison could not be made |
 
 ## `V-043` Findings at one line are ordered by their check
 

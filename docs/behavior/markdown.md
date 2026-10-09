@@ -43,22 +43,6 @@ to parse, and saying so belongs to the form that was reading it.
 | When | the reading is asked what it declares |
 | Then | the blocks the query asks for answer with the lines they sit on |
 
-## `MD-050` The shape a table is drawn with is no part of it
-
-| Step | Statement |
-| --- | --- |
-| Given | a document whose table carries a heading row and a delimiter row above its own |
-| When | a form asking for rows alone reads it |
-| Then | only the rows beneath them answer |
-
-## `MD-053` A table opens with the row naming its columns
-
-| Step | Statement |
-| --- | --- |
-| Given | a document holding two tables under one heading |
-| When | a form asking for tables and rows reads it |
-| Then | each table answers its heading row ahead of the rows beneath it |
-
 ## `MD-016` Which reading answers for a file
 
 | Step | Statement |
@@ -83,6 +67,30 @@ to parse, and saying so belongs to the form that was reading it.
 | When | the reading is asked what it declares |
 | Then | each section answers its globs, its terms, the words they reject, and the lines set aside |
 
+## `MD-048` A definition read through the grammar under a marker
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition file naming a marker, with a fence under one of its contracts |
+| When | the reading is asked what it registers |
+| Then | the marker answers and the fence is prose |
+
+## `MD-049` A definition registering contracts in two languages
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition whose two contracts carry fences opened in different languages |
+| When | the reading is asked what it registers |
+| Then | each contract answers the language its own fence named |
+
+## `MD-050` The shape a table is drawn with is no part of it
+
+| Step | Statement |
+| --- | --- |
+| Given | a document whose table carries a heading row and a delimiter row above its own |
+| When | a form asking for rows alone reads it |
+| Then | only the rows beneath them answer |
+
 ## `MD-051` A table and a fence beside a vocabulary's globs
 
 | Step | Statement |
@@ -99,18 +107,10 @@ to parse, and saying so belongs to the form that was reading it.
 | When | the reading is asked what it declares |
 | Then | the feature is refused at the fence |
 
-## `MD-048` A definition read through the grammar under a marker
+## `MD-053` A table opens with the row naming its columns
 
 | Step | Statement |
 | --- | --- |
-| Given | a definition file naming a marker, with a fence under one of its contracts |
-| When | the reading is asked what it registers |
-| Then | the marker answers and the fence is prose |
-
-## `MD-049` A definition registering contracts in two languages
-
-| Step | Statement |
-| --- | --- |
-| Given | a definition whose two contracts carry fences opened in different languages |
-| When | the reading is asked what it registers |
-| Then | each contract answers the language its own fence named |
+| Given | a document holding two tables under one heading |
+| When | a form asking for tables and rows reads it |
+| Then | each table answers its heading row ahead of the rows beneath it |
