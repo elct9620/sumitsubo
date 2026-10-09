@@ -98,3 +98,7 @@ exit=0
 0 differences
 exit=0
 left as written: true
+--- two ids of one value ---
+.spec/behavior/ordering.md:3: behavior/unordered: P-1 is written before P-01
+1 difference
+exit=1

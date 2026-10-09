@@ -128,6 +128,8 @@ module Sumitsubo
 
     # How two ids compare, a run of digits by its value: `F-9` comes before
     # `F-10`, which a comparison of the letters alone would put the other way.
+    # Two ids of one value, `F-01` and `F-1`, fall back to their letters, since
+    # a sort leaves the order of two it finds equal undecided.
     def self.precedence(left, right)
       ours = runs(left)
       theirs = runs(right)
@@ -138,7 +140,8 @@ module Sumitsubo
 
         at += 1
       end
-      ours.length <=> theirs.length
+      compared = ours.length <=> theirs.length
+      compared == 0 ? left <=> right : compared
     end
 
     def self.run_precedence(left, right)

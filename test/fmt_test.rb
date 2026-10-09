@@ -166,5 +166,30 @@ File.write(".sumi.json", "{ \"specifications\": { \"behavior\": { \"order\": fal
 puts "exit=#{cli.run(["fmt"])}"
 puts "left as written: #{File.read(".spec/behavior/ordering.md") == UNORDERED}"
 
+# Two ids of one value are still two ids, so their letters decide between them.
+# @behavior FM-014
+puts "--- two ids of one value ---"
+File.write(".sumi.json", "{}\n")
+File.write(".spec/behavior/ordering.md", <<~FEATURE)
+  # Ordering
+
+  ## `P-1` Written first
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | one |
+  | When | it is read |
+  | Then | it is one |
+
+  ## `P-01` Written second
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | one again |
+  | When | it is read |
+  | Then | it is one again |
+FEATURE
+puts "exit=#{cli.run(["fmt", "--check"])}"
+
 Dir.chdir(back)
 root.rmtree

@@ -128,3 +128,11 @@ covers is opened.
 | Given | a feature writing `O-10` between `O-1` and `O-2`, and `order: false` on behavior |
 | When | `sumi fmt` runs |
 | Then | the file is left as written |
+
+## `FM-014` Two ids of one value
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature writing `P-1` before `P-01` |
+| When | `sumi fmt --check` runs |
+| Then | `P-1` answers as written before `P-01`, the letters deciding between them |
