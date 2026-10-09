@@ -341,6 +341,8 @@ Every file has one place, and where it sits is what says what it is.
 │  │  mechanism/seed.rb
 │  │  mechanism/{glossary,contract,behavior}.rb    name, seed, checks, wording
 │  │  check/{region,claim,declaration,reach}.rb    fifteen checks
+│  │  budget.rb                                    how long prose may run,
+│  │                                               over every form
 │  │
 │  ├─ (3) the answer leaves
 │  │  finding/repository.rb                        collect, order, count, code
