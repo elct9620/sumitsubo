@@ -1,0 +1,17 @@
+--- what each specification reaches ---
+  .spec/behavior/orders.md ["app/order.rb", "test/order_test.rb"]
+  .spec/behavior/billing.md ["app/billing/charge.rb"]
+  read once: ["app/billing/charge.rb", "app/order.rb", "test/order_test.rb"]
+--- the keys one comment names ---
+["O-001", "O-002"]
+["O-003"]
+--- a claim read back for a check ---
+  contract @command verify at app/order.rb:9 said @command verify
+--- a declaration read back under its language ---
+  typescript ["Order:1", "Charge:3"]
+  tsx ["Order:1"]
+--- a mention read back with its reason ---
+  app/order.rb:2 Order rejects Purchase: Order is what the domain calls it.
+--- a written key naming none, or more than one ---
+  .spec/behavior/orders.md:9: behavior/unresolved: O-001 relates contract absent, which no contract specification declares
+  .spec/behavior/orders.md:9: behavior/ambiguous: O-001 relates contract inspect, which contract declares at .spec/contract/cli.md:11 and .spec/contract/routes.md:11
