@@ -102,16 +102,20 @@ module Sumitsubo
       found.uniq.sort
     end
 
+    # A specification's path as a section's globs are written, relative to the
+    # base, where the specification keeps it relative to where the run started.
+    def self.from_base(path, base)
+      "#{Pathname.new(path).expand_path.relative_path_from(Pathname.new(base).expand_path)}"
+    end
+
     # The files each specification beside the vocabulary reaches, held under
     # that specification's own path, both relative to the base the way a
     # section's are.
     def self.reaches(beside, base, exclusion)
       found = {}
-      root = Pathname.new(base).expand_path
       beside.each do |spec|
         globs = spec.includes.map { |one| one.key }
-        at = "#{Pathname.new(spec.path).expand_path.relative_path_from(root)}"
-        found[at] = Source::Scope.of(base, globs, exclusion)
+        found[from_base(spec.path, base)] = Source::Scope.of(base, globs, exclusion)
       end
       found
     end
@@ -156,11 +160,12 @@ module Sumitsubo
     # Which line declares is the reading's answer rather than a pattern's: the
     # specification says where each word was written, so nothing here opens the
     # file a second time or knows how a format spells a declaration.
-    def self.uses(mentions, spec)
+    def self.uses(mentions, spec, base)
       spelled = declared_in(spec)
+      own = from_base(spec.path, base)
       found = []
       mentions.each do |mention|
-        next if mention.path == spec.path && spelled["#{mention.line} #{mention.used}"]
+        next if mention.path == own && spelled["#{mention.line} #{mention.used}"]
 
         found.push(mention)
       end

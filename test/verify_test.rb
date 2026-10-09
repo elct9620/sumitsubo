@@ -313,3 +313,11 @@ at = Sumitsubo::Place.of("app/order.rb", 2)
 found.add(Sumitsubo::Finding.new(check: "glossary/rejected", difference: true, place: at, message: "a word turned down"))
 found.add(Sumitsubo::Finding.new(check: "contract/mismatched", difference: true, place: at, message: "the shape drifted"))
 Sumitsubo::Finding::Report.new(found).lines.each { |line| puts line }
+
+# @behavior V-050
+puts "--- a vocabulary covering its own file, from the root and from a subdirectory ---"
+Dir.chdir("test/fixtures/project/self-covering")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir("app")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)

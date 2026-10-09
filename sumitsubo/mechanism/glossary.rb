@@ -102,7 +102,7 @@ module Sumitsubo
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
         scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion, beside(config, specifications))
         mentions = Sumitsubo::Glossary.uses(
-          Sumitsubo::Glossary.check(scope, config.base, source), vocabulary
+          Sumitsubo::Glossary.check(scope, config.base, source), vocabulary, config.base
         )
         aside = Sumitsubo::Glossary.set_aside(vocabulary)
         @rejected.run(mentions, aside, config.base).each { |one| findings.add(one) }

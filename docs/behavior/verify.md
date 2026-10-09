@@ -428,3 +428,11 @@ in the order they happened.
 | Given | a scenario relating to one declared term and one undeclared |
 | When | `sumi verify` runs |
 | Then | only the undeclared term answers |
+
+## `V-050` A vocabulary covering its own file, run from a subdirectory
+
+| Step | Statement |
+| --- | --- |
+| Given | a glossary whose includes cover its own file, and source using a word it rejects |
+| When | `sumi verify` runs from a subdirectory |
+| Then | only the source answers, the same as a run from the root |

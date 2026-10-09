@@ -161,3 +161,10 @@ exit=0
 app/order.rb:2: contract/mismatched: the shape drifted
 app/order.rb:2: glossary/rejected: a word turned down
 2 differences
+--- a vocabulary covering its own file, from the root and from a subdirectory ---
+app/order.rb:1: glossary/rejected: Order rejects Purchase: Order is what the domain calls it.
+1 difference
+exit=1
+order.rb:1: glossary/rejected: Order rejects Purchase: Order is what the domain calls it.
+1 difference
+exit=1

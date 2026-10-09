@@ -124,7 +124,7 @@ puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"]
 puts "--- what the specification spells is not a use of it ---"
 spelled = Sumitsubo::Glossary::Mention.new(path: ".spec/glossary.md", line: 18, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
 used = Sumitsubo::Glossary::Mention.new(path: "app/order.rb", line: 2, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
-Sumitsubo::Glossary.uses([spelled, used], vocabulary).each do |mention|
+Sumitsubo::Glossary.uses([spelled, used], vocabulary, Pathname.new(".")).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}: #{mention.reason}"
 end
 
