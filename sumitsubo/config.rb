@@ -47,13 +47,13 @@ module Sumitsubo
     end
 
     # The names a configuration switches specifications by arrive from the
-    # caller: which of them a build carries is decided when it is built, and a
-    # configuration naming one this build does not have is asking for a run it
-    # will not get.
-    def self.load(names, base = discover)
+    # caller, each with what it is switched by besides `verify`: which of them
+    # a build carries is decided when it is built, and a configuration naming
+    # one this build does not have is asking for a run it will not get.
+    def self.load(switches, base = discover)
       directory = Pathname.new(base)
       path = directory / FILE
-      new(directory, path.exist? ? read(path) : {}, names)
+      new(directory, path.exist? ? read(path) : {}, switches)
     end
 
     def self.read(path)
@@ -65,8 +65,8 @@ module Sumitsubo
       raise Error, "#{Place.file(path)} is not readable JSON"
     end
 
-    def initialize(base, document, names)
-      refuse(faults_in(base, document, names))
+    def initialize(base, document, switches)
+      refuse(faults_in(base, document, switches))
       @base = base
       @root = (base / (document["root"] || DEFAULT_ROOT)).cleanpath
       # What every mechanism leaves alone. A build directory belongs to the
@@ -88,8 +88,15 @@ module Sumitsubo
     # verified once its file is there. `verify: false` keeps a specification
     # the project means to hold without a run being checked against it yet.
     def verify?(name)
+      switched?(name, VERIFY)
+    end
+
+    # Whether a specification is switched on by one of the words it takes. Each
+    # is on unless the project wrote false, so a project saying nothing gets
+    # every one of them.
+    def switched?(name, key)
       entry = @specifications[name]
-      entry.nil? || entry[VERIFY] != false
+      entry.nil? || entry[key] != false
     end
 
     private
@@ -102,7 +109,7 @@ module Sumitsubo
     # What the file reads comes first, in the order it reads them, and what it
     # cannot place follows sorted: a document's own order decides neither, so
     # one configuration answers alike however it was written down.
-    def faults_in(base, document, names)
+    def faults_in(base, document, switches)
       where = Place.file(base / FILE)
       said = []
       KEYS.each do |key, takes|
@@ -111,20 +118,20 @@ module Sumitsubo
 
         said.push("#{where} writes #{key} as #{JSON.generate(written)}, where it takes #{takes}")
       end
-      said.concat(unread(where, document)).concat(switched(where, document, names))
+      said.concat(unread(where, document)).concat(switched(where, document, switches))
     end
 
     # The specifications a configuration switches, and how. A name is answered
     # for before what was set on it: with the wrong name, what it was set to
     # was never going to be read either way.
-    def switched(where, document, names)
+    def switched(where, document, switches)
       written = document[SPECIFICATIONS]
       return [] unless written.is_a?(Hash)
 
       said = []
       written.keys.sort.each do |name|
-        if names.include?(name)
-          said.concat(set_on(where, name, written[name]))
+        if switches.key?(name)
+          said.concat(set_on(where, name, written[name], [VERIFY] + switches[name]))
         else
           said.push("#{where} switches #{name}, which is no specification this sumi carries")
         end
@@ -132,19 +139,22 @@ module Sumitsubo
       said
     end
 
-    # What one specification was switched by. `verify` is the whole of the set,
-    # and a value that is not true or false says nothing either way.
-    def set_on(where, name, written)
+    # What one specification was switched by. Each specification takes its own
+    # words, and a value that is not true or false says nothing either way.
+    def set_on(where, name, written, takes)
       unless written.is_a?(Hash)
         return ["#{where} switches #{name} as #{JSON.generate(written)}, where it takes what to switch"]
       end
 
-      said = written.keys.select { |key| key != VERIFY }.sort
-                    .map { |key| "#{where} sets #{key} on #{name}, which is not something a specification is switched by" }
-      held = written[VERIFY]
-      return said if held.nil? || held == true || held == false
+      said = written.keys.select { |key| !takes.include?(key) }.sort
+                    .map { |key| "#{where} sets #{key} on #{name}, which is not something #{name} is switched by" }
+      takes.each do |key|
+        held = written[key]
+        next if held.nil? || held == true || held == false
 
-      said.push("#{where} sets verify on #{name} as #{JSON.generate(held)}, where it takes true or false")
+        said.push("#{where} sets #{key} on #{name} as #{JSON.generate(held)}, where it takes true or false")
+      end
+      said
     end
 
     # A key nothing here reads. The set is closed because reading is what makes

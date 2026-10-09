@@ -33,6 +33,11 @@ module Sumitsubo
         "glossary"
       end
 
+      # What .sumi.json switches this specification by besides `verify`.
+      def switches
+        []
+      end
+
       def seed(root)
         Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::SEED)
       end

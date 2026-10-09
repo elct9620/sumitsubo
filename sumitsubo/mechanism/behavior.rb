@@ -19,6 +19,7 @@ module Sumitsubo
       NAMELESS = "behavior/nameless"
       DANGLING = "behavior/dangling"
       STALE = "behavior/stale"
+      ORDER = "order"
 
       def initialize
         @barren = Check::Reach::Barren.new(BARREN)
@@ -32,6 +33,11 @@ module Sumitsubo
 
       def specification
         "behavior"
+      end
+
+      # `order: false` leaves the scenarios where their author wrote them.
+      def switches
+        [ORDER]
       end
 
       def seed(root)

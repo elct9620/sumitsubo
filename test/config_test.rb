@@ -3,9 +3,10 @@ require "sumitsubo/config"
 require "sumitsubo/source/patterns"
 
 # What a build carries reaches a configuration from its caller, so this says
-# which names it means rather than reaching for the mechanisms — which is what
-# keeps a grammar out of this test's requires.
-NAMES = ["glossary", "contract", "behavior"]
+# which names it means, and what each is switched by besides `verify`, rather
+# than reaching for the mechanisms — which is what keeps a grammar out of this
+# test's requires.
+NAMES = { "glossary" => [], "contract" => [], "behavior" => ["order"] }
 
 # Where a run is configured from is decided by what is on disk above it, so the
 # cases are real directories walked into rather than a layout described to a
@@ -56,6 +57,23 @@ JSON
       "glosary": { "verify": false },
       "contract": { "verfiy": false },
       "behavior": { "verify": "false" }
+    }
+  }
+JSON
+(here / "ordering").mkpath
+(here / "ordering" / ".sumi.json").write(<<~JSON)
+  {
+    "specifications": {
+      "behavior": { "order": false }
+    }
+  }
+JSON
+(here / "misordered").mkpath
+(here / "misordered" / ".sumi.json").write(<<~JSON)
+  {
+    "specifications": {
+      "contract": { "order": false },
+      "behavior": { "order": "no" }
     }
   }
 JSON
@@ -166,6 +184,25 @@ puts "  vendor/kept.rb, put back by .sumi.json: #{Sumitsubo::Source::Patterns.ex
 # @behavior C-014
 Dir.chdir(here / "switched")
 puts "  switched off: #{Sumitsubo::Source::Patterns.excludes?(Sumitsubo::Config.load(NAMES).exclusion, "vendor/gem.rb")}"
+
+# A word only one specification is switched by, read where it was written and
+# nowhere else.
+# @behavior C-018
+puts "--- a specification switched by a word of its own ---"
+Dir.chdir(here / "ordering")
+config = Sumitsubo::Config.load(NAMES)
+puts "  order: behavior=#{config.switched?("behavior", "order")} verify: behavior=#{config.verify?("behavior")}"
+Dir.chdir(here / "loose")
+puts "  a project that said nothing: #{Sumitsubo::Config.load(NAMES).switched?("behavior", "order")}"
+
+# @behavior C-019
+puts "--- a word set on a specification that does not take it, or to what it does not take ---"
+Dir.chdir(here / "misordered")
+begin
+  Sumitsubo::Config.load(NAMES)
+rescue Sumitsubo::Error => e
+  puts e.message
+end
 
 Dir.chdir(back)
 root.rmtree

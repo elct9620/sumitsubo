@@ -20,7 +20,7 @@ loose: base=. root=.spec
 .sumi.json writes rot, which is not something a configuration says
 --- switching a specification by a name, a word or a value nothing reads ---
 .sumi.json sets verify on behavior as "false", where it takes true or false
-.sumi.json sets verfiy on contract, which is not something a specification is switched by
+.sumi.json sets verfiy on contract, which is not something contract is switched by
 .sumi.json switches glosary, which is no specification this sumi carries
 --- what the project excludes ---
   app/order.rb: false
@@ -30,3 +30,9 @@ loose: base=. root=.spec
   vendor/gem.rb: true
   vendor/kept.rb, put back by .sumi.json: false
   switched off: false
+--- a specification switched by a word of its own ---
+  order: behavior=false verify: behavior=true
+  a project that said nothing: true
+--- a word set on a specification that does not take it, or to what it does not take ---
+.sumi.json sets order on behavior as "no", where it takes true or false
+.sumi.json sets order on contract, which is not something contract is switched by

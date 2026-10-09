@@ -73,11 +73,14 @@ module Sumitsubo
       Command::Fmt.new.run(Config.load(switches), @languages, @parsers, !given.nil?)
     end
 
-    # The names .sumi.json switches specifications by. What a build carries is
-    # decided at the edge, so a configuration is handed them rather than
-    # reaching for the mechanisms itself.
+    # The names .sumi.json switches specifications by, each with what it is
+    # switched by besides `verify`. What a build carries is decided at the
+    # edge, so a configuration is handed them rather than reaching for the
+    # mechanisms itself.
     def switches
-      Mechanism::ALL.map { |one| one.specification }
+      found = {}
+      Mechanism::ALL.each { |one| found[one.specification] = one.switches }
+      found
     end
 
     # A first word that is neither a command nor a flag. Only this one is named

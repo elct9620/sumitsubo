@@ -125,3 +125,19 @@ and this project says it.
 | Given | a .sumi.json switching a name this build does not carry, one by a word nothing is switched by, and one to a value that is neither true nor false |
 | When | the configuration is loaded |
 | Then | all three are named, sorted by the specification each was written under |
+
+## `C-018` A specification switched by a word of its own
+
+| Step | Statement |
+| --- | --- |
+| Given | a .sumi.json setting order to false on behavior |
+| When | the configuration is asked whether behavior is ordered |
+| Then | it is not, and a project saying nothing about order is |
+
+## `C-019` A word set where it is not taken
+
+| Step | Statement |
+| --- | --- |
+| Given | a .sumi.json setting order on contract, and on behavior to a word |
+| When | the configuration is loaded |
+| Then | both are named, the first as not what contract is switched by |

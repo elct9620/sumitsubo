@@ -5,9 +5,10 @@ require "sumitsubo/mechanism/behavior"
 
 module Sumitsubo
   # A mechanism is one kind of specification and the checks it is verified by.
-  # It names the word .sumi.json switches it by, lays down a seed to start a
-  # reference line from, says how a file of its own is read, and runs its
-  # checks over what the two repositories hand back. A check is named for what
+  # It names the word .sumi.json switches it by and the words it is switched
+  # by besides `verify`, lays down a seed to start a reference line from, says
+  # how a file of its own is read, and runs its checks over what the two
+  # repositories hand back. A check is named for what
   # it finds, so the mechanism is what puts its own word in front of one.
   #
   # A mechanism registers by being in the list: Spinel decides what an

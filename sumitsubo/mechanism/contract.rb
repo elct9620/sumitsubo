@@ -106,6 +106,10 @@ module Sumitsubo
         "contract"
       end
 
+      def switches
+        []
+      end
+
       # A seed with no content is a directory: a project registers one kind of
       # contract per file, so there is a place rather than a file to create.
       def seed(root)
