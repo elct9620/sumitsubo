@@ -1,0 +1,11 @@
+--- a list item over its limit ---
+  spec.md:3: budget/paragraph: the item runs 7 sentences, over 6
+--- inline code is one word ---
+  sentences=1
+  (nothing)
+  the dot in a path ends nothing: 1
+--- a cell is measured for its sentences alone ---
+  spec.md:9: budget/sentence: "word1 word2 word3 word4…" runs 30 words, over 25
+--- only what the budget writes is measured ---
+  (nothing)
+  measures: true false

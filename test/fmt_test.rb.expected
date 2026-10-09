@@ -102,3 +102,16 @@ left as written: true
 .spec/behavior/ordering.md:3: behavior/unordered: P-1 is written before P-01
 1 difference
 exit=1
+--- no budget measures nothing ---
+0 differences
+exit=0
+--- a sentence over its limit ---
+.spec/behavior/ordering.md:3: budget/sentence: "word1 word2 word3 word4…" runs 30 words, over 25
+1 difference
+exit=1
+--- the run that writes still answers ---
+wrote .spec/glossary.md
+.spec/behavior/ordering.md:3: budget/sentence: "word1 word2 word3 word4…" runs 30 words, over 25
+1 difference
+exit=1
+the dash is rewritten: true

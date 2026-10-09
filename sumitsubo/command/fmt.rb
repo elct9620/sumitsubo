@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo/place"
+require "sumitsubo/budget"
 require "sumitsubo/finding/report"
 require "sumitsubo/command/run"
 
@@ -24,16 +25,30 @@ module Sumitsubo
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
+        measured = []
         current.each_mechanism do |mechanism|
           mechanism.declared(config, current.specifications).each do |document|
             written(config, mechanism, document, current.findings, checking)
+            measured.push(document.path)
           end
         end
+        budget = Budget.new(config.limit("sentence"), config.limit("paragraph"))
+        measure(budget, current, measured) if budget.measures?
         Finding::Report.new(current.findings).lines.each { |line| puts line }
         current.findings.code
       end
 
       private
+
+      # Every document a mechanism kept, measured as it now stands. Nothing a
+      # budget finds can be written for a person, so the run that writes
+      # answers it as the run that only says so does.
+      def measure(budget, current, paths)
+        answered = current.specifications.blocks_of(paths, budget)
+        paths.each do |path|
+          budget.over(path, answered[path]).each { |one| current.findings.add(one) }
+        end
+      end
 
       # What one document writes otherwise than a reference line is written,
       # answered as findings where the run is only to say so, and put in the

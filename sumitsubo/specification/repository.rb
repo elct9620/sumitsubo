@@ -56,18 +56,21 @@ module Sumitsubo
         @files[held] = read_one(held, mechanism)
       end
 
-      private
-
-      # Every file at once. A parser is asked for all of their blocks before any
-      # of them is built, so it puts one question to each grammar rather than two
-      # by turns — which is the difference between compiling a query once and
-      # compiling it for every file.
-      def blocks_of(paths, mechanism)
+      # Every file's blocks at once, of the kinds the asker reads. A parser is
+      # asked for all of them before any is built, so it puts one question to
+      # each grammar rather than two by turns — which is the difference between
+      # compiling a query once and compiling it for every file.
+      #
+      # A mechanism asks this before building what it keeps, and whatever
+      # measures a document without reading it into a form asks it alone.
+      def blocks_of(paths, asking)
         paths.each { |path| Parser.of(path, @parsers) }
         answered = {}
-        @parsers.each { |parser| claimed(parser, paths, mechanism, answered) }
+        @parsers.each { |parser| claimed(parser, paths, asking, answered) }
         answered
       end
+
+      private
 
       # The one specification a file holds. A mechanism keeping one has nothing
       # left to compare where it cannot be read, so the refusal is raised rather
@@ -103,11 +106,11 @@ module Sumitsubo
       # What one parser answers for, asked of it in one go. A file the parsers
       # before it claimed is not offered again, the way `Parser.of` answers with
       # the first that reads it.
-      def claimed(parser, paths, mechanism, answered)
+      def claimed(parser, paths, asking, answered)
         group = paths.select { |path| answered[path].nil? && parser.reads?(path) }
         return if group.empty?
 
-        found = parser.blocks(group, mechanism.kinds)
+        found = parser.blocks(group, asking.kinds)
         group.each { |path| answered[path] = found[path] }
       end
 

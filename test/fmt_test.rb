@@ -191,5 +191,39 @@ File.write(".spec/behavior/ordering.md", <<~FEATURE)
 FEATURE
 puts "exit=#{cli.run(["fmt", "--check"])}"
 
+# Thirty words in one sentence, which no budget is asked to see until a project
+# writes one.
+LONG = "#{(1..29).map { |n| "word#{n}" }.join(" ")} end."
+File.write(".spec/behavior/ordering.md", <<~FEATURE)
+  # Ordering
+
+  #{LONG}
+
+  ## `P-1` Written first
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | one |
+  | When | it is read |
+  | Then | it is one |
+FEATURE
+
+# @behavior BU-006
+puts "--- no budget measures nothing ---"
+puts "exit=#{cli.run(["fmt", "--check"])}"
+
+# @behavior BU-001
+puts "--- a sentence over its limit ---"
+File.write(".sumi.json", "{ \"budget\": { \"sentence\": 25 } }\n")
+puts "exit=#{cli.run(["fmt", "--check"])}"
+
+# A budget finding is nothing `fmt` can write, so the run that writes the dash
+# still has the sentence to answer for.
+# @behavior BU-007
+puts "--- the run that writes still answers ---"
+File.write(".spec/glossary.md", WIDE)
+puts "exit=#{cli.run(["fmt"])}"
+puts "the dash is rewritten: #{!File.read(".spec/glossary.md").include?("`Purchase` —")}"
+
 Dir.chdir(back)
 root.rmtree
