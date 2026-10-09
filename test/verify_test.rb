@@ -327,3 +327,9 @@ puts "--- a contract claim with no code under it ---"
 Dir.chdir("test/fixtures/project/contract-dangling")
 puts "exit=#{cli.run(["verify"])}"
 Dir.chdir(back)
+
+# @behavior V-052 V-053
+puts "--- relations naming a contract and a term more than one statement answers to ---"
+Dir.chdir("test/fixtures/project/related-ambiguous")
+puts "exit=#{cli.run(["verify"])}"
+Dir.chdir(back)

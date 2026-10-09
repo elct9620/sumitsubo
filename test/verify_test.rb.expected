@@ -172,3 +172,8 @@ exit=1
 src/commands.rb:7: contract/dangling: @command verify stands in front of nothing; a claim needs code below it
 0 differences
 exit=2
+--- relations naming a contract and a term more than one statement answers to ---
+.spec/behavior/report.md:7: behavior/ambiguous: B-001 relates contract inspect, which contract declares at .spec/contract/cli.md:11 and .spec/contract/routes.md:11
+.spec/behavior/report.md:7: behavior/ambiguous: B-001 relates glossary Order, which glossary declares at .spec/glossary.md:11 and .spec/glossary.md:21
+0 differences
+exit=2

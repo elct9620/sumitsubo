@@ -332,7 +332,8 @@ module Sumitsubo
 
             `refines` says this contract narrows the one it names. A key
             nobody declares answers as unresolved, even where its mechanism is
-            switched off.
+            switched off. A key two statements declare answers as ambiguous.
+            A term means what the section covering this specification says.
 
         Includes
             The boundary of what a definition answers for. With a marker, a
@@ -540,7 +541,8 @@ module Sumitsubo
 
             `refines` says this scenario narrows the one it names. A key
             nobody declares answers as unresolved, even where its mechanism is
-            switched off.
+            switched off. A key two statements declare answers as ambiguous.
+            A term means what the section covering this specification says.
 
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.

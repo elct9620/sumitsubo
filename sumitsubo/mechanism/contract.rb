@@ -170,6 +170,12 @@ module Sumitsubo
 
       # An include covers no file whichever reading the definition writing it
       # chose, so it is asked once for all of them.
+      # The statements a key written elsewhere names: every one declared under
+      # it, so a key two of them answer to is not quietly taken as either.
+      def find(key, writer, config, specifications, relations, named)
+        named.select { |one| one.key == key }
+      end
+
       def verify(config, findings, specifications, source, relations)
         definitions = declared(config, specifications)
         @barren.run(Reach.covers(definitions), config.base, config.exclusion)

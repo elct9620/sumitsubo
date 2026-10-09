@@ -7,6 +7,7 @@ require "sumitsubo/specification/repository"
 require "sumitsubo/source/repository"
 require "sumitsubo/relation/repository"
 require "sumitsubo/related"
+require "sumitsubo/check/related"
 
 module Sumitsubo
   module Command
@@ -140,19 +141,23 @@ module Sumitsubo
         end
       end
 
-      # One relation, answered where what it names is not declared. A
-      # mechanism switched off is first read here, so whatever it could not
-      # read is answered here too, the once. Where any of a mechanism's
-      # documents was refused, what it names may stand in that one, so the
-      # refusal answers for it instead.
+      # One relation, answered where what it names is not one statement: none,
+      # or more than one. Which statements a key finds is the mechanism keeping
+      # them's to say. A mechanism switched off is first read here, so whatever
+      # it could not read is answered here too, the once. Where any of a
+      # mechanism's documents was refused, what it names may stand in that one,
+      # so the refusal answers for it instead.
       def resolved(relation)
         target = Mechanism.named(relation.object.mechanism)
         named = statements_named(target)
         return if named.nil? || refused?(target)
-        return if named.any? { |one| one.key == relation.object.key }
 
         writing = statements_of(Mechanism.named(relation.subject.mechanism))
-        @findings.add(Related.unresolved(relation, writing.find { |one| one.key == relation.subject.key }))
+        writer = writing.find { |one| one.key == relation.subject.key }
+        found = target.find(relation.object.key, writer, @config, @specifications, @relations, named)
+        return if found.length == 1
+
+        @findings.add(found.empty? ? Check::Related.unresolved(relation, writer) : Check::Related.ambiguous(relation, writer, found))
       end
 
       # Whether any of this mechanism's documents was refused, which is where

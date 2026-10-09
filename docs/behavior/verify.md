@@ -444,3 +444,20 @@ in the order they happened.
 | Given | a source file ending on a contract's marker, with nothing after it |
 | When | `sumi verify` runs |
 | Then | the marker is reported at its line, as standing in front of nothing |
+
+## `V-052` A relation naming a contract two definitions register
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario relating to a name two definitions register under different markers |
+| When | `sumi verify` runs |
+| Then | it answers as naming more than one, at the heading of the scenario writing it |
+
+## `V-053` A relation naming a term two sections declare
+
+| Step | Statement |
+| --- | --- |
+| Given | a term two sections declare |
+| Given | a scenario relating to it where a section reaches, and one where none does |
+| When | `sumi verify` runs |
+| Then | only the second answers, as naming more than one |

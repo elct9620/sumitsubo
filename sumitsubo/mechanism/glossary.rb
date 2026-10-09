@@ -102,6 +102,21 @@ module Sumitsubo
         Sumitsubo::Glossary.relate(scope, config.base, source, relations, specification)
       end
 
+      # The terms a key written elsewhere names. A term means what the section
+      # covering the specification writing it says, the way it does in source;
+      # where no section covers that specification, every section declaring
+      # the term answers, so two of them are not quietly taken as either.
+      def find(key, writer, config, specifications, relations, named)
+        found = named.select { |one| one.key == key }
+        return found if found.length < 2
+
+        scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
+        held = scope[Sumitsubo::Glossary.from_base(writer.path, config.base)]
+        return found if held.nil? || held[key].nil?
+
+        [held[key]]
+      end
+
       def verify(config, findings, specifications, source, relations)
         path = Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root))
         vocabulary = declared(config, specifications)[0]

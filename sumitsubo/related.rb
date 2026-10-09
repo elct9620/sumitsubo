@@ -1,6 +1,4 @@
 require "sumitsubo/relation"
-require "sumitsubo/finding"
-require "sumitsubo/place"
 
 module Sumitsubo
   # What specifications say of one another: a statement names, among its
@@ -25,22 +23,6 @@ module Sumitsubo
     def self.written(statement, kind)
       said = statement.attributes[kind]
       said.nil? ? [] : said
-    end
-
-    # The word a relation naming nothing is answered under, behind the name of
-    # the mechanism whose statement wrote it.
-    UNRESOLVED = "unresolved"
-
-    # A relation naming a statement nobody declares, answered at the statement
-    # writing it. Nothing on the other side confirms it, so it is a comparison
-    # that could not be made rather than a difference.
-    def self.unresolved(relation, writer)
-      Finding.new(
-        check: "#{relation.subject.mechanism}/#{UNRESOLVED}", difference: false,
-        place: Place.of(writer.path, writer.line),
-        message: "#{relation.subject.key} #{relation.kind} #{relation.object.mechanism} " \
-                 "#{relation.object.key}, which no #{relation.object.mechanism} specification declares"
-      )
     end
 
     # A key as it was written. One opening with a mechanism's name and a space
