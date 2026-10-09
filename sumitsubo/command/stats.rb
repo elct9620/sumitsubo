@@ -1,5 +1,6 @@
 require "sumitsubo/place"
 require "sumitsubo/command/run"
+require "sumitsubo/reach"
 require "sumitsubo/behavior"
 require "sumitsubo/check"
 require "sumitsubo/check/claim"
@@ -22,7 +23,7 @@ module Sumitsubo
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
-        current.relate
+        current.relate([Mechanism::BEHAVIOR])
         return 2 if current.unread?
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)
 
@@ -36,7 +37,7 @@ module Sumitsubo
       # The claims counted are the ones verify counts: standing in front of code
       # and among the files the specification declaring their scenario reaches.
       def tallied(features, relations, mechanism)
-        reach = Sumitsubo::Behavior.reach_in(features, relations)
+        reach = Reach.of(features, relations)
         declaring = Sumitsubo::Behavior.declaring_in(features)
         claims = Sumitsubo::Behavior.claimed_in(relations, mechanism)
         within = Check::Claim.within(claims, declaring, reach)
@@ -109,7 +110,7 @@ module Sumitsubo
       def unclaimed_files(reach, claims)
         claimed = {}
         claims.each { |claim| claimed[claim.path] = true }
-        files = Sumitsubo::Behavior.scope(reach).select { |file| claimed[file].nil? }
+        files = Reach.files(reach).select { |file| claimed[file].nil? }
         return [] if files.empty?
 
         said = ["  reached, nothing claimed"]

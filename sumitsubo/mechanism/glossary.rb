@@ -100,7 +100,8 @@ module Sumitsubo
         @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
-        scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion, beside(config, specifications))
+        reached = Sumitsubo::Glossary.reaches(beside(config, specifications), config.base, relations)
+        scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion, reached)
         mentions = Sumitsubo::Glossary.uses(
           Sumitsubo::Glossary.check(scope, config.base, source), vocabulary, config.base
         )

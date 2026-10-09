@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/contract"
+require "sumitsubo/reach"
+require "sumitsubo/relation/repository"
 require "sumitsubo/check/claim"
 require "sumitsubo/check/declaration"
 require "sumitsubo/mechanism"
@@ -9,6 +11,13 @@ require "sumitsubo/source/language"
 require "sumitsubo/source/language/prose"
 require "sumitsubo/source/language/ruby"
 require "sumitsubo/source/language/rust"
+
+# What each specification reaches, kept the way a run keeps it and read back.
+def reach_of(specifications, base)
+  relations = Sumitsubo::Relation::Repository.new
+  Sumitsubo::Reach.keep(specifications, base, [], relations)
+  Sumitsubo::Reach.of(specifications, relations)
+end
 
 # What this test carries, built the way `bin/sumi.rb` builds it: a reading is
 # handed the grammar it puts its queries to.
@@ -138,12 +147,12 @@ puts Sumitsubo::Contract.keywords(definitions).inspect
 # and the union of them is only what gets read once.
 # @behavior T-035
 puts "--- what each definition's include reaches ---"
-reach = Sumitsubo::Contract.reach(definitions, Pathname.new(FIXTURE), [])
+reach = reach_of(definitions, Pathname.new(FIXTURE))
 definitions.each { |definition| puts "  #{definition.key} #{reach[definition.path].keys.sort.inspect}" }
 
 # @behavior T-014
 puts "--- the files to look in ---"
-puts Sumitsubo::Contract.scope(reach).inspect
+puts Sumitsubo::Reach.files(reach).inspect
 
 # `init` is registered by the CLI definition, whose include reaches only src.
 # A claim of it from the controller names the contract without being able to
@@ -217,7 +226,7 @@ Sumitsubo::Contract.defining(
   spelled,
   { "ruby" => [Sumitsubo::Source::Declaration.new(path: "#{FIXTURE}/src/commands.rb", line: 3, name: "verify", shape: shaped),
                Sumitsubo::Source::Declaration.new(path: "#{FIXTURE}/app/controller.rb", line: 9, name: "verify", shape: shaped)] },
-  Sumitsubo::Contract.reach(spelled, Pathname.new(FIXTURE), [])
+  reach_of(spelled, Pathname.new(FIXTURE))
 ).each do |language, names|
   names.each { |name| puts "  #{language} #{name.path}:#{name.line} #{name.name}" }
 end
@@ -341,7 +350,7 @@ end
 # rather than an answer, and what it would have found is nothing either way.
 # @behavior T-043
 puts "--- and a file is read as the language that claims it ---"
-REACH = Sumitsubo::Contract.reach(spelling, Pathname.new(FIXTURE), [])
+REACH = reach_of(spelling, Pathname.new(FIXTURE))
 spelling.each do |definition|
   reached = Sumitsubo::Contract.reached(REACH, definition).length
   made = Sumitsubo::Contract.readings_in([definition], REACH, SOURCE)

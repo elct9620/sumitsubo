@@ -3,7 +3,7 @@ require "sumitsubo/error"
 require "sumitsubo/place"
 require "sumitsubo/finding"
 require "sumitsubo/check"
-require "sumitsubo/source/scope"
+require "sumitsubo/reach"
 require "sumitsubo/source/repository"
 require "sumitsubo/relation"
 
@@ -50,41 +50,6 @@ module Sumitsubo
     # to say, so it arrives as an argument.
     def self.path_in(root)
       Pathname.new(root) / DIRECTORY
-    end
-
-    # The files each feature reaches, held under the specification that wrote
-    # them. An `include` is the boundary of what a feature answers for: a
-    # scenario is witnessed by the files its own feature reaches, and a claim
-    # from anywhere else names it without being able to witness it. That
-    # boundary is what lets one root hold several components, the way a
-    # glossary subdomain does.
-    def self.reach(features, base, exclusion)
-      found = {}
-      features.each { |feature| found[feature.path] = reach_of(feature, base, exclusion) }
-      found
-    end
-
-    # One feature's files as a set: what is asked of a claim is whether it
-    # sits in there, once per claim.
-    def self.reach_of(feature, base, exclusion)
-      found = {}
-      globs = feature.includes.map { |one| one.key }
-      Source::Scope.of(base, globs, exclusion).each { |path| found[Place.file(base / path)] = true }
-      found
-    end
-
-    # Every file any feature reaches, which is what gets read. One file
-    # answering for two features is read once and asked about twice.
-    def self.scope(reach)
-      found = []
-      reach.keys.each { |spec| found.concat(reach[spec].keys) }
-      found.uniq.sort
-    end
-
-    # What each feature's includes cover, each answering at the feature that
-    # wrote them.
-    def self.covers(features)
-      features.map { |feature| Check::Covers.new(path: feature.path, includes: feature.includes) }
     end
 
     # Each scenario written before one with a lower id, with the lowest of
@@ -174,16 +139,13 @@ module Sumitsubo
       text.split(" ")
     end
 
-    # What each feature reaches and every marker left there, kept as relations
+    # Every marker left in the files the features reach, kept as relations
     # under the mechanism's name: a claim where code stands below it, dangling
     # where nothing does. Marker finds the word and hands back the rest of the
     # line; splitting that into ids is this mechanism's, which is what lets
     # Contract read the same line as one name.
     def self.relate(reach, source, relations, mechanism)
-      reach.keys.each do |spec|
-        reach[spec].keys.each { |file| relations.add(Relation.reach(spec, file)) }
-      end
-      marked = source.marked(scope(reach), [MARKER])
+      marked = source.marked(Reach.files(reach), [MARKER])
       marked.claims.each do |claim|
         anchor = anchored(claim)
         referred(claim, mechanism).each { |one| relations.add(Relation.claim(anchor, one)) }
@@ -203,17 +165,6 @@ module Sumitsubo
     # The statements one marker names, one for each id.
     def self.referred(claim, mechanism)
       named_in(claim).map { |id| Relation::Reference.new(mechanism: mechanism, key: id) }
-    end
-
-    # The files each feature reaches, read back from what the run kept.
-    def self.reach_in(features, relations)
-      found = {}
-      features.each do |feature|
-        files = {}
-        relations.reached_from(feature.path).each { |file| files[file] = true }
-        found[feature.path] = files
-      end
-      found
     end
 
     # The claims the run kept for this mechanism, read back as it compares them.

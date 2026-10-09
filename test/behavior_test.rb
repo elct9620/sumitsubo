@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/behavior"
+require "sumitsubo/reach"
+require "sumitsubo/relation/repository"
 require "sumitsubo/check/claim"
 require "sumitsubo/check/reach"
 require "sumitsubo/mechanism"
@@ -8,6 +10,13 @@ require "sumitsubo/source/scope"
 require "sumitsubo/specification"
 require "sumitsubo/grammar"
 require "sumitsubo/specification/parser/markdown"
+
+# What each specification reaches, kept the way a run keeps it and read back.
+def reach_of(specifications, base)
+  relations = Sumitsubo::Relation::Repository.new
+  Sumitsubo::Reach.keep(specifications, base, [], relations)
+  Sumitsubo::Reach.of(specifications, relations)
+end
 
 # Nothing under sumitsubo/ names a format, so a test says which it reads. This
 # one reads the format features are really written in, which is why its
@@ -132,9 +141,9 @@ p Sumitsubo::Behavior.ids_in("V-008 V-009")
 puts "--- what each feature's include reaches ---"
 base = Pathname.new("test/fixtures/project/behavior")
 features = reads(base / ".spec/behavior")
-reach = Sumitsubo::Behavior.reach(features, base, [])
+reach = reach_of(features, base)
 features.each { |feature| puts "  #{feature.key} #{reach[feature.path].keys.sort.inspect}" }
-puts "  read once: #{Sumitsubo::Behavior.scope(reach).inspect}"
+puts "  read once: #{Sumitsubo::Reach.files(reach).inspect}"
 
 # I-001 is declared by Init, whose include reaches only its own test. A claim
 # of it from the file next door names the scenario without being able to
@@ -168,7 +177,7 @@ end
 puts "--- an include covering no file answers at the line that wrote it ---"
 unreached = reads("test/fixtures/specification/behavior/nowhere")
 Sumitsubo::Check::Reach::Barren.new(Sumitsubo::Mechanism::Behavior::BARREN)
-  .run(Sumitsubo::Behavior.covers(unreached), Pathname.new("test/fixtures/project/behavior"), []).each do |finding|
+  .run(Sumitsubo::Reach.covers(unreached), Pathname.new("test/fixtures/project/behavior"), []).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 

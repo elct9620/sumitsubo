@@ -2,6 +2,7 @@ require "sumitsubo/behavior"
 require "sumitsubo/specification/builder/behavior"
 require "sumitsubo/check/claim"
 require "sumitsubo/check/reach"
+require "sumitsubo/reach"
 require "sumitsubo/finding"
 require "sumitsubo/place"
 require "sumitsubo/specification/rewrite"
@@ -107,15 +108,15 @@ module Sumitsubo
       # the files every feature reaches, and every claim the marker leaves there.
       def relate(config, specifications, source, relations)
         features = declared(config, specifications)
-        reach = Sumitsubo::Behavior.reach(features, config.base, config.exclusion)
-        Sumitsubo::Behavior.relate(reach, source, relations, specification)
+        Reach.keep(features, config.base, config.exclusion, relations)
+        Sumitsubo::Behavior.relate(Reach.of(features, relations), source, relations, specification)
       end
 
       def verify(config, findings, specifications, source, relations)
         features = declared(config, specifications)
-        @barren.run(Sumitsubo::Behavior.covers(features), config.base, config.exclusion)
+        @barren.run(Reach.covers(features), config.base, config.exclusion)
                .each { |one| findings.add(one) }
-        reach = Sumitsubo::Behavior.reach_in(features, relations)
+        reach = Reach.of(features, relations)
         claims = Sumitsubo::Behavior.claimed_in(relations, specification)
         stated = Sumitsubo::Behavior.stated_in(features)
         declaring = Sumitsubo::Behavior.declaring_in(features)

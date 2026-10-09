@@ -1,5 +1,7 @@
 require "pathname"
 require "sumitsubo/glossary"
+require "sumitsubo/reach"
+require "sumitsubo/relation/repository"
 require "sumitsubo/check/reach"
 require "sumitsubo/check/region"
 require "sumitsubo/mechanism"
@@ -94,7 +96,7 @@ Sumitsubo::Check::Reach::Unscoped.new(Sumitsubo::Mechanism::Glossary::UNSCOPED).
 
 # @behavior G-002
 puts "--- effective vocabulary per file ---"
-scope = Sumitsubo::Glossary.scope(vocabulary, Pathname.pwd, [], [])
+scope = Sumitsubo::Glossary.scope(vocabulary, Pathname.pwd, [], {})
 scope.keys.sort.each do |path|
   terms = scope[path]
   terms.keys.sort.each do |name|
@@ -114,7 +116,7 @@ reversed = Sumitsubo::Specification.new(
   vocabulary.key, vocabulary.text, vocabulary.includes,
   vocabulary.path, vocabulary.attributes, vocabulary.statements.reverse
 )
-backwards = Sumitsubo::Glossary.scope(reversed, Pathname.pwd, [], [])
+backwards = Sumitsubo::Glossary.scope(reversed, Pathname.pwd, [], {})
 puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"].text}"
 
 # A mention is built here rather than read out of a run: what is being shown
@@ -190,7 +192,7 @@ puts "--- a longer term holding a rejected word is a use of that term ---"
 Dir.chdir("test/fixtures/project/subdomain")
 subdomains = reads("glossary.md")
 prose = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new]))
-Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(subdomains, Pathname.pwd, [], []), Pathname.pwd, prose).each do |mention|
+Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(subdomains, Pathname.pwd, [], {}), Pathname.pwd, prose).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
 end
 Dir.chdir(back)
@@ -202,7 +204,11 @@ puts "--- a specification beside the vocabulary takes the sections its includes 
 Dir.chdir("test/fixtures/project/reached")
 screens = Sumitsubo::Statement.new("app/ui/*.rb", "", [], ".spec/behavior/checkout.md", 7, {}, [])
 checkout = Sumitsubo::Specification.new("Checkout", "", [screens], ".spec/behavior/checkout.md", {}, [])
-reached = Sumitsubo::Glossary.scope(reads(".spec/glossary.md"), Pathname.pwd, [], [checkout])
+beside = Sumitsubo::Relation::Repository.new
+Sumitsubo::Reach.keep([checkout], Pathname.pwd, [], beside)
+reached = Sumitsubo::Glossary.scope(
+  reads(".spec/glossary.md"), Pathname.pwd, [], Sumitsubo::Glossary.reaches([checkout], Pathname.pwd, beside)
+)
 reached[".spec/behavior/checkout.md"].keys.sort.each { |name| puts ".spec/behavior/checkout.md #{name}" }
 Dir.chdir(back)
 
@@ -214,7 +220,7 @@ Dir.chdir("test/fixtures/project/wrapped")
 wrapped = reads("glossary.md")
 both = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new,
                                                                           Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar)]))
-Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(wrapped, Pathname.pwd, [], []), Pathname.pwd, both).each do |mention|
+Sumitsubo::Glossary.check(Sumitsubo::Glossary.scope(wrapped, Pathname.pwd, [], {}), Pathname.pwd, both).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
 end
 Dir.chdir(back)

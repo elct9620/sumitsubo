@@ -14,8 +14,10 @@ module Sumitsubo
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
+        # Every relation is kept before any check reads one: a vocabulary
+        # covers what the specifications beside it reach.
+        current.relate(Mechanism::ALL)
         current.each_mechanism do |mechanism|
-          mechanism.relate(config, current.specifications, current.source, current.relations)
           mechanism.verify(config, current.findings, current.specifications, current.source, current.relations)
         end
         current.declare(current.switched_on)

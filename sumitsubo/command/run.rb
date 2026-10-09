@@ -25,6 +25,8 @@ module Sumitsubo
         @refused = {}
         @failed = {}
         @told = {}
+        @broken = {}
+        @unread_told = 0
       end
 
       def findings
@@ -56,27 +58,38 @@ module Sumitsubo
       # code it covers answers nothing rather than answering clean. One
       # mechanism that cannot be read leaves the others still able to answer,
       # the way a linter reports every file it managed to parse.
+      #
+      # A run walks the mechanisms once per stage, so one that could not be read
+      # answers the first time and is passed over after.
       def each_mechanism
         Mechanism::ALL.each do |mechanism|
           next unless @config.verify?(mechanism.specification)
+          next if @broken[mechanism.specification]
 
           begin
             yield mechanism
           rescue Sumitsubo::Misshapen => e
+            @broken[mechanism.specification] = true
             e.refusals.each { |one| @findings.add(mechanism.refused(one)) }
           rescue Sumitsubo::Error => e
+            @broken[mechanism.specification] = true
             @findings.unreadable(e.message)
           end
         end
         # A document read beside others never reached the mechanism that asked
-        # for it, so its refusal is answered here rather than there.
-        @specifications.unread.each { |one| @findings.add(one) }
+        # for it, so its refusal is answered here rather than there, once.
+        unread = @specifications.unread
+        unread[@unread_told, unread.length - @unread_told].each { |one| @findings.add(one) }
+        @unread_told = unread.length
       end
 
-      # Every relation the switched-on mechanisms keep, for a command that asks
-      # of them rather than comparing.
-      def relate
-        each_mechanism { |mechanism| mechanism.relate(@config, @specifications, @source, @relations) }
+      # Every relation the switched-on mechanisms among these keep. A command
+      # that only looks names the ones it asks about, so a mechanism it does
+      # not count is neither read nor answered for.
+      def relate(mechanisms)
+        each_mechanism do |mechanism|
+          mechanism.relate(@config, @specifications, @source, @relations) if mechanisms.include?(mechanism)
+        end
       end
 
       # The mechanisms the configuration switched on, which are the ones whose

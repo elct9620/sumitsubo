@@ -2,6 +2,7 @@ require "sumitsubo/check/claim"
 require "sumitsubo/check/declaration"
 require "sumitsubo/check/reach"
 require "sumitsubo/contract"
+require "sumitsubo/reach"
 require "sumitsubo/specification/builder/contract"
 require "sumitsubo/finding"
 require "sumitsubo/mechanism/seed"
@@ -38,10 +39,8 @@ module Sumitsubo
           @stale = Check::Claim::Stale.new(STALE)
         end
 
-        def run(config, findings, definitions, source)
-          reach = Sumitsubo::Contract.reach(
-            Sumitsubo::Contract.claimed(definitions), config.base, config.exclusion
-          )
+        def run(findings, definitions, source, relations)
+          reach = Reach.of(Sumitsubo::Contract.claimed(definitions), relations)
           marked = Sumitsubo::Contract.marked_in(definitions, reach, source)
           claims = Sumitsubo::Contract.read(marked.claims)
           stated = Sumitsubo::Contract.stated_in(definitions)
@@ -79,10 +78,8 @@ module Sumitsubo
           @stale = Check::Declaration::Stale.new(STALE)
         end
 
-        def run(config, findings, definitions, source)
-          reach = Sumitsubo::Contract.reach(
-            Sumitsubo::Contract.defined(definitions), config.base, config.exclusion
-          )
+        def run(findings, definitions, source, relations)
+          reach = Reach.of(Sumitsubo::Contract.defined(definitions), relations)
           declared = Sumitsubo::Contract.defining(
             definitions, Sumitsubo::Contract.defined_in(definitions, reach, source), reach
           )
@@ -160,19 +157,20 @@ module Sumitsubo
         declared(config, specifications).map { |one| one.statements }.flatten
       end
 
-      # Nothing this mechanism compares is kept yet: its checks still read the
-      # source themselves, so a run asking what it relates hears nothing.
+      # The files every definition reaches. What the source says about each
+      # contract is not kept yet: its checks still read the source themselves.
       def relate(config, specifications, source, relations)
+        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations)
       end
 
       # An include covers no file whichever reading the definition writing it
       # chose, so it is asked once for all of them.
       def verify(config, findings, specifications, source, relations)
         definitions = declared(config, specifications)
-        @barren.run(Sumitsubo::Contract.covers(definitions), config.base, config.exclusion)
+        @barren.run(Reach.covers(definitions), config.base, config.exclusion)
                .each { |one| findings.add(one) }
-        @claimed.run(config, findings, definitions, source)
-        @defined.run(config, findings, definitions, source)
+        @claimed.run(findings, definitions, source, relations)
+        @defined.run(findings, definitions, source, relations)
       end
     end
   end

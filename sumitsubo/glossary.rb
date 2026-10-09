@@ -79,8 +79,7 @@ module Sumitsubo
     # A specification beside the vocabulary is covered wherever a file its own
     # includes reach is, so it speaks the words of the subdomain it answers for
     # without the vocabulary listing it.
-    def self.scope(spec, base, exclusion, beside)
-      reached = reaches(beside, base, exclusion)
+    def self.scope(spec, base, exclusion, reached)
       effective = {}
       spec.statements.each do |section|
         covering(section, reached, base, exclusion).each do |path|
@@ -102,20 +101,19 @@ module Sumitsubo
       found.uniq.sort
     end
 
-    # A specification's path as a section's globs are written, relative to the
-    # base, where the specification keeps it relative to where the run started.
+    # A path as a section's globs are written, relative to the base, where a
+    # specification and the run keep it relative to where the run started.
     def self.from_base(path, base)
       "#{Pathname.new(path).expand_path.relative_path_from(Pathname.new(base).expand_path)}"
     end
 
-    # The files each specification beside the vocabulary reaches, held under
-    # that specification's own path, both relative to the base the way a
-    # section's are.
-    def self.reaches(beside, base, exclusion)
+    # The files each specification beside the vocabulary reaches, read back
+    # from the run and held under that specification's own path, both relative
+    # to the base the way a section's are.
+    def self.reaches(beside, base, relations)
       found = {}
       beside.each do |spec|
-        globs = spec.includes.map { |one| one.key }
-        found[from_base(spec.path, base)] = Source::Scope.of(base, globs, exclusion)
+        found[from_base(spec.path, base)] = relations.reached_from(spec.path).map { |file| from_base(file, base) }
       end
       found
     end

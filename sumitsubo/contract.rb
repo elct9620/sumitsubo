@@ -2,7 +2,7 @@ require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/place"
 require "sumitsubo/finding"
-require "sumitsubo/source/scope"
+require "sumitsubo/reach"
 require "sumitsubo/check"
 require "sumitsubo/source"
 require "sumitsubo/source/repository"
@@ -93,42 +93,6 @@ module Sumitsubo
       Pathname.new(root) / DIRECTORY
     end
 
-    # The files each definition reaches, held under the specification that
-    # wrote them. As with Behavior, an `include` is the boundary of what a
-    # definition answers for: a contract is implemented by the files its own
-    # definition reaches, and a claim from anywhere else names it without being
-    # able to implement it. That boundary is what tells one component's
-    # interfaces from another's under a single root, the way a glossary
-    # subdomain tells one vocabulary from another.
-    def self.reach(definitions, base, exclusion)
-      found = {}
-      definitions.each { |definition| found[definition.path] = reach_of(definition, base, exclusion) }
-      found
-    end
-
-    # One definition's files as a set: what is asked of a claim is whether it
-    # sits in there, once per claim.
-    def self.reach_of(definition, base, exclusion)
-      found = {}
-      globs = definition.includes.map { |one| one.key }
-      Source::Scope.of(base, globs, exclusion).each { |path| found[Place.file(base / path)] = true }
-      found
-    end
-
-    # Every file any definition reaches, which is what gets read. One file
-    # answering for two definitions is read once and asked about twice.
-    def self.scope(reach)
-      found = []
-      reach.keys.each { |spec| found.concat(reach[spec].keys) }
-      found.uniq.sort
-    end
-
-    # What each definition's includes cover, each answering at the definition
-    # that wrote them.
-    def self.covers(definitions)
-      definitions.map { |one| Check::Covers.new(path: one.path, includes: one.includes) }
-    end
-
     # The word source claims this definition's contracts with, or nil where
     # the definition names a language and is read from the syntax tree
     # instead. Attributes answer lists, so the one word a definition carries
@@ -206,7 +170,7 @@ module Sumitsubo
     # claims is not worth reading comments for.
     # Every word every definition claims, and every one it leaves dangling.
     def self.marked_in(definitions, reach, source)
-      source.marked(scope(reach), keywords(definitions))
+      source.marked(Reach.files(reach), keywords(definitions))
     end
 
     # The words source marked, read as this mechanism reads them: a contract

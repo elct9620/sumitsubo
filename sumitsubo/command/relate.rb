@@ -37,7 +37,7 @@ module Sumitsubo
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
-        current.relate
+        current.relate([Mechanism::BEHAVIOR])
         return 2 if current.unread?
 
         current.declare(Mechanism::ALL)
