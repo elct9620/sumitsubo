@@ -151,13 +151,14 @@ module Sumitsubo
       def beside_of(root)
         return [] unless root.mechanism == Mechanism::BEHAVIOR.specification
 
-        claims = Sumitsubo::Behavior.claimed_in(@current.relations, root.mechanism)
+        claims = Mechanism::BEHAVIOR.claims(@current.relations)
         found = []
         taken = {}
         claims.each do |claim|
           next unless claim.key == root.key
 
-          Sumitsubo::Behavior.beside(claim, claims).each do |key|
+          @current.relations.named_in([Relation::CLAIM], root.mechanism, claim.path, claim.comment_line).each do |key|
+            next if key == root.key
             next unless taken[key].nil?
 
             taken[key] = true

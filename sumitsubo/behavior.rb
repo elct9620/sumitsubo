@@ -147,19 +147,11 @@ module Sumitsubo
     def self.relate(reach, source, relations, mechanism)
       marked = source.marked(Reach.files(reach), [MARKER])
       marked.claims.each do |claim|
-        anchor = anchored(claim)
-        referred(claim, mechanism).each { |one| relations.add(Relation.claim(anchor, one)) }
+        referred(claim, mechanism).each { |one| relations.add(Relation.claim(claim, one)) }
       end
       marked.dangling.each do |claim|
-        anchor = anchored(claim)
-        referred(claim, mechanism).each { |one| relations.add(Relation.dangling(anchor, one)) }
+        referred(claim, mechanism).each { |one| relations.add(Relation.dangling(claim, one)) }
       end
-    end
-
-    # Where a marker was written. Every id it names runs from here, since they
-    # were written in the same place.
-    def self.anchored(claim)
-      Relation::Anchor.new(path: claim.path, line: claim.line, comment_line: claim.comment_line)
     end
 
     # The statements one marker names, one for each id.
@@ -183,20 +175,6 @@ module Sumitsubo
         found.push(Claim.new(
           path: one.subject.path, line: one.subject.line, comment_line: one.subject.comment_line, id: one.object.key
         ))
-      end
-      found
-    end
-
-    # The other scenarios named in the comment holding this claim, each once,
-    # in the order they were written. A comment is one place, so what it
-    # names besides is what a reader asks about a busy one.
-    def self.beside(claim, claims)
-      found = []
-      claims.each do |one|
-        next unless one.path == claim.path && one.comment_line == claim.comment_line
-        next if one.key == claim.key || found.include?(one.key)
-
-        found.push(one.key)
       end
       found
     end

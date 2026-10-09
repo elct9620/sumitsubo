@@ -28,7 +28,7 @@ module Sumitsubo
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)
 
         features = Mechanism::BEHAVIOR.declared(config, current.specifications)
-        tallied(features, current.relations, Mechanism::BEHAVIOR.specification).each { |line| puts line }
+        tallied(features, current.relations, Mechanism::BEHAVIOR).each { |line| puts line }
         0
       end
 
@@ -38,18 +38,18 @@ module Sumitsubo
       # and among the files the specification declaring their scenario reaches.
       def tallied(features, relations, mechanism)
         reach = Reach.of(features, relations)
-        declaring = Sumitsubo::Behavior.declaring_in(features)
-        claims = Sumitsubo::Behavior.claimed_in(relations, mechanism)
+        declaring = mechanism.declaring(features)
+        claims = mechanism.claims(relations)
         within = Check::Claim.within(claims, declaring, reach)
 
         rows = []
         features.each { |feature| rows.push(row(feature, within, declaring)) }
         rows = rows.sort_by { |one| [-one.most, one.path] }
-        width = widest(rows, mechanism)
+        width = widest(rows, mechanism.specification)
 
-        said = ["#{padded(mechanism, width + 4)}statements  claims  most"]
+        said = ["#{padded(mechanism.specification, width + 4)}statements  claims  most"]
         rows.each { |one| said.push(spoken(one, width)) }
-        said.push("  #{totals(features, within)}")
+        said.push("  #{totals(features, within, mechanism)}")
         said.concat(unclaimed_files(reach, claims))
         said
       end
@@ -88,7 +88,7 @@ module Sumitsubo
           "#{aligned(one.most, 4)}#{one.at.empty? ? "" : "  #{one.at}"}"
       end
 
-      def totals(features, within)
+      def totals(features, within, mechanism)
         statements = 0
         unverifiable = 0
         deprecated = 0
@@ -100,7 +100,7 @@ module Sumitsubo
           end
         end
         unclaimed = Check::Claim::Unclaimed.new(Mechanism::Behavior::UNCLAIMED)
-                                         .run(Sumitsubo::Behavior.stated_in(features), within).length
+                                         .run(mechanism.stated(features), within).length
         "#{counted(features.length, "specification")}, #{counted(statements, "statement")}, " \
           "#{unclaimed} unclaimed, #{unverifiable} unverifiable, #{deprecated} deprecated"
       end

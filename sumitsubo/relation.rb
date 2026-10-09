@@ -25,8 +25,8 @@ module Sumitsubo
     end
 
     # A place in source naming a statement, with code below it.
-    def self.claim(anchor, reference)
-      new(kind: CLAIM, subject: anchor, object: reference)
+    def self.claim(marked, reference)
+      new(kind: CLAIM, subject: marked, object: reference)
     end
 
     # A declaration in source naming a statement as the language that read it
@@ -42,8 +42,8 @@ module Sumitsubo
     end
 
     # A place in source naming a statement, with no code below it.
-    def self.dangling(anchor, reference)
-      new(kind: DANGLING, subject: anchor, object: reference)
+    def self.dangling(marked, reference)
+      new(kind: DANGLING, subject: marked, object: reference)
     end
 
     # Two statements a specification says belong together. Which of them
@@ -62,11 +62,6 @@ module Sumitsubo
     # key. It names the statement whether or not one was declared under it, which
     # is what lets a claim resolving to nothing still be kept.
     class Reference < Data.define(:mechanism, :key)
-    end
-
-    # A place in source a relation runs from: the line, and the line the comment
-    # holding it began on, since one comment witnessing many is one place.
-    class Anchor < Data.define(:path, :line, :comment_line)
     end
 
     # A file as one end of a relation, taken whole rather than at a line.

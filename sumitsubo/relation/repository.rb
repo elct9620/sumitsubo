@@ -44,6 +44,21 @@ module Sumitsubo
         end
         found
       end
+
+      # The keys one comment names, each once, in the order they were written.
+      # A comment is one place, so what it names besides one claim is what a
+      # reader asks about a busy one.
+      def named_in(kinds, mechanism, path, comment_line)
+        found = []
+        @all.each do |one|
+          next unless kinds.include?(one.kind) && one.object.mechanism == mechanism
+          next unless one.subject.path == path && one.subject.comment_line == comment_line
+          next if found.include?(one.object.key)
+
+          found.push(one.object.key)
+        end
+        found
+      end
     end
   end
 end

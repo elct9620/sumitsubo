@@ -29,9 +29,9 @@ module Sumitsubo
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)
 
         features = Mechanism::BEHAVIOR.declared(config, current.specifications)
-        mechanism = Mechanism::BEHAVIOR.specification
-        dangling = Sumitsubo::Behavior.dangling_in(current.relations, mechanism)
-        claims = Sumitsubo::Behavior.claimed_in(current.relations, mechanism) + dangling
+        @relations = current.relations
+        dangling = Mechanism::BEHAVIOR.dangling(@relations)
+        claims = Mechanism::BEHAVIOR.claims(@relations) + dangling
         said = place?(key) ? at(key, features, claims) : about(key, features, claims, dangling)
         said.each { |line| puts line }
         0
@@ -123,14 +123,16 @@ module Sumitsubo
 
         said.push("  declared nowhere") if said.empty?
         said.push("  claimed nowhere") if claiming.empty?
-        claiming.each { |claim| said.push("  claimed   #{claim.place.spoken}#{beside(claim, claims, dangling)}") }
+        claiming.each { |claim| said.push("  claimed   #{claim.place.spoken}#{beside(claim, dangling)}") }
         said
       end
 
       # How many other scenarios the comment holding this claim names, and
       # whether it stands in front of anything at all.
-      def beside(claim, claims, dangling)
-        others = Sumitsubo::Behavior.beside(claim, claims)
+      def beside(claim, dangling)
+        kinds = [Relation::CLAIM, Relation::DANGLING]
+        mechanism = Mechanism::BEHAVIOR.specification
+        others = @relations.named_in(kinds, mechanism, claim.path, claim.comment_line).reject { |one| one == claim.key }
         said = ""
         said += "  with #{others.length} #{others.length == 1 ? "other" : "others"}" unless others.empty?
         said += "  in front of nothing" if dangling.any? { |one| one.place.spoken == claim.place.spoken }

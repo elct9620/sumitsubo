@@ -116,6 +116,26 @@ module Sumitsubo
         Sumitsubo::Behavior.relate(Reach.of(features, relations), source, relations, specification)
       end
 
+      # The claims the run kept for this mechanism, as its checks compare them.
+      def claims(relations)
+        Sumitsubo::Behavior.claimed_in(relations, specification)
+      end
+
+      # The markers the run kept for this mechanism with no code below them.
+      def dangling(relations)
+        Sumitsubo::Behavior.dangling_in(relations, specification)
+      end
+
+      # Which feature declares each scenario.
+      def declaring(features)
+        Sumitsubo::Behavior.declaring_in(features)
+      end
+
+      # Every scenario a claim could name, said the way a claim says it.
+      def stated(features)
+        Sumitsubo::Behavior.stated_in(features)
+      end
+
       def verify(config, findings, specifications, source, relations)
         features = declared(config, specifications)
         @barren.run(Reach.covers(features), config.base, config.exclusion)
