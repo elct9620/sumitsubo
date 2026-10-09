@@ -4,6 +4,15 @@ What a run keeps of what corresponds, and how each check reads it back. Every
 stage hands the next its answer as relations, so each is asked here with its
 input written out rather than read from a document.
 
+```text
+K-001  includes        -> reach, read back per specification
+K-002  claims          -> the keys one comment names
+K-003  claims          -> what a check compares
+K-004  declarations    -> grouped by the language that read them
+K-005  mentions        -> joined with the reason a section gives
+K-006  a written key   -> unresolved, or ambiguous
+```
+
 ## Includes
 
 - `test/kept_test.rb`

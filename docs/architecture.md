@@ -60,11 +60,11 @@ edge and handed in.
 ```
 
 A form is not an adapter: it never reaches a driver. What a parser hands over is
-a Block, and what a form makes of one is the specification's own — which is why
+a Block, and what a form makes of one is the specification's own. That is why
 the two sit on either side of that word rather than in one box.
 
 The filesystem is the one driver with an arrow going the other way, and only
-the shell draws it: `init` lays a seed down and `fmt` writes a document back.
+the shell draws it. `init` lays a seed down and `fmt` writes a document back.
 Nothing inner reaches it, so the direction the layers are named for holds.
 
 ## One run
