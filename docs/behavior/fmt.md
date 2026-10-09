@@ -4,20 +4,20 @@ Writing a specification the way a reference line is written, and saying what
 cannot be written that way, without asking what the source does.
 
 A run has two halves, and only one of them is about the code. This is the
-other: every document read as its form reads it, and everything that can be
-said about them before a line of source is opened. What it finds is worded and
-ordered the way `verify` words and orders a finding, since a reader walks the
-same files either way.
+other. It reads every document as its form reads it, and says everything that
+can be said about them before a line of source is opened. What it finds is
+worded and ordered the way `verify` words and orders a finding, since a reader
+walks the same files either way.
 
 A document is rewritten in place, and in place is the reference line itself,
 so `--check` is what says the same thing and changes nothing. What each form
 has to say about how its own documents are written is that form's own. How long
 the prose of any of them may run is the budget's.
 
-A signature is still read as the language it names — that is what says how a
-name is spelled, and a definition registering a name no reading can find is
-not written the way a reference line is written. No file a specification
-covers is opened.
+A signature is still read as the language it names, since that is what says how
+a name is spelled. A definition registering a name no reading can find is not
+written the way a reference line is written. No file a specification covers is
+opened.
 
 ## Includes
 

@@ -2,21 +2,21 @@
 
 What each kind of specification makes of the blocks a document is made of.
 
-Three kinds are written in one syntax and each is a form of its own, so each
+Three kinds are written in one syntax and each is a form of its own. So each
 says which kinds of block it reads and what one means for itself. The same level
-states a term in one and is prose in another, and a kind a form is written in
+states a term in one and is prose in another. A kind a form is written in
 nowhere is read only to refuse one standing where the globs do.
 
 Nothing here names a format. A run taken letter for letter arrives already
-found, so what a form does with one — a name, an id, a word a term turns down —
-is the whole of what these scenarios say. How a document becomes those blocks is
+found. What a form does with one — a name, an id, a word a term turns down — is
+the whole of what these scenarios say. How a document becomes those blocks is
 the parser's, and is specified where the parser is.
 
-Every shape rule below belongs to the form it was written against, and each
+Every shape rule below belongs to the form it was written against. Each
 answers at the line that broke it rather than at the file.
 
 A contract's signature is read by the reading that reads the source it
-describes, so the shapes a definition can register are the shapes that reading
+describes. So the shapes a definition can register are the shapes that reading
 can find. The heading and the fenced block name one thing written twice, and one
 declaring anything else is a contract nobody registered.
 

@@ -3,17 +3,19 @@
 What TypeScript with JSX answers when it is the reading a file was handed to.
 
 A `.tsx` file is TypeScript, so it declares what TypeScript declares and spells
-it the same way — the same TypeDoc reference, `Charge#settle` through a value
-and `Charge.open` through the class. What differs is the grammar underneath,
-and that difference is why this is a reading of its own rather than something
-the one beside it claims: `<Charge />` is a comparison to the other grammar,
-which refuses the file outright. Which of the two reads a `.tsx` is therefore
-decided by its name and cannot be guessed from what it holds, and a
-specification naming the wrong one is refused rather than half-read.
+it the same way. That is the same TypeDoc reference, `Charge#settle` through a
+value and `Charge.open` through the class.
 
-What the reading does not carry is what TypeScript's does not: an enum's
-members, a function written inside another, what an object literal holds, and
-a name assigned a plain value. The markup itself declares nothing — a component
+What differs is the grammar underneath. That difference is why this is a reading
+of its own rather than something the one beside it claims. `<Charge />` is a
+comparison to the other grammar, which refuses the file outright. Which of the
+two reads a `.tsx` is therefore decided by its name and cannot be guessed from
+what it holds. A specification naming the wrong one is refused rather than
+half-read.
+
+What the reading does not carry is what TypeScript's does not. That is an enum's
+members, a function written inside another, what an object literal holds, and a
+name assigned a plain value. The markup itself declares nothing — a component
 answers as the function it is.
 
 ## Includes

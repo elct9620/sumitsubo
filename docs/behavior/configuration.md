@@ -7,12 +7,12 @@ searches the ancestor directories until one answers.
 
 The base a configuration is read against and the one findings answer from are
 deliberately different. The first is what lets a run started anywhere under it
-reach the same files; the second is what lets a reader go straight to a
+reach the same files. The second is what lets a reader go straight to a
 finding.
 
-`.spec` is the default because `spec/` is already RSpec's, and because a
-project wanting its specification apart from the rest of its prose should get
-that without having to say so. Wanting the two together is what `root` says,
+`.spec` is the default because `spec/` is already RSpec's. A project wanting
+its specification apart from the rest of its prose should also get that without
+having to say so. Wanting the two together is what `root` says,
 and this project says it.
 
 ## Includes
@@ -122,7 +122,7 @@ and this project says it.
 
 | Step | Statement |
 | --- | --- |
-| Given | a .sumi.json switching a name this build does not carry, one by a word nothing is switched by, and one to a value that is neither true nor false |
+| Given | a .sumi.json switching a name this build lacks, one by a word nothing is switched by, and one to neither true nor false |
 | When | the configuration is loaded |
 | Then | all three are named, sorted by the specification each was written under |
 

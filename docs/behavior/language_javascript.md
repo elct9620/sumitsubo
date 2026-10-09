@@ -2,27 +2,26 @@
 
 What JavaScript answers when it is the reading a file was handed to.
 
-A name is the JSDoc namepath: `Charge#settle` for a method reached through a
-value, `Charge.open` for one reached through the class, and the bare name for
-whatever the module declares directly. Which of the two a method is comes from
-the grammar — `static` is a node a query can ask for — and the mark that writes
-it down comes from the convention. A private method carries a `#` of its own,
-so the mark and the name meet and `Charge##secret` is what a reader has to
-write.
+A name is the JSDoc namepath. `Charge#settle` is a method reached through a
+value, `Charge.open` one reached through the class, and the bare name whatever
+the module declares directly. Which of the two a method is comes from the
+grammar, where `static` is a node a query can ask for. The mark that writes it
+down comes from the convention. A private method carries a `#` of its own, so
+the mark and the name meet and `Charge##secret` is what a reader has to write.
 
 `const f = () => {}` is how a module writes most of its functions, so the name
 it is assigned to is the name it declares. That is also what keeps a callback
 out: an arrow nobody assigned to a name declares nothing. What the name was
-assigned decides it either way — `const LIMIT = 10` declares nothing, because
-reading a name for whatever it holds would read every value in the module as a
+assigned decides it either way: `const LIMIT = 10` declares nothing. Reading a
+name for whatever it holds would read every value in the module as a
 declaration.
 
 What the reading does not carry. A function written inside another answers by
-its bare name — JSDoc marks an inner member with `~`, and nothing here spells
-it, so two of one name in two functions cannot be told apart. What an object
-literal holds is outside this as well: a module written as `const audit = {
-entry() {} }` declares nothing, since reading it would mean reading every
-object whose value happens to be a function.
+its bare name. JSDoc marks an inner member with `~`, and nothing here spells it,
+so two of one name in two functions cannot be told apart. What an object literal
+holds is outside this as well: a module written as `const audit = {
+entry() {} }` declares nothing. Reading it would mean reading every object whose
+value happens to be a function.
 
 ## Includes
 

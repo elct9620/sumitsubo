@@ -3,14 +3,14 @@
 What TypeScript answers when it is the reading a file was handed to.
 
 A name is the declaration reference TypeDoc resolves, which is JavaScript's
-namepath with what TypeScript adds written under the same marks:
-`Charge#settle` for a member reached through a value, `Charge.open` for one
-reached through the class, and the dotted path for whatever a namespace or the
-module holds. An interface's method is reached through a value like any other
-member, so it takes the same `#`.
+namepath with what TypeScript adds written under the same marks. `Charge#settle`
+is a member reached through a value, `Charge.open` one reached through the
+class, and the dotted path whatever a namespace or the module holds. An
+interface's method is reached through a value like any other member, so it takes
+the same `#`.
 
-An abstract class is a node of its own rather than a class carrying a word, so
-a reading asking only for a class passes one over without saying it did. A `?`
+An abstract class is a node of its own rather than a class carrying a word. So a
+reading asking only for a class passes one over without saying it did. A `?`
 says outright that a caller may leave a parameter out, where a default only
 implies it.
 

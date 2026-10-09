@@ -3,20 +3,21 @@
 The commands `sumi` answers, and what each one is for.
 
 The one option a command takes is `fmt --check`, which says to report rather
-than rewrite: a run that changes the reference line is asked for by name.
+than rewrite. A run that changes the reference line is asked for by name.
 `-v` and `-h` are the whole of what a flag says here, and everything a run has
 to say goes to stdout.
 
 A word a command does not take is named back rather than passed over, and the
-command never runs: a run that rewrites what it was pointed at would otherwise
+command never runs. A run that rewrites what it was pointed at would otherwise
 read a mistyped flag as consent to rewrite it.
 
-What a run answers is one ladder throughout: `0` where it did what it was
-asked, `1` where the two sides differ, and `2` where the comparison could not
-be made — whatever had to be read first was absent, unreadable, or ambiguous.
-Two runs have a second side to differ from, so two answer `1`: `fmt`, whose
-sides are the document as it is written and as a reference line is written,
-and `verify`, whose sides are the specification and the source.
+What a run answers is one ladder throughout. It answers `0` where it did what
+it was asked, and `1` where the two sides differ. It answers `2` where the
+comparison could not be made, because whatever had to be read first was absent,
+unreadable, or ambiguous. Two runs have a second side to differ from, so two
+answer `1`. For `fmt`, the sides are the document as it is written and as a
+reference line is written. For `verify`, they are the specification and the
+source.
 
 ## Includes
 
@@ -46,10 +47,10 @@ exists .spec/behavior
 Write the specification the way a reference line is written, and say what
 cannot be written that way.
 
-Answers the half of a run that is about the specification alone, so a reference
-line can be got right before any code is held to it. No file a specification
-covers is opened: a signature is still read as the language it names, since
-that says how the name is spelled, and nothing else of the source is.
+Answers the half of a run that is about the specification alone. A reference
+line can so be got right before any code is held to it. No file a specification
+covers is opened. A signature is still read as the language it names, since that
+says how the name is spelled, and nothing else of the source is.
 A specification switched off is one the project does not keep, so it is passed
 over here as under `verify`.
 
@@ -163,16 +164,16 @@ The vocabulary a project means to use, and the words it rejects.
 
 Only the words a term rejects are checked: a term rejecting none is vocabulary
 the tool carries but cannot verify. A rejection carries the places it is wrong,
-each with the reason that line is right; the line moving is what makes the run
+each with the reason that line is right. The line moving is what makes the run
 stop and ask again, which a fingerprint would be built to avoid.
 
 ## `help contract`
 
 The interfaces a project means to keep, and the two readings of them.
 
-Whether a definition names a marker decides how the source is read: with one,
+Whether a definition names a marker decides how the source is read. With one,
 source claims each interface in the comment in front of the code implementing
-it; without one, the interfaces are read from the syntax tree and each contract
+it. Without one, the interfaces are read from the syntax tree, and each contract
 carries the signature saying how its name is spelled. The two are exclusive,
 and which applies has to be known before a fence is reached. What an interface
 does is left to `help behavior`.
@@ -182,8 +183,8 @@ does is left to `help behavior`.
 The behaviors a project means its tests to witness.
 
 One file per feature, each carrying its own include. A scenario is stated as
-steps under an id unique across the directory, and a test claims one in the
-comment in front of the code witnessing it.
+steps under an id unique across the directory. A test claims one in the comment
+in front of the code witnessing it.
 
 ## `help config`
 
@@ -193,6 +194,6 @@ A run reads the nearest `.sumi.json` at or above where it started, and a
 project that has said nothing gets the defaults.
 
 `include` and `exclude` are one form read two ways, written the way a
-`.gitignore` line is written, and the `.gitignore` beside that file is read as
+`.gitignore` line is written. The `.gitignore` beside that file is read as
 well. An excluded directory is never looked inside; an include covering no file
 at all refuses to certify.

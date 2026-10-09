@@ -3,25 +3,25 @@
 Reading a document written as Markdown into the blocks a form is written in.
 
 A specification written this way is the document a person reads as well as the
-reference line the tool compares against, so what is recovered is the structure
-a reader already sees: headings and the levels they sit at, paragraphs, the
-items of a list and how deep each is, the rows of a table and the cells under
-them with the heading row naming its columns, and a fenced block with the
-language it declares.
+reference line the tool compares against. So what is recovered is the structure
+a reader already sees. That is headings and the levels they sit at, paragraphs,
+and the items of a list and how deep each is. It is the rows of a table and the
+cells under them, the heading row naming its columns. It is a fenced block and
+the language it declares.
 
 Two grammars answer. The block one gives that structure and hands back the text
-each block holds unparsed; the inline one reads inside that text for the runs a
+each block holds unparsed. The inline one reads inside that text for the runs a
 document marked as taken letter for letter. Every document's structure is read
 before any of their text is, so each grammar is asked for one query rather than
 for two by turns.
 
 A form says which kinds it reads, and a block of any other kind never reaches
-it. What a block means is never asked here: that belongs to the form reading
+it. What a block means is never asked here. That belongs to the form reading
 it, which is also where a level it has no use for is passed over as prose.
 
-The grammar refuses nothing: every byte sequence is a legal document, so a
+The grammar refuses nothing: every byte sequence is a legal document. A
 specification written wrong loses the shape a query matches rather than failing
-to parse, and saying so belongs to the form that was reading it.
+to parse. Saying so belongs to the form that was reading it.
 
 ## Includes
 

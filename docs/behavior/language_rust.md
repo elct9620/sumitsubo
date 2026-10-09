@@ -4,13 +4,13 @@ What Rust answers when it is the reading a file was handed to.
 
 A name is the path the file itself carries: `Charge::settle` for a method in an
 `impl`, `audit::Entry` for a struct in a `mod`. What a crate is called and which
-module a file becomes live in Cargo.toml and in the directory tree, so a name
+module a file becomes live in Cargo.toml and in the directory tree. So a name
 written here stops where the file does, as rustdoc stops it.
 
-What Ruby spells with one node this splits into two, and a block comment ends
-with a delimiter the language required rather than with something a person
-wrote. Rust lets a caller leave no parameter out, so the question Ruby answers
-about a parameter that may be omitted is one this language does not have.
+What Ruby spells with one node this splits into two. A block comment ends with a
+delimiter the language required rather than with something a person wrote. Rust
+lets a caller leave no parameter out. So the question Ruby answers about a
+parameter that may be omitted is one this language does not have.
 
 ## Includes
 

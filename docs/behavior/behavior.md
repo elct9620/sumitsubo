@@ -2,8 +2,9 @@
 
 The scenarios a project declares, and where each one sits.
 
-What this establishes is that a behavior was read and a test among the files
-its own feature reaches witnesses it, never that the implementation is right.
+What this establishes is that a behavior was read, and that a test among the
+files its own feature reaches witnesses it. It never establishes that the
+implementation is right.
 Nothing mechanical can judge whether the code under a claim does what the claim
 says, so that one sentence licenses everything the mechanism cannot check.
 
@@ -15,12 +16,12 @@ Of the three disciplines that make one sentence each reachable, the reason is
 the one that creeps back into a `then`. It belongs to the title, and the exit
 code follows from which of the three the `then` named.
 
-A scenario nothing claims is answered at the line declaring it because that is
-where a reader chooses between writing the test and dropping the scenario.
+A scenario nothing claims is answered at the line declaring it. That is where
+a reader chooses between writing the test and dropping the scenario.
 Both findings collect before reporting, the way a linter does, so a renamed id
 is fixed in one pass.
 
-Verification runs one way. A test claiming nothing is not a difference: only
+Verification runs one way. A test claiming nothing is not a difference. Only
 the scenarios that matter are written down, so a test with no claim says
 nothing about the specification.
 

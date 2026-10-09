@@ -2,25 +2,24 @@
 
 What Python answers when it is the reading a file was handed to.
 
-A name is the dotted path the scopes holding it spell, `Charge.settle` for a
-method and `Outer.Inner.deep` for a class inside a class, as Sphinx writes one.
-Nothing marks a method as belonging to the class rather than to an instance of
-it, because Python spells neither: a sigil invented here would be this reading
-deciding for the language.
+A name is the dotted path the scopes holding it spell, as Sphinx writes one.
+That is `Charge.settle` for a method and `Outer.Inner.deep` for a class inside a
+class. Nothing marks a method as belonging to the class rather than to an
+instance of it, because Python spells neither. A sigil invented here would be
+this reading deciding for the language.
 
-Python's two parameter separators say what the parameters around them are
-rather than naming one of their own — everything before a `/` may only be
-passed by position, and everything after a `*` only by keyword. Which one a
-parameter is therefore cannot be read off the parameter, only off where it
-sits, which is the one place a reading here walks a declaration in the order
-the source wrote it.
+Python's two parameter separators say what the parameters around them are rather
+than naming one of their own. Everything before a `/` may only be passed by
+position, and everything after a `*` only by keyword. Which one a parameter is
+therefore cannot be read off the parameter, only off where it sits. That is the
+one place a reading here walks a declaration in the order the source wrote it.
 
-What the reading does not carry. A docstring is a string the language
-evaluates rather than a comment, so what a person wrote is narrower here than
-in the languages beside it — much of a Python project's vocabulary lives
-somewhere this does not look. A module-level assignment declares nothing:
-Python has no constant, so reading `LIMIT = 10` as one would mean reading every
-assignment as one.
+What the reading does not carry. A docstring is a string the language evaluates
+rather than a comment. So what a person wrote is narrower here than in the
+languages beside it. Much of a Python project's vocabulary lives somewhere this
+does not look. A module-level assignment declares nothing: Python has no
+constant, so reading `LIMIT = 10` as one would mean reading every assignment as
+one.
 
 ## Includes
 

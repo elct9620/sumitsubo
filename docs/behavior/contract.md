@@ -3,18 +3,18 @@
 The interfaces a project registers, and what source claims to implement them.
 
 What this establishes is that a registered interface is implemented among the
-files its own definition reaches, and entered the way the specification says —
-never that what it does behind that is right, and that one sentence licenses
-everything the mechanism cannot check. What it does is a behavior's to declare
-and a test's to witness: this mechanism stops where Behavior starts.
+files its own definition reaches, and entered the way the specification says.
+It never establishes that what the interface does behind that is right. That
+one sentence licenses everything the mechanism cannot check. What it does is a
+behavior's to declare and a test's to witness: this mechanism stops where
+Behavior starts.
 
 ### Verification runs one way
 
 An interface nothing claims is a difference, answered at the line registering
-it, because that is where a reader chooses between writing the code and
-dropping the contract. An interface nobody registered is not one: only the
-contracts that matter are written down, so an absent registration says nothing
-about the code.
+it. That is where a reader chooses between writing the code and dropping the
+contract. An interface nobody registered is not one: only the contracts that
+matter are written down, so an absent registration says nothing about the code.
 
 A claim resolving to no contract belongs to the marker reading alone, since it
 is about a claim and the syntax tree makes none. It is a comparison that could
@@ -26,25 +26,24 @@ draw.
 
 ### A second way in
 
-A scenario may be witnessed by as many tests as claim it, but a contract is
-the way in, so a second one is an entrance the specification does not
-describe. Under the marker reading that is one interface claimed in two
-places; under the other it is one name defined with two shapes.
+A scenario may be witnessed by as many tests as claim it. A contract is the way
+in, though, so a second one is an entrance the specification does not describe.
+Under the marker reading that is one interface claimed in two places; under the
+other it is one name defined with two shapes.
 
 Which is why a method defined twice said nothing while only names were
-compared: the name is the way in, and there was one of them. Definitions
+compared. The name is the way in, and there was one of them. Definitions
 agreeing on their shape are one way in still, so ordinary reopening goes on
-saying nothing. Both places are answered, each naming the other, since
-deciding which to keep means comparing them.
+saying nothing. Both places are answered, each naming the other, since deciding
+which to keep means comparing them.
 
 ### What is compared, and what stays out
 
 The shape a contract registers is read out of the signature it was written
 with, by the reading that answers what source declares. Both sides come from
 one reading, so a shape no definition could have is a shape no specification
-can register — and every contract read this way is compared, since the
-signature that says how its name is spelled is the same text that says what a
-caller writes.
+can register. Every contract read this way is compared. The signature that says
+how its name is spelled is the same text that says what a caller writes.
 
 A shape is compared entire: half-registered would let the rest drift. A scope
 registers none at all, which is not the same as a call taking nothing. Where
@@ -52,42 +51,41 @@ the definitions disagree among themselves the contract is not also compared
 against one of them: two entrances are already the answer.
 
 `positional` is the one kind word this tool owns. It names the parameter a
-caller writes with no marking of any sort, which every language has one of,
-and a finding leaves it out because a bare name already says it. Every other
-kind word belongs to the language and lives in the reading that answers it.
-Contract compares them as text without learning what any of them means.
+caller writes with no marking of any sort, which every language has one of. A
+finding leaves it out because a bare name already says it. Every other kind
+word belongs to the language and lives in the reading that answers it. Contract
+compares them as text without learning what any of them means.
 
-`internal` is a fact about the interface rather than a preference about pages,
-which is what separates it from a configuration switching a whole
-specification off.
+`internal` is a fact about the interface rather than a preference about pages.
+That is what separates it from a configuration switching a whole specification
+off.
 
 ### Which language spells a name
 
 `include` says which files a reading reaches and never what they are written
-in: a generated file may carry one language under an extension nobody knows. A
-name, though, is spelled the way one language spells it and two of them can
-spell one name differently, so the reading that compares names says which
+in. A generated file may carry one language under an extension nobody knows. A
+name, though, is spelled the way one language spells it, and two of them can
+spell one name differently. So the reading that compares names says which
 language it means.
 
 Which language is the contract's own rather than the file's, so one definition
 may register contracts in two of them. It is also the namespace that reading
-registers under, the way the marker is for the other: two languages can spell
-one name and mean nothing alike, so a declaration in one does not define a
+registers under, the way the marker is for the other. Two languages can spell
+one name and mean nothing alike. So a declaration in one does not define a
 contract spelled in the other, and one name registered under each is not
 ambiguous.
 
 Which files could carry such a name is a different question, and the file
-answers it: a definition reaching files of two languages has each read as the
-one claiming it, because `.py` is no more Go for being handed to Go and
-handing it over is a parse that fails rather than an answer. A file no reading
-claims for a language carries no name spelled that way either — an extension
-nobody recognises is one nothing can be registered against.
+answers it. A definition reaching files of two languages has each read as the
+one claiming it. `.py` is no more Go for being handed to Go, and handing it
+over is a parse that fails rather than an answer. A file no reading claims for
+a language carries no name spelled that way either. An extension nobody
+recognises is one nothing can be registered against.
 
-A marker needs none, because a claim is a claim in whatever the file is
-written in. A language this build was not given is a specification that cannot
-be read rather than a difference to report: what an executable can read is
-decided when it is built, and a run that guessed would compare against the
-wrong spelling.
+A marker needs none, because a claim is a claim in whatever the file is written
+in. A language this build was not given is a specification that cannot be read
+rather than a difference to report. What an executable can read is decided when
+it is built, and a run that guessed would compare against the wrong spelling.
 
 ## Includes
 

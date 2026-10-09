@@ -2,23 +2,23 @@
 
 What Go answers when it is the reading a file was handed to.
 
-A name carries the type a declaration is reached through, and a Go file puts
-one there two ways: a method names its type in a receiver beside it, and a
-method written inside an interface is held by the type enclosing it. The first
-is where this reading parts from the ones whose languages nest — a receiver is
-not a scope the method sits in. Pointer and value spell one type, so `*Charge`
-and `Charge` both answer `Charge`. What the package is called lives in the
-directory rather than the file, so a name written here stops where the file
-does, as go doc links stop it.
+A name carries the type a declaration is reached through, and a Go file puts one
+there two ways. A method names its type in a receiver beside it, and a method
+written inside an interface is held by the type enclosing it. The first is where
+this reading parts from the ones whose languages nest — a receiver is not a
+scope the method sits in. Pointer and value spell one type, so `*Charge` and
+`Charge` both answer `Charge`. What the package is called lives in the directory
+rather than the file. So a name written here stops where the file does, as go
+doc links stop it.
 
-Go spells `//` and `/* */` with one node and gives that node no children, so
-where a person stopped writing is not something the tree can be asked — it
-comes off the text instead. A variadic parameter gathers whatever is there, so
-Go does have the question about a parameter a caller may leave out that Rust
-does not.
+Go spells `//` and `/* */` with one node and gives that node no children. So
+where a person stopped writing is not something the tree can be asked — it comes
+off the text instead. A variadic parameter gathers whatever is there, so Go does
+have the question about a parameter a caller may leave out that Rust does not.
 
 What the reading does not carry: a struct's fields, and the package a file
-belongs to, which is written in the directory rather than in what this reads.
+belongs to. The package is written in the directory rather than in what this
+reads.
 
 ## Includes
 

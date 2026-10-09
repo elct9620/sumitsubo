@@ -3,26 +3,24 @@
 Which reading answers for a file, and what a build carries at all.
 
 Which language reads a file for what a person wrote is the same question as
-which files a reading reaches, so it is asked once: a mechanism scans
+which files a reading reaches, so it is asked once. A mechanism scans
 everything its globs cover, and a language claiming nothing is how a file is
-passed over. Reading it for what it declares is a different question — a name
-is spelled the way one language spells it — so there the language arrives
-named.
+passed over. Reading it for what it declares is a different question. A name is
+spelled the way one language spells it, so there the language arrives named.
 
 How a name is then spelled is that language's own convention, written down
-outside this project: `Charge#settle` and `Charge.open` are what RDoc reads,
-`Vec::push` what rustdoc does. A syntax tree hands over the distinction — that
-this one belongs to the type rather than to a value of it — and never the mark
-that writes it down, so a reading takes that mark from the convention rather
-than inventing one here.
+outside this project. `Charge#settle` and `Charge.open` are what RDoc reads,
+`Vec::push` what rustdoc does. A syntax tree hands over the distinction, that
+this one belongs to the type rather than to a value of it. It never hands over
+the mark that writes it down, so a reading takes that mark from the convention
+rather than inventing one here.
 
-No mechanism names a language. The one answering owns the shapes it hands back
-— those more than one language would answer with — which is why a region of
-prose lives here and a name's parameters stay with the reading that makes
-them.
+No mechanism names a language. The one answering owns the shapes it hands back,
+those more than one language would answer with. That is why a region of prose
+lives here and a name's parameters stay with the reading that makes them.
 
-What each reading then makes of what it was handed is a feature of its own,
-one per language, beside that language's own material under
+What each reading then makes of what it was handed is a feature of its own, one
+per language. Each sits beside that language's own material under
 `test/fixtures/source/`. A language this build gains brings one, and the
 questions it has to answer are the ones its neighbours already did.
 

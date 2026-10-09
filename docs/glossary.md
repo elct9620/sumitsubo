@@ -3,8 +3,8 @@
 The words this project keeps, and the ones it turns down in their place.
 
 Most of them belong to no mechanism. A mechanism has a word of its own only
-where a sentence would turn false with another mechanism in its place, so
-meeting one says the sentence holds for that mechanism alone.
+where a sentence would turn false with another mechanism in its place. Meeting
+one says the sentence holds for that mechanism alone.
 
 ## Sumitsubo
 
@@ -25,8 +25,8 @@ of it.
 ### Structured Specification
 
 The files a mechanism reads a specification from, under whatever root the
-project names: glossary.md, one file per kind of contract under contract/, and
-one file per feature under behavior/.
+project names. They are glossary.md, one file per kind of contract under
+contract/, and one file per feature under behavior/.
 
 ### Verifiable Specification
 
@@ -51,38 +51,39 @@ included.
 
 How a file is read for the structure a person gave it. A file is offered to
 each in turn and the first one claiming it answers, the way a language is
-chosen, so which files are specifications is decided by what a build carries
+chosen. So which files are specifications is decided by what a build carries
 rather than by an extension written into a mechanism.
 
 ### Block
 
 What a document is made of, said in the words a specification is written in
-rather than any one format's: a heading and the level it sits at, a paragraph,
-an item of a list and how deep it is, a fenced block and the language it
-declares, a table's heading row, and a row and the cells under it. It is what
+rather than any one format's. It is a heading and the level it sits at, a
+paragraph, or an item of a list and how deep it is. It is also a fenced block
+and the language it declares, a table's heading row, or a row and the cells
+under it. It is what
 a parser answers with, and the first thing that no longer knows how the
 document was written.
 
 ### Form
 
 One kind of specification as the shape a document is written in — a vocabulary,
-a definition, a feature. Three of them share one syntax, so each says which
-kinds of block it reads and what one means for itself: a level that states a
+a definition, a feature. Three of them share one syntax. So each says which
+kinds of block it reads and what one means for itself. A level that states a
 term in one is prose in another.
 
 ### Language
 
 How a file is read for what a person put in it, and how the names it declares
 are spelled. A file is offered to each in turn and the first one claiming it
-answers, which is how comments are found without anyone saying what the file
-is written in; a name, though, is spelled the way one language spells it, so a
+answers. That is how comments are found without anyone saying what the file is
+written in. A name, though, is spelled the way one language spells it, so a
 specification registering names says which it means. What a build carries is
 decided when it is built.
 
 ### Mechanism
 
 One kind of specification, and the checks it is verified by. Which source a
-specification is compared against the specification selects itself, so what a
+specification is compared against the specification selects itself. What a
 mechanism decides is the name it is switched by, the checks it runs, and how
 each of them is worded.
 
@@ -90,7 +91,7 @@ each of them is worded.
 
 An interface a project registers as one it means to keep, found in the source
 implementing it. Source claims one in a comment where no construct of the
-language points at it, and declares it outright where one does — which is why
+language points at it, and declares it outright where one does. That is why
 registering is a word of its own for how a definition declares one.
 
 ### Behavior
@@ -184,8 +185,8 @@ leaves it naming nothing and the run says so.
 
 One glob a specification answers for, written as a list item opening with it in
 backticks. The heading reserved for them is written once in a specification —
-once in each section, for a vocabulary — and holds that one list alone, each
-glob once: what a specification reaches is a set, and a set says exactly what it
+once in each section, for a vocabulary. It holds that one list alone, each glob
+once. What a specification reaches is a set, and a set says exactly what it
 holds or nothing at all.
 
 ### Reach
@@ -200,15 +201,15 @@ specification's reach together is what a run reads.
 
 A path no mechanism reads, however much an include covers. It is written once
 for the project because a build directory is the project's rather than any one
-specification's, and it decides what is read where an Ignore decides what is
+specification's. It decides what is read where an Ignore decides what is
 answered for.
 
 ### Subdomain
 
 A part of the problem a project addresses, and what one specification answers
-for there. Its `include` is the boundary: a glossary section's terms hold in
-the files it reaches, in place of an earlier section's wherever both name the
-same term; a feature's scenarios are witnessed only there, and a definition's
+for there. Its `include` is the boundary. A glossary section's terms hold in the
+files it reaches, in place of an earlier section's wherever both name the same
+term. A feature's scenarios are witnessed only there, and a definition's
 contracts implemented only there. One file may sit under two, and answers for
 both.
 

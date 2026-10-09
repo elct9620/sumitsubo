@@ -3,9 +3,9 @@
 Which paths a run reads and which it leaves alone, matched against rules
 written the way a `.gitignore` line is written.
 
-The same text is read differently on the two sides: an exclusion turns a path
-down wherever it sits, and an include is anchored to the base and names the
-files a specification answers for.
+The same text is read differently on the two sides. An exclusion turns a path
+down wherever it sits. An include is anchored to the base and names the files a
+specification answers for.
 
 ## Includes
 

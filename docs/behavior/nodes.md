@@ -2,19 +2,19 @@
 
 The part of reading a syntax tree that no language owns.
 
-Captures arrive from the binding in node position rather than in pattern order,
-so they are grouped by the match they came from, made into nodes, and nested by
+Captures arrive from the binding in node position rather than in pattern order.
+So they are grouped by the match they came from, made into nodes, and nested by
 where those nodes sit. Every language puts its own query through this and each
 one spells its nodes differently, which is why nothing here names a construct.
 
 A match that qualifies a declaration rather than making one is gathered under
-it instead, keyed by the line and the name that tell two declarations apart.
-What the match then contributes is the reading's to build: two languages agree
-on which declaration a parameter belongs to and on nothing else about it.
+it instead. It is keyed by the line and the name that tell two declarations
+apart. What the match then contributes is the reading's to build. Two languages
+agree on which declaration a parameter belongs to and on nothing else about it.
 
-Nesting is recovered from where the nodes sit rather than from the query: a
-pattern reaches only its direct children, and tree-sitter has no operator for
-a deeper one. Two constructs spanning the same lines therefore answer with no
+Nesting is recovered from where the nodes sit rather than from the query. A
+pattern reaches only its direct children, and tree-sitter has no operator for a
+deeper one. Two constructs spanning the same lines therefore answer with no
 scope, which loses a prefix rather than inventing one.
 
 ## Includes

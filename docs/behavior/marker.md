@@ -2,17 +2,17 @@
 
 What a piece of source claims, read out of the comments a language offers.
 
-A contract is named by the interface itself — `GET /users/:id` — rather than
-by a handle standing in for it, which is why what follows the marker is read
-whole. Behavior's ids are handles and read as a list.
+A contract is named by the interface itself — `GET /users/:id` — rather than by
+a handle standing in for it. That is why what follows the marker is read whole.
+Behavior's ids are handles and read as a list.
 
 Marker hands back the line either way. How it is read belongs to the mechanism
 that named the word.
 
-Where a keyword begins is the comment's business rather than this reading's: a
-language writes `//` or `#` against the marker with nothing between, and so does
-the `*` down the side of a block comment. Anything but a letter may stand in
-front of it, which is what keeps an address out of the claims.
+Where a keyword begins is the comment's business rather than this reading's. A
+language writes `//` or `#` against the marker with nothing between, and so
+does the `*` down the side of a block comment. Anything but a letter may stand
+in front of it, which is what keeps an address out of the claims.
 
 ## Includes
 

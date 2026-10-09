@@ -2,14 +2,14 @@
 
 What Ruby answers when it is the reading a file was handed to.
 
-A scope is what a name is reached through rather than a keyword, so a constant
-assigned a call carrying a block holds what is written inside it — which is how
+A scope is what a name is reached through rather than a keyword. So a constant
+assigned a call carrying a block holds what is written inside it. That is how
 `Data.define` and `Struct.new` spell a class body. Which call it is goes
 unasked. One carrying no block encloses nothing, so it declares nothing either.
 
-What the reading does not carry is stated here as well as what it does: a
-method a call brings into being and one a class mixes in are both outside what
-a file declares, because a syntax tree is read rather than a program run.
+What the reading does not carry is stated here as well as what it does. A method
+a call brings into being and one a class mixes in are both outside what a file
+declares. That is because a syntax tree is read rather than a program run.
 
 ## Includes
 
