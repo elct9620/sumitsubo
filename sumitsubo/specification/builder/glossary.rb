@@ -56,7 +56,7 @@ module Sumitsubo
         WIDE = "—"
 
         def initialize(path)
-          @where = Place.file(path)
+          @path = Place.file(path)
           @refusals = []
           @key = nil
           @text = nil
@@ -75,7 +75,7 @@ module Sumitsubo
 
           # The sections carry the boundaries here, so the container declares
           # none. The shape allows one as their default; nothing needs it yet.
-          Specification.new(@key, @text, [], @where, {}, @sections)
+          Specification.new(@key, @text, [], @path, {}, @sections)
         end
 
         private
@@ -94,7 +94,7 @@ module Sumitsubo
         # A refusal gathered rather than raised, for where nothing after it
         # leans on what it was about.
         def gathered(line, said)
-          @refusals.push(Builder.refusal(@where, line, said, TOPIC))
+          @refusals.push(Builder.refusal(@path, line, said, TOPIC))
         end
 
         def arrived(block)
@@ -145,7 +145,7 @@ module Sumitsubo
           first = @sections.find { |one| one.key == said }
           gathered(block.line, "opens a second section named #{said}, first opened at #{first_at(first)}") unless first.nil?
 
-          @section = Statement.new(said, nil, [], @where, block.line, {}, [])
+          @section = Statement.new(said, nil, [], @path, block.line, {}, [])
           @sections.push(@section)
           @scoped_at = nil
           @term = nil
@@ -174,7 +174,7 @@ module Sumitsubo
           first = @section.statements.find { |one| one.key == said }
           gathered(block.line, "declares #{said} a second time in #{@section.key}, first declared at #{first_at(first)}") unless first.nil?
 
-          @term = Statement.new(said, nil, [], @where, block.line, {}, [])
+          @term = Statement.new(said, nil, [], @path, block.line, {}, [])
           @section.statements.push(@term)
         end
 
@@ -209,7 +209,7 @@ module Sumitsubo
 
         # A section says what it covers once.
         def scoping(line)
-          @refusals.push(Builder.rescoped(@where, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
+          @refusals.push(Builder.rescoped(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
           @scoped_at = line if @scoped_at.nil?
         end
 
@@ -228,7 +228,7 @@ module Sumitsubo
           return set_aside(block) if block.level == IGNORE
           return unless block.level == WORD
           if @holding == INCLUDES
-            @section.includes.push(Builder.scoped(block, @where, TOPIC, @section.includes))
+            @section.includes.push(Builder.scoped(block, @path, TOPIC, @section.includes))
             return
           end
           return unless @holding == REJECTED
@@ -239,7 +239,7 @@ module Sumitsubo
           first = @term.statements.find { |one| one.key == denied }
           gathered(block.line, "rejects #{denied} a second time under #{@term.key}, first rejected at #{first_at(first)}") unless first.nil?
 
-          @rejected = Statement.new(denied, reason(block.rest), [], @where, block.line, {}, [])
+          @rejected = Statement.new(denied, reason(block.rest), [], @path, block.line, {}, [])
           @term.statements.push(@rejected)
         end
 
@@ -268,7 +268,7 @@ module Sumitsubo
           first = @rejected.statements.find { |one| one.key == at }
           gathered(block.line, "sets #{at} aside a second time under #{@rejected.key}, first set aside at #{first_at(first)}") unless first.nil?
 
-          @rejected.statements.push(Statement.new(at, why, [], @where, block.line, {}, []))
+          @rejected.statements.push(Statement.new(at, why, [], @path, block.line, {}, []))
         end
 
         # What a list item says after the word it took letter for letter. The
@@ -306,11 +306,11 @@ module Sumitsubo
         end
 
         def refuse(line, said)
-          Builder.refuse(@where, line, said, TOPIC)
+          Builder.refuse(@path, line, said, TOPIC)
         end
 
         def beside(block)
-          Builder.beside(block, @where, TOPIC)
+          Builder.beside(block, @path, TOPIC)
         end
       end
     end

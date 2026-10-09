@@ -14,6 +14,9 @@ module Sumitsubo
   # than among what the container declares: a barren one answers at the line it
   # was written on, and nothing reads it as a declaration.
   #
+  # `path` is the file as a reader is handed it, and every form keeps it that
+  # way, so a relation, a reach and a finding name one file by one string.
+  #
   # Nothing is required here. A mechanism reaches for this file, and a reading
   # that reaches a grammar would cost every one of their tests its snapshot.
   Specification = Struct.new(:key, :text, :includes, :path, :attributes, :statements)
