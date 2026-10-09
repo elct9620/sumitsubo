@@ -11,7 +11,8 @@ module Sumitsubo
     # The finding is what a run only reporting answers with, and the text is
     # what a run rewriting puts in the line's stead. They are one thing said
     # twice, held together so that what `fmt` reports and what it would do
-    # cannot drift apart.
+    # cannot drift apart. A line only carried along by another's move has no
+    # finding of its own: the finding is where the move was asked for.
     Rewrite = Struct.new(:finding, :line, :text)
   end
 end

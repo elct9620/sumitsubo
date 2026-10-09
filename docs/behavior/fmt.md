@@ -11,8 +11,7 @@ same files either way.
 
 A document is rewritten in place, and in place is the reference line itself,
 so `--check` is what says the same thing and changes nothing. What each form
-has to say about how its own documents are written is that form's own; today
-only the vocabulary has anything to say.
+has to say about how its own documents are written is that form's own.
 
 A signature is still read as the language it names — that is what says how a
 name is spelled, and a definition registering a name no reading can find is
@@ -105,3 +104,27 @@ covers is opened.
 | Given | a wide dash in the word's reason and in the definition above it |
 | When | `sumi fmt` runs |
 | Then | both dashes in the prose stand, because what sets a word off is where it sits |
+
+## `FM-011` A scenario written before a lower id
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature writing `O-10` between `O-1` and `O-2` |
+| When | `sumi fmt --check` runs |
+| Then | `O-10` answers at its heading, naming `O-2`, and the file is left alone |
+
+## `FM-012` The run that puts scenarios in order
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature writing `O-10` between `O-1` and `O-2`, and `O-9` last |
+| When | `sumi fmt` runs |
+| Then | the scenarios read `O-1`, `O-2`, `O-9`, `O-10`, and a second run has nothing to say |
+
+## `FM-013` A project that switched order off
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature writing `O-10` between `O-1` and `O-2`, and `order: false` on behavior |
+| When | `sumi fmt` runs |
+| Then | the file is left as written |

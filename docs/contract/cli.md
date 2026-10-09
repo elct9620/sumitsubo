@@ -57,13 +57,17 @@ A document is rewritten in place, and in place is the reference line itself, so
 `--check` says the same thing and changes nothing. What a form cannot write for
 a person it answers instead, at the line that broke it.
 
+Scenarios go in id order.
+
 ```console
 $ sumi fmt --check
+.spec/behavior/fmt.md:42: behavior/unordered: FM-008 is written before FM-003
 .spec/glossary.md:15: glossary/miswritten: Purchase is set off with a wide dash where a plain one is written
-1 difference
+2 differences
 
 $ sumi fmt
 wrote .spec/glossary.md
+wrote .spec/behavior/fmt.md
 0 differences
 ```
 

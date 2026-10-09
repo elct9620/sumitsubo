@@ -103,5 +103,68 @@ puts "the dashes in the prose beside them stand: " \
 puts "--- which leaves nothing to say ---"
 puts "exit=#{cli.run(["fmt", "--check"])}"
 
+# Written as they came: `O-10` lands between the two it follows, and a run of
+# digits is read by its value, so `O-9` still comes before it.
+UNORDERED = <<~FEATURE
+  # Ordering
+
+  A feature whose scenarios were written as they came.
+
+  ## Includes
+
+  - `test/*_test.rb`
+
+  ## `O-1` The first
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | one |
+  | When | it is read |
+  | Then | it is one |
+
+  ## `O-10` The tenth, written early
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | ten |
+  | When | it is read |
+  | Then | it is ten |
+
+  ## `O-2` The second
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | two |
+  | When | it is read |
+  | Then | it is two |
+
+  ## `O-9` The ninth
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | nine |
+  | When | it is read |
+  | Then | it is nine |
+FEATURE
+
+# @behavior FM-011
+puts "--- a scenario written before a lower id, and the run that only says so ---"
+File.write(".spec/behavior/ordering.md", UNORDERED)
+puts "exit=#{cli.run(["fmt", "--check"])}"
+puts "left as written: #{File.read(".spec/behavior/ordering.md") == UNORDERED}"
+
+# @behavior FM-012
+puts "--- and the run that writes it ---"
+puts "exit=#{cli.run(["fmt"])}"
+puts File.read(".spec/behavior/ordering.md")
+puts "exit=#{cli.run(["fmt", "--check"])}"
+
+# @behavior FM-013
+puts "--- a project that switched order off ---"
+File.write(".spec/behavior/ordering.md", UNORDERED)
+File.write(".sumi.json", "{ \"specifications\": { \"behavior\": { \"order\": false } } }\n")
+puts "exit=#{cli.run(["fmt"])}"
+puts "left as written: #{File.read(".spec/behavior/ordering.md") == UNORDERED}"
+
 Dir.chdir(back)
 root.rmtree

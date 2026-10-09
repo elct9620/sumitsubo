@@ -87,6 +87,83 @@ module Sumitsubo
       features.map { |feature| Check::Covers.new(path: feature.path, includes: feature.includes) }
     end
 
+    # Each scenario written before one with a lower id, with the lowest of
+    # those it comes before: that one is what says where it belongs.
+    def self.ahead(scenarios)
+      found = []
+      scenarios.each_with_index do |scenario, at|
+        later = scenarios[at + 1, scenarios.length - at - 1]
+        lowest = later.min { |left, right| precedence(left.key, right.key) }
+        next if lowest.nil? || precedence(lowest.key, scenario.key) >= 0
+
+        found.push([scenario, lowest])
+      end
+      found
+    end
+
+    # A feature's lines with its scenarios in the order of their ids. A
+    # scenario carries every line up to the next one, and the blank lines
+    # between two stay where they were, so the document keeps its length and
+    # what precedes the first scenario is left alone.
+    def self.ordered(scenarios, lines)
+      starts = scenarios.map { |one| one.line - 1 }
+      bodies = []
+      gaps = []
+      starts.each_with_index do |start, at|
+        finish = at + 1 < starts.length ? starts[at + 1] : lines.length
+        block = lines[start, finish - start]
+        kept = block.length
+        kept -= 1 while kept > 1 && block[kept - 1].strip.empty?
+        bodies.push(block[0, kept])
+        gaps.push(block[kept, block.length - kept])
+      end
+      order = (0...scenarios.length).to_a.sort { |left, right| precedence(scenarios[left].key, scenarios[right].key) }
+      written = lines[0, starts[0]]
+      order.each_with_index do |index, slot|
+        written.concat(bodies[index])
+        written.concat(gaps[slot])
+      end
+      written
+    end
+
+    # How two ids compare, a run of digits by its value: `F-9` comes before
+    # `F-10`, which a comparison of the letters alone would put the other way.
+    def self.precedence(left, right)
+      ours = runs(left)
+      theirs = runs(right)
+      at = 0
+      while at < ours.length && at < theirs.length
+        compared = run_precedence(ours[at], theirs[at])
+        return compared unless compared == 0
+
+        at += 1
+      end
+      ours.length <=> theirs.length
+    end
+
+    def self.run_precedence(left, right)
+      return left.to_i <=> right.to_i if digit?(left[0]) && digit?(right[0])
+
+      left <=> right
+    end
+
+    # An id cut wherever it turns between digits and anything else.
+    def self.runs(key)
+      found = []
+      key.each_char do |char|
+        if found.empty? || digit?(found[found.length - 1][0]) != digit?(char)
+          found.push(char)
+        else
+          found[found.length - 1] = found[found.length - 1] + char
+        end
+      end
+      found
+    end
+
+    def self.digit?(char)
+      char >= "0" && char <= "9"
+    end
+
     # The ids one marker line carries. A claim is data rather than prose, so a
     # trailing remark becomes an id resolving to nothing, which the run reports
     # rather than quietly accepting.

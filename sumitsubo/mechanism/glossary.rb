@@ -83,7 +83,7 @@ module Sumitsubo
       # directly after the word taken letter for letter: a dash in the prose
       # beside it is prose, and rewriting one would change what a person wrote
       # rather than how they wrote it.
-      def rewrites(vocabulary, lines)
+      def rewrites(config, vocabulary, lines)
         found = []
         set_off(vocabulary).each { |statement| dashed(found, statement, lines) }
         found

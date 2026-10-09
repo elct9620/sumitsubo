@@ -276,6 +276,8 @@ word in front, which is the whole of `<mechanism>/<check>`.
    beside it are read and answered anyway
  a line written otherwise than a reference line is:  miswritten  (G) ✻
    what `fmt` writes for a person, and `fmt --check` answers instead
+ a scenario written before a lower id:  unordered  (B) ✻
+   what `fmt` moves for a person, unless `order` is switched off
  a specification nothing could open answers for itself, at no line ✕
    no parser reads it, it is not there, or it names one thing twice
  a relation a specification wrote that names nothing:  unresolved  (C, B) ✕

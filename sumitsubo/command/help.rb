@@ -544,6 +544,10 @@ module Sumitsubo
             An id is unique across the whole directory: a claim carries only the
             id, and a referent that is not unique resolves to nothing.
 
+            `sumi fmt` writes scenarios in the order of their ids, a run of
+            digits by its value. So each scenario reads alone: a step leaning
+            on the one above it reads wrong once it moves.
+
         Includes
             The boundary of what a feature answers for. A scenario is
             witnessed by the files its own feature reaches. A claim from
@@ -593,6 +597,9 @@ module Sumitsubo
             .spec/behavior/verify.md:9: behavior/stale: @behavior V-002 is unverifiable, yet claimed at test/verify_test.rb:13   (exit 2)
                 The reason it was set aside no longer stands. Drop the
                 unverifiable row so the scenario is compared again.
+
+            .spec/behavior/verify.md:41: behavior/unordered: V-019 is written before V-002   (fmt only)
+                Answered by `sumi fmt --check`. Run `sumi fmt` to move it.
       TEXT
 
       # @command help config
@@ -623,7 +630,8 @@ module Sumitsubo
             `specifications` lists only the exceptions: one nobody mentions is
             verified. The names are `glossary`, `contract`, and `behavior`.
             `verify: false` keeps a specification the project means to hold
-            without a run being checked against it yet.
+            without a run being checked against it yet. `order: false` on
+            behavior leaves its scenarios where they were written.
 
             The set is closed both ways. A key nothing here reads, and a
             value the one named does not take, are each refused - and all

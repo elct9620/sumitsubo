@@ -26,7 +26,7 @@ module Sumitsubo
 
         current.each_mechanism do |mechanism|
           mechanism.declared(config, current.specifications).each do |document|
-            written(mechanism, document, current.findings, checking)
+            written(config, mechanism, document, current.findings, checking)
           end
         end
         Finding::Report.new(current.findings).lines.each { |line| puts line }
@@ -39,14 +39,14 @@ module Sumitsubo
       # answered as findings where the run is only to say so, and put in the
       # document's stead where it is to write it. A run that rewrote something
       # says which file, the way `init` says what it laid down.
-      def written(mechanism, document, findings, checking)
+      def written(config, mechanism, document, findings, checking)
         path = Pathname.new(document.path)
         lines = path.read.split("\n", -1)
-        rewrites = mechanism.rewrites(document, lines)
+        rewrites = mechanism.rewrites(config, document, lines)
         return if rewrites.empty?
 
         if checking
-          rewrites.each { |one| findings.add(one.finding) }
+          rewrites.each { |one| findings.add(one.finding) unless one.finding.nil? }
         else
           rewrites.each { |one| lines[one.line - 1] = one.text }
           path.write(lines.join("\n"))

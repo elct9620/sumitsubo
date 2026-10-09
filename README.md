@@ -100,11 +100,13 @@ to it. `sumi fmt --check` says the same thing and changes nothing:
 
 ```console
 $ sumi fmt --check
+.spec/behavior/fmt.md:42: behavior/unordered: FM-008 is written before FM-003
 .spec/glossary.md:15: glossary/miswritten: Purchase is set off with a wide dash where a plain one is written
-1 difference
+2 differences
 
 $ sumi fmt
 wrote .spec/glossary.md
+wrote .spec/behavior/fmt.md
 0 differences
 ```
 

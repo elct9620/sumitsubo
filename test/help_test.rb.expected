@@ -164,7 +164,8 @@ Form
     `specifications` lists only the exceptions: one nobody mentions is
     verified. The names are `glossary`, `contract`, and `behavior`.
     `verify: false` keeps a specification the project means to hold
-    without a run being checked against it yet.
+    without a run being checked against it yet. `order: false` on
+    behavior leaves its scenarios where they were written.
 
     The set is closed both ways. A key nothing here reads, and a
     value the one named does not take, are each refused - and all
@@ -333,3 +334,4 @@ exit=2
   behavior 89: test/verify_test.rb:13: behavior/unresolved: V-404 resolves to no scenario   (exit 2)
   behavior 121: test/other_test.rb:13: behavior/misplaced: V-002 is claimed outside what .spec/behavior/verify.md includes   (exit 2)
   behavior 129: .spec/behavior/verify.md:9: behavior/stale: @behavior V-002 is unverifiable, yet claimed at test/verify_test.rb:13   (exit 2)
+  behavior 95: .spec/behavior/verify.md:41: behavior/unordered: V-019 is written before V-002   (fmt only)

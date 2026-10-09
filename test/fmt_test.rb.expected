@@ -44,3 +44,57 @@ the dashes in the prose beside them stand: true true
 --- which leaves nothing to say ---
 0 differences
 exit=0
+--- a scenario written before a lower id, and the run that only says so ---
+.spec/behavior/ordering.md:17: behavior/unordered: O-10 is written before O-2
+1 difference
+exit=1
+left as written: true
+--- and the run that writes it ---
+wrote .spec/behavior/ordering.md
+0 differences
+exit=0
+# Ordering
+
+A feature whose scenarios were written as they came.
+
+## Includes
+
+- `test/*_test.rb`
+
+## `O-1` The first
+
+| Step | Statement |
+| --- | --- |
+| Given | one |
+| When | it is read |
+| Then | it is one |
+
+## `O-2` The second
+
+| Step | Statement |
+| --- | --- |
+| Given | two |
+| When | it is read |
+| Then | it is two |
+
+## `O-9` The ninth
+
+| Step | Statement |
+| --- | --- |
+| Given | nine |
+| When | it is read |
+| Then | it is nine |
+
+## `O-10` The tenth, written early
+
+| Step | Statement |
+| --- | --- |
+| Given | ten |
+| When | it is read |
+| Then | it is ten |
+0 differences
+exit=0
+--- a project that switched order off ---
+0 differences
+exit=0
+left as written: true

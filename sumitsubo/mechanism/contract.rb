@@ -137,7 +137,7 @@ module Sumitsubo
 
       # Nothing about how a definition is written is checked yet, so it is
       # written the one way it reads.
-      def rewrites(definition, lines)
+      def rewrites(config, definition, lines)
         []
       end
 

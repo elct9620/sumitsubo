@@ -3,6 +3,8 @@ require "sumitsubo/specification/builder/behavior"
 require "sumitsubo/check/claim"
 require "sumitsubo/check/reach"
 require "sumitsubo/finding"
+require "sumitsubo/place"
+require "sumitsubo/specification/rewrite"
 require "sumitsubo/mechanism/seed"
 
 module Sumitsubo
@@ -19,6 +21,7 @@ module Sumitsubo
       NAMELESS = "behavior/nameless"
       DANGLING = "behavior/dangling"
       STALE = "behavior/stale"
+      UNORDERED = "behavior/unordered"
       ORDER = "order"
 
       def initialize
@@ -61,10 +64,24 @@ module Sumitsubo
         Finding.refused(UNREADABLE, refusal)
       end
 
-      # Nothing about how a feature is written is checked yet, so it is
-      # written the one way it reads.
-      def rewrites(feature, lines)
-        []
+      # A feature's scenarios in the order of their ids, unless the project
+      # switched `order` off. Each scenario written before a lower id answers
+      # once, at its heading; the lines moved with it answer nothing.
+      def rewrites(config, feature, lines)
+        return [] unless config.switched?(specification, ORDER)
+
+        ahead = Sumitsubo::Behavior.ahead(feature.statements)
+        return [] if ahead.empty?
+
+        written = Sumitsubo::Behavior.ordered(feature.statements, lines)
+        found = []
+        lines.each_index do |at|
+          next if written[at] == lines[at]
+
+          pair = ahead.find { |one| one[0].line == at + 1 }
+          found.push(Specification::Rewrite.new(pair.nil? ? nil : unordered(pair[0], pair[1]), at + 1, written[at]))
+        end
+        found
       end
 
       # Every specification this mechanism keeps, and everything that can be
@@ -115,6 +132,16 @@ module Sumitsubo
         # witnessing one, so it is answered once, by itself, rather than through
         # the comparisons above.
         @dangling.run(Sumitsubo::Behavior.dangling_in(relations, specification)).each { |one| findings.add(one) }
+      end
+
+      private
+
+      def unordered(scenario, lowest)
+        Finding.new(
+          check: UNORDERED, difference: true,
+          place: Place.of(scenario.path, scenario.line),
+          message: "#{scenario.key} is written before #{lowest.key}"
+        )
       end
     end
   end
