@@ -583,3 +583,11 @@ declaring anything else is a contract nobody registered.
 | Given | a relates row holding a key outside backticks, or nothing at all |
 | When | the blocks the document is made of are read |
 | Then | the specification is refused at that row, naming what the attribute takes |
+
+## `F-071` A contract name written twice in one definition
+
+| Step | Statement |
+| --- | --- |
+| Given | a definition writing one contract name under two headings |
+| When | the blocks the document is made of are read |
+| Then | the specification is refused at the second, naming where the first was written |

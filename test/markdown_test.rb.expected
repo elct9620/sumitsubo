@@ -178,6 +178,8 @@ CLI {"marker" => ["@command"]} []
   refused: cli.md:1 registers init with no signature, so nothing says how its name is spelled; sumi help contract has the form
 --- a second fence under one contract ---
   Store.open {"language" => ["ruby"], "signature" => ["module Store\n  def self.open(path)\n  end\nend\n"]}
+--- a contract name written twice in one definition ---
+  refused: cli.md:9 writes inspect a second time, first written at cli.md:7; sumi help contract has the form
 --- includes written at the level a feature writes them ---
 ["5 test/init_test.rb", "6 test/other_test.rb"]
 --- includes written at the level a vocabulary writes them ---

@@ -60,7 +60,7 @@ compares them as text without learning what any of them means.
 That is what separates it from a configuration switching a whole specification
 off.
 
-### Which language spells a name
+### Name spelling
 
 `include` says which files a reading reaches and never what they are written
 in. A generated file may carry one language under an extension nobody knows. A
@@ -68,24 +68,58 @@ name, though, is spelled the way one language spells it, and two of them can
 spell one name differently. So the reading that compares names says which
 language it means.
 
+```text
+include     the files a reading reaches
+language    how a name is spelled, and its namespace
+marker      the word a claim is written with
+```
+
+#### One namespace
+
 Which language is the contract's own rather than the file's, so one definition
-may register contracts in two of them. It is also the namespace that reading
-registers under, the way the marker is for the other. Two languages can spell
-one name and mean nothing alike. So a declaration in one does not define a
-contract spelled in the other, and one name registered under each is not
-ambiguous.
+may register contracts in two of them. It registers each name once, so one name
+meant in two languages is written in two definitions. The language is the
+namespace that reading registers under, the way the marker is for the other.
+
+```text
+api.md       signature in Ruby    registers Session under Ruby
+api_go.md    signature in Go      registers Session under Go
+```
+
+Two languages can spell one name and mean nothing alike. So a declaration in
+one does not define a contract spelled in the other, and one name registered
+under each is not ambiguous.
+
+#### Files read
 
 Which files could carry such a name is a different question, and the file
 answers it. A definition reaching files of two languages has each read as the
 one claiming it. `.py` is no more Go for being handed to Go, and handing it
-over is a parse that fails rather than an answer. A file no reading claims for
-a language carries no name spelled that way either. An extension nobody
-recognises is one nothing can be registered against.
+over is a parse that fails rather than an answer.
 
-A marker needs none, because a claim is a claim in whatever the file is written
-in. A language this build was not given is a specification that cannot be read
-rather than a difference to report. What an executable can read is decided when
-it is built, and a run that guessed would compare against the wrong spelling.
+```text
+a Go definition reaches
+  charge.go     read as Go
+  charge.py     not read: Python claims it
+  charge.gen    not read: no reading claims it
+```
+
+A file no reading claims for a language carries no name spelled that way. An
+extension nobody recognises is one nothing can be registered against.
+
+#### Missing language
+
+A marker needs no language, because a claim is a claim in whatever the file is
+written in. A language this build was not given is a specification that cannot
+be read rather than a difference to report. What an executable can read is
+decided when it is built, and a run that guessed would compare against the
+wrong spelling.
+
+```text
+the build lacks what the definition names
+  a marker      the definition is read anyway
+  a language    the definition cannot be read
+```
 
 ## Includes
 

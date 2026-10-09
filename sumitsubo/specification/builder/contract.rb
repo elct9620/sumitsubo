@@ -152,6 +152,8 @@ module Sumitsubo
           return marking(block.line) if said == MARKER
 
           @contract = registered(block)
+          first = @contracts.find { |one| one.key == @contract.key }
+          gathered(block.line, "writes #{@contract.key} a second time, #{Builder.first_written(@path, first.line)}") unless first.nil?
           @contracts.push(@contract)
         end
 

@@ -788,6 +788,15 @@ definition([
 ], { OPEN => [scope("Store"), declares("Store.open")] })
   .statements.each { |contract| puts "  #{contract.key} #{contract.attributes.inspect}" }
 
+# A definition registers each name once, whichever reading it is read by; one
+# name meant in two languages is two definitions.
+# @behavior F-071
+puts "--- a contract name written twice in one definition ---"
+definition([
+  h1(1, "CLI"), h2(3, "Marker"), paragraph(5, "`@command`"),
+  h2(7, "`inspect`"), h2(9, "`inspect`")
+])
+
 # --- what a specification answers for ------------------------------------
 #
 # Every kind lists its includes under the reserved heading and they differ only

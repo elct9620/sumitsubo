@@ -291,7 +291,8 @@ module Sumitsubo
             The language is the namespace, the way the marker is for the other
             reading. Two languages may spell one name and mean nothing alike,
             so a Rust declaration does not define a Ruby contract, and one name
-            registered under each is not ambiguous.
+            registered under each is not ambiguous. A definition registers a
+            name once, so a name meant in two languages takes two definitions.
 
         Attributes
             A heading carries the contract's name alone. What the contract is
