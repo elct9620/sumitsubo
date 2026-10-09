@@ -4,6 +4,7 @@ require "sumitsubo/glossary"
 require "sumitsubo/specification/builder/glossary"
 require "sumitsubo/finding"
 require "sumitsubo/place"
+require "sumitsubo/relation"
 require "sumitsubo/specification/rewrite"
 require "sumitsubo/mechanism/seed"
 
@@ -89,9 +90,16 @@ module Sumitsubo
         found
       end
 
-      # Nothing this mechanism compares is kept yet: its checks still read the
-      # source themselves, so a run asking what it relates hears nothing.
+      # A section's reach is worked out with the vocabulary laid over it, and
+      # that needs the reach of the specifications beside it, so nothing is
+      # kept here.
+      def reach(config, specifications, relations)
+      end
+
+      # Every rejected word the source writes, kept for whoever asks after.
       def relate(config, specifications, source, relations)
+        scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
+        Sumitsubo::Glossary.relate(scope, config.base, source, relations, specification)
       end
 
       def verify(config, findings, specifications, source, relations)
@@ -100,10 +108,10 @@ module Sumitsubo
         @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
-        reached = Sumitsubo::Glossary.reaches(beside(config, specifications), config.base, relations)
-        scope = Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion, reached)
+        kept = relations.naming(Relation::MENTIONS, specification)
         mentions = Sumitsubo::Glossary.uses(
-          Sumitsubo::Glossary.check(scope, config.base, source), vocabulary, config.base
+          Sumitsubo::Glossary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base),
+          vocabulary, config.base
         )
         aside = Sumitsubo::Glossary.set_aside(vocabulary)
         @rejected.run(mentions, aside, config.base).each { |one| findings.add(one) }
@@ -111,6 +119,13 @@ module Sumitsubo
       end
 
       private
+
+      # Each file's vocabulary: the sections covering it laid over one another,
+      # and the specifications beside it covered where the files they reach are.
+      def scope_of(config, specifications, relations, vocabulary)
+        reached = Sumitsubo::Glossary.reaches(beside(config, specifications), config.base, relations)
+        Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion, reached)
+      end
 
       # Every specification the mechanisms beside this one keep. One switched
       # off is never read, and one refused is left out by itself. Where two of

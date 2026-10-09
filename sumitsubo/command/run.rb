@@ -83,10 +83,15 @@ module Sumitsubo
         @unread_told = unread.length
       end
 
-      # Every relation the switched-on mechanisms among these keep. A command
-      # that only looks names the ones it asks about, so a mechanism it does
-      # not count is neither read nor answered for.
+      # Every relation the switched-on mechanisms among these keep: what each
+      # specification reaches first, since what the source says is read in the
+      # files reached, and a vocabulary covers what the others reach. A command
+      # that only looks names the ones it asks about, so a mechanism it does not
+      # count is neither read nor answered for.
       def relate(mechanisms)
+        each_mechanism do |mechanism|
+          mechanism.reach(@config, @specifications, @relations) if mechanisms.include?(mechanism)
+        end
         each_mechanism do |mechanism|
           mechanism.relate(@config, @specifications, @source, @relations) if mechanisms.include?(mechanism)
         end

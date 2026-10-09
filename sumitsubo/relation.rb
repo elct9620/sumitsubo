@@ -6,7 +6,7 @@ module Sumitsubo
   #
   # The ends are not one shape: a claim and a dangling marker run from where
   # the marker was written to a reference, a declaration from what a language
-  # read, a reach from one artifact to another, and what one statement says of
+  # read, a mention from the word a person wrote, a reach from one artifact to another, and what one statement says of
   # another from one reference to the next. Which pair a
   # relation carries is what its kind says, so a caller asks the kind before it
   # asks an end anything only that shape answers.
@@ -17,6 +17,7 @@ module Sumitsubo
     RELATES = "relates"
     REFINES = "refines"
     DECLARES = "declares"
+    MENTIONS = "mentions"
 
     # A specification reaching a file, both taken whole.
     def self.reach(specification, file)
@@ -32,6 +33,12 @@ module Sumitsubo
     # spells it.
     def self.declares(spelled, reference)
       new(kind: DECLARES, subject: spelled, object: reference)
+    end
+
+    # A word a person wrote, naming the term in the vocabulary that rejects
+    # it where it stands.
+    def self.mentions(mention, reference)
+      new(kind: MENTIONS, subject: mention, object: reference)
     end
 
     # A place in source naming a statement, with no code below it.

@@ -6,6 +6,8 @@ require "sumitsubo/source/scope"
 require "sumitsubo/source/repository"
 require "sumitsubo/specification"
 require "sumitsubo/place"
+require "sumitsubo/relation"
+require "sumitsubo/source"
 
 module Sumitsubo
   # The structured specification the Glossary mechanism verifies against.
@@ -148,6 +150,30 @@ module Sumitsubo
       end
       # A key that leaves no ties, so two runs report the same order.
       mentions.sort_by { |one| [one.path, one.line, one.term, one.used] }
+    end
+
+    # Every rejected word in the files the vocabulary reaches, kept under the
+    # term rejecting it there. The word is kept as it was written, at the path
+    # a relation names a file by.
+    def self.relate(scope, base, source, relations, mechanism)
+      check(scope, base, source).each do |one|
+        found = Source::Mention.new(path: Place.file(base / one.path), line: one.line, used: one.used)
+        relations.add(Relation.mentions(found, Relation::Reference.new(mechanism: mechanism, key: one.term)))
+      end
+    end
+
+    # The mentions the run kept, read back as the checks compare them: under
+    # the base the way an ignore names one, with the reason the vocabulary
+    # holding in that file gives for turning the word down.
+    def self.mentioned(relations, scope, base)
+      found = []
+      relations.each do |one|
+        path = from_base(one.subject.path, base)
+        term = one.object.key
+        entry = scope[path][term].statements.find { |rejected| rejected.key == one.subject.used }
+        found.push(Mention.new(path: path, line: one.subject.line, term: term, used: one.subject.used, reason: entry.text))
+      end
+      found
     end
 
     # The mentions that are uses of a rejected word rather than the

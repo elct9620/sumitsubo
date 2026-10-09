@@ -104,11 +104,15 @@ module Sumitsubo
         declared(config, specifications).map { |one| one.statements }.flatten
       end
 
+      # The files every feature reaches.
+      def reach(config, specifications, relations)
+        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations)
+      end
+
       # What the source says about each scenario, kept for whoever asks after:
-      # the files every feature reaches, and every claim the marker leaves there.
+      # every claim the marker leaves in the files the features reach.
       def relate(config, specifications, source, relations)
         features = declared(config, specifications)
-        Reach.keep(features, config.base, config.exclusion, relations)
         Sumitsubo::Behavior.relate(Reach.of(features, relations), source, relations, specification)
       end
 

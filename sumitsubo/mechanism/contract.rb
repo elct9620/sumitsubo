@@ -157,13 +157,15 @@ module Sumitsubo
         declared(config, specifications).map { |one| one.statements }.flatten
       end
 
+      # The files every definition reaches.
+      def reach(config, specifications, relations)
+        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations)
+      end
+
       # What the source says about each contract, kept for whoever asks after:
-      # the files every definition reaches, and every claim and declaration
-      # found there.
+      # every claim and declaration in the files the definitions reach.
       def relate(config, specifications, source, relations)
-        definitions = declared(config, specifications)
-        Reach.keep(definitions, config.base, config.exclusion, relations)
-        Sumitsubo::Contract.relate(definitions, source, relations, specification)
+        Sumitsubo::Contract.relate(declared(config, specifications), source, relations, specification)
       end
 
       # An include covers no file whichever reading the definition writing it

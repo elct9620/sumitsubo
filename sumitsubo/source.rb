@@ -61,6 +61,11 @@ module Sumitsubo
       end
     end
 
+    # A word standing on a line of what a person wrote, spelled the way it was
+    # written. Which term it is a use of is the vocabulary's to say.
+    class Mention < Data.define(:path, :line, :used)
+    end
+
     # A declaration with the language that read it, for whoever asks after
     # the caller holding the two apart is gone.
     class Spelled < Data.define(:declaration, :language)
