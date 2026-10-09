@@ -1,5 +1,5 @@
 require "pathname"
-require "sumitsubo/behavior"
+require "sumitsubo/mechanism/behavior"
 require "sumitsubo/reach"
 require "sumitsubo/relation/repository"
 require "sumitsubo/check/claim"
@@ -45,7 +45,7 @@ end
 def taken(directory, parsers)
   features = Sumitsubo::Specification::Repository.new(parsers, nil)
                .all(directory, Sumitsubo::Mechanism::Behavior.new)
-  Sumitsubo::Behavior.refuse_ambiguity(features)
+  Sumitsubo::Feature.refuse_ambiguity(features)
   features
 end
 
@@ -111,7 +111,7 @@ p reads("test/fixtures/project/behavior/.spec/absent")
 puts "--- one id under two scenarios leaves a marker nothing to resolve to ---"
 begin
   reads("test/fixtures/specification/behavior/duplicate")
-rescue Sumitsubo::Behavior::Error => e
+rescue Sumitsubo::Feature::Error => e
   puts e.message
 end
 
@@ -119,7 +119,7 @@ end
 puts "--- the root arrives absolute, but a message answers where the run started ---"
 begin
   reads(Pathname.pwd / "test/fixtures/specification/behavior/duplicate")
-rescue Sumitsubo::Behavior::Error => e
+rescue Sumitsubo::Feature::Error => e
   puts e.message
 end
 
@@ -132,7 +132,7 @@ refused("test/fixtures/specification/behavior/anonymous")
 # id is this mechanism's to say.
 # @behavior B-007
 puts "--- several ids on one marker line ---"
-p Sumitsubo::Behavior.ids_in("V-008 V-009")
+p Sumitsubo::Feature.ids_in("V-008 V-009")
 
 # An `include` is the boundary of what a feature answers for rather than a
 # list of files to read: two features over one directory reach different files,
@@ -148,16 +148,16 @@ puts "  read once: #{Sumitsubo::Reach.files(reach).inspect}"
 # I-001 is declared by Init, whose include reaches only its own test. A claim
 # of it from the file next door names the scenario without being able to
 # witness it, so the scenario stands unclaimed.
-claims = [Sumitsubo::Behavior::Claim.new(
+claims = [Sumitsubo::Feature::Claim.new(
   path: "test/fixtures/project/behavior/test/verify_test.rb", line: 9, comment_line: 9, id: "I-001"
 )]
 
 # @behavior B-012
 puts "--- a scenario claimed only from outside its own feature ---"
-declaring = Sumitsubo::Behavior.declaring_in(features)
+declaring = Sumitsubo::Feature.declaring_in(features)
 within = Sumitsubo::Check::Claim.within(claims, declaring, reach)
 Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Behavior::UNCLAIMED)
-  .run(Sumitsubo::Behavior.stated_in(features), within).each do |finding|
+  .run(Sumitsubo::Feature.stated_in(features), within).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
@@ -194,37 +194,37 @@ end
 # @behavior B-016
 puts "--- a claim naming no scenario, apart from one resolving to none ---"
 mixed = [
-  Sumitsubo::Behavior::Claim.new(
+  Sumitsubo::Feature::Claim.new(
     path: "test/fixtures/project/behavior/test/verify_test.rb", line: 13, comment_line: 13, id: "G-404"
   ),
-  Sumitsubo::Behavior::Claim.new(
+  Sumitsubo::Feature::Claim.new(
     path: "test/fixtures/project/behavior/test/verify_test.rb", line: 16, comment_line: 16, id: ""
   )
 ]
 (Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Behavior::UNRESOLVED, "scenario")
-   .run(Sumitsubo::Behavior.named(mixed), Sumitsubo::Behavior.stated_in(features)) +
+   .run(Sumitsubo::Feature.named(mixed), Sumitsubo::Feature.stated_in(features)) +
  Sumitsubo::Check::Claim::Nameless.new(Sumitsubo::Mechanism::Behavior::NAMELESS, "scenario")
-   .run(Sumitsubo::Behavior.nameless(mixed))).each do |finding|
+   .run(Sumitsubo::Feature.nameless(mixed))).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # R-001 and R-002 each say no test can witness them yet, and only R-002 is
 # claimed; R-003 is retiring and nothing claims it.
 retired = reads("test/fixtures/specification/behavior/unverifiable")
-retired_claims = [Sumitsubo::Behavior::Claim.new(
+retired_claims = [Sumitsubo::Feature::Claim.new(
   path: "test/retired_test.rb", line: 2, comment_line: 2, id: "R-002"
 )]
 
 # @behavior B-017 B-019
 puts "--- unverifiable scenarios are compared by none, a deprecated one like any other ---"
 Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Behavior::UNCLAIMED)
-  .run(Sumitsubo::Behavior.stated_in(retired), retired_claims).each do |finding|
+  .run(Sumitsubo::Feature.stated_in(retired), retired_claims).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior B-017 B-018
 puts "--- an unverifiable scenario a test claims, and none nothing claims ---"
 Sumitsubo::Check::Claim::Stale.new(Sumitsubo::Mechanism::Behavior::STALE)
-  .run(Sumitsubo::Behavior.stated_in(retired), retired_claims).each do |finding|
+  .run(Sumitsubo::Feature.stated_in(retired), retired_claims).each do |finding|
   puts "  #{finding.check} #{finding.place.spoken} #{finding.message}"
 end

@@ -1,5 +1,5 @@
 require "pathname"
-require "sumitsubo/behavior"
+require "sumitsubo/mechanism/behavior"
 require "sumitsubo/source/marker"
 require "sumitsubo/source"
 
@@ -9,7 +9,7 @@ require "sumitsubo/source"
 # and what each stands next to are the language's to answer, and a real grammar
 # here would only be answering a question this reading never asks.
 
-BEHAVIOR = [Sumitsubo::Behavior::MARKER]
+BEHAVIOR = [Sumitsubo::Feature::MARKER]
 
 # A language's answer, said outright.
 class Offered

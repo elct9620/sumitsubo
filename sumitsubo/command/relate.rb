@@ -1,7 +1,6 @@
 require "sumitsubo/place"
 require "sumitsubo/command/run"
-require "sumitsubo/behavior"
-require "sumitsubo/related"
+require "sumitsubo/mechanism/behavior"
 
 module Sumitsubo
   module Command
@@ -37,19 +36,19 @@ module Sumitsubo
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
-        current.relate([Mechanism::BEHAVIOR])
+        current.keep([Mechanism::BEHAVIOR])
         return 2 if current.unread?
 
-        current.declare(Mechanism::ALL)
+        current.written.keep(Mechanism::ALL)
         @current = current
         @names = Mechanism::ALL.map { |one| one.specification }
-        written = Related.reference(key, "", @names)
+        written = Relation::Reference.written(key, "", @names)
         roots = rooted(written)
         if roots.empty?
           puts "nothing declares #{key}"
           # It may stand in a document that could not be read, which is then
           # said rather than left as the answer.
-          searched(written).each { |mechanism| @current.statements_named(mechanism) if @current.refused?(mechanism) }
+          searched(written).each { |mechanism| @current.written.statements_named(mechanism) if @current.written.refused?(mechanism) }
         end
         roots.each { |root| answered(root).each { |line| puts line } }
         # A switched-off mechanism is read for what the answer shows, so what
@@ -64,7 +63,7 @@ module Sumitsubo
       def rooted(written)
         found = []
         searched(written).each do |mechanism|
-          held = @current.statements_of(mechanism)
+          held = @current.written.statements_of(mechanism)
           next if held.nil? || held.none? { |one| one.key == written.key }
 
           found.push(Relation::Reference.new(mechanism: mechanism.specification, key: written.key))
@@ -193,7 +192,7 @@ module Sumitsubo
 
       def unread?(reference)
         mechanism = Mechanism.named(reference.mechanism)
-        !mechanism.nil? && @current.refused?(mechanism)
+        !mechanism.nil? && @current.written.refused?(mechanism)
       end
 
       def titled(statement)
@@ -204,7 +203,7 @@ module Sumitsubo
         mechanism = Mechanism.named(reference.mechanism)
         return nil if mechanism.nil?
 
-        held = @current.statements_named(mechanism)
+        held = @current.written.statements_named(mechanism)
         held.nil? ? nil : held.find { |one| one.key == reference.key }
       end
     end

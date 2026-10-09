@@ -1,6 +1,7 @@
 require "sumitsubo/check/reach"
 require "sumitsubo/check/region"
-require "sumitsubo/glossary"
+require "sumitsubo/vocabulary/declared"
+require "sumitsubo/vocabulary/kept"
 require "sumitsubo/specification/builder/glossary"
 require "sumitsubo/finding"
 require "sumitsubo/place"
@@ -40,7 +41,7 @@ module Sumitsubo
       end
 
       def seed(root)
-        Seed.new(Sumitsubo::Glossary.path_in(root), Sumitsubo::Glossary::SEED)
+        Seed.new(Vocabulary.path_in(root), Vocabulary::SEED)
       end
 
       # Which kinds of block this form reads, asked before a document is
@@ -69,7 +70,7 @@ module Sumitsubo
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
       def declared(config, specifications)
-        [specifications.one(Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root)), self)]
+        [specifications.one(Vocabulary.at(Vocabulary.path_in(config.root)), self)]
       end
 
       # Every term the vocabulary declares, which is what a statement
@@ -97,9 +98,9 @@ module Sumitsubo
       end
 
       # Every rejected word the source writes, kept for whoever asks after.
-      def relate(config, specifications, source, relations)
+      def keep(config, specifications, source, relations)
         scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
-        Sumitsubo::Glossary.relate(scope, config.base, source, relations, specification)
+        Vocabulary.keep(scope, config.base, source, relations, specification)
       end
 
       # The terms a key written elsewhere names. A term means what the section
@@ -111,24 +112,24 @@ module Sumitsubo
         return found if found.length < 2
 
         scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
-        held = scope[Sumitsubo::Glossary.from_base(writer.path, config.base)]
+        held = scope[Vocabulary.from_base(writer.path, config.base)]
         return found if held.nil? || held[key].nil?
 
         [held[key]]
       end
 
       def verify(config, findings, specifications, source, relations)
-        path = Sumitsubo::Glossary.at(Sumitsubo::Glossary.path_in(config.root))
+        path = Vocabulary.at(Vocabulary.path_in(config.root))
         vocabulary = declared(config, specifications)[0]
-        @barren.run(Sumitsubo::Glossary.covers(vocabulary, path), config.base, config.exclusion)
+        @barren.run(Vocabulary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
         kept = relations.naming(Relation::MENTIONS, specification)
-        mentions = Sumitsubo::Glossary.uses(
-          Sumitsubo::Glossary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base),
+        mentions = Vocabulary.uses(
+          Vocabulary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base),
           vocabulary, config.base
         )
-        aside = Sumitsubo::Glossary.set_aside(vocabulary)
+        aside = Vocabulary.set_aside(vocabulary)
         @rejected.run(mentions, aside, config.base).each { |one| findings.add(one) }
         @stale.run(mentions, aside, path).each { |one| findings.add(one) }
       end
@@ -138,8 +139,8 @@ module Sumitsubo
       # Each file's vocabulary: the sections covering it laid over one another,
       # and the specifications beside it covered where the files they reach are.
       def scope_of(config, specifications, relations, vocabulary)
-        reached = Sumitsubo::Glossary.reaches(beside(config, specifications), config.base, relations)
-        Sumitsubo::Glossary.scope(vocabulary, config.base, config.exclusion, reached)
+        reached = Vocabulary.reaches(beside(config, specifications), config.base, relations)
+        Vocabulary.scope(vocabulary, config.base, config.exclusion, reached)
       end
 
       # Every specification the mechanisms beside this one keep. One switched

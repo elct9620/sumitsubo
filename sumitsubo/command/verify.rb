@@ -16,12 +16,12 @@ module Sumitsubo
 
         # Every relation is kept before any check reads one: a vocabulary
         # covers what the specifications beside it reach.
-        current.relate(Mechanism::ALL)
+        current.keep(Mechanism::ALL)
         current.each_mechanism do |mechanism|
           mechanism.verify(config, current.findings, current.specifications, current.source, current.relations)
         end
-        current.declare(current.switched_on)
-        current.resolve
+        current.written.keep(current.switched_on)
+        current.written.resolve
         Finding::Report.new(current.findings).lines.each { |line| puts line }
         current.findings.code
       end

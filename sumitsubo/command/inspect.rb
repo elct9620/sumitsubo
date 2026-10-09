@@ -1,7 +1,7 @@
 require "pathname"
 require "sumitsubo/place"
 require "sumitsubo/command/run"
-require "sumitsubo/behavior"
+require "sumitsubo/mechanism/behavior"
 
 module Sumitsubo
   module Command
@@ -23,7 +23,7 @@ module Sumitsubo
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
-        current.relate([Mechanism::BEHAVIOR])
+        current.keep([Mechanism::BEHAVIOR])
         return 2 if current.unread?
 
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)

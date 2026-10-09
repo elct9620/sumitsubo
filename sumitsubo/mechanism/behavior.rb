@@ -1,4 +1,6 @@
-require "sumitsubo/behavior"
+require "sumitsubo/feature/declared"
+require "sumitsubo/feature/kept"
+require "sumitsubo/feature/compared"
 require "sumitsubo/specification/builder/behavior"
 require "sumitsubo/check/claim"
 require "sumitsubo/check/reach"
@@ -45,7 +47,7 @@ module Sumitsubo
       end
 
       def seed(root)
-        Seed.new(Sumitsubo::Behavior.path_in(root), nil)
+        Seed.new(Feature.path_in(root), nil)
       end
 
       # Which kinds of block this form reads, asked before a document is
@@ -71,10 +73,10 @@ module Sumitsubo
       def rewrites(config, feature, lines)
         return [] unless config.switched?(specification, ORDER)
 
-        ahead = Sumitsubo::Behavior.ahead(feature.statements)
+        ahead = Feature.ahead(feature.statements)
         return [] if ahead.empty?
 
-        written = Sumitsubo::Behavior.ordered(feature.statements, lines)
+        written = Feature.ordered(feature.statements, lines)
         found = []
         lines.each_index do |at|
           next if written[at] == lines[at]
@@ -93,8 +95,8 @@ module Sumitsubo
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
       def declared(config, specifications)
-        features = specifications.all(Sumitsubo::Behavior.path_in(config.root), self)
-        Sumitsubo::Behavior.refuse_ambiguity(features)
+        features = specifications.all(Feature.path_in(config.root), self)
+        Feature.refuse_ambiguity(features)
         features
       end
 
@@ -111,29 +113,29 @@ module Sumitsubo
 
       # What the source says about each scenario, kept for whoever asks after:
       # every claim the marker leaves in the files the features reach.
-      def relate(config, specifications, source, relations)
+      def keep(config, specifications, source, relations)
         features = declared(config, specifications)
-        Sumitsubo::Behavior.relate(Reach.of(features, relations), source, relations, specification)
+        Feature.keep(Reach.of(features, relations), source, relations, specification)
       end
 
       # The claims the run kept for this mechanism, as its checks compare them.
       def claims(relations)
-        Sumitsubo::Behavior.claimed_in(relations, specification)
+        Feature.claimed_in(relations, specification)
       end
 
       # The markers the run kept for this mechanism with no code below them.
       def dangling(relations)
-        Sumitsubo::Behavior.dangling_in(relations, specification)
+        Feature.dangling_in(relations, specification)
       end
 
       # Which feature declares each scenario.
       def declaring(features)
-        Sumitsubo::Behavior.declaring_in(features)
+        Feature.declaring_in(features)
       end
 
       # Every scenario a claim could name, said the way a claim says it.
       def stated(features)
-        Sumitsubo::Behavior.stated_in(features)
+        Feature.stated_in(features)
       end
 
       # The statements a key written elsewhere names: every one declared under
@@ -147,9 +149,9 @@ module Sumitsubo
         @barren.run(Reach.covers(features), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         reach = Reach.of(features, relations)
-        claims = Sumitsubo::Behavior.claimed_in(relations, specification)
-        stated = Sumitsubo::Behavior.stated_in(features)
-        declaring = Sumitsubo::Behavior.declaring_in(features)
+        claims = Feature.claimed_in(relations, specification)
+        stated = Feature.stated_in(features)
+        declaring = Feature.declaring_in(features)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.
         within = Check::Claim.within(claims, declaring, reach)
@@ -157,12 +159,12 @@ module Sumitsubo
         @unclaimed.run(stated, within).each { |one| findings.add(one) }
         @stale.run(stated, within).each { |one| findings.add(one) }
         @misplaced.run(claims, declaring, reach).each { |one| findings.add(one) }
-        @unresolved.run(Sumitsubo::Behavior.named(claims), stated).each { |one| findings.add(one) }
-        @nameless.run(Sumitsubo::Behavior.nameless(claims)).each { |one| findings.add(one) }
+        @unresolved.run(Feature.named(claims), stated).each { |one| findings.add(one) }
+        @nameless.run(Feature.nameless(claims)).each { |one| findings.add(one) }
         # A marker standing in front of nothing names a scenario without
         # witnessing one, so it is answered once, by itself, rather than through
         # the comparisons above.
-        @dangling.run(Sumitsubo::Behavior.dangling_in(relations, specification)).each { |one| findings.add(one) }
+        @dangling.run(Feature.dangling_in(relations, specification)).each { |one| findings.add(one) }
       end
 
       private

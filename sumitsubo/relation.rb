@@ -62,6 +62,17 @@ module Sumitsubo
     # key. It names the statement whether or not one was declared under it, which
     # is what lets a claim resolving to nothing still be kept.
     class Reference < Data.define(:mechanism, :key)
+      # A key as a specification wrote it. One opening with a mechanism's name
+      # and a space is that mechanism's; any other is kept by the mechanism
+      # writing it, so a scenario names another scenario by its id alone.
+      def self.written(said, own, names)
+        at = said.index(" ")
+        unless at.nil?
+          named = said[0, at]
+          return new(mechanism: named, key: said[at + 1, said.length - at - 1]) if names.include?(named)
+        end
+        new(mechanism: own, key: said)
+      end
     end
 
     # A file as one end of a relation, taken whole rather than at a line.

@@ -1,4 +1,4 @@
-require "sumitsubo/related"
+require "sumitsubo/relation/written"
 require "sumitsubo/relation/repository"
 require "sumitsubo/specification"
 
@@ -13,7 +13,7 @@ end
 
 def kept(statements)
   relations = Sumitsubo::Relation::Repository.new
-  Sumitsubo::Related.relate("behavior", statements, NAMES, relations)
+  Sumitsubo::Relation::Written.keep("behavior", statements, NAMES, relations)
   [Sumitsubo::Relation::RELATES, Sumitsubo::Relation::REFINES].each do |kind|
     relations.of(kind).each do |one|
       puts "  #{one.kind} #{one.subject.mechanism} #{one.subject.key} -> #{one.object.mechanism} #{one.object.key}"

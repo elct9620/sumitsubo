@@ -6,8 +6,7 @@ require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/source/repository"
 require "sumitsubo/relation/repository"
-require "sumitsubo/related"
-require "sumitsubo/check/related"
+require "sumitsubo/relation/written"
 
 module Sumitsubo
   module Command
@@ -22,10 +21,7 @@ module Sumitsubo
         @source = Source::Repository.new(languages)
         @specifications = Specification::Repository.new(parsers, languages)
         @relations = Relation::Repository.new
-        @statements = {}
-        @refused = {}
-        @failed = {}
-        @told = {}
+        @written = Relation::Written.new(config, @specifications, @relations, @findings, Mechanism::ALL)
         @broken = {}
         @unread_told = 0
       end
@@ -44,6 +40,12 @@ module Sumitsubo
 
       def relations
         @relations
+      end
+
+      # What the specifications say of one another, and what of that names
+      # no statement, or more than one.
+      def written
+        @written
       end
 
       # With no root there is no reference line to read at all, which is not a
@@ -89,12 +91,12 @@ module Sumitsubo
       # files reached, and a vocabulary covers what the others reach. A command
       # that only looks names the ones it asks about, so a mechanism it does not
       # count is neither read nor answered for.
-      def relate(mechanisms)
+      def keep(mechanisms)
         each_mechanism do |mechanism|
           mechanism.reach(@config, @specifications, @relations) if mechanisms.include?(mechanism)
         end
         each_mechanism do |mechanism|
-          mechanism.relate(@config, @specifications, @source, @relations) if mechanisms.include?(mechanism)
+          mechanism.keep(@config, @specifications, @source, @relations) if mechanisms.include?(mechanism)
         end
       end
 
@@ -102,84 +104,6 @@ module Sumitsubo
       # specifications are compared.
       def switched_on
         Mechanism::ALL.select { |mechanism| @config.verify?(mechanism.specification) }
-      end
-
-      # What the specifications these mechanisms keep say of one another.
-      def declare(mechanisms)
-        names = Mechanism::ALL.map { |one| one.specification }
-        mechanisms.each do |mechanism|
-          statements = statements_of(mechanism)
-          Related.relate(mechanism.specification, statements, names, @relations) unless statements.nil?
-        end
-      end
-
-      # Every relation a specification wrote that names nothing, answered at
-      # the statement that wrote it. What it names is looked up whether or not
-      # its mechanism is switched on: switching one off holds back comparing
-      # the code against it, and the statement naming it still depends on it.
-      def resolve
-        [Relation::RELATES, Relation::REFINES].each do |kind|
-          @relations.of(kind).each { |relation| resolved(relation) }
-        end
-      end
-
-      # Every statement this mechanism declares, or nil where its
-      # specifications cannot be read. Read once, since what a relation names
-      # is looked up as often as relations name it.
-      def statements_of(mechanism)
-        name = mechanism.specification
-        return @statements[name] if @statements.key?(name)
-
-        @statements[name] = begin
-          mechanism.statements(@config, @specifications)
-        rescue Sumitsubo::Misshapen => e
-          @refused[name] = e.refusals.map { |one| mechanism.refused(one) }
-          nil
-        rescue Sumitsubo::Error => e
-          @failed[name] = e.message
-          nil
-        end
-      end
-
-      # One relation, answered where what it names is not one statement: none,
-      # or more than one. Which statements a key finds is the mechanism keeping
-      # them's to say. A mechanism switched off is first read here, so whatever
-      # it could not read is answered here too, the once. Where any of a
-      # mechanism's documents was refused, what it names may stand in that one,
-      # so the refusal answers for it instead.
-      def resolved(relation)
-        target = Mechanism.named(relation.object.mechanism)
-        named = statements_named(target)
-        return if named.nil? || refused?(target)
-
-        writing = statements_of(Mechanism.named(relation.subject.mechanism))
-        writer = writing.find { |one| one.key == relation.subject.key }
-        found = target.find(relation.object.key, writer, @config, @specifications, @relations, named)
-        return if found.length == 1
-
-        @findings.add(found.empty? ? Check::Related.unresolved(relation, writer) : Check::Related.ambiguous(relation, writer, found))
-      end
-
-      # Whether any of this mechanism's documents was refused, which is where
-      # a key looked for and not found may stand.
-      def refused?(mechanism)
-        prefix = "#{mechanism.specification}/"
-        !@refused[mechanism.specification].nil? || @specifications.unread.any? { |one| one.check.start_with?(prefix) }
-      end
-
-      # A mechanism's statements whether or not it is switched on. Whatever a
-      # switched-off one refused is answered as it is first read; a switched-on
-      # one has answered for itself already.
-      def statements_named(mechanism)
-        name = mechanism.specification
-        named = statements_of(mechanism)
-        return named if @config.verify?(name) || !@told[name].nil?
-
-        @told[name] = true
-        @specifications.unread.each { |one| @findings.add(one) if one.check.start_with?("#{name}/") }
-        (@refused[name] || []).each { |one| @findings.add(one) }
-        @findings.unreadable(@failed[name]) unless @failed[name].nil?
-        named
       end
 
       # What could not be read, said where there is any. A command that only
