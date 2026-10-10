@@ -48,7 +48,7 @@ module Sumitsubo
           puts "nothing declares #{key}"
           # It may stand in a document that could not be read, which is then
           # said rather than left as the answer.
-          searched(written).each { |mechanism| @current.written.statements_named(mechanism) if @current.specifications.refused?(mechanism) }
+          searched(written).each { |mechanism| @current.written.statements_named(mechanism) if @current.specifications.unreadable?(mechanism) }
         end
         roots.each { |root| answered(root).each { |line| puts line } }
         # A switched-off mechanism is read for what the answer shows, so what
@@ -192,7 +192,7 @@ module Sumitsubo
 
       def unread?(reference)
         mechanism = Mechanism.named(reference.mechanism)
-        !mechanism.nil? && @current.specifications.refused?(mechanism)
+        !mechanism.nil? && @current.specifications.unreadable?(mechanism)
       end
 
       def titled(statement)

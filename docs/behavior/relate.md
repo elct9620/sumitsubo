@@ -127,3 +127,19 @@ never answers `1`.
 | Given | contracts switched on and written out of shape, and a scenario relating to one |
 | When | `sumi relate` is given the scenario's id |
 | Then | the contract answers as unreadable, followed by the refusal, and the run answers 2 |
+
+## `RL-015` A mechanism the answer names that declares one key twice
+
+| Step | Statement |
+| --- | --- |
+| Given | contracts declaring one key twice, and a scenario relating to it |
+| When | `sumi relate` is given the scenario's id |
+| Then | the contract answers as unreadable, followed by where it is declared, and the run answers 2 |
+
+## `RL-016` A key asked for where its mechanism declares one key twice
+
+| Step | Statement |
+| --- | --- |
+| Given | contracts declaring one key twice |
+| When | `sumi relate` is given that key |
+| Then | it says nothing declares it, where it is declared follows, and the run answers 2 |

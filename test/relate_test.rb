@@ -58,3 +58,15 @@ puts "--- a switched-on mechanism the answer names and cannot read ---"
 Dir.chdir("test/fixtures/project/related-unread-on")
 puts "exit=#{cli.run(["relate", "X-003"])}"
 Dir.chdir(back)
+
+# A key declared twice leaves the mechanism unread as a whole, which is a
+# failure like a refused document rather than an absence.
+# @behavior RL-015
+puts "--- a mechanism the answer names that declares one key twice ---"
+Dir.chdir("test/fixtures/project/related-twice")
+puts "exit=#{cli.run(["relate", "X-003"])}"
+
+# @behavior RL-016
+puts "--- a key asked for where its mechanism declares one key twice ---"
+puts "exit=#{cli.run(["relate", "contract inspect"])}"
+Dir.chdir(back)

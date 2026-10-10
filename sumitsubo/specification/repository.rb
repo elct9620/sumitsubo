@@ -35,10 +35,11 @@ module Sumitsubo
         @unread[mechanism.specification] || []
       end
 
-      # Whether anything of this mechanism was refused, which is where a key
-      # looked for and not found may stand.
-      def refused?(mechanism)
-        !unread(mechanism).empty?
+      # Whether anything of this mechanism could not be read, a document or the
+      # mechanism as a whole, which is where a key looked for and not found may
+      # stand.
+      def unreadable?(mechanism)
+        broken?(mechanism) || !unread(mechanism).empty?
       end
 
       # Whether this mechanism can be asked anything more: one that could not

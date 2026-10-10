@@ -100,7 +100,7 @@ module Sumitsubo
       def resolved(relation)
         target = named(relation.object.mechanism)
         named = statements_named(target)
-        return if named.nil? || @specifications.refused?(target)
+        return if named.nil? || @specifications.unreadable?(target)
 
         writing = statements_of(named(relation.subject.mechanism))
         writer = writing.find { |one| one.key == relation.subject.key }
