@@ -5,7 +5,8 @@ require "sumitsubo/check"
 require "sumitsubo/source/scope"
 
 module Sumitsubo
-  # The structured specification the Glossary mechanism verifies against.
+  # What a vocabulary declares, and how it is read.
+  #
   # Reading it can fail in a way that is not a difference between the
   # specification and the code: with no file, or an unreadable one, there is
   # no reference line to verify from at all.

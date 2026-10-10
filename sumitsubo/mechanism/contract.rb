@@ -13,10 +13,16 @@ require "sumitsubo/mechanism/seed"
 module Sumitsubo
   module Mechanism
     # The interfaces a project means to keep, checked against the source
-    # implementing them. Which of the two readings below applies is the
-    # definition's own to say: writing a marker says source claims its
-    # contracts in a comment, and naming a language says the syntax tree
-    # answers for them instead.
+    # implementing them. What it establishes is that a declared interface is
+    # implemented somewhere in scope, never that the implementation is right.
+    #
+    # Verification runs one way: an interface nothing claims is a difference,
+    # while an interface nobody declared is not. Only the contracts that matter
+    # are registered, so the absence of a declaration says nothing.
+    #
+    # Which of the two readings below applies is the definition's own to say:
+    # writing a marker says source claims its contracts in a comment, and
+    # naming a language says the syntax tree answers for them instead.
     class Contract
       BARREN = "contract/barren"
       UNREADABLE = "contract/unreadable"
@@ -170,8 +176,6 @@ module Sumitsubo
         Definition.keep(declared(config, specifications), source, relations, specification)
       end
 
-      # An include covers no file whichever reading the definition writing it
-      # chose, so it is asked once for all of them.
       # The statements a key written elsewhere names: every one declared under
       # it, so a key two of them answer to is not quietly taken as either.
       def find(key, writer, config, specifications, relations, named)
@@ -180,6 +184,8 @@ module Sumitsubo
 
       def verify(config, findings, specifications, source, relations)
         definitions = declared(config, specifications)
+        # An include covers no file whichever reading the definition writing it
+        # chose, so it is asked once for all of them.
         @barren.run(Reach.covers(definitions), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @claimed.run(findings, definitions, relations, specification)

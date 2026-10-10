@@ -28,8 +28,8 @@ module Sumitsubo
       # a project declaring several kinds of contract would otherwise read every
       # file once per kind.
       def self.marked_in(path, keywords, languages)
-        # A caller reaching a mechanism other than Behavior has no reason to have
-        # rendered the path first, so the reading owns how it answers.
+        # The reading renders the path itself, so a claim names its file the
+        # same way whichever mechanism asked.
         where = Place.file(path)
         comments = languages.comments_in(path, where)
         in_front_at = in_front_of_code(comments)

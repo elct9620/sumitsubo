@@ -3,13 +3,7 @@ require "sumitsubo/error"
 require "sumitsubo/place"
 
 module Sumitsubo
-  # The structured specification the Contract mechanism verifies against. What
-  # it establishes is that a declared interface is implemented somewhere in
-  # scope, never that the implementation is right.
-  #
-  # Verification runs one way: an interface nothing claims is a difference,
-  # while an interface nobody declared is not. Only the contracts that matter
-  # are registered, so the absence of a declaration says nothing.
+  # What a definition declares, and how it is read.
   #
   # A definition names the word source claims its interfaces with, or names
   # the language its names are spelled in and is read from the syntax tree
@@ -17,8 +11,7 @@ module Sumitsubo
   # language points at one; a method is a construct, so which of the two a
   # definition names is what says which reading applies.
   #
-  # Nothing here names the grammar. What that keeps regenerable is no longer
-  # this file's own test, which reads real documents now, but the three that
+  # Nothing here names the grammar, which keeps regenerable the tests that
   # reach this file through `require "sumitsubo"` alone.
   #
   # A module beside Mechanism::Contract rather than its class methods: Spinel

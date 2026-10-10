@@ -1,10 +1,10 @@
 module Sumitsubo
-  # What every mechanism reads a specification into. The three of them had a
+  # What every mechanism reads a specification into. The three of them speak a
   # vocabulary each — section and term, definition and interface, feature and
-  # scenario — for the same two things: a file's worth of what a project
+  # scenario — of the same two things: a file's worth of what a project
   # declares, and one declaration in it.
   #
-  # A statement carries its own statements, so what used to be a structure of
+  # A statement carries its own statements, so what could be a structure of
   # its own is one of these under another: a rejected word sits under the term
   # rejecting it, and the line set aside sits under that. What earns a
   # statement of its own rather than an attribute is being pointed at from
