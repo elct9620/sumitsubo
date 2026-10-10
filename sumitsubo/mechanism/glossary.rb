@@ -74,8 +74,11 @@ module Sumitsubo
       end
 
       # Every term the vocabulary declares, which is what a statement
-      # elsewhere names by its key.
+      # elsewhere names by its key. One switched off and never written declares
+      # nothing, the way a directory nobody wrote does.
       def statements(config, specifications)
+        return [] unless config.verify?(specification) || Vocabulary.path_in(config.root).exist?
+
         declared(config, specifications).map { |one| one.statements }.flatten
                                          .map { |section| section.statements }.flatten
       end
