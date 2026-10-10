@@ -50,3 +50,11 @@ puts "exit=#{cli.run(["relate", "X-003"])}"
 puts "--- a key asked for where its document was refused ---"
 puts "exit=#{cli.run(["relate", "contract inspect"])}"
 Dir.chdir(back)
+
+# A switched-on mechanism is read for the answer the same way, since
+# `relate` runs no stage of its own for it.
+# @behavior RL-014
+puts "--- a switched-on mechanism the answer names and cannot read ---"
+Dir.chdir("test/fixtures/project/related-unread-on")
+puts "exit=#{cli.run(["relate", "X-003"])}"
+Dir.chdir(back)

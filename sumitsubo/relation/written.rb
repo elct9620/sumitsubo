@@ -11,9 +11,9 @@ module Sumitsubo
     #
     # What a relation names is looked up whether or not its mechanism is
     # switched on: switching one off holds back comparing the code against it,
-    # and the statement naming it still depends on it. So a switched-off
-    # mechanism is first read here, and whatever it could not read is answered
-    # here too, the once.
+    # and the statement naming it still depends on it. So a mechanism may be
+    # first read here, and whatever it could not read is answered here too,
+    # the once.
     #
     # The mechanisms arrive with the run rather than being named here, so what
     # a specification writes of another is kept without reaching every
@@ -82,12 +82,12 @@ module Sumitsubo
         end
       end
 
-      # A mechanism's statements whether or not it is switched on. Whatever a
-      # switched-off one refused is answered as it is first read; a switched-on
-      # one has answered for itself already.
+      # A mechanism's statements whether or not it is switched on, with
+      # whatever it could not read answered as an answer names it. A command
+      # may have run no stage for it, so this is not left to the stages.
       def statements_named(mechanism)
         named = statements_of(mechanism)
-        @specifications.tell(mechanism, @findings) unless @config.verify?(mechanism.specification)
+        @specifications.tell(mechanism, @findings)
         named
       end
 

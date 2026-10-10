@@ -41,3 +41,11 @@ exit=2
 nothing declares contract inspect
 .spec/contract/cli.md:19: contract/unreadable: writes an attribute row of 3 cells rather than two, where a | inside a cell is written \|; sumi help contract has the form
 exit=2
+--- a switched-on mechanism the answer names and cannot read ---
+X-003  A scenario relating to a declared contract  .spec/behavior/inspect.md:33
+├─ relates  contract inspect  in a specification that could not be read
+├─ claimed beside  X-001  A scenario relating to one declared beside it  test/inspect_test.rb:1  (derived)
+├─ claimed beside  X-002  A scenario relating to one nobody declares  test/inspect_test.rb:1  (derived)
+└─ claimed beside  X-004  A scenario refining a contract nobody declares  test/inspect_test.rb:1  (derived)
+.spec/contract/cli.md:19: contract/unreadable: writes an attribute row of 3 cells rather than two, where a | inside a cell is written \|; sumi help contract has the form
+exit=2

@@ -119,3 +119,11 @@ never answers `1`.
 | Given | contracts switched off and written out of shape |
 | When | `sumi relate` is given a contract's key |
 | Then | it says nothing declares it, the refusal follows, and the run answers 2 |
+
+## `RL-014` A switched-on mechanism the answer names and cannot read
+
+| Step | Statement |
+| --- | --- |
+| Given | contracts switched on and written out of shape, and a scenario relating to one |
+| When | `sumi relate` is given the scenario's id |
+| Then | the contract answers as unreadable, followed by the refusal, and the run answers 2 |
