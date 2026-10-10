@@ -391,3 +391,11 @@ the build lacks what the definition names
 | Given | no claim of it, and no definition of it |
 | When | the two sides are compared |
 | Then | it answers as claimed or defined nowhere it includes |
+
+## `T-047` A file two definitions reach is read once
+
+| Step | Statement |
+| --- | --- |
+| Given | two definitions registering contracts in one language, both reaching one file |
+| When | the files to read are worked out |
+| Then | that file is read once for the language, rather than once for each definition |

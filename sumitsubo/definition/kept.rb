@@ -17,11 +17,27 @@ module Sumitsubo
 
     def self.readings_in(definitions, reach, source)
       found = []
+      asked = {}
       defined(definitions).each do |definition|
         paths = reached(reach, definition)
         languages_of(definition).each do |language|
-          spelled(source, paths, language).each { |one| found.push(one) }
+          spelled(source, unasked(asked, paths, language), language).each { |one| found.push(one) }
         end
+      end
+      found
+    end
+
+    # The files among these not yet asked about in this language. Two
+    # definitions reaching one file ask it the same question, so it is read
+    # once for each language rather than once for each definition.
+    def self.unasked(asked, paths, language)
+      found = []
+      paths.each do |path|
+        key = "#{language} #{path}"
+        next unless asked[key].nil?
+
+        asked[key] = true
+        found.push(path)
       end
       found
     end

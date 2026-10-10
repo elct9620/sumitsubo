@@ -363,6 +363,15 @@ Sumitsubo::Definition.readings_in(spelling, REACH, SOURCE).each do |reading|
   puts "  #{reading.path} as #{reading.language}"
 end
 
+# Two definitions reaching one file ask the same question of it, so it is
+# read once for the language both register rather than once for each.
+# @behavior T-047
+puts "--- a file two definitions reach is read once ---"
+overlapping = loaded("#{FIXTURE}/overlapping")
+Sumitsubo::Definition.readings_in(overlapping, reach_of(overlapping, Pathname.new(FIXTURE)), SOURCE).each do |reading|
+  puts "  #{reading.path} as #{reading.language}"
+end
+
 # The Ruby contract is defined in Ruby and the Rust one is not: a declaration
 # the other language answered does not define it, however alike they spell.
 # @behavior T-041
