@@ -15,13 +15,14 @@ module Sumitsubo
     # A path arrives composed and answers rendered, because what a reading
     # hands back is what a finding points at.
     class Repository
-      def initialize(languages)
+      def initialize(languages, from)
         @languages = languages
+        @from = from
       end
 
       # What a person wrote for another person in this file.
       def comments(path)
-        @languages.comments_in(path, Place.file(path))
+        @languages.comments_in(path, Place.file(path, @from))
       end
 
       # What these files claim with any of these words, and what they leave
@@ -31,7 +32,7 @@ module Sumitsubo
         claims = []
         dangling = []
         paths.each do |path|
-          marked = Marker.marked_in(path, keywords, @languages)
+          marked = Marker.marked_in(path, Place.file(path, @from), keywords, @languages)
           claims.concat(marked.claims)
           dangling.concat(marked.dangling)
         end
@@ -40,7 +41,7 @@ module Sumitsubo
 
       # What a file declares, read as the language a specification named.
       def declarations(path, language)
-        @languages.declarations_in(path, Place.file(path), language)
+        @languages.declarations_in(path, Place.file(path, @from), language)
       end
 
       # The same reading of a piece of text nobody wrote to a file, which is

@@ -70,7 +70,7 @@ module Sumitsubo
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
       def declared(config, specifications)
-        [specifications.one(Vocabulary.at(Vocabulary.path_in(config.root)), self)]
+        [specifications.one(Vocabulary.at(Vocabulary.path_in(config.root), config.here), self)]
       end
 
       # Every term the vocabulary declares, which is what a statement
@@ -103,7 +103,7 @@ module Sumitsubo
       # Every rejected word the source writes, kept for whoever asks after.
       def keep(config, specifications, source, relations)
         scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
-        Vocabulary.keep(scope, config.base, source, relations, specification)
+        Vocabulary.keep(scope, config.base, source, relations, specification, config.here)
       end
 
       # The terms a key written elsewhere names. A term means what the section
@@ -115,25 +115,25 @@ module Sumitsubo
         return found if found.length < 2
 
         scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
-        held = scope[Vocabulary.from_base(writer.path, config.base)]
+        held = scope[Vocabulary.from_base(writer.path, config.base, config.here)]
         return found if held.nil? || held[key].nil?
 
         [held[key]]
       end
 
       def verify(config, findings, specifications, source, relations)
-        path = Vocabulary.at(Vocabulary.path_in(config.root))
         vocabulary = declared(config, specifications)[0]
+        path = vocabulary.path
         @barren.run(Vocabulary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
         kept = relations.naming(Relation::MENTIONS, specification)
         mentions = Vocabulary.uses(
-          Vocabulary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base),
-          vocabulary, config.base
+          Vocabulary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base, config.here),
+          vocabulary, config.base, config.here
         )
         aside = Vocabulary.set_aside(vocabulary)
-        @rejected.run(mentions, aside, config.base).each { |one| findings.add(one) }
+        @rejected.run(mentions, aside, config.base, config.here).each { |one| findings.add(one) }
         @stale.run(mentions, aside, path).each { |one| findings.add(one) }
       end
 
@@ -142,7 +142,7 @@ module Sumitsubo
       # Each file's vocabulary: the sections covering it laid over one another,
       # and the specifications beside it covered where the files they reach are.
       def scope_of(config, specifications, relations, vocabulary)
-        reached = Vocabulary.reaches(beside(config, specifications), config.base, relations)
+        reached = Vocabulary.reaches(beside(config, specifications), config.base, relations, config.here)
         Vocabulary.scope(vocabulary, config.base, config.exclusion, reached)
       end
 

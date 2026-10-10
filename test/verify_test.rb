@@ -309,7 +309,7 @@ root.rmtree
 # @behavior V-040 V-043
 puts "--- a finding names the check that found it ---"
 found = Sumitsubo::Finding::Repository.new
-at = Sumitsubo::Place.of("app/order.rb", 2)
+at = Sumitsubo::Place.of("app/order.rb", 2, Pathname.pwd)
 found.add(Sumitsubo::Finding.new(check: "glossary/rejected", difference: true, place: at, message: "a word turned down"))
 found.add(Sumitsubo::Finding.new(check: "contract/mismatched", difference: true, place: at, message: "the shape drifted"))
 Sumitsubo::Finding::Report.new(found).lines.each { |line| puts line }

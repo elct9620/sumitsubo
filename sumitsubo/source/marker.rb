@@ -1,6 +1,5 @@
 require "sumitsubo/error"
 require "sumitsubo/source"
-require "sumitsubo/place"
 
 module Sumitsubo
   module Source
@@ -27,10 +26,7 @@ module Sumitsubo
       # A whole set of keywords is read in one pass because parsing is the cost:
       # a project declaring several kinds of contract would otherwise read every
       # file once per kind.
-      def self.marked_in(path, keywords, languages)
-        # The reading renders the path itself, so a claim names its file the
-        # same way whichever mechanism asked.
-        where = Place.file(path)
+      def self.marked_in(path, where, keywords, languages)
         comments = languages.comments_in(path, where)
         in_front_at = in_front_of_code(comments)
         begun_at = begins(comments)

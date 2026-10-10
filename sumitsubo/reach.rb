@@ -10,11 +10,11 @@ module Sumitsubo
   # its own specification reaches. Worked out once for every mechanism and kept
   # as relations, so whoever asks after reads the same answer.
   module Reach
-    def self.keep(specifications, base, exclusion, relations)
+    def self.keep(specifications, base, exclusion, relations, from)
       specifications.each do |spec|
         globs = spec.includes.map { |one| one.key }
         Source::Scope.of(base, globs, exclusion).each do |path|
-          relations.add(Relation.reach(spec.path, Place.file(base / path)))
+          relations.add(Relation.reach(spec.path, Place.file(base / path, from)))
         end
       end
     end

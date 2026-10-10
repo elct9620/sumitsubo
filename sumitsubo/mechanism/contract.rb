@@ -167,7 +167,7 @@ module Sumitsubo
 
       # The files every definition reaches.
       def reach(config, specifications, relations)
-        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations)
+        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations, config.here)
       end
 
       # What the source says about each contract, kept for whoever asks after:

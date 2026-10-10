@@ -32,9 +32,9 @@ module Sumitsubo
     # glossary is not a difference between a specification and the code — there
     # is no reference line to verify from — and this is the one place that knows
     # a run without one has something to lay down.
-    def self.at(path)
+    def self.at(path, from)
       file = Pathname.new(path)
-      raise Error, "no glossary at #{Place.file(file)}; sumi init lays one down" unless file.exist?
+      raise Error, "no glossary at #{Place.file(file, from)}; sumi init lays one down" unless file.exist?
 
       path
     end
@@ -83,17 +83,18 @@ module Sumitsubo
 
     # A path as a section's globs are written, relative to the base, where a
     # specification and the run keep it relative to where the run started.
-    def self.from_base(path, base)
-      "#{Pathname.new(path).expand_path.relative_path_from(Pathname.new(base).expand_path)}"
+    def self.from_base(path, base, from)
+      "#{(from / path).cleanpath.relative_path_from(Pathname.new(base).expand_path)}"
     end
 
     # The files each specification beside the vocabulary reaches, read back
     # from the run and held under that specification's own path, both relative
     # to the base the way a section's are.
-    def self.reaches(beside, base, relations)
+    def self.reaches(beside, base, relations, from)
       found = {}
       beside.each do |spec|
-        found[from_base(spec.path, base)] = relations.reached_from(spec.path).map { |file| from_base(file, base) }
+        reached = relations.reached_from(spec.path).map { |file| from_base(file, base, from) }
+        found[from_base(spec.path, base, from)] = reached
       end
       found
     end

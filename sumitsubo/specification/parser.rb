@@ -19,11 +19,11 @@ module Sumitsubo
       # The parser answering for this file, which is the first one that says it
       # reads it. A file no parser answers for is a comparison that cannot be
       # made rather than a specification read as something it is not.
-      def self.of(path, parsers)
+      def self.of(path, parsers, from)
         parser = parsers.find { |candidate| candidate.reads?(path) }
         return parser unless parser.nil?
 
-        raise Unreadable, "#{Place.file(path)} is not a specification this sumi can read"
+        raise Unreadable, "#{Place.file(path, from)} is not a specification this sumi can read"
       end
 
       # Whether this build carries a parser answering for the file, the way

@@ -14,7 +14,7 @@ require "sumitsubo/specification/parser/markdown"
 # What each specification reaches, kept the way a run keeps it and read back.
 def reach_of(specifications, base)
   relations = Sumitsubo::Relation::Repository.new
-  Sumitsubo::Reach.keep(specifications, base, [], relations)
+  Sumitsubo::Reach.keep(specifications, base, [], relations, Pathname.pwd)
   Sumitsubo::Reach.of(specifications, relations)
 end
 
@@ -37,14 +37,14 @@ end
 # is kept rather than raised, so the ones beside it still answer and the
 # refusal is asked for rather than rescued.
 def refused(directory)
-  repository = Sumitsubo::Specification::Repository.new(PARSERS, nil)
+  repository = Sumitsubo::Specification::Repository.new(PARSERS, nil, Pathname.pwd)
   mechanism = Sumitsubo::Mechanism::Behavior.new
   repository.all(directory, mechanism)
   repository.unread(mechanism)
 end
 
 def taken(directory, parsers)
-  features = Sumitsubo::Specification::Repository.new(parsers, nil)
+  features = Sumitsubo::Specification::Repository.new(parsers, nil, Pathname.pwd)
                .all(directory, Sumitsubo::Mechanism::Behavior.new)
   Sumitsubo::Feature.refuse_ambiguity(features)
   features
@@ -61,7 +61,7 @@ class Other
 
   def reads?(path) = "#{path}".end_with?(SUFFIX)
 
-  def blocks(paths, kinds)
+  def blocks(paths, kinds, from)
     found = {}
     paths.each { |path| found[path] = spoken }
     found

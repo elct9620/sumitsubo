@@ -18,8 +18,8 @@ module Sumitsubo
       def initialize(config, languages, parsers)
         @config = config
         @findings = Finding::Repository.new
-        @source = Source::Repository.new(languages)
-        @specifications = Specification::Repository.new(parsers, languages)
+        @source = Source::Repository.new(languages, config.here)
+        @specifications = Specification::Repository.new(parsers, languages, config.here)
         @relations = Relation::Repository.new
         @written = Relation::Written.new(config, @specifications, @relations, @findings, Mechanism::ALL)
       end
@@ -51,7 +51,7 @@ module Sumitsubo
       def rootless?
         return false if @config.root.directory?
 
-        puts "no specification at #{Place.file(@config.root)}; sumi init lays one down"
+        puts "no specification at #{Place.file(@config.root, @config.here)}; sumi init lays one down"
         true
       end
 

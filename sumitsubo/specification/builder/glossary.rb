@@ -56,7 +56,7 @@ module Sumitsubo
         WIDE = "—"
 
         def initialize(path)
-          @path = Place.file(path)
+          @path = path
           @refusals = []
           @key = nil
           @text = nil

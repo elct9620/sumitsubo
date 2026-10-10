@@ -1,5 +1,4 @@
 require "sumitsubo/specification"
-require "sumitsubo/place"
 require "sumitsubo/specification/builder"
 require "sumitsubo/specification/block"
 
@@ -49,7 +48,7 @@ module Sumitsubo
         TOPIC = "behavior"
 
         def initialize(path)
-          @path = Place.file(path)
+          @path = path
           @refusals = []
           @key = nil
           @text = nil

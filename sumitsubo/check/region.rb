@@ -21,14 +21,14 @@ module Sumitsubo
         # answers at the path a reader started the run from. This is where a
         # mention stops being a candidate, so this is where the two are told
         # apart.
-        def run(mentions, aside, base)
+        def run(mentions, aside, base, from)
           found = []
           mentions.each do |mention|
             next unless aside[mention.key].nil?
 
             found.push(Finding.new(
               check: @check, difference: true,
-              place: Place.of(base / mention.path, mention.line),
+              place: Place.of(base / mention.path, mention.line, from),
               message: "#{mention.term} rejects #{mention.used}: #{mention.reason}"
             ))
           end
@@ -54,7 +54,7 @@ module Sumitsubo
             ignore = aside[key]
             found.push(Finding.new(
               check: @check, difference: false,
-              place: Place.of(path, ignore.line),
+              place: Place.new(path: path, line: ignore.line),
               message: "nothing at #{ignore.at} has #{ignore.term} rejecting " \
                        "#{ignore.used}; the line moved or the wording was fixed"
             ))

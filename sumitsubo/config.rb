@@ -34,7 +34,10 @@ module Sumitsubo
             ["specifications", "the specifications to switch"],
             [BUDGET, "the limits to measure"]]
 
-    attr_reader :base, :root, :exclusion
+    # Where the run started is `here` rather than `start`: on Spinel 2026.09.12
+    # a receiver with no type of its own answers a capture's `start` instead,
+    # and the build fails. Fixed on master at a116c85db.
+    attr_reader :base, :root, :exclusion, :here
 
     # The directory a run is configured from: the nearest one at or above the
     # starting point holding a .sumi.json, else the repository it sits in, else
@@ -56,22 +59,27 @@ module Sumitsubo
     # caller, each with what it is switched by besides `verify`: which of them
     # a build carries is decided when it is built, and a configuration naming
     # one this build does not have is asking for a run it will not get.
-    def self.load(switches, base = discover)
+    #
+    # Where the run started is held here once, since every path a reader is
+    # handed is answered relative to it.
+    def self.load(switches, base = discover, start = Pathname.pwd)
       directory = Pathname.new(base)
       path = directory / FILE
-      new(directory, path.exist? ? read(path) : {}, switches)
+      here = Pathname.new(start).expand_path
+      new(directory, path.exist? ? read(path, here) : {}, switches, here)
     end
 
-    def self.read(path)
+    def self.read(path, start)
       JSON.parse(path.read)
     rescue JSON::ParserError
       # The parser's own wording is Spinel's rather than CRuby's, so it stays
       # out of a message a snapshot has to match on both. The path is answered
       # the way a finding is, relative to where the run started.
-      raise Error, "#{Place.file(path)} is not readable JSON"
+      raise Error, "#{Place.file(path, start)} is not readable JSON"
     end
 
-    def initialize(base, document, switches)
+    def initialize(base, document, switches, here)
+      @here = here
       refuse(faults_in(base, document, switches))
       @base = base
       @root = (base / (document["root"] || DEFAULT_ROOT)).cleanpath
@@ -123,7 +131,7 @@ module Sumitsubo
     # cannot place follows sorted: a document's own order decides neither, so
     # one configuration answers alike however it was written down.
     def faults_in(base, document, switches)
-      where = Place.file(base / FILE)
+      where = Place.file(base / FILE, @here)
       said = []
       KEYS.each do |key, takes|
         written = document[key]

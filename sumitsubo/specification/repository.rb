@@ -1,5 +1,6 @@
 require "pathname"
 require "sumitsubo/finding"
+require "sumitsubo/place"
 require "sumitsubo/specification"
 require "sumitsubo/specification/parser"
 
@@ -15,9 +16,10 @@ module Sumitsubo
     # because a specification switched off is never read and one that cannot be
     # read leaves the others still answering.
     class Repository
-      def initialize(parsers, languages)
+      def initialize(parsers, languages, from)
         @parsers = parsers
         @languages = languages
+        @from = from
         @directories = {}
         @files = {}
         @unread = {}
@@ -113,7 +115,7 @@ module Sumitsubo
       # A mechanism asks this before building what it keeps, and whatever
       # measures a document without reading it into a form asks it alone.
       def blocks_of(paths, asking)
-        paths.each { |path| Parser.of(path, @parsers) }
+        paths.each { |path| Parser.of(path, @parsers, @from) }
         answered = {}
         @parsers.each { |parser| claimed(parser, paths, asking, answered) }
         answered
@@ -128,7 +130,7 @@ module Sumitsubo
       # The languages go with the reading because a contract's signature is read
       # by the very reading that reads the source it describes.
       def read_one(path, mechanism)
-        mechanism.read(blocks_of([path], mechanism)[path], path, @languages)
+        mechanism.read(blocks_of([path], mechanism)[path], Place.file(path, @from), @languages)
       end
 
       # Every specification a directory holds, each answering for itself.
@@ -147,7 +149,7 @@ module Sumitsubo
       # is what a run needs to answer it. A document no reading answers for at
       # all is raised before any of them is built.
       def read_into(found, blocks, path, mechanism)
-        found.push(mechanism.read(blocks, path, @languages))
+        found.push(mechanism.read(blocks, Place.file(path, @from), @languages))
       rescue Sumitsubo::Misshapen => e
         e.refusals.each { |one| kept(mechanism).push(mechanism.refused(one)) }
       end
@@ -165,7 +167,7 @@ module Sumitsubo
         group = paths.select { |path| answered[path].nil? && parser.reads?(path) }
         return if group.empty?
 
-        found = parser.blocks(group, asking.kinds)
+        found = parser.blocks(group, asking.kinds, @from)
         group.each { |path| answered[path] = found[path] }
       end
 
@@ -175,8 +177,9 @@ module Sumitsubo
       # is passed over, so a directory is still the project's to keep other
       # things in.
       #
-      # A found path is a String: it is what a specification answers with, and
-      # what a finding about one of its statements points at.
+      # A found path is a String, rendered once where a form is handed it: that
+      # is what a specification answers with, and what a finding about one of
+      # its statements points at.
       def files_in(path)
         path.glob("*").select { |file| file.file? && Parser.reads?(file, @parsers) }
             .map { |file| "#{file}" }.sort

@@ -108,7 +108,7 @@ module Sumitsubo
 
       # The files every feature reaches.
       def reach(config, specifications, relations)
-        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations)
+        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations, config.here)
       end
 
       # What the source says about each scenario, kept for whoever asks after:

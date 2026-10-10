@@ -22,8 +22,8 @@ PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 # A vocabulary comes from the repository the way a run's does, read as the
 # mechanism that keeps it reads it.
 def reads(path)
-  Sumitsubo::Specification::Repository.new(PARSERS, nil)
-    .one(Sumitsubo::Vocabulary.at(path), Sumitsubo::Mechanism::Glossary.new([]))
+  Sumitsubo::Specification::Repository.new(PARSERS, nil, Pathname.pwd)
+    .one(Sumitsubo::Vocabulary.at(path, Pathname.pwd), Sumitsubo::Mechanism::Glossary.new([]))
 end
 
 # What a vocabulary could not be read as, however it was refused: a form points
@@ -126,7 +126,7 @@ puts "app/billing/charge.rb Order: #{backwards["app/billing/charge.rb"]["Order"]
 puts "--- what the specification spells is not a use of it ---"
 spelled = Sumitsubo::Vocabulary::Mention.new(path: ".spec/glossary.md", line: 18, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
 used = Sumitsubo::Vocabulary::Mention.new(path: "app/order.rb", line: 2, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
-Sumitsubo::Vocabulary.uses([spelled, used], vocabulary, Pathname.new(".")).each do |mention|
+Sumitsubo::Vocabulary.uses([spelled, used], vocabulary, Pathname.new("."), Pathname.pwd).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}: #{mention.reason}"
 end
 
@@ -139,7 +139,7 @@ aside = Sumitsubo::Vocabulary::Mention.new(path: "app/order.rb", line: 2, term: 
 kept = Sumitsubo::Vocabulary::Mention.new(path: "app/other.rb", line: 3, term: "Order", used: "Purchase", reason: "Order is what the domain calls it.")
 set_aside = Sumitsubo::Vocabulary.set_aside(ignored)
 Sumitsubo::Check::Region::Rejected.new(Sumitsubo::Mechanism::Glossary::REJECTED)
-  .run([aside, kept], set_aside, Pathname.pwd).each do |finding|
+  .run([aside, kept], set_aside, Pathname.pwd, Pathname.pwd).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 Sumitsubo::Check::Region::Stale.new(Sumitsubo::Mechanism::Glossary::STALE)
@@ -191,7 +191,7 @@ refused(Pathname.new("test/fixtures/specification/glossary/absent.md").expand_pa
 puts "--- a longer term holding a rejected word is a use of that term ---"
 Dir.chdir("test/fixtures/project/subdomain")
 subdomains = reads("glossary.md")
-prose = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new]))
+prose = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new]), Pathname.pwd)
 Sumitsubo::Vocabulary.check(Sumitsubo::Vocabulary.scope(subdomains, Pathname.pwd, [], {}), Pathname.pwd, prose).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
 end
@@ -205,9 +205,9 @@ Dir.chdir("test/fixtures/project/reached")
 screens = Sumitsubo::Statement.new("app/ui/*.rb", "", [], ".spec/behavior/checkout.md", 7, {}, [])
 checkout = Sumitsubo::Specification.new("Checkout", "", [screens], ".spec/behavior/checkout.md", {}, [])
 beside = Sumitsubo::Relation::Repository.new
-Sumitsubo::Reach.keep([checkout], Pathname.pwd, [], beside)
+Sumitsubo::Reach.keep([checkout], Pathname.pwd, [], beside, Pathname.pwd)
 reached = Sumitsubo::Vocabulary.scope(
-  reads(".spec/glossary.md"), Pathname.pwd, [], Sumitsubo::Vocabulary.reaches([checkout], Pathname.pwd, beside)
+  reads(".spec/glossary.md"), Pathname.pwd, [], Sumitsubo::Vocabulary.reaches([checkout], Pathname.pwd, beside, Pathname.pwd)
 )
 reached[".spec/behavior/checkout.md"].keys.sort.each { |name| puts ".spec/behavior/checkout.md #{name}" }
 Dir.chdir(back)
@@ -219,7 +219,7 @@ puts "--- a longer term a line break cuts in two is still that term ---"
 Dir.chdir("test/fixtures/project/wrapped")
 wrapped = reads("glossary.md")
 both = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new,
-                                                                          Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar)]))
+                                                                          Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar)]), Pathname.pwd)
 Sumitsubo::Vocabulary.check(Sumitsubo::Vocabulary.scope(wrapped, Pathname.pwd, [], {}), Pathname.pwd, both).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
 end

@@ -1,4 +1,3 @@
-require "sumitsubo/place"
 require "sumitsubo/command/run"
 require "sumitsubo/reach"
 require "sumitsubo/mechanism/behavior"
@@ -78,7 +77,7 @@ module Sumitsubo
           at = first[place]
         end
         Row.new(
-          path: Place.file(feature.path), statements: feature.statements.length,
+          path: feature.path, statements: feature.statements.length,
           claims: places.length, most: most, at: at
         )
       end

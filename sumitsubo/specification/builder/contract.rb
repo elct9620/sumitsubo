@@ -1,5 +1,4 @@
 require "sumitsubo/error"
-require "sumitsubo/place"
 require "sumitsubo/specification"
 require "sumitsubo/specification/builder"
 require "sumitsubo/specification/block"
@@ -61,7 +60,7 @@ module Sumitsubo
         SEPARATORS = [":", ".", "#"]
 
         def initialize(path, languages)
-          @path = Place.file(path)
+          @path = path
           @refusals = []
           @languages = languages
           @key = nil

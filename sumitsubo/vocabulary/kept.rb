@@ -55,9 +55,9 @@ module Sumitsubo
     # Every rejected word in the files the vocabulary reaches, kept under the
     # term rejecting it there. The word is kept as it was written, at the path
     # a relation names a file by.
-    def self.keep(scope, base, source, relations, mechanism)
+    def self.keep(scope, base, source, relations, mechanism, from)
       check(scope, base, source).each do |one|
-        found = Source::Mention.new(path: Place.file(base / one.path), line: one.line, used: one.used)
+        found = Source::Mention.new(path: Place.file(base / one.path, from), line: one.line, used: one.used)
         relations.add(Relation.mentions(found, Relation::Reference.new(mechanism: mechanism, key: one.term)))
       end
     end
@@ -65,10 +65,10 @@ module Sumitsubo
     # The mentions the run kept, read back as the checks compare them: under
     # the base the way an ignore names one, with the reason the vocabulary
     # holding in that file gives for turning the word down.
-    def self.mentioned(relations, scope, base)
+    def self.mentioned(relations, scope, base, from)
       found = []
       relations.each do |one|
-        path = from_base(one.subject.path, base)
+        path = from_base(one.subject.path, base, from)
         term = one.object.key
         entry = scope[path][term].statements.find { |rejected| rejected.key == one.subject.used }
         found.push(Mention.new(path: path, line: one.subject.line, term: term, used: one.subject.used, reason: entry.text))
@@ -84,9 +84,9 @@ module Sumitsubo
     # Which line declares is the reading's answer rather than a pattern's: the
     # specification says where each word was written, so nothing here opens the
     # file a second time or knows how a format spells a declaration.
-    def self.uses(mentions, spec, base)
+    def self.uses(mentions, spec, base, from)
       spelled = declared_in(spec)
-      own = from_base(spec.path, base)
+      own = from_base(spec.path, base, from)
       found = []
       mentions.each do |mention|
         next if mention.path == own && spelled["#{mention.line} #{mention.used}"]

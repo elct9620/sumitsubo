@@ -30,6 +30,7 @@ module Sumitsubo
 
         features = Mechanism::BEHAVIOR.declared(config, current.specifications)
         @relations = current.relations
+        @from = config.here
         dangling = Mechanism::BEHAVIOR.dangling(@relations)
         claims = Mechanism::BEHAVIOR.claims(@relations) + dangling
         said = place?(key) ? at(key, features, claims) : about(key, features, claims, dangling)
@@ -59,7 +60,7 @@ module Sumitsubo
       # Every comment in the file claiming a scenario, or the one holding the
       # line asked for: from where it begins to its last claim.
       def at(key, features, claims)
-        path = Place.file(path_of(key))
+        path = Place.file(path_of(key), @from)
         line = line_of(key)
         starts = []
         last = {}

@@ -1,6 +1,5 @@
 require "sumitsubo/check"
 require "sumitsubo/finding"
-require "sumitsubo/place"
 
 module Sumitsubo
   module Check
@@ -173,7 +172,7 @@ module Sumitsubo
 
             found.push(Finding.new(
               check: @check, difference: false, place: claim.place,
-              message: "#{claim.said} is claimed outside what #{Place.file(spec)} includes"
+              message: "#{claim.said} is claimed outside what #{spec} includes"
             ))
           end
           found

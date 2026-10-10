@@ -106,12 +106,12 @@ module Sumitsubo
         end
 
         # The blocks each of these files is made of, in the kinds asked for.
-        def blocks(paths, kinds)
+        def blocks(paths, kinds, from)
           asked = PATTERNS.keys.select { |kind| kinds.include?(kind) }
           query = asked.map { |kind| PATTERNS[kind] }.join
           reading = {}
-          paths.each { |path| reading[path] = captured(query, path) }
-          spanned = spans_in(reading, paths)
+          paths.each { |path| reading[path] = captured(query, path, from) }
+          spanned = spans_in(reading, paths, from)
 
           answered = {}
           paths.each { |path| answered[path] = built(reading[path], spanned) }
@@ -123,9 +123,9 @@ module Sumitsubo
         # Every run taken letter for letter, held under the text it was found in.
         # One text answers once however many documents wrote it, which is also
         # what keeps the second grammar to a single question.
-        def spans_in(reading, paths)
+        def spans_in(reading, paths, from)
           spanned = {}
-          paths.each { |path| spanning(reading[path], Place.file(path), spanned) }
+          paths.each { |path| spanning(reading[path], Place.file(path, from), spanned) }
           spanned
         end
 
@@ -216,11 +216,12 @@ module Sumitsubo
         # Every byte sequence is a legal document, so the grammar refuses
         # nothing: what a specification written wrong loses is the shape the
         # query matches, and saying so is a form's rather than the grammar's.
-        def captured(query, path)
+        def captured(query, path, from)
           file = Pathname.new(path)
-          raise Unreadable, "#{Place.file(file)} is not there to read" unless file.exist?
+          where = Place.file(file, from)
+          raise Unreadable, "#{where} is not there to read" unless file.exist?
 
-          @grammar.captures_in(GRAMMAR, file, query, Place.file(file))
+          @grammar.captures_in(GRAMMAR, file, query, where)
         end
       end
     end

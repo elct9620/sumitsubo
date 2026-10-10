@@ -1,6 +1,6 @@
 require "pathname"
 require "sumitsubo/mechanism/behavior"
-require "sumitsubo/source/marker"
+require "sumitsubo/source/repository"
 require "sumitsubo/source"
 
 # What a piece of source claims, read out of the comments a language offers.
@@ -34,7 +34,7 @@ end
 # mechanism reads the two lists apart for. Each list is in line order and one
 # line sits in one of them, so merging puts them back as the file reads.
 def claims(path, keywords, regions)
-  marked = Sumitsubo::Source::Marker.marked_in(path, keywords, Offered.new(regions))
+  marked = Sumitsubo::Source::Repository.new(Offered.new(regions), Pathname.pwd).marked([path], keywords)
   said = []
   left = 0
   right = 0
@@ -70,8 +70,8 @@ claims("src/init.rb", BEHAVIOR, [
   region(9, "=begin\nWhat the next thing is for.\n@behavior I-003\n=end")
 ]).each { |line| puts line }
 
-# A caller reaching a mechanism other than Behavior has no reason to have
-# rendered the path first, so the reading answers for itself.
+# A caller has no reason to have rendered the path first, so the repository
+# reading the file answers for it.
 # @behavior M-008
 puts "--- a path that arrives absolute still answers where the run started ---"
 claims(Pathname.new("src/commands.rb").expand_path.to_s, BEHAVIOR, [
@@ -132,10 +132,13 @@ claims("src/routes.rb", ["@command", "@route"], [
 # one is the run those lines make, so that is what the claims name.
 # @behavior M-013
 puts "--- claims in one comment name the line it began on ---"
-Sumitsubo::Source::Marker.marked_in("src/ruby.rb", BEHAVIOR, Offered.new([
+joined = Sumitsubo::Source::Repository.new(Offered.new([
   region(2, "# What the sample declares.", Sumitsubo::Source::Region::COMMENT),
   region(3, "# @behavior RB-005 RB-006", Sumitsubo::Source::Region::COMMENT),
   region(4, "# @behavior RB-007", Sumitsubo::Source::Region::CODE),
   region(9, "# @behavior RB-008", Sumitsubo::Source::Region::CODE)
-])).claims.each { |claim| puts "#{claim.path}:#{claim.line} in the comment from #{claim.comment_line}" }
+]), Pathname.pwd)
+joined.marked(["src/ruby.rb"], BEHAVIOR).claims.each do |claim|
+  puts "#{claim.path}:#{claim.line} in the comment from #{claim.comment_line}"
+end
 

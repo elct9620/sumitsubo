@@ -8,7 +8,7 @@ module Sumitsubo
     class Init
       def run(config)
         config.root.mkpath
-        Mechanism::ALL.each { |mechanism| lay_down(mechanism.seed(config.root)) }
+        Mechanism::ALL.each { |mechanism| lay_down(mechanism.seed(config.root), config.here) }
         0
       end
 
@@ -16,8 +16,8 @@ module Sumitsubo
 
       # Laying down what is already there would overwrite a reference line, so
       # what exists is reported rather than replaced.
-      def lay_down(seed)
-        where = Place.file(seed.path)
+      def lay_down(seed, from)
+        where = Place.file(seed.path, from)
         if seed.path.exist?
           puts "exists #{where}"
         else

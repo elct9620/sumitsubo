@@ -67,7 +67,7 @@ module Sumitsubo
       # walk opens no specification and knows of none.
       def self.barren_at(check, path, pattern, line)
         Finding.new(
-          check: check, difference: false, place: Place.of(path, line),
+          check: check, difference: false, place: Place.new(path: path, line: line),
           message: "include #{pattern} covers no file; " \
                    "the pattern is wrong or what it pointed at is gone"
         )

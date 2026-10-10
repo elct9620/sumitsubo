@@ -16,7 +16,7 @@ The one place a path a reader is handed is made.
 
 ```ruby
 class Sumitsubo::Place
-  def self.file(path)
+  def self.file(path, from)
   end
 end
 ```
@@ -31,7 +31,7 @@ The one place a place in a file is made, for a finding to answer at.
 
 ```ruby
 class Sumitsubo::Place
-  def self.of(path, line)
+  def self.of(path, line, from)
   end
 end
 ```
@@ -42,7 +42,7 @@ The one place a file is matched to the parser that answers for it.
 
 ```ruby
 module Sumitsubo::Specification::Parser
-  def self.of(path, parsers)
+  def self.of(path, parsers, from)
   end
 end
 ```
@@ -143,7 +143,7 @@ The reading of what a piece of source claims, and what it leaves dangling, for a
 
 ```ruby
 module Sumitsubo::Source::Marker
-  def self.marked_in(path, keywords, languages)
+  def self.marked_in(path, where, keywords, languages)
   end
 end
 ```

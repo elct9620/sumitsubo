@@ -107,15 +107,15 @@ p [reading.reads?("init.md"), reading.reads?("init.json"), reading.reads?(".spec
 # because a constant is reached through the name written here, not through a
 # value handed over.
 def feature_blocks(reading, path)
-  reading.blocks([path], Sumitsubo::Specification::Builder::Behavior::KINDS)[path]
+  reading.blocks([path], Sumitsubo::Specification::Builder::Behavior::KINDS, Pathname.pwd)[path]
 end
 
 def vocabulary_blocks(reading, path)
-  reading.blocks([path], Sumitsubo::Specification::Builder::Glossary::KINDS)[path]
+  reading.blocks([path], Sumitsubo::Specification::Builder::Glossary::KINDS, Pathname.pwd)[path]
 end
 
 def definition_blocks(reading, path)
-  reading.blocks([path], Sumitsubo::Specification::Builder::Contract::KINDS)[path]
+  reading.blocks([path], Sumitsubo::Specification::Builder::Contract::KINDS, Pathname.pwd)[path]
 end
 
 def steps_of(scenario)
@@ -146,7 +146,7 @@ end
 # is what tells two tables under one heading apart.
 def table_blocks(reading, kinds)
   path = "test/fixtures/specification/forms/tables.md"
-  reading.blocks([path], kinds)[path].each do |block|
+  reading.blocks([path], kinds, Pathname.pwd)[path].each do |block|
     puts "  #{block.line} #{block.kind} #{block.cells.map { |cell| cell.text.strip }.inspect}"
   end
 end

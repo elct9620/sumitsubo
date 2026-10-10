@@ -83,7 +83,7 @@ module Sumitsubo
         next if counted <= @sentence
 
         found.push(Finding.new(
-          check: SENTENCE, difference: true, place: Place.of(path, block.line),
+          check: SENTENCE, difference: true, place: Place.new(path: path, line: block.line),
           message: "\"#{words.take(OPENING).join(" ")}…\" runs #{counted} words, over #{@sentence}"
         ))
       end
@@ -96,7 +96,7 @@ module Sumitsubo
       return if many <= @paragraph
 
       found.push(Finding.new(
-        check: PARAGRAPH, difference: true, place: Place.of(path, block.line),
+        check: PARAGRAPH, difference: true, place: Place.new(path: path, line: block.line),
         message: "the #{block.kind} runs #{many} sentences, over #{@paragraph}"
       ))
     end

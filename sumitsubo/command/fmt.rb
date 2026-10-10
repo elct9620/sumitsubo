@@ -1,5 +1,4 @@
 require "pathname"
-require "sumitsubo/place"
 require "sumitsubo/budget"
 require "sumitsubo/finding/report"
 require "sumitsubo/command/run"
@@ -65,7 +64,7 @@ module Sumitsubo
         else
           rewrites.each { |one| lines[one.line - 1] = one.text }
           path.write(lines.join("\n"))
-          puts "wrote #{Place.file(path)}"
+          puts "wrote #{path}"
         end
       end
     end

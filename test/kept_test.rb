@@ -40,7 +40,7 @@ puts "--- what each specification reaches ---"
 orders = spec(".spec/behavior/orders.md", ["app/*.rb", "test/*.rb"])
 billing = spec(".spec/behavior/billing.md", ["app/billing/*.rb"])
 relations = Sumitsubo::Relation::Repository.new
-Sumitsubo::Reach.keep([orders, billing], base, [], relations)
+Sumitsubo::Reach.keep([orders, billing], base, [], relations, Pathname.pwd)
 reach = Sumitsubo::Reach.of([orders, billing], relations)
 [orders, billing].each { |one| puts "  #{one.path} #{reach[one.path].keys.sort.inspect}" }
 puts "  read once: #{Sumitsubo::Reach.files(reach).inspect}"
@@ -87,7 +87,7 @@ word = Sumitsubo::Source::Mention.new(path: "app/order.rb", line: 2, used: "Purc
 mentioned.add(Sumitsubo::Relation.mentions(word, reference("glossary", "Order")))
 rejected = statement("Purchase", "Order is what the domain calls it.", ".spec/glossary.md", 12)
 scope = { "app/order.rb" => { "Order" => statement("Order", "What a customer asks for.", ".spec/glossary.md", 9, [rejected]) } }
-Sumitsubo::Vocabulary.mentioned(mentioned.naming(Sumitsubo::Relation::MENTIONS, "glossary"), scope, base).each do |one|
+Sumitsubo::Vocabulary.mentioned(mentioned.naming(Sumitsubo::Relation::MENTIONS, "glossary"), scope, base, Pathname.pwd).each do |one|
   puts "  #{one.path}:#{one.line} #{one.term} rejects #{one.used}: #{one.reason}"
 end
 

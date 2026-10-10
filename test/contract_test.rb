@@ -15,7 +15,7 @@ require "sumitsubo/source/language/rust"
 # What each specification reaches, kept the way a run keeps it and read back.
 def reach_of(specifications, base)
   relations = Sumitsubo::Relation::Repository.new
-  Sumitsubo::Reach.keep(specifications, base, [], relations)
+  Sumitsubo::Reach.keep(specifications, base, [], relations, Pathname.pwd)
   Sumitsubo::Reach.of(specifications, relations)
 end
 
@@ -38,7 +38,7 @@ require "sumitsubo/specification"
 PARSERS = [Sumitsubo::Specification::Parser::Markdown.new(Sumitsubo::Grammar)]
 
 # Source reaches a mechanism through the repository, the way a run's does.
-SOURCE = Sumitsubo::Source::Repository.new(LANGUAGES)
+SOURCE = Sumitsubo::Source::Repository.new(LANGUAGES, Pathname.pwd)
 
 # The loader answers where an interface sits as well as what it says. An
 # interface nothing claims is a finding about the specification, so the reader
@@ -65,7 +65,7 @@ class Other
 
   def reads?(path) = "#{path}".end_with?(SUFFIX)
 
-  def blocks(paths, kinds)
+  def blocks(paths, kinds, from)
     found = {}
     paths.each { |path| found[path] = spoken }
     found
@@ -91,7 +91,7 @@ end
 def loaded(directory, parsers = PARSERS)
   # A signature is read by the reading that reads the source, so what a
   # definition is checked against is the languages this build carries.
-  definitions = Sumitsubo::Specification::Repository.new(parsers, LANGUAGES)
+  definitions = Sumitsubo::Specification::Repository.new(parsers, LANGUAGES, Pathname.pwd)
                   .all(directory, Sumitsubo::Mechanism::Contract.new)
   Sumitsubo::Definition.refuse_ambiguity(definitions)
   definitions
@@ -124,7 +124,7 @@ end
 # is kept rather than raised, so the ones beside it still answer and the
 # refusal is asked for rather than rescued.
 def refused(directory)
-  repository = Sumitsubo::Specification::Repository.new(PARSERS, LANGUAGES)
+  repository = Sumitsubo::Specification::Repository.new(PARSERS, LANGUAGES, Pathname.pwd)
   mechanism = Sumitsubo::Mechanism::Contract.new
   repository.all(directory, mechanism)
   repository.unread(mechanism)
