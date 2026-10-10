@@ -78,7 +78,7 @@ module Sumitsubo
       reached.keys.each do |file|
         found.push(file) if reached[file].any? { |path| matched[path] }
       end
-      found.uniq.sort
+      Source::Scope.distinct(found).sort
     end
 
     # A path as a section's globs are written, relative to the base, where a
@@ -175,7 +175,7 @@ module Sumitsubo
     # where another says nothing is decided by what each covers.
     def self.paths_for(section, base, exclusion)
       globs = section.includes.map { |one| one.key }
-      Source::Scope.of(base, globs, exclusion).uniq.sort
+      Source::Scope.distinct(Source::Scope.of(base, globs, exclusion)).sort
     end
   end
 end

@@ -36,7 +36,7 @@ module Sumitsubo
     def self.files(reach)
       found = []
       reach.keys.each { |spec| found.concat(reach[spec].keys) }
-      found.uniq.sort
+      Source::Scope.distinct(found).sort
     end
 
     # What each specification's includes cover, each answering at the

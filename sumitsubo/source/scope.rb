@@ -91,7 +91,14 @@ module Sumitsubo
           found = under(base, root, exclusion, pruned)
           found.each { |path| paths.push(path) }
         end
-        Found.new(paths.uniq, pruned)
+        Found.new(distinct(paths), pruned)
+      end
+
+      # Each path once, in the order first met. Counted rather than `uniq`:
+      # on Spinel 2026.09.12 `uniq` compares every pair, which a tree of tens
+      # of thousands of files turns into seconds. Fixed on master at a116c85db.
+      def self.distinct(paths)
+        paths.tally.keys
       end
 
       def self.selected(pattern, candidates)
