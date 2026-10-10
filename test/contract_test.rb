@@ -125,8 +125,9 @@ end
 # refusal is asked for rather than rescued.
 def refused(directory)
   repository = Sumitsubo::Specification::Repository.new(PARSERS, LANGUAGES)
-  repository.all(directory, Sumitsubo::Mechanism::Contract.new)
-  repository.unread
+  mechanism = Sumitsubo::Mechanism::Contract.new
+  repository.all(directory, mechanism)
+  repository.unread(mechanism)
 end
 
 # @behavior T-001

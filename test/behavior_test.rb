@@ -38,8 +38,9 @@ end
 # refusal is asked for rather than rescued.
 def refused(directory)
   repository = Sumitsubo::Specification::Repository.new(PARSERS, nil)
-  repository.all(directory, Sumitsubo::Mechanism::Behavior.new)
-  repository.unread
+  mechanism = Sumitsubo::Mechanism::Behavior.new
+  repository.all(directory, mechanism)
+  repository.unread(mechanism)
 end
 
 def taken(directory, parsers)

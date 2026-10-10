@@ -20,15 +20,63 @@ module Sumitsubo
         @languages = languages
         @directories = {}
         @files = {}
-        @unread = []
+        @unread = {}
+        @broken = {}
+        @failed = {}
+        @told = {}
+        @said = {}
       end
 
-      # Each document a directory held that its form refused, answered at the
-      # line that broke it. They are collected rather than raised, so a run
-      # answers for every specification it managed to read the way a linter
-      # answers for every file it managed to parse.
-      def unread
-        @unread
+      # Everything this mechanism's form refused, each answered at the line that
+      # broke it. They are collected rather than raised, so a run answers for
+      # every specification it managed to read the way a linter answers for
+      # every file it managed to parse.
+      def unread(mechanism)
+        @unread[mechanism.specification] || []
+      end
+
+      # Whether anything of this mechanism was refused, which is where a key
+      # looked for and not found may stand.
+      def refused?(mechanism)
+        !unread(mechanism).empty?
+      end
+
+      # Whether this mechanism can be asked anything more: one that could not
+      # be read as a whole answers the first time and is passed over after.
+      def broken?(mechanism)
+        !@broken[mechanism.specification].nil?
+      end
+
+      # A mechanism whose specifications were refused as a whole. Only the
+      # first answer is kept, since asking again reads the same documents.
+      def refuse(mechanism, refusals)
+        return if broken?(mechanism)
+
+        @broken[mechanism.specification] = true
+        refusals.each { |one| kept(mechanism).push(mechanism.refused(one)) }
+      end
+
+      # A mechanism nothing could be read from at all, worded by the error.
+      def unreadable(mechanism, message)
+        return if broken?(mechanism)
+
+        @broken[mechanism.specification] = true
+        @failed[mechanism.specification] = message
+      end
+
+      # What this mechanism could not read, added to the findings once however
+      # often it is asked: whatever was refused since it was last asked, and
+      # the failure the first time.
+      def tell(mechanism, findings)
+        name = mechanism.specification
+        held = unread(mechanism)
+        told = @told[name] || 0
+        held[told, held.length - told].each { |one| findings.add(one) }
+        @told[name] = held.length
+        return if @failed[name].nil? || !@said[name].nil?
+
+        @said[name] = true
+        findings.unreadable(@failed[name])
       end
 
       # Every specification a directory holds. A directory nobody wrote
@@ -100,7 +148,13 @@ module Sumitsubo
       def read_into(found, blocks, path, mechanism)
         found.push(mechanism.read(blocks, path, @languages))
       rescue Sumitsubo::Misshapen => e
-        e.refusals.each { |one| @unread.push(mechanism.refused(one)) }
+        e.refusals.each { |one| kept(mechanism).push(mechanism.refused(one)) }
+      end
+
+      def kept(mechanism)
+        name = mechanism.specification
+        @unread[name] = [] if @unread[name].nil?
+        @unread[name]
       end
 
       # What one parser answers for, asked of it in one go. A file the parsers

@@ -22,8 +22,6 @@ module Sumitsubo
         @specifications = Specification::Repository.new(parsers, languages)
         @relations = Relation::Repository.new
         @written = Relation::Written.new(config, @specifications, @relations, @findings, Mechanism::ALL)
-        @broken = {}
-        @unread_told = 0
       end
 
       def findings
@@ -67,23 +65,17 @@ module Sumitsubo
       def each_mechanism
         Mechanism::ALL.each do |mechanism|
           next unless @config.verify?(mechanism.specification)
-          next if @broken[mechanism.specification]
+          next if @specifications.broken?(mechanism)
 
           begin
             yield mechanism
           rescue Sumitsubo::Misshapen => e
-            @broken[mechanism.specification] = true
-            e.refusals.each { |one| @findings.add(mechanism.refused(one)) }
+            @specifications.refuse(mechanism, e.refusals)
           rescue Sumitsubo::Error => e
-            @broken[mechanism.specification] = true
-            @findings.unreadable(e.message)
+            @specifications.unreadable(mechanism, e.message)
           end
+          @specifications.tell(mechanism, @findings)
         end
-        # A document read beside others never reached the mechanism that asked
-        # for it, so its refusal is answered here rather than there, once.
-        unread = @specifications.unread
-        unread[@unread_told, unread.length - @unread_told].each { |one| @findings.add(one) }
-        @unread_told = unread.length
       end
 
       # Every relation the switched-on mechanisms among these keep: what each

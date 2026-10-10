@@ -45,9 +45,6 @@ module Sumitsubo
         @relations = relations
         @findings = findings
         @statements = {}
-        @refused = {}
-        @failed = {}
-        @told = {}
       end
 
       # What the specifications these mechanisms keep say of one another.
@@ -77,33 +74,20 @@ module Sumitsubo
         @statements[name] = begin
           mechanism.statements(@config, @specifications)
         rescue Sumitsubo::Misshapen => e
-          @refused[name] = e.refusals.map { |one| mechanism.refused(one) }
+          @specifications.refuse(mechanism, e.refusals)
           nil
         rescue Sumitsubo::Error => e
-          @failed[name] = e.message
+          @specifications.unreadable(mechanism, e.message)
           nil
         end
-      end
-
-      # Whether any of this mechanism's documents was refused, which is where
-      # a key looked for and not found may stand.
-      def refused?(mechanism)
-        prefix = "#{mechanism.specification}/"
-        !@refused[mechanism.specification].nil? || @specifications.unread.any? { |one| one.check.start_with?(prefix) }
       end
 
       # A mechanism's statements whether or not it is switched on. Whatever a
       # switched-off one refused is answered as it is first read; a switched-on
       # one has answered for itself already.
       def statements_named(mechanism)
-        name = mechanism.specification
         named = statements_of(mechanism)
-        return named if @config.verify?(name) || !@told[name].nil?
-
-        @told[name] = true
-        @specifications.unread.each { |one| @findings.add(one) if one.check.start_with?("#{name}/") }
-        (@refused[name] || []).each { |one| @findings.add(one) }
-        @findings.unreadable(@failed[name]) unless @failed[name].nil?
+        @specifications.tell(mechanism, @findings) unless @config.verify?(mechanism.specification)
         named
       end
 
@@ -116,7 +100,7 @@ module Sumitsubo
       def resolved(relation)
         target = named(relation.object.mechanism)
         named = statements_named(target)
-        return if named.nil? || refused?(target)
+        return if named.nil? || @specifications.refused?(target)
 
         writing = statements_of(named(relation.subject.mechanism))
         writer = writing.find { |one| one.key == relation.subject.key }
