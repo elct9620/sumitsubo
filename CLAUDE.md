@@ -64,20 +64,25 @@ Three things earn more room:
 
 ## Paths
 
-A path the tool composes is a `Pathname` and reaches the file through that
-same object; a path it read off the filesystem, or rendered for a reader, is a
-String. The rendered ones are what a finding points at, and they answer
-relative to where the run started, so `Place` is the one place that makes one —
-`of` for a place in a file and `file` for the file alone. Composition is `#/`,
-which answers a `Pathname` on every branch, rather than the `join` the
-ecosystem writes.
+Each kind of path has one type, and the rendered kind has one maker.
+
+| Path | Type | Made by |
+| --- | --- | --- |
+| composed by the tool | `Pathname` | `#/` |
+| read off the filesystem | String | the filesystem |
+| rendered for a reader | String | `Place.of` in a file, `Place.file` alone |
+
+A composed path reaches the file through that same object. Composition is
+`#/`, which answers a `Pathname` on every branch, rather than the `join` the
+ecosystem writes. A rendered path is what a finding points at, and answers
+relative to where the run started.
 
 Where the run started is asked once, and the configuration holds it as `here`.
 A rendered path becomes a `Place` through `new`, never rendered twice.
 
 A seam normalises rather than refusing: `load` takes what it is handed and
-wraps it, the way `Config.load` does, so a caller composing a path itself is
-not made to say so twice.
+wraps it. `Config.load` does so, and a caller composing a path itself is not
+made to say so twice.
 
 ## Build
 
