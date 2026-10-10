@@ -33,5 +33,14 @@ module Sumitsubo
   # A statement carries includes because a section answers for a boundary the
   # way the document does, and one written deeper is still the container's own
   # rather than a declaration under it.
-  Statement = Struct.new(:key, :text, :includes, :path, :line, :attributes, :statements)
+  #
+  # An arrangement is where a statement's parts are written, which only a
+  # form writing an attributes table has to say, so the others leave it out.
+  Statement = Struct.new(:key, :text, :includes, :path, :line, :attributes, :statements, :arrangement)
+
+  # Where a statement writes its attributes table, from its heading row to its
+  # last, beside the line of what the table sits right above — the steps, the
+  # signature — and the last line the statement holds. Each is nil where the
+  # statement writes no such thing or runs to the end of its document.
+  Arrangement = Struct.new(:from, :to, :above, :ends)
 end

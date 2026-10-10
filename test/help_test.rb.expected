@@ -169,6 +169,8 @@ Form
     `verify: false` keeps a specification the project means to hold
     without a run being checked against it yet. `order: false` on
     behavior leaves its scenarios where they were written.
+    `arrange: false` on behavior or contract leaves their attributes
+    where they were written.
 
     `budget` measures only the limits it writes, so a project writing
     none is measured for nothing. A table cell is measured for its
@@ -338,8 +340,10 @@ exit=2
   contract 129: app/show.rb:1: contract/misplaced: @route GET /users/:id is claimed outside what .spec/contract/routes.md includes   (exit 2)
   contract 114: .spec/contract/api.md:9: contract/unreadable: writes a signature declaring open, and not Store.open   (exit 2)
   contract 140: .spec/contract/api.md:9: contract/unreadable: registers Store.open with no signature, so nothing says how its name is spelled   (exit 2)
+  contract 143: .spec/contract/api.md:16: contract/unarranged: Store#read writes its attributes somewhere other than right above its signature   (fmt only)
   behavior 114: .spec/behavior/verify.md:9: behavior/unclaimed: @behavior V-002 is claimed nowhere this specification includes
   behavior 89: test/verify_test.rb:13: behavior/unresolved: V-404 resolves to no scenario   (exit 2)
   behavior 121: test/other_test.rb:13: behavior/misplaced: V-002 is claimed outside what .spec/behavior/verify.md includes   (exit 2)
   behavior 129: .spec/behavior/verify.md:9: behavior/stale: @behavior V-002 is unverifiable, yet claimed at test/verify_test.rb:13   (exit 2)
   behavior 95: .spec/behavior/verify.md:41: behavior/unordered: V-019 is written before V-002   (fmt only)
+  behavior 137: .spec/behavior/verify.md:52: behavior/unarranged: V-020 writes its attributes somewhere other than right above its steps   (fmt only)

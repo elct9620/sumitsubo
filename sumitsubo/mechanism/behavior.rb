@@ -8,6 +8,7 @@ require "sumitsubo/reach"
 require "sumitsubo/finding"
 require "sumitsubo/place"
 require "sumitsubo/specification/rewrite"
+require "sumitsubo/specification/arrange"
 require "sumitsubo/mechanism/seed"
 
 module Sumitsubo
@@ -25,7 +26,9 @@ module Sumitsubo
       DANGLING = "behavior/dangling"
       STALE = "behavior/stale"
       UNORDERED = "behavior/unordered"
+      UNARRANGED = "behavior/unarranged"
       ORDER = "order"
+      ARRANGE = "arrange"
 
       def initialize
         @barren = Check::Reach::Barren.new(BARREN)
@@ -41,9 +44,10 @@ module Sumitsubo
         "behavior"
       end
 
-      # `order: false` leaves the scenarios where their author wrote them.
+      # `order: false` leaves the scenarios where their author wrote them, and
+      # `arrange: false` leaves each one's attributes where they were written.
       def switches
-        [ORDER]
+        [ORDER, ARRANGE]
       end
 
       def seed(root)
@@ -67,22 +71,31 @@ module Sumitsubo
         Finding.refused(UNREADABLE, refusal)
       end
 
-      # A feature's scenarios in the order of their ids, unless the project
-      # switched `order` off. Each scenario written before a lower id answers
-      # once, at its heading; the lines moved with it answer nothing.
+      # A feature's scenarios in the order of their ids, each with its
+      # attributes right above its steps, unless the project switched either
+      # off. A scenario written before a lower id answers at its heading, and
+      # attributes written elsewhere at their table; the lines moved with
+      # either answer nothing.
       def rewrites(config, feature, lines)
-        return [] unless config.switched?(specification, ORDER)
+        scenarios = feature.statements
+        misplaced = config.switched?(specification, ARRANGE) ? Specification::Arrange.misplaced(scenarios, lines) : []
+        ahead = config.switched?(specification, ORDER) ? Feature.ahead(scenarios) : []
+        return [] if misplaced.empty? && ahead.empty?
 
-        ahead = Feature.ahead(feature.statements)
-        return [] if ahead.empty?
-
-        written = Feature.ordered(feature.statements, lines)
+        said = {}
+        ahead.each { |pair| said[pair[0].line] = unordered(pair[0], pair[1]) }
+        misplaced.each { |scenario| said[scenario.arrangement.from] = unarranged(scenario) }
+        written = misplaced.empty? ? lines : Specification::Arrange.written(misplaced, lines)
+        written = Feature.ordered(scenarios, written) unless ahead.empty?
+        # Written out here and in the other mechanism rather than shared:
+        # Spinel 2026.09.12 cannot build one module function both call
+        # ("cannot box ... into a poly value"). Master a060aef1e can.
         found = []
         lines.each_index do |at|
-          next if written[at] == lines[at]
+          finding = said[at + 1]
+          next if written[at] == lines[at] && finding.nil?
 
-          pair = ahead.find { |one| one[0].line == at + 1 }
-          found.push(Specification::Rewrite.new(pair.nil? ? nil : unordered(pair[0], pair[1]), at + 1, written[at]))
+          found.push(Specification::Rewrite.new(finding, at + 1, written[at]))
         end
         found
       end
@@ -171,6 +184,14 @@ module Sumitsubo
       end
 
       private
+
+      def unarranged(scenario)
+        Finding.new(
+          check: UNARRANGED, difference: true,
+          place: Place.new(path: scenario.path, line: scenario.arrangement.from),
+          message: "#{scenario.key} writes its attributes somewhere other than right above its steps"
+        )
+      end
 
       def unordered(scenario, lowest)
         Finding.new(

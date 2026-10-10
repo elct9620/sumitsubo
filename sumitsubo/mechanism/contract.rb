@@ -8,6 +8,9 @@ require "sumitsubo/reach"
 require "sumitsubo/relation"
 require "sumitsubo/specification/builder/contract"
 require "sumitsubo/finding"
+require "sumitsubo/place"
+require "sumitsubo/specification/rewrite"
+require "sumitsubo/specification/arrange"
 require "sumitsubo/mechanism/seed"
 
 module Sumitsubo
@@ -26,6 +29,8 @@ module Sumitsubo
     class Contract
       BARREN = "contract/barren"
       UNREADABLE = "contract/unreadable"
+      UNARRANGED = "contract/unarranged"
+      ARRANGE = "arrange"
 
       # Source says in a comment that it implements an interface, which is what
       # an interface needs when no construct of the language points at it.
@@ -111,8 +116,10 @@ module Sumitsubo
         "contract"
       end
 
+      # `arrange: false` leaves each contract's attributes where they were
+      # written.
       def switches
-        []
+        [ARRANGE]
       end
 
       # A seed with no content is a directory: a project registers one kind of
@@ -140,10 +147,29 @@ module Sumitsubo
         Finding.refused(UNREADABLE, refusal)
       end
 
-      # Nothing about how a definition is written is checked yet, so it is
-      # written the one way it reads.
+      # Each contract with its attributes right above its signature, or last
+      # where it has none, unless the project switched `arrange` off. The
+      # contract answers at its table; the lines moved with it answer nothing.
       def rewrites(config, definition, lines)
-        []
+        return [] unless config.switched?(specification, ARRANGE)
+
+        misplaced = Specification::Arrange.misplaced(definition.statements, lines)
+        return [] if misplaced.empty?
+
+        said = {}
+        misplaced.each { |contract| said[contract.arrangement.from] = unarranged(contract) }
+        written = Specification::Arrange.written(misplaced, lines)
+        # Written out here and in the other mechanism rather than shared:
+        # Spinel 2026.09.12 cannot build one module function both call
+        # ("cannot box ... into a poly value"). Master a060aef1e can.
+        found = []
+        lines.each_index do |at|
+          finding = said[at + 1]
+          next if written[at] == lines[at] && finding.nil?
+
+          found.push(Specification::Rewrite.new(finding, at + 1, written[at]))
+        end
+        found
       end
 
       # Every specification this mechanism keeps, and everything that can be
@@ -190,6 +216,18 @@ module Sumitsubo
                .each { |one| findings.add(one) }
         @claimed.run(findings, definitions, relations, specification)
         @defined.run(findings, definitions, source, relations, specification)
+      end
+
+      private
+
+      def unarranged(contract)
+        arrangement = contract.arrangement
+        where = arrangement.above.nil? ? "last" : "right above its signature"
+        Finding.new(
+          check: UNARRANGED, difference: true,
+          place: Place.new(path: contract.path, line: arrangement.from),
+          message: "#{contract.key} writes its attributes somewhere other than #{where}"
+        )
       end
     end
   end

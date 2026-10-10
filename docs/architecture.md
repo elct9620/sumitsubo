@@ -282,6 +282,9 @@ front — a mechanism, or the budget — which is the whole of `<word>/<check>`.
    what `fmt` writes for a person, and `fmt --check` answers instead
  a scenario written before a lower id:  unordered  (B) ✻
    what `fmt` moves for a person, unless `order` is switched off
+ attributes written apart from what they sit above:  unarranged  (C, B) ✻
+   right above the steps or the signature, or last where there is none;
+   what `fmt` moves for a person, unless `arrange` is switched off
  prose running over its budget:  sentence, paragraph  (budget) ✻
    measured over every form, and answered by `fmt` whether it writes or
    not, since nothing can be written for it

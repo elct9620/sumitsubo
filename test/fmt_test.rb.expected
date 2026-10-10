@@ -115,3 +115,108 @@ wrote .spec/glossary.md
 1 difference
 exit=1
 the dash is rewritten: true
+--- a scenario writing its attributes under its steps ---
+.spec/behavior/arranging.md:11: behavior/unarranged: R-1 writes its attributes somewhere other than right above its steps
+1 difference
+exit=1
+left as written: true
+--- and the run that writes them above the steps ---
+wrote .spec/behavior/arranging.md
+0 differences
+exit=0
+# Arranging
+
+## `R-1` A behavior on its way out
+
+| Attribute | Value |
+| --- | --- |
+| deprecated | R-2 replaces it |
+
+| Step | Statement |
+| --- | --- |
+| Given | a run |
+| When | it is read |
+| Then | it answers |
+0 differences
+exit=0
+--- a contract writing its attributes under its signature ---
+.spec/contract/store.md:16: contract/unarranged: Store#read writes its attributes somewhere other than right above its signature
+1 difference
+exit=1
+left as written: true
+--- and the run that writes them above the signature ---
+wrote .spec/contract/store.md
+0 differences
+exit=0
+# Store
+
+## `Store#read`
+
+Read one.
+
+| Attribute | Value |
+| --- | --- |
+| internal | yes |
+
+```ruby
+class Store
+  def read(key)
+  end
+end
+```
+
+A missing key answers nil.
+0 differences
+exit=0
+--- a contract with no signature writes its attributes last ---
+wrote .spec/contract/cli.md
+0 differences
+exit=0
+# CLI
+
+## Marker
+
+`@command`
+
+## `verify`
+
+Check the source against the specification.
+
+| Attribute | Value |
+| --- | --- |
+| unverifiable | no test runs the executable |
+--- a project that switched arrange off ---
+0 differences
+exit=0
+left as written: true true
+--- a scenario out of order whose attributes are under its steps ---
+.spec/behavior/arranging.md:3: behavior/unordered: A-2 is written before A-1
+.spec/behavior/arranging.md:11: behavior/unarranged: A-2 writes its attributes somewhere other than right above its steps
+2 differences
+exit=1
+wrote .spec/behavior/arranging.md
+0 differences
+exit=0
+# Arranging
+
+## `A-1` Written second
+
+| Step | Statement |
+| --- | --- |
+| Given | one |
+| When | it is read |
+| Then | it is one |
+
+## `A-2` Written first
+
+| Attribute | Value |
+| --- | --- |
+| unverifiable | nothing reads it |
+
+| Step | Statement |
+| --- | --- |
+| Given | two |
+| When | it is read |
+| Then | it is two |
+0 differences
+exit=0

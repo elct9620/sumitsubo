@@ -137,3 +137,59 @@ opened.
 | Given | a feature writing `P-1` before `P-01` |
 | When | `sumi fmt --check` runs |
 | Then | `P-1` answers as written before `P-01`, the letters deciding between them |
+
+## `FM-015` A scenario writing its attributes under its steps
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario whose attributes table follows its steps |
+| When | `sumi fmt --check` runs |
+| Then | the scenario answers at the table's first row, and the file is left alone |
+
+## `FM-016` The run that writes a scenario's attributes above its steps
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario whose attributes table follows its steps |
+| When | `sumi fmt` runs |
+| Then | the attributes read right above the steps, and a second run has nothing to say |
+
+## `FM-017` A contract writing its attributes under its signature
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract whose attributes table follows its signature |
+| When | `sumi fmt --check` runs |
+| Then | the contract answers at the table's first row, and the file is left alone |
+
+## `FM-018` The run that writes a contract's attributes above its signature
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract writing prose, its signature, a note after it, and then its attributes |
+| When | `sumi fmt` runs |
+| Then | the attributes read between the prose and the signature, and the note stays after the signature |
+
+## `FM-019` A contract with no signature writes its attributes last
+
+| Step | Statement |
+| --- | --- |
+| Given | a contract under a marker writing its attributes above its prose |
+| When | `sumi fmt` runs |
+| Then | the attributes read after the prose |
+
+## `FM-020` A project that switched arrange off
+
+| Step | Statement |
+| --- | --- |
+| Given | a scenario and a contract writing their attributes after their steps and signature, and `arrange: false` on both |
+| When | `sumi fmt` runs |
+| Then | both files are left as written |
+
+## `FM-021` A scenario out of order whose attributes are under its steps
+
+| Step | Statement |
+| --- | --- |
+| Given | a feature writing `A-2` before `A-1`, with `A-2`'s attributes under its steps |
+| When | `sumi fmt` runs |
+| Then | `A-1` reads first and `A-2` reads its attributes above its steps |

@@ -297,7 +297,8 @@ module Sumitsubo
         Attributes
             A heading carries the contract's name alone. What the contract is
             besides its name is a table under it, a row to an attribute. Its
-            heading and delimiter rows state nothing:
+            heading and delimiter rows state nothing. It sits right above the
+            signature, or last where there is none:
 
                 | Attribute | Value |
                 | --- | --- |
@@ -402,6 +403,9 @@ module Sumitsubo
             .spec/contract/api.md:9: contract/unreadable: registers Store.open with no signature, so nothing says how its name is spelled   (exit 2)
                 Every contract read from the syntax tree carries one. Usually a
                 `## Marker` section that went missing.
+
+            .spec/contract/api.md:16: contract/unarranged: Store#read writes its attributes somewhere other than right above its signature   (fmt only)
+                Answered by `sumi fmt --check`. Run `sumi fmt` to move them.
 
         What the reading cannot see
             The syntax tree reading finds a definition by its name in the tree.
@@ -516,8 +520,8 @@ module Sumitsubo
 
             A cell cannot wrap, and a `|` inside one is written `\\|`.
 
-            A scenario's attributes are a second table under its steps,
-            headed `Attribute` and `Value`:
+            A scenario's attributes are a table of their own, right above its
+            steps and headed `Attribute` and `Value`:
 
                 | Attribute | Value |
                 | --- | --- |
@@ -549,7 +553,8 @@ module Sumitsubo
 
             `sumi fmt` writes scenarios in the order of their ids, a run of
             digits by its value. So each scenario reads alone: a step leaning
-            on the one above it reads wrong once it moves.
+            on the one above it reads wrong once it moves. It also moves a
+            scenario's attributes written anywhere but right above its steps.
 
         Includes
             The boundary of what a feature answers for. A scenario is
@@ -603,6 +608,9 @@ module Sumitsubo
 
             .spec/behavior/verify.md:41: behavior/unordered: V-019 is written before V-002   (fmt only)
                 Answered by `sumi fmt --check`. Run `sumi fmt` to move it.
+
+            .spec/behavior/verify.md:52: behavior/unarranged: V-020 writes its attributes somewhere other than right above its steps   (fmt only)
+                Answered by `sumi fmt --check`. Run `sumi fmt` to move them.
       TEXT
 
       # @command help config
@@ -638,6 +646,8 @@ module Sumitsubo
             `verify: false` keeps a specification the project means to hold
             without a run being checked against it yet. `order: false` on
             behavior leaves its scenarios where they were written.
+            `arrange: false` on behavior or contract leaves their attributes
+            where they were written.
 
             `budget` measures only the limits it writes, so a project writing
             none is measured for nothing. A table cell is measured for its

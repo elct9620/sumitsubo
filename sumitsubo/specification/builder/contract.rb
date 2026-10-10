@@ -24,7 +24,7 @@ module Sumitsubo
       # from.
       class Contract
         KINDS = [Block::HEADING, Block::PARAGRAPH,
-                 Block::ITEM, Block::CODE, Block::ROW]
+                 Block::ITEM, Block::CODE, Block::TABLE, Block::ROW]
 
         # The levels this form is written at: a name, and a heading that either
         # scopes the definition, names the marker, or declares a contract.
@@ -81,6 +81,7 @@ module Sumitsubo
           @contracts.each { |contract| checked(contract) }
           raise Sumitsubo::Misshapen.new(@refusals) unless @refusals.empty?
 
+          closed(nil)
           Specification.new(@key, @text, @includes, @path, attributes, @contracts)
         end
 
@@ -118,6 +119,7 @@ module Sumitsubo
           when Block::PARAGRAPH then described(block)
           when Block::ITEM then item(block)
           when Block::CODE then signed(block)
+          when Block::TABLE then tabled(block)
           when Block::ROW then attributed(block)
           end
         end
@@ -144,7 +146,7 @@ module Sumitsubo
         # what it is for.
         def registers(block)
           said = block.text
-          @contract = nil
+          closed(block.line - 1)
           @holding = nil
 
           return scoping(block.line) if said == INCLUDES
@@ -232,9 +234,32 @@ module Sumitsubo
             refuse(line, "writes an attribute row #{Builder.width_of(cells.length)}")
           end
 
+          @contract.arrangement.to = line unless @contract.arrangement.nil?
           Builder.carried(@contract.attributes, ATTRIBUTES,
                           Builder::Row.new(line: line, said: cells[0].text.strip, value: cells[1].text.strip),
                           "an attribute a contract carries", @path, TOPIC)
+        end
+
+        # Where the attributes table runs, from its heading row through the
+        # delimiter beneath it; each row extends it. A second table under one
+        # contract extends the first rather than starting again.
+        def tabled(block)
+          return if @contract.nil?
+
+          arrangement = arranged
+          arrangement.from = block.line if arrangement.from.nil?
+          arrangement.to = block.line + 1
+        end
+
+        def arranged
+          @contract.arrangement = Arrangement.new(nil, nil, nil, nil) if @contract.arrangement.nil?
+          @contract.arrangement
+        end
+
+        # A contract ends where the next heading at its level begins.
+        def closed(ends)
+          @contract.arrangement.ends = ends unless @contract.nil? || @contract.arrangement.nil?
+          @contract = nil
         end
 
         # A fenced block taken as the signature of the contract it sits under. A
@@ -249,6 +274,7 @@ module Sumitsubo
 
           @contract.attributes[LANGUAGE] = [block.language] unless block.language.nil?
           @contract.attributes[SIGNATURE] = [block.text]
+          arranged.above = block.line
           return unless block.language.nil?
 
           gathered(block.line, "writes a signature with no language, which is what says how #{@contract.key} is spelled")

@@ -225,5 +225,136 @@ File.write(".spec/glossary.md", WIDE)
 puts "exit=#{cli.run(["fmt"])}"
 puts "the dash is rewritten: #{!File.read(".spec/glossary.md").include?("`Purchase` —")}"
 
+File.write(".sumi.json", "{}\n")
+File.delete(".spec/behavior/ordering.md")
+
+# The attributes follow the steps, the way a table added afterwards lands.
+UNARRANGED = <<~FEATURE
+  # Arranging
+
+  ## `R-1` A behavior on its way out
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | a run |
+  | When | it is read |
+  | Then | it answers |
+
+  | Attribute | Value |
+  | --- | --- |
+  | deprecated | R-2 replaces it |
+FEATURE
+
+# @behavior FM-015
+puts "--- a scenario writing its attributes under its steps ---"
+File.write(".spec/behavior/arranging.md", UNARRANGED)
+puts "exit=#{cli.run(["fmt", "--check"])}"
+puts "left as written: #{File.read(".spec/behavior/arranging.md") == UNARRANGED}"
+
+# @behavior FM-016
+puts "--- and the run that writes them above the steps ---"
+puts "exit=#{cli.run(["fmt"])}"
+puts File.read(".spec/behavior/arranging.md")
+puts "exit=#{cli.run(["fmt", "--check"])}"
+
+# The note after the signature is prose its writer put there, so only the
+# table moves.
+SIGNED = <<~DEFINITION
+  # Store
+
+  ## `Store#read`
+
+  Read one.
+
+  ```ruby
+  class Store
+    def read(key)
+    end
+  end
+  ```
+
+  A missing key answers nil.
+
+  | Attribute | Value |
+  | --- | --- |
+  | internal | yes |
+DEFINITION
+
+# @behavior FM-017
+puts "--- a contract writing its attributes under its signature ---"
+File.write(".spec/contract/store.md", SIGNED)
+puts "exit=#{cli.run(["fmt", "--check"])}"
+puts "left as written: #{File.read(".spec/contract/store.md") == SIGNED}"
+
+# @behavior FM-018
+puts "--- and the run that writes them above the signature ---"
+puts "exit=#{cli.run(["fmt"])}"
+puts File.read(".spec/contract/store.md")
+puts "exit=#{cli.run(["fmt", "--check"])}"
+File.delete(".spec/contract/store.md")
+
+# @behavior FM-019
+puts "--- a contract with no signature writes its attributes last ---"
+File.write(".spec/contract/cli.md", <<~DEFINITION)
+  # CLI
+
+  ## Marker
+
+  `@command`
+
+  ## `verify`
+
+  | Attribute | Value |
+  | --- | --- |
+  | unverifiable | no test runs the executable |
+
+  Check the source against the specification.
+DEFINITION
+puts "exit=#{cli.run(["fmt"])}"
+puts File.read(".spec/contract/cli.md")
+File.delete(".spec/contract/cli.md")
+
+# @behavior FM-020
+puts "--- a project that switched arrange off ---"
+File.write(".spec/behavior/arranging.md", UNARRANGED)
+File.write(".spec/contract/store.md", SIGNED)
+File.write(".sumi.json", "{ \"specifications\": { \"behavior\": { \"arrange\": false }, " \
+                         "\"contract\": { \"arrange\": false } } }\n")
+puts "exit=#{cli.run(["fmt"])}"
+puts "left as written: #{File.read(".spec/behavior/arranging.md") == UNARRANGED} " \
+     "#{File.read(".spec/contract/store.md") == SIGNED}"
+File.write(".sumi.json", "{}\n")
+File.delete(".spec/contract/store.md")
+
+# @behavior FM-021
+puts "--- a scenario out of order whose attributes are under its steps ---"
+File.write(".spec/behavior/arranging.md", <<~FEATURE)
+  # Arranging
+
+  ## `A-2` Written first
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | two |
+  | When | it is read |
+  | Then | it is two |
+
+  | Attribute | Value |
+  | --- | --- |
+  | unverifiable | nothing reads it |
+
+  ## `A-1` Written second
+
+  | Step | Statement |
+  | --- | --- |
+  | Given | one |
+  | When | it is read |
+  | Then | it is one |
+FEATURE
+puts "exit=#{cli.run(["fmt", "--check"])}"
+puts "exit=#{cli.run(["fmt"])}"
+puts File.read(".spec/behavior/arranging.md")
+puts "exit=#{cli.run(["fmt", "--check"])}"
+
 Dir.chdir(back)
 root.rmtree

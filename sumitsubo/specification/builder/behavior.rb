@@ -64,7 +64,7 @@ module Sumitsubo
 
         def build(blocks)
           blocks.each { |block| taken(block) }
-          closed
+          closed(nil)
           gathered(1, "declares no title") if @key.nil?
           raise Sumitsubo::Misshapen.new(@refusals) unless @refusals.empty?
 
@@ -109,7 +109,7 @@ module Sumitsubo
           return beside(block) if @scoping && block.level > SCENARIO
           return unless block.level == SCENARIO
 
-          closed
+          closed(block.line - 1)
           @scoping = block.text == INCLUDES
           return scoping(block.line) if @scoping
 
@@ -121,8 +121,9 @@ module Sumitsubo
         # A scenario ends where the next heading at its level begins, and the
         # steps it never stated are said at its heading. One whose heading or
         # step rows were already refused has said what is wrong with it.
-        def closed
+        def closed(ends)
           scenario = @open
+          scenario.arrangement.ends = ends unless scenario.nil? || scenario.arrangement.nil?
           @open = nil
           @table = nil
           stepped = @step
@@ -187,7 +188,8 @@ module Sumitsubo
         def tabled(block)
           @table = block.cells.map { |cell| cell.text.strip }
           return if @scoping || @open.nil?
-          return if @table == STEPPED || @table == ATTRIBUTED
+          return placed_above(block.line) if @table == STEPPED
+          return placed(block.line, block.line + 1) if @table == ATTRIBUTED
 
           misstep(block.line, "writes a table headed #{@table.join(" and ")}, " \
                               "where a scenario holds its steps and its attributes")
@@ -212,10 +214,31 @@ module Sumitsubo
           if @table == STEPPED
             stage(line, name, value)
           elsif @table == ATTRIBUTED
+            placed(line, line)
             Builder.carried(@open.attributes, ATTRIBUTES,
                             Builder::Row.new(line: line, said: name, value: value),
                             "an attribute a scenario carries", @path, TOPIC)
           end
+        end
+
+        # Where the attributes table runs, from its heading row through the
+        # delimiter beneath it to its last row. A second table under one
+        # scenario extends the first rather than starting again.
+        def placed(from, to)
+          arrangement = arranged
+          arrangement.from = from if arrangement.from.nil?
+          arrangement.to = to
+        end
+
+        # The steps the attributes sit right above, which are their first table.
+        def placed_above(line)
+          arrangement = arranged
+          arrangement.above = line if arrangement.above.nil?
+        end
+
+        def arranged
+          @open.arrangement = Arrangement.new(nil, nil, nil, nil) if @open.arrangement.nil?
+          @open.arrangement
         end
 
         # One step, held under the scenario as what it states, where the order
