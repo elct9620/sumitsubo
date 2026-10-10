@@ -27,7 +27,8 @@ edge and handed in.
                           ┌─────────────────────────┐
         bin/sumi.rb ─────►│  Config (DTO)           │──── root
                 │         │  root / exclusion /     │──── exclusion
-                │         │  how each one runs      │──── switches
+                │         │  how each one runs /    │──── switches
+                │         │  where the run began    │──── here
                 │         └───────────┬─────────────┘
                 │                     │ handed to the stage that needs it
                 ▼                     ▼

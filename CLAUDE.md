@@ -72,6 +72,9 @@ relative to where the run started, so `Place` is the one place that makes one â€
 which answers a `Pathname` on every branch, rather than the `join` the
 ecosystem writes.
 
+Where the run started is asked once, and the configuration holds it as `here`.
+A rendered path becomes a `Place` through `new`, never rendered twice.
+
 A seam normalises rather than refusing: `load` takes what it is handed and
 wraps it, the way `Config.load` does, so a caller composing a path itself is
 not made to say so twice.
