@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.1.0-preview13](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview12...v0.1.0-preview13) (2026-10-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **form:** a definition naming one contract under two headings is refused; write each language's in a definition of its own.
+* **form:** an attribute written among a scenario's steps, a second When or Then, or a scenario missing a step is refused.
+
+### Features
+
+* **config:** let a project budget its specification's sentences and paragraphs ([d49b6db](https://github.com/elct9620/sumitsubo/commit/d49b6db02c1a6d6756381778160d4948cda0a051))
+* **config:** let a specification be switched by words of its own ([adf325e](https://github.com/elct9620/sumitsubo/commit/adf325efcd43750ccf8e61d5cd7be89c10ca774e))
+* **fmt:** measure a specification's prose against its budget ([654e4dd](https://github.com/elct9620/sumitsubo/commit/654e4dd1307dc420fe6e842eca1525014f156a58))
+* **fmt:** write a feature's scenarios in the order of their ids ([2b7a9f6](https://github.com/elct9620/sumitsubo/commit/2b7a9f6c987638f0fe394a622b29fba0a6c19238))
+* **form:** let a scenario or a contract name what it relates to and refines ([aaff18d](https://github.com/elct9620/sumitsubo/commit/aaff18d15e265b72c5853e482c83c832baf36a8b))
+* **form:** read a scenario's steps as its content, and hold their order ([55a8ae1](https://github.com/elct9620/sumitsubo/commit/55a8ae17a604478504abf91bd5a7a6c512f295d3))
+* **form:** refuse a contract name written twice in one definition ([386d1fe](https://github.com/elct9620/sumitsubo/commit/386d1feaca64b6fc5956823466c3bd862af11ab0))
+* **markdown:** hand a form the row naming a table's columns ([386f8d4](https://github.com/elct9620/sumitsubo/commit/386f8d4b1bfe613aff9041660fe3dc528ccb059f))
+* **relate:** answer a key that names more than one statement ([85b5f1a](https://github.com/elct9620/sumitsubo/commit/85b5f1a432e5f99dacc862cd21d1be8e907488be))
+* **relate:** show a statement and what it is related to, two relations out ([3a12ad7](https://github.com/elct9620/sumitsubo/commit/3a12ad78421ef5e2ededb68f33b1ef0edb6adbed))
+* **relation:** keep what one specification says of another ([3321a37](https://github.com/elct9620/sumitsubo/commit/3321a37ab6a6d53591972b99428e8f9f2fa09415))
+* **verify:** answer a relation that names a statement nobody declares ([3ba1c60](https://github.com/elct9620/sumitsubo/commit/3ba1c609764a6ba3d1005e57989aa54d76623a72))
+
+
+### Bug Fixes
+
+* **fmt:** decide between two ids of one value by their letters ([843ffc3](https://github.com/elct9620/sumitsubo/commit/843ffc38b2ae077cf08ecb75c8f6706b157f4b47))
+* **form:** say a relates or refines row naming nothing in words a reader can act on ([f3af8c3](https://github.com/elct9620/sumitsubo/commit/f3af8c36a67be2e4208aa5713872a51dc33eed52))
+* **glossary:** let a vocabulary switched off and never written declare nothing ([306e9bc](https://github.com/elct9620/sumitsubo/commit/306e9bc459eb7fe7f2b969e946dda82d0db2f43c))
+* **glossary:** set aside the vocabulary's own spellings wherever the run starts ([41436ed](https://github.com/elct9620/sumitsubo/commit/41436edc27cf8fc84b4472819919114165b91147))
+* **relate:** answer a mechanism that could not be read as a whole ([c7f275f](https://github.com/elct9620/sumitsubo/commit/c7f275fd6aeea9d6be0a0b6bf10c3b987d404ade))
+* **relate:** say a refused document where a key asked for is not found ([3065488](https://github.com/elct9620/sumitsubo/commit/3065488941fd3e3cd3e413fc2a02c655e4e53cb5))
+* **relate:** say what a switched-on mechanism could not read ([9a2d0c2](https://github.com/elct9620/sumitsubo/commit/9a2d0c21134e0b3983bd1541290b62b39e2be2a6))
+* **stats:** list a file whose only marker dangles as claiming nothing ([11fea7b](https://github.com/elct9620/sumitsubo/commit/11fea7b254adef9c8836363833db32a62de77e3a))
+
+
+### Performance Improvements
+
+* **contract:** read a file two definitions reach once per language ([ae8065b](https://github.com/elct9620/sumitsubo/commit/ae8065b13f99265ebd0fe70b55e7d8b3710a96d5))
+* **place:** answer every path from where the run started, asked once ([f592298](https://github.com/elct9620/sumitsubo/commit/f59229830a8b9cfb7788c5c8812a2ad914a88f12))
+* **place:** stop rendering a path that is rendered already ([e319112](https://github.com/elct9620/sumitsubo/commit/e319112f491f57e936f1a3a2d8f85a8d15014b5d))
+* **scope:** keep each path once without comparing every pair ([be02628](https://github.com/elct9620/sumitsubo/commit/be02628df99dec9e399be333aa481948e9d79747))
+
 ## [0.1.0-preview12](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview11...v0.1.0-preview12) (2026-10-07)
 
 
