@@ -149,22 +149,25 @@ module Sumitsubo
         @barren.run(Reach.covers(features), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         reach = Reach.of(features, relations)
-        claims = Feature.claimed_in(relations, specification)
-        stated = Feature.stated_in(features)
-        declaring = Feature.declaring_in(features)
+        claimed = claims(relations)
+        # Read through the module rather than `stated`: Spinel 2026.09.12
+        # answers that call with nil from inside this method. Master c52df8a1
+        # does not, so call `stated` once the pin moves past it.
+        scenarios = Feature.stated_in(features)
+        declared_by = declaring(features)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.
-        within = Check::Claim.within(claims, declaring, reach)
+        within = Check::Claim.within(claimed, declared_by, reach)
 
-        @unclaimed.run(stated, within).each { |one| findings.add(one) }
-        @stale.run(stated, within).each { |one| findings.add(one) }
-        @misplaced.run(claims, declaring, reach).each { |one| findings.add(one) }
-        @unresolved.run(Feature.named(claims), stated).each { |one| findings.add(one) }
-        @nameless.run(Feature.nameless(claims)).each { |one| findings.add(one) }
+        @unclaimed.run(scenarios, within).each { |one| findings.add(one) }
+        @stale.run(scenarios, within).each { |one| findings.add(one) }
+        @misplaced.run(claimed, declared_by, reach).each { |one| findings.add(one) }
+        @unresolved.run(Feature.named(claimed), scenarios).each { |one| findings.add(one) }
+        @nameless.run(Feature.nameless(claimed)).each { |one| findings.add(one) }
         # A marker standing in front of nothing names a scenario without
         # witnessing one, so it is answered once, by itself, rather than through
         # the comparisons above.
-        @dangling.run(Feature.dangling_in(relations, specification)).each { |one| findings.add(one) }
+        @dangling.run(dangling(relations)).each { |one| findings.add(one) }
       end
 
       private
