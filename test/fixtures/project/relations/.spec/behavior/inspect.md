@@ -8,16 +8,16 @@ What a run answers about one place.
 
 ## `IN-001` A scenario at the center
 
+| Attribute | Value |
+| --- | --- |
+| relates | `contract inspect`, `IN-404` |
+| refines | `SA-001` |
+
 | Step | Statement |
 | --- | --- |
 | Given | a project |
 | When | it is asked |
 | Then | it answers |
-
-| Attribute | Value |
-| --- | --- |
-| relates | `contract inspect`, `IN-404` |
-| refines | `SA-001` |
 
 ## `IN-004` A scenario the contract relates to
 

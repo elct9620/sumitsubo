@@ -8,36 +8,36 @@ What a run counts.
 
 ## `SA-001` A scenario the center refines
 
-| Step | Statement |
-| --- | --- |
-| Given | a project |
-| When | it is asked |
-| Then | it answers |
-
 | Attribute | Value |
 | --- | --- |
 | relates | `IN-004` |
 
-## `SA-002` A scenario refining what the center refines
-
 | Step | Statement |
 | --- | --- |
 | Given | a project |
 | When | it is asked |
 | Then | it answers |
+
+## `SA-002` A scenario refining what the center refines
 
 | Attribute | Value |
 | --- | --- |
 | refines | `SA-001` |
 
-## `SA-003` A scenario three relations away
-
 | Step | Statement |
 | --- | --- |
 | Given | a project |
 | When | it is asked |
 | Then | it answers |
 
+## `SA-003` A scenario three relations away
+
 | Attribute | Value |
 | --- | --- |
 | refines | `SA-002` |
+
+| Step | Statement |
+| --- | --- |
+| Given | a project |
+| When | it is asked |
+| Then | it answers |

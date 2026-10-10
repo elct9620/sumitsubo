@@ -32,24 +32,24 @@ What placing an order does.
 
 ## `O-004` An order is shipped
 
+| Attribute | Value |
+| --- | --- |
+| unverifiable | no test reaches the courier |
+
 | Step | Statement |
 | --- | --- |
 | Given | a placed order |
 | When | a courier collects it |
 | Then | it leaves the warehouse |
 
+## `O-005` An order is printed
+
 | Attribute | Value |
 | --- | --- |
-| unverifiable | no test reaches the courier |
-
-## `O-005` An order is printed
+| deprecated | O-002 replaces it |
 
 | Step | Statement |
 | --- | --- |
 | Given | a placed order |
 | When | it is printed |
 | Then | the slip lists the item |
-
-| Attribute | Value |
-| --- | --- |
-| deprecated | O-002 replaces it |
