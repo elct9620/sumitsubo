@@ -143,3 +143,11 @@ never answers `1`.
 | Given | contracts declaring one key twice |
 | When | `sumi relate` is given that key |
 | Then | it says nothing declares it, both places follow, and the run answers 2 |
+
+## `RL-017` A key asked for under a switched-on mechanism nobody wrote
+
+| Step | Statement |
+| --- | --- |
+| Given | the glossary switched on and never written |
+| When | `sumi relate` is given a glossary key |
+| Then | it says nothing declares it, the missing glossary follows, and the run answers 2 |

@@ -61,3 +61,7 @@ exit=2
 nothing declares contract inspect
 @command inspect is declared twice, at .spec/contract/again.md:13 and .spec/contract/cli.md:13
 exit=2
+--- a key asked for under a switched-on mechanism nobody wrote ---
+nothing declares glossary Order
+no glossary at .spec/glossary.md; sumi init lays one down
+exit=2

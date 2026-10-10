@@ -70,3 +70,12 @@ puts "exit=#{cli.run(["relate", "X-003"])}"
 puts "--- a key asked for where its mechanism declares one key twice ---"
 puts "exit=#{cli.run(["relate", "contract inspect"])}"
 Dir.chdir(back)
+
+# A mechanism the project keeps and never wrote is absent, which fails the
+# way an unreadable one does; one switched off and never written declares
+# nothing, which RL-010 holds.
+# @behavior RL-017
+puts "--- a key asked for under a switched-on mechanism nobody wrote ---"
+Dir.chdir("test/fixtures/project/related-unwritten")
+puts "exit=#{cli.run(["relate", "glossary Order"])}"
+Dir.chdir(back)
