@@ -1,11 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/place"
-require "sumitsubo/finding"
-require "sumitsubo/check"
-require "sumitsubo/reach"
-require "sumitsubo/source/repository"
-require "sumitsubo/relation"
 
 module Sumitsubo
   # What a feature declares, and how it is read.

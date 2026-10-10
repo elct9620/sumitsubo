@@ -1,13 +1,6 @@
 require "pathname"
 require "sumitsubo/error"
 require "sumitsubo/place"
-require "sumitsubo/finding"
-require "sumitsubo/reach"
-require "sumitsubo/relation"
-require "sumitsubo/check"
-require "sumitsubo/source"
-require "sumitsubo/source/repository"
-require "sumitsubo/specification"
 
 module Sumitsubo
   # The structured specification the Contract mechanism verifies against. What

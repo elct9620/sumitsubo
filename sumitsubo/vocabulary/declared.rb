@@ -1,13 +1,8 @@
 require "pathname"
 require "sumitsubo/error"
-require "sumitsubo/finding"
+require "sumitsubo/place"
 require "sumitsubo/check"
 require "sumitsubo/source/scope"
-require "sumitsubo/source/repository"
-require "sumitsubo/specification"
-require "sumitsubo/place"
-require "sumitsubo/relation"
-require "sumitsubo/source"
 
 module Sumitsubo
   # The structured specification the Glossary mechanism verifies against.

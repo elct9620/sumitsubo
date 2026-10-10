@@ -1,13 +1,8 @@
-require "pathname"
-require "sumitsubo/error"
+require "sumitsubo/check"
 require "sumitsubo/place"
-require "sumitsubo/finding"
 require "sumitsubo/reach"
 require "sumitsubo/relation"
-require "sumitsubo/check"
 require "sumitsubo/source"
-require "sumitsubo/source/repository"
-require "sumitsubo/specification"
 require "sumitsubo/definition/declared"
 
 module Sumitsubo

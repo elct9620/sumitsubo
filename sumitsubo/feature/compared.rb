@@ -1,12 +1,6 @@
-require "pathname"
-require "sumitsubo/error"
-require "sumitsubo/place"
-require "sumitsubo/finding"
 require "sumitsubo/check"
-require "sumitsubo/reach"
-require "sumitsubo/source/repository"
-require "sumitsubo/relation"
-require "sumitsubo/feature/declared"
+require "sumitsubo/place"
+require "sumitsubo/feature/kept"
 
 module Sumitsubo
   # What a feature hands the Behavior mechanism's checks.
