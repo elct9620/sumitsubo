@@ -168,7 +168,7 @@ opened.
 | --- | --- |
 | Given | a contract writing prose, its signature, a note after it, and then its attributes |
 | When | `sumi fmt` runs |
-| Then | the attributes read between the prose and the signature, and the note stays after the signature |
+| Then | the attributes land above the signature, and the note stays after it |
 
 ## `FM-019` A contract with no signature writes its attributes last
 
@@ -182,7 +182,7 @@ opened.
 
 | Step | Statement |
 | --- | --- |
-| Given | a scenario and a contract writing their attributes after their steps and signature, and `arrange: false` on both |
+| Given | attributes under the steps and under the signature, and `arrange: false` on both |
 | When | `sumi fmt` runs |
 | Then | both files are left as written |
 

@@ -223,7 +223,7 @@ module Sumitsubo
 
         # Where the attributes table runs, from its heading row through the
         # delimiter beneath it to its last row. A second table under one
-        # scenario extends the first rather than starting again.
+        # scenario extends the first, so what stands between them moves too.
         def placed(from, to)
           arrangement = arranged
           arrangement.from = from if arrangement.from.nil?

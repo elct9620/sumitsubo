@@ -327,6 +327,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │  specification/repository.rb                  every specification
 │  │  specification/block.rb                       what a document is made of
 │  │  specification/rewrite.rb                     one line, as it would be written
+│  │  specification/arrange.rb                     attributes moved where they sit
 │  │  specification/parser.rb                      port
 │  │  specification/parser/markdown.rb             adapter, both grammars
 │  │  specification/builder.rb                     what every form shares

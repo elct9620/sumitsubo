@@ -242,7 +242,7 @@ module Sumitsubo
 
         # Where the attributes table runs, from its heading row through the
         # delimiter beneath it; each row extends it. A second table under one
-        # contract extends the first rather than starting again.
+        # contract extends the first, so what stands between them moves too.
         def tabled(block)
           return if @contract.nil?
 
