@@ -140,6 +140,8 @@ opened.
 
 ## `FM-015` A scenario writing its attributes under its steps
 
+Reporting first lets a reader see where a table stands before anything moves.
+
 | Step | Statement |
 | --- | --- |
 | Given | a scenario whose attributes table follows its steps |
@@ -147,6 +149,8 @@ opened.
 | Then | the scenario answers at the table's first row, and the file is left alone |
 
 ## `FM-016` The run that writes a scenario's attributes above its steps
+
+Attributes above the steps tell a reader what holds of a scenario before what it does.
 
 | Step | Statement |
 | --- | --- |
@@ -156,6 +160,8 @@ opened.
 
 ## `FM-017` A contract writing its attributes under its signature
 
+A contract answers the way a scenario does, so one rule covers both forms.
+
 | Step | Statement |
 | --- | --- |
 | Given | a contract whose attributes table follows its signature |
@@ -163,6 +169,8 @@ opened.
 | Then | the contract answers at the table's first row, and the file is left alone |
 
 ## `FM-018` The run that writes a contract's attributes above its signature
+
+Only the table moves, since a note after the signature may lean on the code above it.
 
 | Step | Statement |
 | --- | --- |
@@ -172,6 +180,8 @@ opened.
 
 ## `FM-019` A contract with no signature writes its attributes last
 
+With nothing to sit above, the table goes after everything the contract says.
+
 | Step | Statement |
 | --- | --- |
 | Given | a contract under a marker writing its attributes above its prose |
@@ -180,6 +190,8 @@ opened.
 
 ## `FM-020` A project that switched arrange off
 
+A project may keep its own layout, so the switch leaves every table where it was written.
+
 | Step | Statement |
 | --- | --- |
 | Given | attributes under the steps and under the signature, and `arrange: false` on both |
@@ -187,6 +199,8 @@ opened.
 | Then | both files are left as written |
 
 ## `FM-021` A scenario out of order whose attributes are under its steps
+
+Both rewrites land in one run, so a second run finds the file already settled.
 
 | Step | Statement |
 | --- | --- |
