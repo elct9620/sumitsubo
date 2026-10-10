@@ -163,7 +163,7 @@ module Sumitsubo
             taken[key] = true
             other = Relation::Reference.new(mechanism: root.mechanism, key: key)
             found.push("claimed beside  #{named(other)}#{titled(declared(other))}  " \
-                       "#{Place.of(claim.path, claim.comment_line).spoken}  (derived)")
+                       "#{Place.new(path: claim.path, line: claim.comment_line).spoken}  (derived)")
           end
         end
         found
@@ -187,7 +187,7 @@ module Sumitsubo
         return "  in a specification that could not be read" if statement.nil? && unread?(reference)
         return "  declared nowhere" if statement.nil?
 
-        "#{titled(statement)}  #{Place.of(statement.path, statement.line).spoken}"
+        "#{titled(statement)}  #{Place.new(path: statement.path, line: statement.line).spoken}"
       end
 
       def unread?(reference)

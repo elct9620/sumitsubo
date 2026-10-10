@@ -175,7 +175,7 @@ module Sumitsubo
       def unordered(scenario, lowest)
         Finding.new(
           check: UNORDERED, difference: true,
-          place: Place.of(scenario.path, scenario.line),
+          place: Place.new(path: scenario.path, line: scenario.line),
           message: "#{scenario.key} is written before #{lowest.key}"
         )
       end

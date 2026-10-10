@@ -190,7 +190,7 @@ module Sumitsubo
         found.push(Specification::Rewrite.new(
           Finding.new(
             check: MISWRITTEN, difference: true,
-            place: Place.of(statement.path, statement.line),
+            place: Place.new(path: statement.path, line: statement.line),
             message: "#{statement.key} is set off with a wide dash where a plain one is written"
           ),
           statement.line,

@@ -45,7 +45,7 @@ module Sumitsubo
       end
 
       def self.first_written(path, line)
-        "first written at #{Place.of(path, line).spoken}"
+        "first written at #{Place.new(path: path, line: line).spoken}"
       end
 
       # What a block is called when it is written where only globs stand.
@@ -70,7 +70,7 @@ module Sumitsubo
       # goes on either way and the raise reaches no further than the block it
       # was made about.
       def self.refusal(path, line, said, topic)
-        Refusal.new(Place.of(path, line), "#{said}; sumi help #{topic} has the form")
+        Refusal.new(Place.new(path: path, line: line), "#{said}; sumi help #{topic} has the form")
       end
 
       def self.refuse(path, line, said, topic)

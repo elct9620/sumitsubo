@@ -179,7 +179,7 @@ module Sumitsubo
     # What a claim can resolve against. Only the marker reading makes claims,
     # so only its definitions are here.
     def self.at(interface)
-      Place.of(interface.path, interface.line).spoken
+      Place.new(path: interface.path, line: interface.line).spoken
     end
   end
 end

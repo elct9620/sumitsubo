@@ -125,7 +125,7 @@ module Sumitsubo
     end
 
     def self.at(scenario)
-      Place.of(scenario.path, scenario.line).spoken
+      Place.new(path: scenario.path, line: scenario.line).spoken
     end
   end
 end

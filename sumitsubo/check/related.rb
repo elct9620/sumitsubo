@@ -16,17 +16,17 @@ module Sumitsubo
       def self.unresolved(relation, writer)
         Finding.new(
           check: "#{relation.subject.mechanism}/#{UNRESOLVED}", difference: false,
-          place: Place.of(writer.path, writer.line),
+          place: Place.new(path: writer.path, line: writer.line),
           message: "#{written(relation)}, which no #{relation.object.mechanism} specification declares"
         )
       end
 
       # A relation naming a key more than one statement answers to.
       def self.ambiguous(relation, writer, found)
-        places = found.map { |one| Place.of(one.path, one.line).spoken }
+        places = found.map { |one| Place.new(path: one.path, line: one.line).spoken }
         Finding.new(
           check: "#{relation.subject.mechanism}/#{AMBIGUOUS}", difference: false,
-          place: Place.of(writer.path, writer.line),
+          place: Place.new(path: writer.path, line: writer.line),
           message: "#{written(relation)}, which #{relation.object.mechanism} declares at #{places.join(" and ")}"
         )
       end

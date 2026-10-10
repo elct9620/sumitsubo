@@ -31,7 +31,7 @@ module Sumitsubo
         feature.statements.each do |scenario|
           found.push(Check::Stated.new(
             key: scenario.key,
-            place: Place.of(scenario.path, scenario.line),
+            place: Place.new(path: scenario.path, line: scenario.line),
             said: "#{MARKER} #{scenario.key}",
             unverifiable: Check.unverifiable(scenario.attributes)
           ))

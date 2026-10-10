@@ -102,7 +102,10 @@ module Sumitsubo
         found = "declared nowhere"
         features.each do |feature|
           feature.statements.each do |scenario|
-            found = "#{Place.of(scenario.path, scenario.line).spoken}  #{scenario.text}" if scenario.key == id
+            next unless scenario.key == id
+
+            at = Place.new(path: scenario.path, line: scenario.line)
+            found = "#{at.spoken}  #{scenario.text}"
           end
         end
         found
@@ -115,7 +118,7 @@ module Sumitsubo
             next unless scenario.key == key
 
             said.push("#{key}  #{scenario.text}")
-            said.push("  declared  #{Place.of(scenario.path, scenario.line).spoken}")
+            said.push("  declared  #{Place.new(path: scenario.path, line: scenario.line).spoken}")
           end
         end
         claiming = claims.select { |claim| claim.key == key }

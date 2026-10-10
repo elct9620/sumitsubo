@@ -125,21 +125,21 @@ module Sumitsubo
         # what keeps the second grammar to a single question.
         def spans_in(reading, paths)
           spanned = {}
-          paths.each { |path| spanning(reading[path], path, spanned) }
+          paths.each { |path| spanning(reading[path], Place.file(path), spanned) }
           spanned
         end
 
-        def spanning(captures, path, spanned)
+        def spanning(captures, where, spanned)
           captures.each do |capture|
             next if OF[capture.name].nil?
 
             said = folded(capture.text)
-            spanned[said] = spans_of(said, path) if spanned[said].nil?
+            spanned[said] = spans_of(said, where) if spanned[said].nil?
           end
         end
 
-        def spans_of(said, path)
-          found = @grammar.captures_of(INLINE, said, SPANS, Place.file(path))
+        def spans_of(said, where)
+          found = @grammar.captures_of(INLINE, said, SPANS, where)
           found.map { |capture| Span.new(taken_from(capture.text), capture.start, capture.finish) }
         end
 

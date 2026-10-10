@@ -63,7 +63,7 @@ module Sumitsubo
 
             found.push(Finding.new(
               check: @check, difference: false,
-              place: Place.of(section.path, section.line),
+              place: Place.new(path: section.path, line: section.line),
               message: "#{section.key} names no include; " \
                        "the words it declares are checked nowhere"
             ))
