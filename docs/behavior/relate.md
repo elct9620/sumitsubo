@@ -134,7 +134,7 @@ never answers `1`.
 | --- | --- |
 | Given | contracts declaring one key twice, and a scenario relating to it |
 | When | `sumi relate` is given the scenario's id |
-| Then | the contract answers as unreadable, followed by where it is declared, and the run answers 2 |
+| Then | the contract answers as unreadable, followed by both places, and the run answers 2 |
 
 ## `RL-016` A key asked for where its mechanism declares one key twice
 
@@ -142,4 +142,4 @@ never answers `1`.
 | --- | --- |
 | Given | contracts declaring one key twice |
 | When | `sumi relate` is given that key |
-| Then | it says nothing declares it, where it is declared follows, and the run answers 2 |
+| Then | it says nothing declares it, both places follow, and the run answers 2 |
