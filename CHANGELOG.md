@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-preview14](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview13...v0.1.0-preview14) (2026-10-10)
+
+
+### Features
+
+* **fmt:** write each statement's attributes right above what they describe ([ee0af73](https://github.com/elct9620/sumitsubo/commit/ee0af73ea63cd1a0b5280e0267701218a573de86))
+
 ## [0.1.0-preview13](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview12...v0.1.0-preview13) (2026-10-10)
 
 
