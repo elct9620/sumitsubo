@@ -28,6 +28,7 @@ module Sumitsubo
         @failed = {}
         @told = {}
         @said = {}
+        @statements = {}
       end
 
       # Everything this mechanism's form refused, each answered at the line that
@@ -49,6 +50,16 @@ module Sumitsubo
       # be read as a whole answers the first time and is passed over after.
       def broken?(mechanism)
         !@broken[mechanism.specification].nil?
+      end
+
+      # Every statement this mechanism declares, or nil where its
+      # specifications cannot be read. Read once, since what a relation names
+      # is looked up as often as relations name it.
+      def statements(mechanism, config)
+        name = mechanism.specification
+        return @statements[name] if @statements.key?(name)
+
+        @statements[name] = guard(mechanism) { mechanism.statements(config, self) }
       end
 
       # What a mechanism does with its specifications, or nil where they cannot

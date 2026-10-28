@@ -43,14 +43,13 @@ module Sumitsubo
         @specifications = specifications
         @relations = relations
         @findings = findings
-        @statements = {}
       end
 
       # What the specifications these mechanisms keep say of one another.
       def keep(mechanisms)
         names = @mechanisms.map { |one| one.specification }
         mechanisms.each do |mechanism|
-          statements = statements_of(mechanism)
+          statements = @specifications.statements(mechanism, @config)
           Written.keep(mechanism.specification, statements, names, @relations) unless statements.nil?
         end
       end
@@ -63,25 +62,6 @@ module Sumitsubo
         end
       end
 
-      # Every statement this mechanism declares, or nil where its
-      # specifications cannot be read. Read once, since what a relation names
-      # is looked up as often as relations name it.
-      def statements_of(mechanism)
-        name = mechanism.specification
-        return @statements[name] if @statements.key?(name)
-
-        @statements[name] = @specifications.guard(mechanism) { mechanism.statements(@config, @specifications) }
-      end
-
-      # A mechanism's statements whether or not it is switched on, with
-      # whatever it could not read answered as an answer names it. A command
-      # may have run no stage for it, so this is not left to the stages.
-      def statements_with_refusals(mechanism)
-        named = statements_of(mechanism)
-        @specifications.tell(mechanism, @findings)
-        named
-      end
-
       private
 
       # One relation, answered where what it names is not one statement. Which
@@ -90,10 +70,11 @@ module Sumitsubo
       # that one, so the refusal answers for it instead.
       def check(relation)
         target = mechanism_of(relation.object.mechanism)
-        named = statements_with_refusals(target)
+        named = @specifications.statements(target, @config)
+        @specifications.tell(target, @findings)
         return if named.nil? || @specifications.unreadable?(target)
 
-        writing = statements_of(mechanism_of(relation.subject.mechanism))
+        writing = @specifications.statements(mechanism_of(relation.subject.mechanism), @config)
         writer = writing.find { |one| one.key == relation.subject.key }
         found = target.find(relation.object.key, writer, @config, @specifications, @relations, named)
         return if found.length == 1

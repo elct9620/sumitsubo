@@ -33,6 +33,7 @@ module Sumitsubo
           return 2
         end
 
+        @config = config
         current = Run.new(config, languages, parsers)
         return 2 if current.rootless?
 
@@ -48,7 +49,7 @@ module Sumitsubo
           puts "nothing declares #{key}"
           # It may stand in a document that could not be read, which is then
           # said rather than left as the answer.
-          searched(written).each { |mechanism| @current.written.statements_with_refusals(mechanism) if @current.specifications.unreadable?(mechanism) }
+          searched(written).each { |mechanism| statements_of(mechanism) if @current.specifications.unreadable?(mechanism) }
         end
         roots.each { |root| answered(root).each { |line| puts line } }
         # A switched-off mechanism is read for what the answer shows, so what
@@ -63,12 +64,21 @@ module Sumitsubo
       def rooted(written)
         found = []
         searched(written).each do |mechanism|
-          held = @current.written.statements_of(mechanism)
+          held = @current.specifications.statements(mechanism, @config)
           next if held.nil? || held.none? { |one| one.key == written.key }
 
           found.push(Relation::Reference.new(mechanism: mechanism.specification, key: written.key))
         end
         found
+      end
+
+      # A mechanism's statements whether or not it is switched on, with
+      # whatever it could not read answered as an answer names it. A command
+      # may have run no stage for it, so this is not left to the stages.
+      def statements_of(mechanism)
+        held = @current.specifications.statements(mechanism, @config)
+        @current.specifications.tell(mechanism, @current.findings)
+        held
       end
 
       # The mechanisms a key is looked for under.
@@ -203,7 +213,7 @@ module Sumitsubo
         mechanism = Mechanism.of(reference.mechanism)
         return nil if mechanism.nil?
 
-        held = @current.written.statements_with_refusals(mechanism)
+        held = statements_of(mechanism)
         held.nil? ? nil : held.find { |one| one.key == reference.key }
       end
     end
