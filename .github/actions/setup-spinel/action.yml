@@ -11,13 +11,13 @@ inputs:
     default: matz/spinel
   ref:
     description: >-
-      Commit SHA to build: the one a Spinel release names, here 2026.09.12's,
+      Commit SHA to build: the one a Spinel release names, here 2026.10.25's,
       so the toolchain is one anybody can install. A tag or branch would make
       both the cache key and the revision check lie about what is installed,
       so the release is pinned by its commit — which, fetched without the tag,
       names its release `unreleased`.
     required: false
-    default: 112bae85c1a25fc5399009a849f805bfe691426b
+    default: 2814693f6e86b5c0427d9e7a0a7464eba462c64f
   prefix:
     description: Install prefix. `<prefix>/bin` holds the executables.
     required: false
@@ -55,8 +55,7 @@ runs:
           echo "prefix=$prefix"
           echo "spin=$prefix/bin/spin"
           echo "spinel=$prefix/bin/spinel"
-          # `spinel --version` reports the revision as a 12-character prefix.
-          echo "revision=${ref:0:12}"
+          echo "revision=$ref"
           # The runner image sets ImageOS in the process environment
           # rather than the `env` expression context, so the key is
           # built from the former.
@@ -82,11 +81,12 @@ runs:
         got=""
         # The revision is compiled into the binary, so this asks the
         # toolchain what it is rather than trusting the cache key that
-        # produced it.
+        # produced it. It prints an abbreviated SHA in parentheses, whose
+        # length git chooses, so it is matched as a prefix of the pin.
         if [ -x "$spinel" ]; then
-          got=$("$spinel" --version 2>/dev/null | awk '{print $2}') || got=""
+          got=$("$spinel" --version 2>/dev/null | sed -n 's/^[^(]*(\([0-9a-f]*\)).*/\1/p') || got=""
         fi
-        if [ "$got" = "$want" ]; then
+        if [ -n "$got" ] && [ "${want#"$got"}" != "$want" ]; then
           echo "usable=true" >> "$GITHUB_OUTPUT"
           echo "toolchain reports $got — the pinned revision; skipping the build"
         else
@@ -132,8 +132,8 @@ runs:
         # Whichever branch got us here, the toolchain now on disk must be the
         # pinned revision. Asserting it once at the end makes that a fact the
         # steps downstream can build on.
-        got=$("$prefix/bin/spinel" --version | awk '{print $2}')
-        if [ "$got" != "$want" ]; then
+        got=$("$prefix/bin/spinel" --version | sed -n 's/^[^(]*(\([0-9a-f]*\)).*/\1/p')
+        if [ -z "$got" ] || [ "${want#"$got"}" = "$want" ]; then
           echo "::error::spinel reports $got, expected $want" >&2
           exit 1
         fi

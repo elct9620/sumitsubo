@@ -37,8 +37,8 @@ spinel=${SPINEL:-$(command -v spinel || true)}
 pin=$(sed -n 's/^[[:space:]]*default: \([0-9a-f]\{40\}\)$/\1/p' \
   "$root/.github/actions/setup-spinel/action.yml" || true)
 if [ -n "$spinel" ] && [ -n "$pin" ]; then
-  ran=$("$spinel" --version 2>/dev/null | awk '{ print $2 }' || true)
-  if [ -n "$ran" ] && [ "$ran" != "${pin:0:12}" ]; then
+  ran=$("$spinel" --version 2>/dev/null | sed -n 's/^[^(]*(\([0-9a-f]*\)).*/\1/p' || true)
+  if [ -n "$ran" ] && [ "${pin#"$ran"}" = "$pin" ]; then
     printf '{"systemMessage":"The suite ran under spinel %s; CI builds against %s."}\n' \
       "$ran" "${pin:0:12}"
   fi
