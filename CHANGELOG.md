@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-preview15](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview14...v0.1.0-preview15) (2026-10-28)
+
+
+### Bug Fixes
+
+* **finding:** build a refused finding under Spinel 2026.10.25 ([dd693a5](https://github.com/elct9620/sumitsubo/commit/dd693a5585b0009494f9c636ef0e8fb6bf0526d8))
+
 ## [0.1.0-preview14](https://github.com/elct9620/sumitsubo/compare/v0.1.0-preview13...v0.1.0-preview14) (2026-10-10)
 
 
