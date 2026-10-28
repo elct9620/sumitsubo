@@ -158,7 +158,7 @@ module Sumitsubo
 
         said = {}
         misplaced.each { |contract| said[contract.arrangement.from] = unarranged(contract) }
-        written = Specification::Arrange.written(misplaced, lines)
+        written = Specification::Arrange.rearrange(misplaced, lines)
         Specification::Rewrite.between(lines, written, said)
       end
 

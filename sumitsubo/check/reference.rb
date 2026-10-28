@@ -17,7 +17,7 @@ module Sumitsubo
         Finding.new(
           check: "#{relation.subject.mechanism}/#{UNRESOLVED}", difference: false,
           place: Place.new(path: writer.path, line: writer.line),
-          message: "#{written(relation)}, which no #{relation.object.mechanism} specification declares"
+          message: "#{spoken(relation)}, which no #{relation.object.mechanism} specification declares"
         )
       end
 
@@ -27,11 +27,11 @@ module Sumitsubo
         Finding.new(
           check: "#{relation.subject.mechanism}/#{AMBIGUOUS}", difference: false,
           place: Place.new(path: writer.path, line: writer.line),
-          message: "#{written(relation)}, which #{relation.object.mechanism} declares at #{places.join(" and ")}"
+          message: "#{spoken(relation)}, which #{relation.object.mechanism} declares at #{places.join(" and ")}"
         )
       end
 
-      def self.written(relation)
+      def self.spoken(relation)
         "#{relation.subject.key} #{relation.kind} #{relation.object.mechanism} #{relation.object.key}"
       end
     end

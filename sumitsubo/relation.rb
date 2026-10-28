@@ -65,7 +65,7 @@ module Sumitsubo
       # A key as a specification wrote it. One opening with a mechanism's name
       # and a space is that mechanism's; any other is kept by the mechanism
       # writing it, so a scenario names another scenario by its id alone.
-      def self.written(said, own, names)
+      def self.from_key(said, own, names)
         at = said.index(" ")
         unless at.nil?
           named = said[0, at]

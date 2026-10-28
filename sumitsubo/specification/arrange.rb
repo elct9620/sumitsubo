@@ -19,7 +19,7 @@ module Sumitsubo
       # its table where it belongs. A table takes one blank line with it and
       # leaves one where it lands, so the document keeps its length and every
       # heading its line.
-      def self.written(statements, lines)
+      def self.rearrange(statements, lines)
         written = lines.dup
         statements.each { |one| move(written, one) }
         written

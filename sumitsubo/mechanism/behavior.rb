@@ -85,7 +85,7 @@ module Sumitsubo
         said = {}
         ahead.each { |pair| said[pair[0].line] = unordered(pair[0], pair[1]) }
         misplaced.each { |scenario| said[scenario.arrangement.from] = unarranged(scenario) }
-        written = misplaced.empty? ? lines : Specification::Arrange.written(misplaced, lines)
+        written = misplaced.empty? ? lines : Specification::Arrange.rearrange(misplaced, lines)
         written = Behavior.ordered(scenarios, written) unless ahead.empty?
         Specification::Rewrite.between(lines, written, said)
       end

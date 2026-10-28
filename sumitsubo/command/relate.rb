@@ -43,13 +43,13 @@ module Sumitsubo
         current.attributes.keep(Mechanism::ALL)
         @current = current
         @names = Mechanism::ALL.map { |one| one.specification }
-        written = Relation::Reference.written(key, "", @names)
-        roots = rooted(written)
+        reference = Relation::Reference.from_key(key, "", @names)
+        roots = rooted(reference)
         if roots.empty?
           puts "nothing declares #{key}"
           # It may stand in a document that could not be read, which is then
           # said rather than left as the answer.
-          searched(written).each { |mechanism| statements_of(mechanism) if @current.specifications.unreadable?(mechanism) }
+          searched(reference).each { |mechanism| statements_of(mechanism) if @current.specifications.unreadable?(mechanism) }
         end
         roots.each { |root| answered(root).each { |line| puts line } }
         # A switched-off mechanism is read for what the answer shows, so what
@@ -61,13 +61,13 @@ module Sumitsubo
 
       # Every statement the key names: the one under the mechanism it opens
       # with, or, written bare, the one under whichever mechanism declares it.
-      def rooted(written)
+      def rooted(reference)
         found = []
-        searched(written).each do |mechanism|
+        searched(reference).each do |mechanism|
           held = @current.specifications.statements(mechanism, @config)
-          next if held.nil? || held.none? { |one| one.key == written.key }
+          next if held.nil? || held.none? { |one| one.key == reference.key }
 
-          found.push(Relation::Reference.new(mechanism: mechanism.specification, key: written.key))
+          found.push(Relation::Reference.new(mechanism: mechanism.specification, key: reference.key))
         end
         found
       end
@@ -82,8 +82,8 @@ module Sumitsubo
       end
 
       # The mechanisms a key is looked for under.
-      def searched(written)
-        Mechanism::ALL.select { |one| written.mechanism.empty? || written.mechanism == one.specification }
+      def searched(reference)
+        Mechanism::ALL.select { |one| reference.mechanism.empty? || reference.mechanism == one.specification }
       end
 
       def answered(root)

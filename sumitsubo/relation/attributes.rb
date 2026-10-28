@@ -24,10 +24,10 @@ module Sumitsubo
         statements.each do |statement|
           subject = Reference.new(mechanism: mechanism, key: statement.key)
           said(statement, RELATES).each do |one|
-            relations.add(Relation.relates(subject, Reference.written(one, mechanism, names)))
+            relations.add(Relation.relates(subject, Reference.from_key(one, mechanism, names)))
           end
           said(statement, REFINES).each do |one|
-            relations.add(Relation.refines(subject, Reference.written(one, mechanism, names)))
+            relations.add(Relation.refines(subject, Reference.from_key(one, mechanism, names)))
           end
         end
       end
