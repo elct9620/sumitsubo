@@ -156,11 +156,11 @@ module Sumitsubo
           return unless @scoping
           return beside(block) unless block.level == GLOB
 
-          @includes.push(Builder.scoped(block, @path, TOPIC, @includes))
+          @includes.push(Builder.include_from(block, @path, TOPIC, @includes))
         end
 
         def scoping(line)
-          @refusals.push(Builder.rescoped(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
+          @refusals.push(Builder.repeated_include(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
           @scoped_at = line if @scoped_at.nil?
         end
 
@@ -215,7 +215,7 @@ module Sumitsubo
             stage(line, name, value)
           elsif @table == ATTRIBUTED
             placed(line, line)
-            Builder.carried(@open.attributes, ATTRIBUTES,
+            Builder.carry(@open.attributes, ATTRIBUTES,
                             Builder::Row.new(line: line, said: name, value: value),
                             "an attribute a scenario carries", @path, TOPIC)
           end

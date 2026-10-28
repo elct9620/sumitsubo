@@ -15,7 +15,7 @@ module Sumitsubo
       end
 
       # The files a specification reaches, in the order it reached them.
-      def reached_from(path)
+      def reach_of(path)
         found = []
         @all.each do |one|
           next unless one.kind == REACH && one.subject.path == path
@@ -31,7 +31,7 @@ module Sumitsubo
       end
 
       # Every relation of this kind naming a statement this mechanism keeps.
-      def naming(kind, mechanism)
+      def of_mechanism(kind, mechanism)
         found = []
         @all.each do |one|
           next unless one.kind == kind && one.object.mechanism == mechanism
@@ -44,7 +44,7 @@ module Sumitsubo
       # The keys one comment names, each once, in the order they were written.
       # A comment is one place, so what it names besides one claim is what a
       # reader asks about a busy one.
-      def named_in(kinds, mechanism, path, comment_line)
+      def keys_in(kinds, mechanism, path, comment_line)
         found = []
         @all.each do |one|
           next unless kinds.include?(one.kind) && one.object.mechanism == mechanism

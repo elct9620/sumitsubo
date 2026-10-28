@@ -11,7 +11,7 @@ module Sumitsubo
     # put it, since a sentence leaning on the one above it reads wrong moved.
     module Arrange
       # The statements whose attributes stand anywhere else.
-      def self.misplaced(statements, lines)
+      def self.out_of_place(statements, lines)
         statements.select { |one| !one.arrangement.nil? && !one.arrangement.from.nil? && !arranged?(one.arrangement, lines) }
       end
 
@@ -21,7 +21,7 @@ module Sumitsubo
       # heading its line.
       def self.written(statements, lines)
         written = lines.dup
-        statements.each { |one| moved(written, one) }
+        statements.each { |one| move(written, one) }
         written
       end
 
@@ -43,7 +43,7 @@ module Sumitsubo
 
       # One statement's lines, its table taken out and put back where it
       # belongs, written over the lines it held.
-      def self.moved(written, statement)
+      def self.move(written, statement)
         arrangement = statement.arrangement
         start = statement.line
         finish = arrangement.ends.nil? ? written.length : arrangement.ends

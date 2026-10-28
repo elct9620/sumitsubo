@@ -26,7 +26,7 @@ module Sumitsubo
         return 2 if current.unread?
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)
 
-        features = Mechanism::BEHAVIOR.declared(config, current.specifications)
+        features = Mechanism::BEHAVIOR.documents(config, current.specifications)
         tallied(features, current.relations, Mechanism::BEHAVIOR).each { |line| puts line }
         0
       end
@@ -37,7 +37,7 @@ module Sumitsubo
       # and among the files the specification declaring their scenario reaches.
       def tallied(features, relations, mechanism)
         reach = Reach.of(features, relations)
-        declaring = mechanism.declaring(features)
+        declaring = mechanism.declarers(features)
         claims = mechanism.claims(relations)
         within = Check::Claim.within(claims, declaring, reach)
 
@@ -99,7 +99,7 @@ module Sumitsubo
           end
         end
         unclaimed = Check::Claim::Unclaimed.new(Mechanism::Behavior::UNCLAIMED)
-                                         .run(mechanism.stated(features), within).length
+                                         .run(mechanism.promises(features), within).length
         "#{counted(features.length, "specification")}, #{counted(statements, "statement")}, " \
           "#{unclaimed} unclaimed, #{unverifiable} unverifiable, #{deprecated} deprecated"
       end

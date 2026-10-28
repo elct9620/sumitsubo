@@ -54,10 +54,10 @@ module Sumitsubo
         end
 
         def run(findings, definitions, relations, mechanism)
-          reach = Reach.of(Contract.claimed(definitions), relations)
-          claims = Contract.read(relations.naming(Relation::CLAIM, mechanism))
-          stated = Contract.stated_in(definitions)
-          registering = Contract.registering_claims(definitions)
+          reach = Reach.of(Contract.by_claim(definitions), relations)
+          claims = Contract.read(relations.of_mechanism(Relation::CLAIM, mechanism))
+          stated = Contract.promises_in(definitions)
+          registering = Contract.claim_registrars(definitions)
           # What the two checks below compare is the claims that can implement
           # what they name; the rest answer for themselves further down.
           within = Check::Claim.within(claims, registering, reach)
@@ -66,12 +66,12 @@ module Sumitsubo
           @stale.run(stated, within).each { |one| findings.add(one) }
           @duplicated.run(within, stated).each { |one| findings.add(one) }
           @misplaced.run(claims, registering, reach).each { |one| findings.add(one) }
-          @unresolved.run(Contract.named(claims), stated).each { |one| findings.add(one) }
+          @unresolved.run(Contract.claims_with_name(claims), stated).each { |one| findings.add(one) }
           @nameless.run(Contract.nameless(claims)).each { |one| findings.add(one) }
           # A marker standing in front of nothing names an interface without
           # implementing one, so it is answered once, by itself, rather than
           # through the comparisons above.
-          @dangling.run(Contract.read(relations.naming(Relation::DANGLING, mechanism))).each { |one| findings.add(one) }
+          @dangling.run(Contract.read(relations.of_mechanism(Relation::DANGLING, mechanism))).each { |one| findings.add(one) }
         end
       end
 
@@ -92,17 +92,17 @@ module Sumitsubo
         end
 
         def run(findings, definitions, source, relations, mechanism)
-          reach = Reach.of(Contract.defined(definitions), relations)
-          declared = Contract.defining(
-            definitions, Contract.declared_from(relations.naming(Relation::DECLARES, mechanism)), reach
+          reach = Reach.of(Contract.by_declaration(definitions), relations)
+          declared = Contract.registered_declarations(
+            definitions, Contract.declarations_from(relations.of_mechanism(Relation::DECLARES, mechanism)), reach
           )
-          grouped = Contract.declared_in(declared)
+          grouped = Contract.declarations_by_name(declared)
 
-          stated = Contract.stated_names(definitions)
+          stated = Contract.name_promises(definitions)
           @undefined.run(stated, grouped).each { |one| findings.add(one) }
           @stale.run(stated, grouped).each { |one| findings.add(one) }
-          @conflicting.run(Contract.spelled_names(definitions), grouped).each { |one| findings.add(one) }
-          @mismatched.run(Contract.registered_in(definitions, source), grouped).each { |one| findings.add(one) }
+          @conflicting.run(Contract.name_spellings(definitions), grouped).each { |one| findings.add(one) }
+          @mismatched.run(Contract.registrations_in(definitions, source), grouped).each { |one| findings.add(one) }
         end
       end
 
@@ -143,8 +143,8 @@ module Sumitsubo
       # A document this form refused, worded as the finding a run answers
       # with. The check is worded here because it is this mechanism's, the way
       # every other check of its own is.
-      def refused(refusal)
-        Finding.refused(UNREADABLE, refusal)
+      def finding_for(refusal)
+        Finding.from_refusal(UNREADABLE, refusal)
       end
 
       # Each contract with its attributes right above its signature, or last
@@ -153,7 +153,7 @@ module Sumitsubo
       def rewrites(config, definition, lines)
         return [] unless config.switched?(specification, ARRANGE)
 
-        misplaced = Specification::Arrange.misplaced(definition.statements, lines)
+        misplaced = Specification::Arrange.out_of_place(definition.statements, lines)
         return [] if misplaced.empty?
 
         said = {}
@@ -169,7 +169,7 @@ module Sumitsubo
       #
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
-      def declared(config, specifications)
+      def documents(config, specifications)
         definitions = specifications.all(Contract.path_in(config.root), self)
         Contract.refuse_ambiguity(definitions)
         definitions
@@ -178,18 +178,18 @@ module Sumitsubo
       # Every contract the specifications declare, which is what a statement
       # elsewhere names by its key.
       def statements(config, specifications)
-        declared(config, specifications).map { |one| one.statements }.flatten
+        documents(config, specifications).map { |one| one.statements }.flatten
       end
 
       # The files every definition reaches.
       def reach(config, specifications, relations)
-        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations, config.here)
+        Reach.keep(documents(config, specifications), config.base, config.exclusion, relations, config.here)
       end
 
       # What the source says about each contract, kept for whoever asks after:
       # every claim and declaration in the files the definitions reach.
       def keep(config, specifications, source, relations)
-        Contract.keep(declared(config, specifications), source, relations, specification)
+        Contract.keep(documents(config, specifications), source, relations, specification)
       end
 
       # The statements a key written elsewhere names: every one declared under
@@ -199,7 +199,7 @@ module Sumitsubo
       end
 
       def verify(config, findings, specifications, source, relations)
-        definitions = declared(config, specifications)
+        definitions = documents(config, specifications)
         # An include covers no file whichever reading the definition writing it
         # chose, so it is asked once for all of them.
         @barren.run(Reach.covers(definitions), config.base, config.exclusion)

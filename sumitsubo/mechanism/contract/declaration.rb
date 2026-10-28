@@ -106,13 +106,13 @@ module Sumitsubo
         marker.nil? ? language_of(definition, interface) : marker
       end
 
-      def self.claimed(definitions)
+      def self.by_claim(definitions)
         found = []
         definitions.each { |definition| found.push(definition) unless marker_of(definition).nil? }
         found
       end
 
-      def self.defined(definitions)
+      def self.by_declaration(definitions)
         found = []
         definitions.each { |definition| found.push(definition) if marker_of(definition).nil? }
         found
@@ -120,7 +120,7 @@ module Sumitsubo
 
       # The words source claims these contracts with, read in one pass.
       def self.keywords(definitions)
-        claimed(definitions).map { |definition| marker_of(definition) }.uniq.sort
+        by_claim(definitions).map { |definition| marker_of(definition) }.uniq.sort
       end
 
       # An interface defined with a shape other than the one registered. Where

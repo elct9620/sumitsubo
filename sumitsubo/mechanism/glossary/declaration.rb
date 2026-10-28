@@ -59,7 +59,7 @@ module Sumitsubo
       def self.scope(spec, base, exclusion, reached)
         effective = {}
         spec.statements.each do |section|
-          covering(section, reached, base, exclusion).each do |path|
+          cover_of(section, reached, base, exclusion).each do |path|
             effective[path] = laid_over(effective[path], section.statements)
           end
         end
@@ -68,7 +68,7 @@ module Sumitsubo
 
       # What one section covers: the files its globs match, and each
       # specification beside it reaching any of them.
-      def self.covering(section, reached, base, exclusion)
+      def self.cover_of(section, reached, base, exclusion)
         found = paths_for(section, base, exclusion)
         matched = {}
         found.each { |path| matched[path] = true }
@@ -90,7 +90,7 @@ module Sumitsubo
       def self.reaches(beside, base, relations, from)
         found = {}
         beside.each do |spec|
-          reached = relations.reached_from(spec.path).map { |file| from_base(file, base, from) }
+          reached = relations.reach_of(spec.path).map { |file| from_base(file, base, from) }
           found[from_base(spec.path, base, from)] = reached
         end
         found
@@ -106,7 +106,7 @@ module Sumitsubo
 
       # Every line the specification spells a word on, whether as a term or as
       # one a term rejects. Both spellings declare, and neither uses.
-      def self.declared_in(spec)
+      def self.spellings_in(spec)
         spelled = {}
         spec.statements.each { |section| section.statements.each { |term| spells(term, spelled) } }
         spelled

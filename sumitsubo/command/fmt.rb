@@ -26,7 +26,7 @@ module Sumitsubo
 
         measured = []
         current.each_mechanism do |mechanism|
-          mechanism.declared(config, current.specifications).each do |document|
+          mechanism.documents(config, current.specifications).each do |document|
             written(config, mechanism, document, current.findings, checking)
             measured.push(document.path)
           end

@@ -210,11 +210,11 @@ module Sumitsubo
           return unless @holding == INCLUDES
           return beside(block) unless block.level == GLOB
 
-          @includes.push(Builder.scoped(block, @path, TOPIC, @includes))
+          @includes.push(Builder.include_from(block, @path, TOPIC, @includes))
         end
 
         def scoping(line)
-          @refusals.push(Builder.rescoped(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
+          @refusals.push(Builder.repeated_include(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
           @scoped_at = line if @scoped_at.nil?
           @holding = INCLUDES
         end
@@ -235,7 +235,7 @@ module Sumitsubo
           end
 
           @contract.arrangement.to = line unless @contract.arrangement.nil?
-          Builder.carried(@contract.attributes, ATTRIBUTES,
+          Builder.carry(@contract.attributes, ATTRIBUTES,
                           Builder::Row.new(line: line, said: cells[0].text.strip, value: cells[1].text.strip),
                           "an attribute a contract carries", @path, TOPIC)
         end

@@ -33,7 +33,7 @@ module Sumitsubo
       # The last rule to match decides, so a `!` line written after one puts a
       # path back.
       def self.excludes?(rules, path)
-        decided(rules, "#{path}".split("/"), false)
+        verdict(rules, "#{path}".split("/"), false)
       end
 
       # The same question about a directory, which a rule naming one answers
@@ -41,10 +41,10 @@ module Sumitsubo
       # file it can only be one the file sits under. Asked while walking, so a
       # directory left out is never looked inside.
       def self.excludes_directory?(rules, path)
-        decided(rules, "#{path}".split("/"), true)
+        verdict(rules, "#{path}".split("/"), true)
       end
 
-      def self.decided(rules, segments, directory)
+      def self.verdict(rules, segments, directory)
         matched = rules.select { |rule| covers?(rule, segments, directory) }
         return false if matched.empty?
 

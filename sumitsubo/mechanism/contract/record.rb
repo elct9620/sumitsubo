@@ -19,10 +19,10 @@ module Sumitsubo
       def self.readings_in(definitions, reach, source)
         found = []
         asked = {}
-        defined(definitions).each do |definition|
-          paths = reached(reach, definition)
+        by_declaration(definitions).each do |definition|
+          paths = files_of(reach, definition)
           languages_of(definition).each do |language|
-            spelled(source, unasked(asked, paths, language), language).each { |one| found.push(one) }
+            readings_for(source, still_to_ask(asked, paths, language), language).each { |one| found.push(one) }
           end
         end
         found
@@ -31,7 +31,7 @@ module Sumitsubo
       # The files among these not yet asked about in this language. Two
       # definitions reaching one file ask it the same question, so it is read
       # once for each language rather than once for each definition.
-      def self.unasked(asked, paths, language)
+      def self.still_to_ask(asked, paths, language)
         found = []
         paths.each do |path|
           key = "#{language} #{path}"
@@ -44,14 +44,14 @@ module Sumitsubo
       end
 
       # The files one definition reached, in a fixed order.
-      def self.reached(reach, definition)
+      def self.files_of(reach, definition)
         reach[definition.path].keys.sort
       end
 
       # The files among these that could carry a name spelled as this language
       # spells it. Which files a definition reaches is its include's to say, and
       # which of them a language could have written is the file's own.
-      def self.spelled(source, paths, language)
+      def self.readings_for(source, paths, language)
         found = []
         paths.each do |path|
           found.push(Reading.new(path, language)) if source.spelled_in?(path, language)
@@ -64,8 +64,8 @@ module Sumitsubo
       # marker nobody wrote is not worth parsing for, and a definition nobody
       # claims is not worth reading comments for.
       # Every word every definition claims, and every one it leaves dangling.
-      def self.marked_in(definitions, reach, source)
-        source.marked(Reach.files(reach), keywords(definitions))
+      def self.marks_in(definitions, reach, source)
+        source.marks(Reach.files(reach), keywords(definitions))
       end
 
       # Every claim and dangling marker in the files the claimed definitions
@@ -73,10 +73,10 @@ module Sumitsubo
       # this mechanism's name. A contract is named by the interface itself, so
       # the whole of what follows the marker is the key a claim names.
       def self.keep(definitions, source, relations, mechanism)
-        marked = marked_in(definitions, Reach.of(claimed(definitions), relations), source)
+        marked = marks_in(definitions, Reach.of(by_claim(definitions), relations), source)
         marked.claims.each { |one| relations.add(Relation.claim(one, Relation::Reference.new(mechanism: mechanism, key: one.text))) }
         marked.dangling.each { |one| relations.add(Relation.dangling(one, Relation::Reference.new(mechanism: mechanism, key: one.text))) }
-        declared = defined_in(definitions, Reach.of(defined(definitions), relations), source)
+        declared = declarations_in(definitions, Reach.of(by_declaration(definitions), relations), source)
         declared.keys.each do |language|
           declared[language].each do |one|
             spelled = Source::Spelling.new(declaration: one, language: language)
@@ -98,7 +98,7 @@ module Sumitsubo
 
       # What the run kept as declared, held again under the language that read
       # each, in the order it was read.
-      def self.declared_from(relations)
+      def self.declarations_from(relations)
         found = {}
         relations.each do |one|
           holding = found[one.subject.language]
@@ -116,7 +116,7 @@ module Sumitsubo
       # once per language, and one file read twice answers twice: which reading
       # each came back from is what tells the two apart, so it is the answers
       # that are held apart rather than each answer that says which.
-      def self.defined_in(definitions, reach, source)
+      def self.declarations_in(definitions, reach, source)
         found = {}
         readings_in(definitions, reach, source).each do |reading|
           holding = found[reading.language]

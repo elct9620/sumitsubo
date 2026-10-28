@@ -48,7 +48,7 @@ module Sumitsubo
           puts "nothing declares #{key}"
           # It may stand in a document that could not be read, which is then
           # said rather than left as the answer.
-          searched(written).each { |mechanism| @current.written.statements_named(mechanism) if @current.specifications.unreadable?(mechanism) }
+          searched(written).each { |mechanism| @current.written.statements_with_refusals(mechanism) if @current.specifications.unreadable?(mechanism) }
         end
         roots.each { |root| answered(root).each { |line| puts line } }
         # A switched-off mechanism is read for what the answer shows, so what
@@ -156,7 +156,7 @@ module Sumitsubo
         claims.each do |claim|
           next unless claim.key == root.key
 
-          @current.relations.named_in([Relation::CLAIM], root.mechanism, claim.path, claim.comment_line).each do |key|
+          @current.relations.keys_in([Relation::CLAIM], root.mechanism, claim.path, claim.comment_line).each do |key|
             next if key == root.key
             next unless taken[key].nil?
 
@@ -191,7 +191,7 @@ module Sumitsubo
       end
 
       def unread?(reference)
-        mechanism = Mechanism.named(reference.mechanism)
+        mechanism = Mechanism.of(reference.mechanism)
         !mechanism.nil? && @current.specifications.unreadable?(mechanism)
       end
 
@@ -200,10 +200,10 @@ module Sumitsubo
       end
 
       def declared(reference)
-        mechanism = Mechanism.named(reference.mechanism)
+        mechanism = Mechanism.of(reference.mechanism)
         return nil if mechanism.nil?
 
-        held = @current.written.statements_named(mechanism)
+        held = @current.written.statements_with_refusals(mechanism)
         held.nil? ? nil : held.find { |one| one.key == reference.key }
       end
     end

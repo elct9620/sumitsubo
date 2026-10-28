@@ -9,7 +9,7 @@ module Sumitsubo
     module Declaration
       # What a caller would have to write. A scope has no call to describe at
       # all, which is not the same as a method taking nothing.
-      def self.spelled(shape)
+      def self.call_of(shape)
         shape.nil? ? "nothing" : shape.spoken
       end
 
@@ -106,8 +106,8 @@ module Sumitsubo
             Declaration.paired(group).each do |pair|
               found.push(Finding.new(
                 check: @check, difference: true, place: pair[0].place,
-                message: "#{pair[0].name} takes #{Declaration.spelled(pair[0].shape)} here and " \
-                         "#{Declaration.spelled(pair[1].shape)} at #{pair[1].place.spoken}"
+                message: "#{pair[0].name} takes #{Declaration.call_of(pair[0].shape)} here and " \
+                         "#{Declaration.call_of(pair[1].shape)} at #{pair[1].place.spoken}"
               ))
             end
           end
@@ -135,8 +135,8 @@ module Sumitsubo
             # this comes from shows no word in front of it.
             found.push(Finding.new(
               check: @check, difference: true, place: one.place,
-              message: "#{one.said} takes #{Declaration.spelled(group[0].shape)} " \
-                       "where the specification registers #{Declaration.spelled(one.shape)}"
+              message: "#{one.said} takes #{Declaration.call_of(group[0].shape)} " \
+                       "where the specification registers #{Declaration.call_of(one.shape)}"
             ))
           end
           found

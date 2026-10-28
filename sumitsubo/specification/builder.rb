@@ -27,7 +27,7 @@ module Sumitsubo
       # asked only whether this glob is among them: what a specification
       # reaches is a set, and which array a statement joins is for the builder
       # holding it to decide.
-      def self.scoped(block, path, topic, held)
+      def self.include_from(block, path, topic, held)
         glob = block.taken
         refuse(path, block.line, "writes an include that is not a glob in backticks", topic) if glob.nil?
 
@@ -40,7 +40,7 @@ module Sumitsubo
       # The reserved heading written again where it was already written once.
       # Gathered rather than raised: the globs under it are still globs, and
       # each is asked about on its own.
-      def self.rescoped(path, line, first, topic)
+      def self.repeated_include(path, line, first, topic)
         refusal(path, line, "writes #{INCLUDES} a second time, #{first_written(path, first)}", topic)
       end
 
@@ -101,7 +101,7 @@ module Sumitsubo
       #
       # An attribute written twice says which of them it is nowhere, the way a
       # second name does.
-      def self.carried(attributes, takes, row, carries, path, topic)
+      def self.carry(attributes, takes, row, carries, path, topic)
         line = row.line
         said = row.said
         value = row.value

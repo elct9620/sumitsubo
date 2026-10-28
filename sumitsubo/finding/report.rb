@@ -15,7 +15,7 @@ module Sumitsubo
       # .sumi.json it answers to.
       def lines
         found = said
-        found.push(counted)
+        found.push(tally)
         found
       end
 
@@ -31,7 +31,7 @@ module Sumitsubo
 
       # A run always says how many, so a clean one says so rather than saying
       # nothing at all.
-      def counted
+      def tally
         many = @repository.differences.length
         "#{many} #{many == 1 ? "difference" : "differences"}"
       end

@@ -30,7 +30,7 @@ module Sumitsubo
 
     # The mechanism a specification's name switches, or nil where this build
     # carries none by that name.
-    def self.named(name)
+    def self.of(name)
       ALL.find { |one| one.specification == name }
     end
   end

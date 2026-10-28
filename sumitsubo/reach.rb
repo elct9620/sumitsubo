@@ -25,7 +25,7 @@ module Sumitsubo
       found = {}
       specifications.each do |spec|
         files = {}
-        relations.reached_from(spec.path).each { |file| files[file] = true }
+        relations.reach_of(spec.path).each { |file| files[file] = true }
         found[spec.path] = files
       end
       found

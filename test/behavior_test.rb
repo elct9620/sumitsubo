@@ -155,10 +155,10 @@ claims = [Sumitsubo::Mechanism::Behavior::Claim.new(
 
 # @behavior B-012
 puts "--- a scenario claimed only from outside its own feature ---"
-declaring = Sumitsubo::Mechanism::Behavior.declaring_in(features)
+declaring = Sumitsubo::Mechanism::Behavior.declarers_in(features)
 within = Sumitsubo::Check::Claim.within(claims, declaring, reach)
 Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Behavior::UNCLAIMED)
-  .run(Sumitsubo::Mechanism::Behavior.stated_in(features), within).each do |finding|
+  .run(Sumitsubo::Mechanism::Behavior.promises_in(features), within).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
@@ -203,7 +203,7 @@ mixed = [
   )
 ]
 (Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Behavior::UNRESOLVED, "scenario")
-   .run(Sumitsubo::Mechanism::Behavior.named(mixed), Sumitsubo::Mechanism::Behavior.stated_in(features)) +
+   .run(Sumitsubo::Mechanism::Behavior.claims_with_id(mixed), Sumitsubo::Mechanism::Behavior.promises_in(features)) +
  Sumitsubo::Check::Claim::Nameless.new(Sumitsubo::Mechanism::Behavior::NAMELESS, "scenario")
    .run(Sumitsubo::Mechanism::Behavior.nameless(mixed))).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
@@ -219,13 +219,13 @@ retired_claims = [Sumitsubo::Mechanism::Behavior::Claim.new(
 # @behavior B-017 B-019
 puts "--- unverifiable scenarios are compared by none, a deprecated one like any other ---"
 Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Behavior::UNCLAIMED)
-  .run(Sumitsubo::Mechanism::Behavior.stated_in(retired), retired_claims).each do |finding|
+  .run(Sumitsubo::Mechanism::Behavior.promises_in(retired), retired_claims).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior B-017 B-018
 puts "--- an unverifiable scenario a test claims, and none nothing claims ---"
 Sumitsubo::Check::Claim::Stale.new(Sumitsubo::Mechanism::Behavior::STALE)
-  .run(Sumitsubo::Mechanism::Behavior.stated_in(retired), retired_claims).each do |finding|
+  .run(Sumitsubo::Mechanism::Behavior.promises_in(retired), retired_claims).each do |finding|
   puts "  #{finding.check} #{finding.place.spoken} #{finding.message}"
 end

@@ -57,8 +57,8 @@ module Sumitsubo
       # A document this form refused, worded as the finding a run answers
       # with. The check is worded here because it is this mechanism's, the way
       # every other check of its own is.
-      def refused(refusal)
-        Finding.refused(UNREADABLE, refusal)
+      def finding_for(refusal)
+        Finding.from_refusal(UNREADABLE, refusal)
       end
 
       # The one specification this mechanism keeps, answered as the several
@@ -69,7 +69,7 @@ module Sumitsubo
       #
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
-      def declared(config, specifications)
+      def documents(config, specifications)
         [specifications.one(Glossary.at(Glossary.path_in(config.root), config.here), self)]
       end
 
@@ -79,7 +79,7 @@ module Sumitsubo
       def statements(config, specifications)
         return [] unless config.verify?(specification) || Glossary.path_in(config.root).exist?
 
-        declared(config, specifications).map { |one| one.statements }.flatten
+        documents(config, specifications).map { |one| one.statements }.flatten
                                          .map { |section| section.statements }.flatten
       end
 
@@ -102,7 +102,7 @@ module Sumitsubo
 
       # Every rejected word the source writes, kept for whoever asks after.
       def keep(config, specifications, source, relations)
-        scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
+        scope = scope_of(config, specifications, relations, documents(config, specifications)[0])
         Glossary.keep(scope, config.base, source, relations, specification, config.here)
       end
 
@@ -114,7 +114,7 @@ module Sumitsubo
         found = named.select { |one| one.key == key }
         return found if found.length < 2
 
-        scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
+        scope = scope_of(config, specifications, relations, documents(config, specifications)[0])
         held = scope[Glossary.from_base(writer.path, config.base, config.here)]
         return found if held.nil? || held[key].nil?
 
@@ -122,14 +122,14 @@ module Sumitsubo
       end
 
       def verify(config, findings, specifications, source, relations)
-        vocabulary = declared(config, specifications)[0]
+        vocabulary = documents(config, specifications)[0]
         path = vocabulary.path
         @barren.run(Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
-        kept = relations.naming(Relation::MENTIONS, specification)
+        kept = relations.of_mechanism(Relation::MENTIONS, specification)
         mentions = Glossary.uses(
-          Glossary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base, config.here),
+          Glossary.mentions_from(kept, scope_of(config, specifications, relations, vocabulary), config.base, config.here),
           vocabulary, config.base, config.here
         )
         aside = Glossary.set_aside(vocabulary)
@@ -156,7 +156,7 @@ module Sumitsubo
           next unless config.verify?(mechanism.specification)
 
           begin
-            found.concat(mechanism.declared(config, specifications))
+            found.concat(mechanism.documents(config, specifications))
           rescue Sumitsubo::Error
             next
           end

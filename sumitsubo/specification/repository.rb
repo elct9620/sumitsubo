@@ -56,7 +56,7 @@ module Sumitsubo
         return if broken?(mechanism)
 
         @broken[mechanism.specification] = true
-        refusals.each { |one| kept(mechanism).push(mechanism.refused(one)) }
+        refusals.each { |one| kept(mechanism).push(mechanism.finding_for(one)) }
       end
 
       # A mechanism nothing could be read from at all, worded by the error.
@@ -114,7 +114,7 @@ module Sumitsubo
       def blocks_of(paths, asking)
         paths.each { |path| Parser.of(path, @parsers, @from) }
         answered = {}
-        @parsers.each { |parser| claimed(parser, paths, asking, answered) }
+        @parsers.each { |parser| read_with(parser, paths, asking, answered) }
         answered
       end
 
@@ -148,7 +148,7 @@ module Sumitsubo
       def read_into(found, blocks, path, mechanism)
         found.push(mechanism.read(blocks, Place.file(path, @from), @languages))
       rescue Sumitsubo::Misshapen => e
-        e.refusals.each { |one| kept(mechanism).push(mechanism.refused(one)) }
+        e.refusals.each { |one| kept(mechanism).push(mechanism.finding_for(one)) }
       end
 
       def kept(mechanism)
@@ -160,7 +160,7 @@ module Sumitsubo
       # What one parser answers for, asked of it in one go. A file the parsers
       # before it claimed is not offered again, the way `Parser.of` answers with
       # the first that reads it.
-      def claimed(parser, paths, asking, answered)
+      def read_with(parser, paths, asking, answered)
         group = paths.select { |path| answered[path].nil? && parser.reads?(path) }
         return if group.empty?
 

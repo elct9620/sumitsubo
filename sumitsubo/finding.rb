@@ -16,7 +16,7 @@ module Sumitsubo
     # Interpolated: Spinel 2026.10.25 hands this message, read off a receiver
     # that may be an exception, to C as the wrong type and the build fails.
     # Master f4b8e2fa does not.
-    def self.refused(check, refusal)
+    def self.from_refusal(check, refusal)
       new(check: check, difference: false, place: refusal.place, message: "#{refusal.message}")
     end
 

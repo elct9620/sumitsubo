@@ -192,7 +192,7 @@ puts "--- a longer term holding a rejected word is a use of that term ---"
 Dir.chdir("test/fixtures/project/subdomain")
 subdomains = reads("glossary.md")
 prose = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new]), Pathname.pwd)
-Sumitsubo::Mechanism::Glossary.check(Sumitsubo::Mechanism::Glossary.scope(subdomains, Pathname.pwd, [], {}), Pathname.pwd, prose).each do |mention|
+Sumitsubo::Mechanism::Glossary.mentions_in(Sumitsubo::Mechanism::Glossary.scope(subdomains, Pathname.pwd, [], {}), Pathname.pwd, prose).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
 end
 Dir.chdir(back)
@@ -220,7 +220,7 @@ Dir.chdir("test/fixtures/project/wrapped")
 wrapped = reads("glossary.md")
 both = Sumitsubo::Source::Repository.new(Sumitsubo::Source::Language.new([Sumitsubo::Source::Language::Prose.new,
                                                                           Sumitsubo::Source::Language::Ruby.new(Sumitsubo::Grammar)]), Pathname.pwd)
-Sumitsubo::Mechanism::Glossary.check(Sumitsubo::Mechanism::Glossary.scope(wrapped, Pathname.pwd, [], {}), Pathname.pwd, both).each do |mention|
+Sumitsubo::Mechanism::Glossary.mentions_in(Sumitsubo::Mechanism::Glossary.scope(wrapped, Pathname.pwd, [], {}), Pathname.pwd, both).each do |mention|
   puts "#{mention.path}:#{mention.line} #{mention.term} rejects #{mention.used}"
 end
 Dir.chdir(back)

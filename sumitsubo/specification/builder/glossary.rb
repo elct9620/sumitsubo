@@ -209,7 +209,7 @@ module Sumitsubo
 
         # A section says what it covers once.
         def scoping(line)
-          @refusals.push(Builder.rescoped(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
+          @refusals.push(Builder.repeated_include(@path, line, @scoped_at, TOPIC)) unless @scoped_at.nil?
           @scoped_at = line if @scoped_at.nil?
         end
 
@@ -228,7 +228,7 @@ module Sumitsubo
           return set_aside(block) if block.level == IGNORE
           return unless block.level == WORD
           if @holding == INCLUDES
-            @section.includes.push(Builder.scoped(block, @path, TOPIC, @section.includes))
+            @section.includes.push(Builder.include_from(block, @path, TOPIC, @section.includes))
             return
           end
           return unless @holding == REJECTED

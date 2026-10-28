@@ -37,7 +37,7 @@ module Sumitsubo
       # by the language answering for the file, and that arrives from outside:
       # this mechanism checks a vocabulary and names no language, which is what
       # leaves a second one to be carried without it being touched.
-      def self.check(scope, base, source)
+      def self.mentions_in(scope, base, source)
         mentions = []
         scope.keys.sort.each do |path|
           file = base / path
@@ -57,7 +57,7 @@ module Sumitsubo
       # term rejecting it there. The word is kept as it was written, at the path
       # a relation names a file by.
       def self.keep(scope, base, source, relations, mechanism, from)
-        check(scope, base, source).each do |one|
+        mentions_in(scope, base, source).each do |one|
           found = Source::Mention.new(path: Place.file(base / one.path, from), line: one.line, used: one.used)
           relations.add(Relation.mentions(found, Relation::Reference.new(mechanism: mechanism, key: one.term)))
         end
@@ -66,7 +66,7 @@ module Sumitsubo
       # The mentions the run kept, read back as the checks compare them: under
       # the base the way an ignore names one, with the reason the vocabulary
       # holding in that file gives for turning the word down.
-      def self.mentioned(relations, scope, base, from)
+      def self.mentions_from(relations, scope, base, from)
         found = []
         relations.each do |one|
           path = from_base(one.subject.path, base, from)
@@ -86,11 +86,11 @@ module Sumitsubo
       # specification says where each word was written, so nothing here opens the
       # file a second time or knows how a format spells a declaration.
       def self.uses(mentions, spec, base, from)
-        spelled = declared_in(spec)
+        spellings = spellings_in(spec)
         own = from_base(spec.path, base, from)
         found = []
         mentions.each do |mention|
-          next if mention.path == own && spelled["#{mention.line} #{mention.used}"]
+          next if mention.path == own && spellings["#{mention.line} #{mention.used}"]
 
           found.push(mention)
         end

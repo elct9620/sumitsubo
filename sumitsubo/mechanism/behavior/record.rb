@@ -45,7 +45,7 @@ module Sumitsubo
       # line; splitting that into ids is this mechanism's, which is what lets
       # Contract read the same line as one name.
       def self.keep(reach, source, relations, mechanism)
-        marked = source.marked(Reach.files(reach), [MARKER])
+        marked = source.marks(Reach.files(reach), [MARKER])
         marked.claims.each do |claim|
           referred(claim, mechanism).each { |one| relations.add(Relation.claim(claim, one)) }
         end
@@ -56,17 +56,17 @@ module Sumitsubo
 
       # The statements one marker names, one for each id.
       def self.referred(claim, mechanism)
-        named_in(claim).map { |id| Relation::Reference.new(mechanism: mechanism, key: id) }
+        ids_of(claim).map { |id| Relation::Reference.new(mechanism: mechanism, key: id) }
       end
 
       # The claims the run kept for this mechanism, read back as it compares them.
-      def self.claimed_in(relations, mechanism)
-        read(relations.naming(Relation::CLAIM, mechanism))
+      def self.claims_in(relations, mechanism)
+        read(relations.of_mechanism(Relation::CLAIM, mechanism))
       end
 
       # The markers the run kept for this mechanism with no code below them.
       def self.dangling_in(relations, mechanism)
-        read(relations.naming(Relation::DANGLING, mechanism))
+        read(relations.of_mechanism(Relation::DANGLING, mechanism))
       end
 
       def self.read(relations)
@@ -82,7 +82,7 @@ module Sumitsubo
       # The ids one claim carries, or the empty one where it carries none. A
       # marker written with nothing behind it still claims: dropping it would be
       # this mechanism deciding nobody meant to write the word.
-      def self.named_in(claim)
+      def self.ids_of(claim)
         found = ids_in(claim.text)
         found.empty? ? [""] : found
       end

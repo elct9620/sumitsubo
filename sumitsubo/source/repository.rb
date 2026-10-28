@@ -28,11 +28,11 @@ module Sumitsubo
       # What these files claim with any of these words, and what they leave
       # dangling, read in one pass per file: parsing is the cost, so a project
       # registering several kinds still reads each of them once.
-      def marked(paths, keywords)
+      def marks(paths, keywords)
         claims = []
         dangling = []
         paths.each do |path|
-          marked = Marker.marked_in(path, Place.file(path, @from), keywords, @languages)
+          marked = Marker.marks_in(path, Place.file(path, @from), keywords, @languages)
           claims.concat(marked.claims)
           dangling.concat(marked.dangling)
         end

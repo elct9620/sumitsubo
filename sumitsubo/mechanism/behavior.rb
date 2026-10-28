@@ -67,8 +67,8 @@ module Sumitsubo
       # A document this form refused, worded as the finding a run answers
       # with. The check is worded here because it is this mechanism's, the way
       # every other check of its own is.
-      def refused(refusal)
-        Finding.refused(UNREADABLE, refusal)
+      def finding_for(refusal)
+        Finding.from_refusal(UNREADABLE, refusal)
       end
 
       # A feature's scenarios in the order of their ids, each with its
@@ -78,7 +78,7 @@ module Sumitsubo
       # either answer nothing.
       def rewrites(config, feature, lines)
         scenarios = feature.statements
-        misplaced = config.switched?(specification, ARRANGE) ? Specification::Arrange.misplaced(scenarios, lines) : []
+        misplaced = config.switched?(specification, ARRANGE) ? Specification::Arrange.out_of_place(scenarios, lines) : []
         ahead = config.switched?(specification, ORDER) ? Behavior.ahead(scenarios) : []
         return [] if misplaced.empty? && ahead.empty?
 
@@ -97,7 +97,7 @@ module Sumitsubo
       #
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
-      def declared(config, specifications)
+      def documents(config, specifications)
         features = specifications.all(Behavior.path_in(config.root), self)
         Behavior.refuse_ambiguity(features)
         features
@@ -106,24 +106,24 @@ module Sumitsubo
       # Every scenario the specifications declare, which is what a statement
       # elsewhere names by its key.
       def statements(config, specifications)
-        declared(config, specifications).map { |one| one.statements }.flatten
+        documents(config, specifications).map { |one| one.statements }.flatten
       end
 
       # The files every feature reaches.
       def reach(config, specifications, relations)
-        Reach.keep(declared(config, specifications), config.base, config.exclusion, relations, config.here)
+        Reach.keep(documents(config, specifications), config.base, config.exclusion, relations, config.here)
       end
 
       # What the source says about each scenario, kept for whoever asks after:
       # every claim the marker leaves in the files the features reach.
       def keep(config, specifications, source, relations)
-        features = declared(config, specifications)
+        features = documents(config, specifications)
         Behavior.keep(Reach.of(features, relations), source, relations, specification)
       end
 
       # The claims the run kept for this mechanism, as its checks compare them.
       def claims(relations)
-        Behavior.claimed_in(relations, specification)
+        Behavior.claims_in(relations, specification)
       end
 
       # The markers the run kept for this mechanism with no code below them.
@@ -132,13 +132,13 @@ module Sumitsubo
       end
 
       # Which feature declares each scenario.
-      def declaring(features)
-        Behavior.declaring_in(features)
+      def declarers(features)
+        Behavior.declarers_in(features)
       end
 
       # Every scenario a claim could name, said the way a claim says it.
-      def stated(features)
-        Behavior.stated_in(features)
+      def promises(features)
+        Behavior.promises_in(features)
       end
 
       # The statements a key written elsewhere names: every one declared under
@@ -148,13 +148,13 @@ module Sumitsubo
       end
 
       def verify(config, findings, specifications, source, relations)
-        features = declared(config, specifications)
+        features = documents(config, specifications)
         @barren.run(Reach.covers(features), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         reach = Reach.of(features, relations)
         claimed = claims(relations)
-        scenarios = stated(features)
-        declared_by = declaring(features)
+        scenarios = promises(features)
+        declared_by = declarers(features)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.
         within = Check::Claim.within(claimed, declared_by, reach)
@@ -162,7 +162,7 @@ module Sumitsubo
         @unclaimed.run(scenarios, within).each { |one| findings.add(one) }
         @stale.run(scenarios, within).each { |one| findings.add(one) }
         @misplaced.run(claimed, declared_by, reach).each { |one| findings.add(one) }
-        @unresolved.run(Behavior.named(claimed), scenarios).each { |one| findings.add(one) }
+        @unresolved.run(Behavior.claims_with_id(claimed), scenarios).each { |one| findings.add(one) }
         @nameless.run(Behavior.nameless(claimed)).each { |one| findings.add(one) }
         # A marker standing in front of nothing names a scenario without
         # witnessing one, so it is answered once, by itself, rather than through

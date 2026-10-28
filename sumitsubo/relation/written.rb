@@ -60,7 +60,7 @@ module Sumitsubo
       # one statement, answered at the statement that wrote it.
       def resolve
         [RELATES, REFINES].each do |kind|
-          @relations.of(kind).each { |relation| resolved(relation) }
+          @relations.of(kind).each { |relation| check(relation) }
         end
       end
 
@@ -85,7 +85,7 @@ module Sumitsubo
       # A mechanism's statements whether or not it is switched on, with
       # whatever it could not read answered as an answer names it. A command
       # may have run no stage for it, so this is not left to the stages.
-      def statements_named(mechanism)
+      def statements_with_refusals(mechanism)
         named = statements_of(mechanism)
         @specifications.tell(mechanism, @findings)
         named
@@ -97,12 +97,12 @@ module Sumitsubo
       # statements a key finds is the mechanism keeping them's to say. Where
       # any of a mechanism's documents was refused, what it names may stand in
       # that one, so the refusal answers for it instead.
-      def resolved(relation)
-        target = named(relation.object.mechanism)
-        named = statements_named(target)
+      def check(relation)
+        target = mechanism_of(relation.object.mechanism)
+        named = statements_with_refusals(target)
         return if named.nil? || @specifications.unreadable?(target)
 
-        writing = statements_of(named(relation.subject.mechanism))
+        writing = statements_of(mechanism_of(relation.subject.mechanism))
         writer = writing.find { |one| one.key == relation.subject.key }
         found = target.find(relation.object.key, writer, @config, @specifications, @relations, named)
         return if found.length == 1
@@ -110,7 +110,7 @@ module Sumitsubo
         @findings.add(found.empty? ? Check::Reference.unresolved(relation, writer) : Check::Reference.ambiguous(relation, writer, found))
       end
 
-      def named(name)
+      def mechanism_of(name)
         @mechanisms.find { |one| one.specification == name }
       end
     end

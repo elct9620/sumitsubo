@@ -28,7 +28,7 @@ module Sumitsubo
 
         return 0 unless config.verify?(Mechanism::BEHAVIOR.specification)
 
-        features = Mechanism::BEHAVIOR.declared(config, current.specifications)
+        features = Mechanism::BEHAVIOR.documents(config, current.specifications)
         @relations = current.relations
         @from = config.here
         dangling = Mechanism::BEHAVIOR.dangling(@relations)
@@ -132,7 +132,7 @@ module Sumitsubo
       def beside(claim, dangling)
         kinds = [Relation::CLAIM, Relation::DANGLING]
         mechanism = Mechanism::BEHAVIOR.specification
-        others = @relations.named_in(kinds, mechanism, claim.path, claim.comment_line).reject { |one| one == claim.key }
+        others = @relations.keys_in(kinds, mechanism, claim.path, claim.comment_line).reject { |one| one == claim.key }
         said = ""
         said += "  with #{others.length} #{others.length == 1 ? "other" : "others"}" unless others.empty?
         said += "  in front of nothing" if dangling.any? { |one| one.place.spoken == claim.place.spoken }

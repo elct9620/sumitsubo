@@ -19,14 +19,14 @@ module Sumitsubo
         found
       end
 
-      def self.named(claims)
+      def self.claims_with_id(claims)
         found = []
         claims.each { |claim| found.push(claim) unless claim.id.empty? }
         found
       end
 
       # Every scenario a claim could name, said the way a claim says it.
-      def self.stated_in(features)
+      def self.promises_in(features)
         found = []
         features.each do |feature|
           feature.statements.each do |scenario|
@@ -54,7 +54,7 @@ module Sumitsubo
       # Which specification declares each scenario, so a claim can be asked
       # whether it sits where that specification can see it. One id belongs to
       # one feature, which is what refuse_ambiguity guarantees.
-      def self.declaring_in(features)
+      def self.declarers_in(features)
         found = {}
         features.each do |feature|
           feature.statements.each { |scenario| found[scenario.key] = feature.path }

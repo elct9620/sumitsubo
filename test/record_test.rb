@@ -53,20 +53,20 @@ marks = Sumitsubo::Relation::Repository.new
   claim = Sumitsubo::Source::Claim.new("test/order_test.rb", mark[1], mark[2], "@behavior", mark[0])
   marks.add(Sumitsubo::Relation.claim(claim, reference("behavior", mark[0])))
 end
-p marks.named_in([Sumitsubo::Relation::CLAIM], "behavior", "test/order_test.rb", 1)
-p marks.named_in([Sumitsubo::Relation::CLAIM], "behavior", "test/order_test.rb", 7)
+p marks.keys_in([Sumitsubo::Relation::CLAIM], "behavior", "test/order_test.rb", 1)
+p marks.keys_in([Sumitsubo::Relation::CLAIM], "behavior", "test/order_test.rb", 7)
 
 # @behavior K-003
 puts "--- a claim read back for a check ---"
 claims = Sumitsubo::Relation::Repository.new
 command = Sumitsubo::Source::Claim.new("app/order.rb", 9, 9, "@command", "verify")
 claims.add(Sumitsubo::Relation.claim(command, reference("contract", "verify")))
-Sumitsubo::Mechanism::Contract.read(claims.naming(Sumitsubo::Relation::CLAIM, "contract")).each do |one|
+Sumitsubo::Mechanism::Contract.read(claims.of_mechanism(Sumitsubo::Relation::CLAIM, "contract")).each do |one|
   puts "  contract #{one.key.spoken} at #{one.place.spoken} said #{one.said}"
 end
 scenario = Sumitsubo::Source::Claim.new("test/order_test.rb", 3, 3, "@behavior", "O-001")
 claims.add(Sumitsubo::Relation.claim(scenario, reference("behavior", "O-001")))
-Sumitsubo::Mechanism::Behavior.claimed_in(claims, "behavior").each do |one|
+Sumitsubo::Mechanism::Behavior.claims_in(claims, "behavior").each do |one|
   puts "  scenario #{one.id} at #{one.path}:#{one.line}"
 end
 
@@ -80,7 +80,7 @@ declared = Sumitsubo::Relation::Repository.new
   spelled = Sumitsubo::Source::Spelling.new(declaration: found, language: language)
   declared.add(Sumitsubo::Relation.declares(spelled, reference("contract", name)))
 end
-held = Sumitsubo::Mechanism::Contract.declared_from(declared.naming(Sumitsubo::Relation::DECLARES, "contract"))
+held = Sumitsubo::Mechanism::Contract.declarations_from(declared.of_mechanism(Sumitsubo::Relation::DECLARES, "contract"))
 held.keys.each { |language| puts "  #{language} #{held[language].map { |one| "#{one.name}:#{one.line}" }.inspect}" }
 
 # @behavior K-005
@@ -90,7 +90,7 @@ word = Sumitsubo::Source::Mention.new(path: "app/order.rb", line: 2, used: "Purc
 mentioned.add(Sumitsubo::Relation.mentions(word, reference("glossary", "Order")))
 rejected = statement("Purchase", "Order is what the domain calls it.", ".spec/glossary.md", 12)
 scope = { "app/order.rb" => { "Order" => statement("Order", "What a customer asks for.", ".spec/glossary.md", 9, [rejected]) } }
-Sumitsubo::Mechanism::Glossary.mentioned(mentioned.naming(Sumitsubo::Relation::MENTIONS, "glossary"), scope, base, Pathname.pwd).each do |one|
+Sumitsubo::Mechanism::Glossary.mentions_from(mentioned.of_mechanism(Sumitsubo::Relation::MENTIONS, "glossary"), scope, base, Pathname.pwd).each do |one|
   puts "  #{one.path}:#{one.line} #{one.term} rejects #{one.used}: #{one.reason}"
 end
 

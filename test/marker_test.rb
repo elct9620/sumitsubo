@@ -34,7 +34,7 @@ end
 # mechanism reads the two lists apart for. Each list is in line order and one
 # line sits in one of them, so merging puts them back as the file reads.
 def claims(path, keywords, regions)
-  marked = Sumitsubo::Source::Repository.new(Offered.new(regions), Pathname.pwd).marked([path], keywords)
+  marked = Sumitsubo::Source::Repository.new(Offered.new(regions), Pathname.pwd).marks([path], keywords)
   said = []
   left = 0
   right = 0
@@ -138,7 +138,7 @@ joined = Sumitsubo::Source::Repository.new(Offered.new([
   region(4, "# @behavior RB-007", Sumitsubo::Source::Region::CODE),
   region(9, "# @behavior RB-008", Sumitsubo::Source::Region::CODE)
 ]), Pathname.pwd)
-joined.marked(["src/ruby.rb"], BEHAVIOR).claims.each do |claim|
+joined.marks(["src/ruby.rb"], BEHAVIOR).claims.each do |claim|
   puts "#{claim.path}:#{claim.line} in the comment from #{claim.comment_line}"
 end
 

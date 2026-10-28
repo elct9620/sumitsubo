@@ -99,12 +99,12 @@ end
 
 def undefined(definitions, declared)
   Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::ByDeclaration::UNDEFINED)
-    .run(Sumitsubo::Mechanism::Contract.stated_names(definitions), Sumitsubo::Mechanism::Contract.declared_in(declared))
+    .run(Sumitsubo::Mechanism::Contract.name_promises(definitions), Sumitsubo::Mechanism::Contract.declarations_by_name(declared))
 end
 
 def unclaimed(definitions, claims)
   Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Contract::ByClaim::UNCLAIMED)
-    .run(Sumitsubo::Mechanism::Contract.stated_in(definitions), claims)
+    .run(Sumitsubo::Mechanism::Contract.promises_in(definitions), claims)
 end
 
 # A claim as the mechanism reads one. What it stands in front of was settled
@@ -163,7 +163,7 @@ astray = [claim("test/fixtures/specification/contract/app/controller.rb", 4, "@c
 
 # @behavior T-036
 puts "--- a contract claimed only from outside its own definition ---"
-registering = Sumitsubo::Mechanism::Contract.registering_claims(definitions)
+registering = Sumitsubo::Mechanism::Contract.claim_registrars(definitions)
 within = Sumitsubo::Check::Claim.within(astray, registering, reach)
 unclaimed(definitions, within).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
@@ -198,7 +198,7 @@ refused("#{FIXTURE}/nameless")
 # definition naming none is read from the syntax tree instead.
 # @behavior T-007
 puts "--- a definition with no marker is read from the syntax tree ---"
-p Sumitsubo::Mechanism::Contract.defined(loaded("#{FIXTURE}/nomarker")).length
+p Sumitsubo::Mechanism::Contract.by_declaration(loaded("#{FIXTURE}/nomarker")).length
 
 # The syntax tree reading shares one namespace, so a name twice in it is the
 # same ambiguity — said without a marker in front of it.
@@ -224,7 +224,7 @@ end
 # @behavior T-038
 puts "--- a declaration outside the definition registering its name ---"
 spelled = loaded("#{FIXTURE}/nomarker")
-Sumitsubo::Mechanism::Contract.defining(
+Sumitsubo::Mechanism::Contract.registered_declarations(
   spelled,
   { "ruby" => [Sumitsubo::Source::Declaration.new(path: "#{FIXTURE}/src/commands.rb", line: 3, name: "verify", shape: shaped),
                Sumitsubo::Source::Declaration.new(path: "#{FIXTURE}/app/controller.rb", line: 9, name: "verify", shape: shaped)] },
@@ -251,7 +251,7 @@ end
 # @behavior T-010 T-011
 puts "--- a claim resolving to no contract, and one naming none at all ---"
 (Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Contract::ByClaim::UNRESOLVED, "contract")
-   .run(Sumitsubo::Mechanism::Contract.named(claims), Sumitsubo::Mechanism::Contract.stated_in(definitions)) +
+   .run(Sumitsubo::Mechanism::Contract.claims_with_name(claims), Sumitsubo::Mechanism::Contract.promises_in(definitions)) +
  Sumitsubo::Check::Claim::Nameless.new(Sumitsubo::Mechanism::Contract::ByClaim::NAMELESS, "contract")
    .run(Sumitsubo::Mechanism::Contract.nameless(claims))).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
@@ -260,7 +260,7 @@ end
 # @behavior T-012
 puts "--- one contract claimed in two places ---"
 Sumitsubo::Check::Claim::Duplicated.new(Sumitsubo::Mechanism::Contract::ByClaim::DUPLICATED)
-  .run(claims, Sumitsubo::Mechanism::Contract.stated_in(definitions)).each do |finding|
+  .run(claims, Sumitsubo::Mechanism::Contract.promises_in(definitions)).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
@@ -293,8 +293,8 @@ end
 # @behavior T-020 T-021
 puts "--- an interface defined with another shape ---"
 Sumitsubo::Check::Declaration::Mismatched.new(Sumitsubo::Mechanism::Contract::ByDeclaration::MISMATCHED)
-  .run(Sumitsubo::Mechanism::Contract.registered_in(registered, SOURCE),
-       Sumitsubo::Mechanism::Contract.declared_in({ "ruby" => [
+  .run(Sumitsubo::Mechanism::Contract.registrations_in(registered, SOURCE),
+       Sumitsubo::Mechanism::Contract.declarations_by_name({ "ruby" => [
   declares(2, "Store.open", [takes("path")]),
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(9, "Store#write", []),
@@ -314,7 +314,7 @@ twice = { "ruby" => [
   declares(24, "Store#read", [takes("key", "keyword")])
 ] }
 Sumitsubo::Check::Declaration::Conflicting.new(Sumitsubo::Mechanism::Contract::ByDeclaration::CONFLICTING)
-  .run(Sumitsubo::Mechanism::Contract.spelled_names(registered), Sumitsubo::Mechanism::Contract.declared_in(twice))
+  .run(Sumitsubo::Mechanism::Contract.name_spellings(registered), Sumitsubo::Mechanism::Contract.declarations_by_name(twice))
   .each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
@@ -354,7 +354,7 @@ end
 puts "--- and a file is read as the language that claims it ---"
 REACH = reach_of(spelling, Pathname.new(FIXTURE))
 spelling.each do |definition|
-  reached = Sumitsubo::Mechanism::Contract.reached(REACH, definition).length
+  reached = Sumitsubo::Mechanism::Contract.files_of(REACH, definition).length
   made = Sumitsubo::Mechanism::Contract.readings_in([definition], REACH, SOURCE)
   puts "  #{definition.key} #{Sumitsubo::Mechanism::Contract.languages_of(definition).join(",")}: " \
        "reaches #{reached}, reads #{made.length}"
@@ -397,7 +397,7 @@ end
 # defined; `Store.open` is retiring and nothing defines it.
 retired = loaded("#{FIXTURE}/unverifiable")
 retired_claims = [claim("src/commands.rb", 3, "@command", "init")]
-retired_declared = Sumitsubo::Mechanism::Contract.declared_in(
+retired_declared = Sumitsubo::Mechanism::Contract.declarations_by_name(
   { "ruby" => [Sumitsubo::Source::Declaration.new(path: "src/store.rb", line: 2, name: "Store#write", shape: shaped)] }
 )
 
@@ -405,15 +405,15 @@ retired_declared = Sumitsubo::Mechanism::Contract.declared_in(
 puts "--- unverifiable interfaces are compared by none, deprecated ones like any other ---"
 (unclaimed(retired, retired_claims) +
  Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::ByDeclaration::UNDEFINED)
-   .run(Sumitsubo::Mechanism::Contract.stated_names(retired), retired_declared)).each do |finding|
+   .run(Sumitsubo::Mechanism::Contract.name_promises(retired), retired_declared)).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-044 T-045
 puts "--- unverifiable interfaces the source claims or defines, and none it does not ---"
 (Sumitsubo::Check::Claim::Stale.new(Sumitsubo::Mechanism::Contract::ByClaim::STALE)
-   .run(Sumitsubo::Mechanism::Contract.stated_in(retired), retired_claims) +
+   .run(Sumitsubo::Mechanism::Contract.promises_in(retired), retired_claims) +
  Sumitsubo::Check::Declaration::Stale.new(Sumitsubo::Mechanism::Contract::ByDeclaration::STALE)
-   .run(Sumitsubo::Mechanism::Contract.stated_names(retired), retired_declared)).each do |finding|
+   .run(Sumitsubo::Mechanism::Contract.name_promises(retired), retired_declared)).each do |finding|
   puts "#{finding.check} #{finding.place.spoken} #{finding.message}"
 end

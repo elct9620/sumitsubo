@@ -26,7 +26,7 @@ module Sumitsubo
       # A whole set of keywords is read in one pass because parsing is the cost:
       # a project declaring several kinds of contract would otherwise read every
       # file once per kind.
-      def self.marked_in(path, where, keywords, languages)
+      def self.marks_in(path, where, keywords, languages)
         comments = languages.comments_in(path, where)
         in_front_at = in_front_of_code(comments)
         begun_at = begins(comments)
@@ -34,7 +34,7 @@ module Sumitsubo
         dangling = []
         comments.each do |comment|
           held = in_front_at[comment.line] ? claims : dangling
-          claimed_in(comment, keywords, where, begun_at[comment.line]).each { |one| held.push(one) }
+          claims_in(comment, keywords, where, begun_at[comment.line]).each { |one| held.push(one) }
         end
         Source::Marks.new(claims: claims, dangling: dangling)
       end
@@ -74,7 +74,7 @@ module Sumitsubo
 
       # The claims one comment carries. It spans lines whole, so a claim answers
       # at the line its keyword is on rather than where the comment began.
-      def self.claimed_in(comment, keywords, where, comment_line)
+      def self.claims_in(comment, keywords, where, comment_line)
         found = []
         comment.lines.each do |one|
           keywords.each do |keyword|

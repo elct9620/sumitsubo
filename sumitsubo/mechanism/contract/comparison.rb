@@ -8,9 +8,9 @@ module Sumitsubo
     class Contract
       # Every contract a claim could name, said the way a claim says it. Only
       # the definitions source claims are here: the other reading makes none.
-      def self.stated_in(definitions)
+      def self.promises_in(definitions)
         found = []
-        claimed(definitions).each do |definition|
+        by_claim(definitions).each do |definition|
           definition.statements.each do |interface|
             name = Name.new(marker_of(definition), interface.key)
             found.push(Check::Promise.new(
@@ -37,7 +37,7 @@ module Sumitsubo
         found
       end
 
-      def self.named(claims)
+      def self.claims_with_name(claims)
         found = []
         claims.each { |claim| found.push(claim) unless claim.key.bare.empty? }
         found
@@ -57,9 +57,9 @@ module Sumitsubo
       # Which specification registers each contract, so a claim can be asked
       # whether it sits where that specification can see it. One pair belongs to
       # one definition, which is what refuse_ambiguity guarantees.
-      def self.registering_claims(definitions)
+      def self.claim_registrars(definitions)
         found = {}
-        claimed(definitions).each do |definition|
+        by_claim(definitions).each do |definition|
           spec = definition.path
           definition.statements.each { |interface| found[Name.new(marker_of(definition), interface.key)] = spec }
         end
@@ -77,11 +77,11 @@ module Sumitsubo
       # parts from the other: a claim asserts that a contract was implemented
       # and is wrong where it cannot be, while a class merely sharing a
       # registered name asserts nothing at all.
-      def self.defining(definitions, declared, reach)
-        registering = registering_names(definitions)
+      def self.registered_declarations(definitions, declared, reach)
+        registering = name_registrars(definitions)
         found = {}
         declared.keys.each do |language|
-          found[language] = defining_in(declared[language], language, registering, reach)
+          found[language] = registered_declarations_in(declared[language], language, registering, reach)
         end
         found
       end
@@ -90,7 +90,7 @@ module Sumitsubo
       # from the group holding them rather than from each of them: what a file
       # read twice answers twice is told apart by which reading it came back
       # from, so nothing has to be carried on the answers themselves.
-      def self.defining_in(declarations, language, registering, reach)
+      def self.registered_declarations_in(declarations, language, registering, reach)
         found = []
         declarations.each do |declared|
           spec = registering[Name.new(language, declared.name)]
@@ -105,9 +105,9 @@ module Sumitsubo
       # Which specification registers each name the syntax tree answers for.
       # The language is part of the key, so one of them belongs to one
       # definition — which refuse_ambiguity is what guarantees.
-      def self.registering_names(definitions)
+      def self.name_registrars(definitions)
         found = {}
-        defined(definitions).each do |definition|
+        by_declaration(definitions).each do |definition|
           spec = definition.path
           definition.statements.each do |interface|
             found[Name.new(language_of(definition, interface), interface.key)] = spec
@@ -151,7 +151,7 @@ module Sumitsubo
       # Every definition of each name, kept in the order source declared them. A
       # name may be defined more than once, and which of those a contract
       # describes is not this reading's to decide.
-      def self.declared_in(declared)
+      def self.declarations_by_name(declared)
         found = {}
         declared.keys.each do |language|
           declared[language].each do |one|
@@ -171,9 +171,9 @@ module Sumitsubo
       # under, and the shape the signature says a caller writes. A signature no
       # definition could have is a shape no specification can register, so a
       # contract without one registers nothing to compare.
-      def self.registered_in(definitions, source)
+      def self.registrations_in(definitions, source)
         found = []
-        defined(definitions).each do |definition|
+        by_declaration(definitions).each do |definition|
           definition.statements.each do |interface|
             shape = shape_of(definition, interface, source)
             next if shape.nil?
@@ -190,9 +190,9 @@ module Sumitsubo
 
       # Every name the syntax tree reading registers, said the way the other
       # reading says one.
-      def self.stated_names(definitions)
+      def self.name_promises(definitions)
         found = []
-        defined(definitions).each do |definition|
+        by_declaration(definitions).each do |definition|
           definition.statements.each do |interface|
             name = Name.new(language_of(definition, interface), interface.key)
             found.push(Check::Promise.new(
@@ -206,9 +206,9 @@ module Sumitsubo
 
       # The names the syntax tree reading registers, each under the language
       # spelling it, in an order that leaves no ties.
-      def self.spelled_names(definitions)
+      def self.name_spellings(definitions)
         found = []
-        defined(definitions).each do |definition|
+        by_declaration(definitions).each do |definition|
           definition.statements.each do |interface|
             found.push(Name.new(language_of(definition, interface), interface.key))
           end
