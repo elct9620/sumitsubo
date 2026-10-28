@@ -89,18 +89,9 @@ module Sumitsubo
         "#{said}, where a | inside a cell is written \\|"
       end
 
-      # What an attribute takes in place of a fixed value when it says why.
-      #
-      # Held in one table where a pair is meant — the fixed values and the
-      # reasoned words as two sets: under Spinel 2026.09.12 a scenario's empty
-      # set of fixed values leaves `key?` on the shared parameter without the
-      # other form's arm, and the run crashes. Spinel c1d108a has the arm.
-      REASON = "a reason"
-
-      # What an attribute takes when it names other statements: their keys,
-      # each in backticks, set apart by commas. A key is taken letter for
-      # letter, so one carrying a space or a comma is still one key.
-      KEYS = "keys in backticks"
+      # The attributes a form carries, by what each takes: the one value it
+      # fixes, the reason it is said, or the keys of the statements it names.
+      Attributes = Data.define(:fixed, :reasoned, :keyed)
 
       # One attribute as a row wrote it, held under the word its first cell
       # names. The set is closed both ways: a word nothing knows is a form
@@ -114,17 +105,18 @@ module Sumitsubo
         line = row.line
         said = row.said
         value = row.value
-        taken = takes[said]
-        refuse(path, line, "writes #{said}, which is not #{carries}", topic) if taken.nil?
         held = [value]
-        if taken == REASON
+        if takes.reasoned.include?(said)
           refuse(path, line, "writes #{said} with no reason", topic) if value.empty?
-        elsif taken == KEYS
+        elsif takes.keyed.include?(said)
           refuse(path, line, "writes #{said} naming nothing", topic) if value.empty?
           held = keys_in(value)
-          refuse(path, line, "writes #{said} as #{value}, where it takes #{taken}", topic) if held.empty?
-        elsif value != taken
-          refuse(path, line, "writes #{said} as #{value}, where it takes #{taken}", topic)
+          refuse(path, line, "writes #{said} as #{value}, where it takes keys in backticks", topic) if held.empty?
+        elsif takes.fixed.key?(said)
+          fixed = takes.fixed[said]
+          refuse(path, line, "writes #{said} as #{value}, where it takes #{fixed}", topic) if value != fixed
+        else
+          refuse(path, line, "writes #{said}, which is not #{carries}", topic)
         end
         refuse(path, line, "writes #{said} twice", topic) unless attributes[said].nil?
 
@@ -132,7 +124,8 @@ module Sumitsubo
       end
 
       # The keys a cell names, or none where any part of it is not one key in
-      # backticks: a cell half read would name less than its writer meant.
+      # backticks: a cell half read would name less than its writer meant. A
+      # key is taken letter for letter, so one carrying a space is still one.
       def self.keys_in(value)
         found = []
         parts = value.split(",").map { |one| one.strip }

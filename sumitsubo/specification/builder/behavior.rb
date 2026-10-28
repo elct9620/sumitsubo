@@ -37,8 +37,8 @@ module Sumitsubo
 
         # The attributes a scenario carries: the two taking the reason they are
         # said, and the two naming the statements it relates to and refines.
-        ATTRIBUTES = { "unverifiable" => Builder::REASON, "deprecated" => Builder::REASON,
-                       "relates" => Builder::KEYS, "refines" => Builder::KEYS }
+        ATTRIBUTES = Builder::Attributes.new(fixed: {}, reasoned: ["unverifiable", "deprecated"],
+                                             keyed: ["relates", "refines"])
 
         # The columns each table a scenario holds is headed by.
         STEPPED = ["Step", "Statement"]
