@@ -21,7 +21,7 @@ module Sumitsubo
         found = []
         candidates = walk(base, patterns, exclusion).paths
         patterns.each do |pattern|
-          matches(pattern, candidates).each { |path| found.push(path) }
+          select(pattern, candidates).each { |path| found.push(path) }
         end
         found
       end
@@ -39,7 +39,7 @@ module Sumitsubo
         walked = walk(base, patterns, exclusion)
         found = []
         patterns.each do |pattern|
-          next unless matches(pattern, walked.paths).empty?
+          next unless select(pattern, walked.paths).empty?
           next if refused?(walked.pruned, root_of(pattern))
 
           found.push(pattern)
@@ -94,7 +94,7 @@ module Sumitsubo
         Found.new(paths.uniq, pruned)
       end
 
-      def self.matches(pattern, candidates)
+      def self.select(pattern, candidates)
         rule = Patterns.read([pattern])[0]
         candidates.select { |path| Patterns.selects?(rule, path) }
       end
