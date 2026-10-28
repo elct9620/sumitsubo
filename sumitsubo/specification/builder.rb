@@ -135,10 +135,7 @@ module Sumitsubo
       # backticks: a cell half read would name less than its writer meant.
       def self.keys_in(value)
         found = []
-        # Interpolated first: in this program Spinel 2026.09.12 splits the boxed
-        # cell text into an array it then reads as C strings, and C refuses it.
-        # Master 0e8befeb compiles `value.split`.
-        parts = "#{value}".split(",").map { |one| one.strip }
+        parts = value.split(",").map { |one| one.strip }
         parts.each do |part|
           return [] unless part.length > 2 && part.start_with?("`") && part.end_with?("`")
 

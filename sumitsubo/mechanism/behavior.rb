@@ -163,10 +163,7 @@ module Sumitsubo
                .each { |one| findings.add(one) }
         reach = Reach.of(features, relations)
         claimed = claims(relations)
-        # Read through the module rather than `stated`: Spinel 2026.09.12
-        # answers that call with nil from inside this method. Master c52df8a1
-        # does not, so call `stated` once the pin moves past it.
-        scenarios = Feature.stated_in(features)
+        scenarios = stated(features)
         declared_by = declaring(features)
         # What the check below compares is the claims that can witness; the
         # rest answer for themselves further down.

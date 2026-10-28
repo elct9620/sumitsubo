@@ -56,11 +56,7 @@ module TreeSitter
     raise ParseError, "tree-sitter: #{TreeSitterNative.tsq_error}" if TreeSitterNative.tsq_failed
     raise ParseError, "#{where}: cannot be parsed by the #{grammar} grammar" unless TreeSitterNative.tsq_parse_ok
 
-    # Held before it is answered: Spinel loses the type of an Array of objects a
-    # method answers straight from a call to one defined further down.
-    # matz/spinel#4490.
-    found = decode(raw)
-    found
+    decode(raw)
   end
 
   # The record format this binding owns, read back without a parser.
@@ -76,10 +72,10 @@ module TreeSitter
       # nothing loses its last field to the split, so six is enough.
       next if fields.length < 6
 
-      # Interpolated to settle the element type: an array built by a loop keeps
-      # its members open, and unescape needs a string.
+      # The text is interpolated because a capture of nothing has no field
+      # there at all, and its text is empty rather than nil.
       found << Capture.new(
-        fields[0].to_i, "#{fields[1]}", fields[2].to_i, fields[3].to_i,
+        fields[0].to_i, fields[1], fields[2].to_i, fields[3].to_i,
         fields[4].to_i, fields[5].to_i, unescape("#{fields[6]}")
       )
     end

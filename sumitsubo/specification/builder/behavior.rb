@@ -245,9 +245,7 @@ module Sumitsubo
         # says it may stand. A state may follow a state, and the operation and
         # its outcome are each stated once, in that order.
         def stage(line, name, said)
-          # Compared in a block: Spinel 2026.09.12 hands `index(name)` a boxed
-          # string where it takes a C one and refuses it. Master 0e8befeb does not.
-          at = STEPS.index { |one| one == name }
+          at = STEPS.index(name)
           misstep(line, "writes #{name} among the steps, where Given, When and Then are written") if at.nil?
           return held(line, name, said) if @misstepped
 

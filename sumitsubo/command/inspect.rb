@@ -96,20 +96,16 @@ module Sumitsubo
         said
       end
 
-      # Assigned rather than returned from inside the loop: on Spinel 2026.09.12
-      # and on master at e527d205d, a return from these nested blocks compiles
-      # the blocks of `about` to procs answering an integer, and C refuses them.
       def declared(id, features)
-        found = "declared nowhere"
         features.each do |feature|
           feature.statements.each do |scenario|
             next unless scenario.key == id
 
             at = Place.new(path: scenario.path, line: scenario.line)
-            found = "#{at.spoken}  #{scenario.text}"
+            return "#{at.spoken}  #{scenario.text}"
           end
         end
-        found
+        "declared nowhere"
       end
 
       def about(key, features, claims, dangling)
