@@ -20,8 +20,8 @@ module Sumitsubo
         current.each_mechanism do |mechanism|
           mechanism.verify(config, current.findings, current.specifications, current.source, current.relations)
         end
-        current.written.keep(current.switched_on)
-        current.written.resolve
+        current.attributes.keep(current.switched_on)
+        current.attributes.resolve
         Finding::Report.new(current.findings).lines.each { |line| puts line }
         current.findings.code
       end

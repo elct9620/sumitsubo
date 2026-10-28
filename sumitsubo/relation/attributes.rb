@@ -17,7 +17,7 @@ module Sumitsubo
     # The mechanisms arrive with the run rather than being named here, so what
     # a specification writes of another is kept without reaching every
     # mechanism there is.
-    class Written
+    class Attributes
       # Every relation the statements one mechanism keeps write, from each of
       # them to every key it names.
       def self.keep(mechanism, statements, names, relations)
@@ -50,7 +50,7 @@ module Sumitsubo
         names = @mechanisms.map { |one| one.specification }
         mechanisms.each do |mechanism|
           statements = @specifications.statements(mechanism, @config)
-          Written.keep(mechanism.specification, statements, names, @relations) unless statements.nil?
+          Attributes.keep(mechanism.specification, statements, names, @relations) unless statements.nil?
         end
       end
 

@@ -114,7 +114,7 @@ mechanism's is kept, switched on or not.
                          │  ├ dangling marker → key│
                          │  ├ declares  read → key │
                          │  ├ mentions  word → key │
-                         │  ├ relates   key → key  │◄── (1), Relation::Written
+                         │  ├ relates   key → key  │◄── (1), Relation::Attributes
                          │  └ refines   key → key  │──► relate, unresolved,
                          └───────────┬─────────────┘    ambiguous
                                      │
@@ -343,7 +343,7 @@ Every file has one place, and where it sits is what says what it is.
 │  │  reach.rb                                     what each specification
 │  │                                               reaches, kept first
 │  │  relation/repository.rb                       what corresponds, kept
-│  │  relation/written.rb                          what specifications say of
+│  │  relation/attributes.rb                       what specifications say of
 │  │                                               one another
 │  │
 │  ├─ what a form means to its own mechanism, a file to each stage

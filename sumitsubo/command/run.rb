@@ -5,7 +5,7 @@ require "sumitsubo/mechanism"
 require "sumitsubo/specification/repository"
 require "sumitsubo/source/repository"
 require "sumitsubo/relation/repository"
-require "sumitsubo/relation/written"
+require "sumitsubo/relation/attributes"
 
 module Sumitsubo
   module Command
@@ -20,7 +20,7 @@ module Sumitsubo
         @source = Source::Repository.new(languages, config.here)
         @specifications = Specification::Repository.new(parsers, languages, config.here)
         @relations = Relation::Repository.new
-        @written = Relation::Written.new(config, @specifications, @relations, @findings, Mechanism::ALL)
+        @attributes = Relation::Attributes.new(config, @specifications, @relations, @findings, Mechanism::ALL)
       end
 
       def findings
@@ -41,8 +41,8 @@ module Sumitsubo
 
       # What the specifications say of one another, and what of that names
       # no statement, or more than one.
-      def written
-        @written
+      def attributes
+        @attributes
       end
 
       # With no root there is no reference line to read at all, which is not a

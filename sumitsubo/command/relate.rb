@@ -40,7 +40,7 @@ module Sumitsubo
         current.keep([Mechanism::BEHAVIOR])
         return 2 if current.unread?
 
-        current.written.keep(Mechanism::ALL)
+        current.attributes.keep(Mechanism::ALL)
         @current = current
         @names = Mechanism::ALL.map { |one| one.specification }
         written = Relation::Reference.written(key, "", @names)

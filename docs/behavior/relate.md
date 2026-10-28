@@ -13,7 +13,7 @@ never answers `1`.
 
 ## Includes
 
-- `test/related_test.rb`
+- `test/attributes_test.rb`
 - `test/relate_test.rb`
 
 ## `RL-001` A scenario relating to another of its own
