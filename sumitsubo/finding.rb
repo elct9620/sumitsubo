@@ -12,8 +12,11 @@ module Sumitsubo
     # A document its own form refused, worded the way every other finding is
     # worded so a reader meets it in the order they walk the file. The check is
     # the mechanism's, and where and what are the refusal's own.
+    #
+    # Interpolated: Spinel 2026.10.25 hands this message, read off a receiver
+    # that may be an exception, to C as the wrong type and the build fails.
     def self.refused(check, refusal)
-      new(check: check, difference: false, place: refusal.place, message: refusal.message)
+      new(check: check, difference: false, place: refusal.place, message: "#{refusal.message}")
     end
 
     # The comparison was made and the two sides disagree. False says it could
