@@ -133,13 +133,8 @@ module Sumitsubo
     # The text with every longer spelling blanked out, so a match left in it is
     # the word standing on its own — including a spelling a line break cut in
     # two, whose other half ends the line before or opens the line after.
-    #
-    # Held as spellings and interpolated first: under Spinel 2026.09.12 a Regexp
-    # taken out of an Array reaches `gsub` as a String, and the text a region
-    # holds has no `gsub` at all. Spinel 30d32f7 answers the first and c6bbdfb
-    # the second.
     def self.masked(text, longer, before, after)
-      held = "#{text}"
+      held = text
       longer.each do |one|
         held = held.gsub(whole_word(one), " ")
         held = unwrapped(held, one.split(" "), before, after)
