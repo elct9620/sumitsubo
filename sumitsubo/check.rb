@@ -12,7 +12,7 @@ module Sumitsubo
     # where the specification declares it, and how it is said to a reader.
     # `unverifiable` is the reason no check can hold it to the source yet, and
     # nil for everything a check does hold.
-    Stated = Data.define(:key, :place, :said, :unverifiable)
+    Promise = Data.define(:key, :place, :said, :unverifiable)
 
     # The reason a statement's attributes give for setting it aside, or nil
     # where they give none.
@@ -22,12 +22,12 @@ module Sumitsubo
     end
 
     # What source claims: the same word, where it says so, and how that is said.
-    Made = Data.define(:key, :place, :said)
+    Mark = Data.define(:key, :place, :said)
 
     # What a specification registers for a name the syntax tree answers for:
     # the shape a caller would have to write, beside the name it is written
     # under.
-    Registered = Data.define(:key, :place, :said, :shape)
+    Registration = Data.define(:key, :place, :said, :shape)
 
     # What one specification's includes cover, and where that specification is.
     # A glossary writes them in sections and answers for all of them at once,

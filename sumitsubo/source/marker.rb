@@ -36,7 +36,7 @@ module Sumitsubo
           held = in_front_at[comment.line] ? claims : dangling
           claimed_in(comment, keywords, where, begun_at[comment.line]).each { |one| held.push(one) }
         end
-        Source::Marked.new(claims: claims, dangling: dangling)
+        Source::Marks.new(claims: claims, dangling: dangling)
       end
 
       # Answered under the line each comment starts on: the line its run

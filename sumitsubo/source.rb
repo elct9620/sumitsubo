@@ -68,7 +68,7 @@ module Sumitsubo
 
     # A declaration with the language that read it, for whoever asks after
     # the caller holding the two apart is gone.
-    class Spelled < Data.define(:declaration, :language)
+    class Spelling < Data.define(:declaration, :language)
     end
 
     # What a caller has to write to reach a declaration. Two of them saying the
@@ -115,6 +115,6 @@ module Sumitsubo
     # What a pass over source marks, held apart by what the comment stands in
     # front of: a claim is about the code below it, so a marker with none below
     # is dangling rather than a claim, and nothing downstream has to ask again.
-    Marked = Data.define(:claims, :dangling)
+    Marks = Data.define(:claims, :dangling)
   end
 end

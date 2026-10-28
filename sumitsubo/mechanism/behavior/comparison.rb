@@ -14,7 +14,7 @@ module Sumitsubo
         claims.each do |claim|
           next unless claim.id.empty?
 
-          found.push(Check::Made.new(key: claim.key, place: claim.place, said: claim.said))
+          found.push(Check::Mark.new(key: claim.key, place: claim.place, said: claim.said))
         end
         found
       end
@@ -30,7 +30,7 @@ module Sumitsubo
         found = []
         features.each do |feature|
           feature.statements.each do |scenario|
-            found.push(Check::Stated.new(
+            found.push(Check::Promise.new(
               key: scenario.key,
               place: Place.new(path: scenario.path, line: scenario.line),
               said: "#{MARKER} #{scenario.key}",

@@ -13,7 +13,7 @@ module Sumitsubo
         claimed(definitions).each do |definition|
           definition.statements.each do |interface|
             name = Name.new(marker_of(definition), interface.key)
-            found.push(Check::Stated.new(
+            found.push(Check::Promise.new(
               key: name, place: Place.new(path: interface.path, line: interface.line), said: name.spoken,
               unverifiable: Check.unverifiable(interface.attributes)
             ))
@@ -30,7 +30,7 @@ module Sumitsubo
         claims.each do |claim|
           next unless claim.key.bare.empty?
 
-          found.push(Check::Made.new(
+          found.push(Check::Mark.new(
             key: claim.key, place: claim.place, said: claim.key.namespace
           ))
         end
@@ -178,7 +178,7 @@ module Sumitsubo
             shape = shape_of(definition, interface, source)
             next if shape.nil?
 
-            found.push(Check::Registered.new(
+            found.push(Check::Registration.new(
               key: Name.new(language_of(definition, interface), interface.key),
               place: Place.new(path: interface.path, line: interface.line),
               said: interface.key, shape: shape
@@ -195,7 +195,7 @@ module Sumitsubo
         defined(definitions).each do |definition|
           definition.statements.each do |interface|
             name = Name.new(language_of(definition, interface), interface.key)
-            found.push(Check::Stated.new(
+            found.push(Check::Promise.new(
               key: name, place: Place.new(path: interface.path, line: interface.line), said: name.spoken,
               unverifiable: Check.unverifiable(interface.attributes)
             ))

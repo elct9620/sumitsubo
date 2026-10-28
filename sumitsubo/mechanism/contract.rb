@@ -34,7 +34,7 @@ module Sumitsubo
 
       # Source says in a comment that it implements an interface, which is what
       # an interface needs when no construct of the language points at it.
-      class Claimed
+      class ByClaim
         UNCLAIMED = "contract/unclaimed"
         DUPLICATED = "contract/duplicated"
         MISPLACED = "contract/misplaced"
@@ -78,7 +78,7 @@ module Sumitsubo
       # The syntax tree answers for the interface outright, so this reading
       # makes no claims: what it compares is what the source defines and the
       # shape a caller would have to call it with.
-      class Defined
+      class ByDeclaration
         UNDEFINED = "contract/undefined"
         CONFLICTING = "contract/conflicting"
         MISMATCHED = "contract/mismatched"
@@ -108,8 +108,8 @@ module Sumitsubo
 
       def initialize
         @barren = Check::Reach::Barren.new(BARREN)
-        @claimed = Claimed.new
-        @defined = Defined.new
+        @by_claim = ByClaim.new
+        @by_declaration = ByDeclaration.new
       end
 
       def specification
@@ -204,8 +204,8 @@ module Sumitsubo
         # chose, so it is asked once for all of them.
         @barren.run(Reach.covers(definitions), config.base, config.exclusion)
                .each { |one| findings.add(one) }
-        @claimed.run(findings, definitions, relations, specification)
-        @defined.run(findings, definitions, source, relations, specification)
+        @by_claim.run(findings, definitions, relations, specification)
+        @by_declaration.run(findings, definitions, source, relations, specification)
       end
 
       private

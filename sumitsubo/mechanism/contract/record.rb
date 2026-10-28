@@ -79,7 +79,7 @@ module Sumitsubo
         declared = defined_in(definitions, Reach.of(defined(definitions), relations), source)
         declared.keys.each do |language|
           declared[language].each do |one|
-            spelled = Source::Spelled.new(declaration: one, language: language)
+            spelled = Source::Spelling.new(declaration: one, language: language)
             relations.add(Relation.declares(spelled, Relation::Reference.new(mechanism: mechanism, key: one.name)))
           end
         end
@@ -91,7 +91,7 @@ module Sumitsubo
         found = []
         relations.each do |one|
           name = Name.new(one.subject.keyword, one.subject.text)
-          found.push(Check::Made.new(key: name, place: Place.new(path: one.subject.path, line: one.subject.line), said: name.spoken))
+          found.push(Check::Mark.new(key: name, place: Place.new(path: one.subject.path, line: one.subject.line), said: name.spoken))
         end
         found
       end

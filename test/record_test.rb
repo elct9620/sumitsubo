@@ -77,7 +77,7 @@ declared = Sumitsubo::Relation::Repository.new
   language = read[0]
   name = read[1]
   found = Sumitsubo::Source::Declaration.new(path: "app/order.ts", line: read[2], name: name, shape: nil)
-  spelled = Sumitsubo::Source::Spelled.new(declaration: found, language: language)
+  spelled = Sumitsubo::Source::Spelling.new(declaration: found, language: language)
   declared.add(Sumitsubo::Relation.declares(spelled, reference("contract", name)))
 end
 held = Sumitsubo::Mechanism::Contract.declared_from(declared.naming(Sumitsubo::Relation::DECLARES, "contract"))

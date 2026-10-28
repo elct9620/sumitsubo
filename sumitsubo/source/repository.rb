@@ -36,7 +36,7 @@ module Sumitsubo
           claims.concat(marked.claims)
           dangling.concat(marked.dangling)
         end
-        Marked.new(claims: claims, dangling: dangling)
+        Marks.new(claims: claims, dangling: dangling)
       end
 
       # What a file declares, read as the language a specification named.

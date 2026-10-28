@@ -98,12 +98,12 @@ def loaded(directory, parsers = PARSERS)
 end
 
 def undefined(definitions, declared)
-  Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::Defined::UNDEFINED)
+  Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::ByDeclaration::UNDEFINED)
     .run(Sumitsubo::Mechanism::Contract.stated_names(definitions), Sumitsubo::Mechanism::Contract.declared_in(declared))
 end
 
 def unclaimed(definitions, claims)
-  Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Contract::Claimed::UNCLAIMED)
+  Sumitsubo::Check::Claim::Unclaimed.new(Sumitsubo::Mechanism::Contract::ByClaim::UNCLAIMED)
     .run(Sumitsubo::Mechanism::Contract.stated_in(definitions), claims)
 end
 
@@ -111,7 +111,7 @@ end
 # by the reading, which is what put it among the claims at all.
 def claim(path, line, keyword, name)
   said = Sumitsubo::Mechanism::Contract::Name.new(keyword, name)
-  Sumitsubo::Check::Made.new(key: said, place: Sumitsubo::Place.new(path: path, line: line), said: said.spoken)
+  Sumitsubo::Check::Mark.new(key: said, place: Sumitsubo::Place.new(path: path, line: line), said: said.spoken)
 end
 
 def fails
@@ -171,7 +171,7 @@ end
 
 # @behavior T-037
 puts "--- and the claim that could not implement it ---"
-Sumitsubo::Check::Claim::Misplaced.new(Sumitsubo::Mechanism::Contract::Claimed::MISPLACED)
+Sumitsubo::Check::Claim::Misplaced.new(Sumitsubo::Mechanism::Contract::ByClaim::MISPLACED)
   .run(astray, registering, reach).each do |finding|
   puts "  #{finding.place.spoken} #{finding.message}"
 end
@@ -250,16 +250,16 @@ end
 
 # @behavior T-010 T-011
 puts "--- a claim resolving to no contract, and one naming none at all ---"
-(Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Contract::Claimed::UNRESOLVED, "contract")
+(Sumitsubo::Check::Claim::Unresolved.new(Sumitsubo::Mechanism::Contract::ByClaim::UNRESOLVED, "contract")
    .run(Sumitsubo::Mechanism::Contract.named(claims), Sumitsubo::Mechanism::Contract.stated_in(definitions)) +
- Sumitsubo::Check::Claim::Nameless.new(Sumitsubo::Mechanism::Contract::Claimed::NAMELESS, "contract")
+ Sumitsubo::Check::Claim::Nameless.new(Sumitsubo::Mechanism::Contract::ByClaim::NAMELESS, "contract")
    .run(Sumitsubo::Mechanism::Contract.nameless(claims))).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-012
 puts "--- one contract claimed in two places ---"
-Sumitsubo::Check::Claim::Duplicated.new(Sumitsubo::Mechanism::Contract::Claimed::DUPLICATED)
+Sumitsubo::Check::Claim::Duplicated.new(Sumitsubo::Mechanism::Contract::ByClaim::DUPLICATED)
   .run(claims, Sumitsubo::Mechanism::Contract.stated_in(definitions)).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
@@ -292,7 +292,7 @@ end
 # scope with no call to describe, so only `Store.open` answers.
 # @behavior T-020 T-021
 puts "--- an interface defined with another shape ---"
-Sumitsubo::Check::Declaration::Mismatched.new(Sumitsubo::Mechanism::Contract::Defined::MISMATCHED)
+Sumitsubo::Check::Declaration::Mismatched.new(Sumitsubo::Mechanism::Contract::ByDeclaration::MISMATCHED)
   .run(Sumitsubo::Mechanism::Contract.registered_in(registered, SOURCE),
        Sumitsubo::Mechanism::Contract.declared_in({ "ruby" => [
   declares(2, "Store.open", [takes("path")]),
@@ -313,7 +313,7 @@ twice = { "ruby" => [
   declares(6, "Store#read", [takes("key", "keyword"), takes(nil, "block", true)]),
   declares(24, "Store#read", [takes("key", "keyword")])
 ] }
-Sumitsubo::Check::Declaration::Conflicting.new(Sumitsubo::Mechanism::Contract::Defined::CONFLICTING)
+Sumitsubo::Check::Declaration::Conflicting.new(Sumitsubo::Mechanism::Contract::ByDeclaration::CONFLICTING)
   .run(Sumitsubo::Mechanism::Contract.spelled_names(registered), Sumitsubo::Mechanism::Contract.declared_in(twice))
   .each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
@@ -404,16 +404,16 @@ retired_declared = Sumitsubo::Mechanism::Contract.declared_in(
 # @behavior T-044 T-046
 puts "--- unverifiable interfaces are compared by none, deprecated ones like any other ---"
 (unclaimed(retired, retired_claims) +
- Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::Defined::UNDEFINED)
+ Sumitsubo::Check::Declaration::Undefined.new(Sumitsubo::Mechanism::Contract::ByDeclaration::UNDEFINED)
    .run(Sumitsubo::Mechanism::Contract.stated_names(retired), retired_declared)).each do |finding|
   puts "#{finding.place.spoken} #{finding.message}"
 end
 
 # @behavior T-044 T-045
 puts "--- unverifiable interfaces the source claims or defines, and none it does not ---"
-(Sumitsubo::Check::Claim::Stale.new(Sumitsubo::Mechanism::Contract::Claimed::STALE)
+(Sumitsubo::Check::Claim::Stale.new(Sumitsubo::Mechanism::Contract::ByClaim::STALE)
    .run(Sumitsubo::Mechanism::Contract.stated_in(retired), retired_claims) +
- Sumitsubo::Check::Declaration::Stale.new(Sumitsubo::Mechanism::Contract::Defined::STALE)
+ Sumitsubo::Check::Declaration::Stale.new(Sumitsubo::Mechanism::Contract::ByDeclaration::STALE)
    .run(Sumitsubo::Mechanism::Contract.stated_names(retired), retired_declared)).each do |finding|
   puts "#{finding.check} #{finding.place.spoken} #{finding.message}"
 end
