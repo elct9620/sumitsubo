@@ -5,6 +5,7 @@ require "sumitsubo/relation/repository"
 require "sumitsubo/source"
 require "sumitsubo/specification"
 require "sumitsubo/check/related"
+require "sumitsubo/mechanism/behavior/kept"
 require "sumitsubo/mechanism/contract/kept"
 require "sumitsubo/mechanism/glossary/kept"
 
@@ -55,9 +56,6 @@ end
 p marks.named_in([Sumitsubo::Relation::CLAIM], "behavior", "test/order_test.rb", 1)
 p marks.named_in([Sumitsubo::Relation::CLAIM], "behavior", "test/order_test.rb", 7)
 
-# Spinel 2026.09.12, and master at 7232a802, cannot type a scenario's claims
-# read back in a program this small, so only the contract's half is asked here;
-# verify_test asks the scenario's through a whole run. Ask both once it can.
 # @behavior K-003
 puts "--- a claim read back for a check ---"
 claims = Sumitsubo::Relation::Repository.new
@@ -65,6 +63,11 @@ command = Sumitsubo::Source::Claim.new("app/order.rb", 9, 9, "@command", "verify
 claims.add(Sumitsubo::Relation.claim(command, reference("contract", "verify")))
 Sumitsubo::Mechanism::Contract.read(claims.naming(Sumitsubo::Relation::CLAIM, "contract")).each do |one|
   puts "  contract #{one.key.spoken} at #{one.place.spoken} said #{one.said}"
+end
+scenario = Sumitsubo::Source::Claim.new("test/order_test.rb", 3, 3, "@behavior", "O-001")
+claims.add(Sumitsubo::Relation.claim(scenario, reference("behavior", "O-001")))
+Sumitsubo::Mechanism::Behavior.claimed_in(claims, "behavior").each do |one|
+  puts "  scenario #{one.id} at #{one.path}:#{one.line}"
 end
 
 # @behavior K-004

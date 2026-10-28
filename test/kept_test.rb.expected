@@ -7,6 +7,7 @@
 ["O-003"]
 --- a claim read back for a check ---
   contract @command verify at app/order.rb:9 said @command verify
+  scenario O-001 at test/order_test.rb:3
 --- a declaration read back under its language ---
   typescript ["Order:1", "Charge:3"]
   tsx ["Order:1"]
