@@ -1,6 +1,6 @@
 require "sumitsubo/check"
 require "sumitsubo/place"
-require "sumitsubo/mechanism/behavior/kept"
+require "sumitsubo/mechanism/behavior/record"
 
 module Sumitsubo
   module Mechanism

@@ -1,7 +1,7 @@
 require "sumitsubo/place"
 require "sumitsubo/relation"
 require "sumitsubo/source"
-require "sumitsubo/mechanism/glossary/declared"
+require "sumitsubo/mechanism/glossary/declaration"
 
 module Sumitsubo
   module Mechanism

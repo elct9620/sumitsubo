@@ -1,6 +1,6 @@
 require "sumitsubo/error"
 require "sumitsubo/relation"
-require "sumitsubo/check/related"
+require "sumitsubo/check/reference"
 
 module Sumitsubo
   class Relation
@@ -107,7 +107,7 @@ module Sumitsubo
         found = target.find(relation.object.key, writer, @config, @specifications, @relations, named)
         return if found.length == 1
 
-        @findings.add(found.empty? ? Check::Related.unresolved(relation, writer) : Check::Related.ambiguous(relation, writer, found))
+        @findings.add(found.empty? ? Check::Reference.unresolved(relation, writer) : Check::Reference.ambiguous(relation, writer, found))
       end
 
       def named(name)

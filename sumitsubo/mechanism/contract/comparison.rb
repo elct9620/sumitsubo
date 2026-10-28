@@ -1,6 +1,6 @@
 require "sumitsubo/check"
 require "sumitsubo/place"
-require "sumitsubo/mechanism/contract/declared"
+require "sumitsubo/mechanism/contract/declaration"
 
 module Sumitsubo
   module Mechanism

@@ -3,7 +3,7 @@ require "sumitsubo/place"
 require "sumitsubo/reach"
 require "sumitsubo/relation"
 require "sumitsubo/source"
-require "sumitsubo/mechanism/contract/declared"
+require "sumitsubo/mechanism/contract/declaration"
 
 module Sumitsubo
   module Mechanism

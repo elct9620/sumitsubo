@@ -347,16 +347,16 @@ Every file has one place, and where it sits is what says what it is.
 │  │                                               one another
 │  │
 │  ├─ what a form means to its own mechanism, a file to each stage
-│  │  mechanism/*/declared.rb                      what a document declares
-│  │  mechanism/*/kept.rb                          what is kept from source
-│  │  mechanism/{contract,behavior}/compared.rb    what the checks are handed
+│  │  mechanism/*/declaration.rb                   what a document declares
+│  │  mechanism/*/record.rb                        what is kept from source
+│  │  mechanism/{contract,behavior}/comparison.rb  what the checks are handed
 │  │
 │  ├─ the comparison
 │  │  mechanism.rb                                 the register
 │  │  mechanism/seed.rb
 │  │  mechanism/{glossary,contract,behavior}.rb    name, seed, checks, wording
 │  │  check/{region,claim,declaration,reach}.rb    a check to each word
-│  │  check/related.rb                             what a relation names
+│  │  check/reference.rb                           what a relation names
 │  │  budget.rb                                    how long prose may run,
 │  │                                               over every form
 │  │

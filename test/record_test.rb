@@ -4,15 +4,15 @@ require "sumitsubo/relation"
 require "sumitsubo/relation/repository"
 require "sumitsubo/source"
 require "sumitsubo/specification"
-require "sumitsubo/check/related"
-require "sumitsubo/mechanism/behavior/kept"
-require "sumitsubo/mechanism/contract/kept"
-require "sumitsubo/mechanism/glossary/kept"
+require "sumitsubo/check/reference"
+require "sumitsubo/mechanism/behavior/record"
+require "sumitsubo/mechanism/contract/record"
+require "sumitsubo/mechanism/glossary/record"
 
 # What each stage keeps, handed in as data and read back the way the next one
 # asks. Nothing reaches the grammar, so `--regen` can write the snapshot.
 
-root = Pathname.new("/tmp/sumi_kept_test_#{Process.pid}")
+root = Pathname.new("/tmp/sumi_record_test_#{Process.pid}")
 root.rmtree if root.exist?
 back = Dir.pwd
 root.mkpath
@@ -101,10 +101,10 @@ nothing = Sumitsubo::Relation.relates(reference("behavior", "O-001"), reference(
 def said(finding)
   puts "  #{finding.place.spoken}: #{finding.check}: #{finding.message}"
 end
-said(Sumitsubo::Check::Related.unresolved(nothing, writer))
+said(Sumitsubo::Check::Reference.unresolved(nothing, writer))
 twice = Sumitsubo::Relation.relates(reference("behavior", "O-001"), reference("contract", "inspect"))
 found = [statement("inspect", nil, ".spec/contract/cli.md", 11), statement("inspect", nil, ".spec/contract/routes.md", 11)]
-said(Sumitsubo::Check::Related.ambiguous(twice, writer, found))
+said(Sumitsubo::Check::Reference.ambiguous(twice, writer, found))
 
 Dir.chdir(back)
 root.rmtree

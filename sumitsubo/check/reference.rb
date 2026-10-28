@@ -8,7 +8,7 @@ module Sumitsubo
     # relation, under the word of the mechanism keeping it, and both are a
     # comparison that could not be made rather than a difference: nothing on
     # the other side says which statement was meant.
-    module Related
+    module Reference
       UNRESOLVED = "unresolved"
       AMBIGUOUS = "ambiguous"
 

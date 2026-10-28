@@ -1,4 +1,4 @@
-# Kept
+# Record
 
 What a run keeps of what corresponds, and how each check reads it back. Every
 stage hands the next its answer as relations, so each is asked here with its
@@ -15,7 +15,7 @@ K-006  a written key   -> unresolved, or ambiguous
 
 ## Includes
 
-- `test/kept_test.rb`
+- `test/record_test.rb`
 
 ## `K-001` What each specification reaches
 
