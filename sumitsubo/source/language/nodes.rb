@@ -145,7 +145,7 @@ module Sumitsubo
         # node, and neither can be told from the other at this resolution:
         # answering with none loses a prefix where a one-line `class A; class B;
         # end; end` nests, and answering with both would invent one.
-        def self.enclosing(scopes, node)
+        def self.path_to(scopes, node)
           holding = []
           scopes.each do |scope|
             next if scope.first == node.first && scope.last == node.last

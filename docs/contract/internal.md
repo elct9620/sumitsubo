@@ -200,7 +200,7 @@ module Sumitsubo::Source::Language::Nodes
 end
 ```
 
-## `Sumitsubo::Source::Language::Nodes.enclosing`
+## `Sumitsubo::Source::Language::Nodes.path_to`
 
 The one place nesting is recovered from where the nodes sit.
 
@@ -210,7 +210,7 @@ The one place nesting is recovered from where the nodes sit.
 
 ```ruby
 module Sumitsubo::Source::Language::Nodes
-  def self.enclosing(scopes, node)
+  def self.path_to(scopes, node)
   end
 end
 ```

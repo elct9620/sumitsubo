@@ -52,8 +52,8 @@ Sumitsubo::Source::Language::Nodes.nodes_in([
 puts "--- the nodes holding one, outermost first ---"
 scopes = [node("scope", "Inner", 2, 5), node("scope", "Outer", 1, 8), node("scope", "Same", 3, 3)]
 [node("instance", "go", 3, 3), node("instance", "away", 6, 6)].each do |held|
-  holding = Sumitsubo::Source::Language::Nodes.enclosing(scopes, held).map { |scope| scope.text }
-  puts "  #{held.text}: #{holding.join(" > ")}"
+  path = Sumitsubo::Source::Language::Nodes.path_to(scopes, held).map { |scope| scope.text }
+  puts "  #{held.text}: #{path.join(" > ")}"
 end
 
 # A query has no way to ask what a node is not, so which neighbours are

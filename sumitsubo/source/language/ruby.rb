@@ -164,13 +164,13 @@ module Sumitsubo
         # The name a contract would have to use to reach this node, its enclosing
         # scopes included.
         def qualified(scopes, reopened, node)
-          holding = Nodes.enclosing(scopes, node).map { |scope| scope.text }
-          return holding.push(node.text).join("::") if node.kind == SCOPE
+          path = Nodes.path_to(scopes, node).map { |scope| scope.text }
+          return path.push(node.text).join("::") if node.kind == SCOPE
           # A definition outside every scope is reached by its bare name: there
           # is no path to put in front of it.
-          return node.text if holding.empty?
+          return node.text if path.empty?
 
-          "#{holding.join("::")}#{singleton?(reopened, node) ? "." : "#"}#{node.text}"
+          "#{path.join("::")}#{singleton?(reopened, node) ? "." : "#"}#{node.text}"
         end
 
         # Whether the method belongs to the class rather than to an instance of

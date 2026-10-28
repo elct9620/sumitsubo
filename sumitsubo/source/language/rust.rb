@@ -105,15 +105,15 @@ module Sumitsubo
           nodes = sorted(Nodes.nodes_in(matches))
           taken = params_in(matches)
 
-          holders = []
-          nodes.each { |node| holders.push(node) if node.kind != ITEM }
+          scopes = []
+          nodes.each { |node| scopes.push(node) if node.kind != ITEM }
 
           found = []
           nodes.each do |node|
             next if node.kind == HOLDER
 
             found.push(Source::Declaration.new(
-              where, node.first, qualified(holders, node), shape_for(taken, node)
+              where, node.first, qualified(scopes, node), shape_for(taken, node)
             ))
           end
           found
@@ -170,8 +170,8 @@ module Sumitsubo
 
         # The path a contract would have to write to reach this node, the blocks
         # holding it in front of it.
-        def qualified(holders, node)
-          path = Nodes.enclosing(holders, node).map { |holder| base(holder.text) }
+        def qualified(scopes, node)
+          path = Nodes.path_to(scopes, node).map { |scope| base(scope.text) }
           path.push(base(node.text))
           path.join("::")
         end

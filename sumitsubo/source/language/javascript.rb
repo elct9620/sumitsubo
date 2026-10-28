@@ -164,7 +164,7 @@ module Sumitsubo
         # and `#` where a value does — and everything else answers under the
         # scopes holding it.
         def qualified(scopes, statics, node)
-          path = Nodes.enclosing(scopes, node).map { |scope| scope.text }
+          path = Nodes.path_to(scopes, node).map { |scope| scope.text }
           return node.text if path.empty?
           return "#{path.join(".")}#{mark(statics, node)}#{node.text}" if node.kind == MEMBER
 

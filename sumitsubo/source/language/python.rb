@@ -144,7 +144,7 @@ module Sumitsubo
         # The name a contract would have to write to reach this declaration:
         # the scopes holding it, dotted, and its own name last.
         def qualified(scopes, node)
-          path = Nodes.enclosing(scopes, node).map { |scope| scope.text }
+          path = Nodes.path_to(scopes, node).map { |scope| scope.text }
           path.push(node.text)
           path.join(".")
         end

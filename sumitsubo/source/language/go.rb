@@ -189,7 +189,7 @@ module Sumitsubo
           holder = holders[Nodes.owner_of(node.first, node.text)]
           return "#{holder}.#{node.text}" unless holder.nil?
 
-          path = Nodes.enclosing(scopes, node).map { |scope| scope.text }
+          path = Nodes.path_to(scopes, node).map { |scope| scope.text }
           path.push(node.text)
           path.join(".")
         end
