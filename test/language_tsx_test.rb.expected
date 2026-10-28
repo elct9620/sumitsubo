@@ -1,6 +1,6 @@
 --- and what a person wrote in a file of its own ---
 5
-"19:/* @contract Charge.open — a claim in a block comment. "
+"19:/* @contract Charge.open \xE2\x80\x94 a claim in a block comment. "
 "nothing"
 --- a component is the function it is ---
   4 Props

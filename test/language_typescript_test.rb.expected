@@ -1,6 +1,6 @@
 --- and what a person wrote in a file of its own ---
 5
-"37:/* @contract Charge.open — a claim in a block comment. "
+"37:/* @contract Charge.open \xE2\x80\x94 a claim in a block comment. "
 "nothing"
 --- what TypeScript declares beyond what JavaScript does ---
   4 Ledger

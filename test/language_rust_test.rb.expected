@@ -2,7 +2,7 @@
 6
 "51:nothing"
 --- a block comment stops before its own closing delimiter ---
-"48:/* @contract audit::Entry::at — a claim in a block comment. "
+"48:/* @contract audit::Entry::at \xE2\x80\x94 a claim in a block comment. "
 --- and spells a name the way it writes a path ---
   6 Charge
   12 Charge::settle

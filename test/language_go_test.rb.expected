@@ -2,7 +2,7 @@
 6
 "36:nothing"
 --- a block comment stops before its own closing delimiter ---
-"33:/* @contract Charge.Audit — a claim in a block comment. "
+"33:/* @contract Charge.Audit \xE2\x80\x94 a claim in a block comment. "
 --- and spells a method through the type it hangs on ---
   6 Charge
   11 Charge.Settle

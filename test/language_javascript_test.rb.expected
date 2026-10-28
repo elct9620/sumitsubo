@@ -1,6 +1,6 @@
 --- a fifth language reads its own comments ---
 6
-"43:/* @contract Charge.open — a claim in a block comment. "
+"43:/* @contract Charge.open \xE2\x80\x94 a claim in a block comment. "
 "nothing"
 --- and marks a member the way JSDoc does ---
   5 Charge
