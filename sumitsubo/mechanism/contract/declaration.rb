@@ -41,7 +41,7 @@ module Sumitsubo
       # every place they meet. Spoken to a reader it is the pair, except that the
       # reading which declares has no word: a message should not read as though
       # one were missing.
-      Name = Data.define(:namespace, :bare) do
+      class Name < Data.define(:namespace, :bare)
         include Comparable
 
         # Ordered so a run answers in the same order twice, which is all this is
