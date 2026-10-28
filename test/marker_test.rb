@@ -9,7 +9,7 @@ require "sumitsubo/source"
 # and what each stands next to are the language's to answer, and a real grammar
 # here would only be answering a question this reading never asks.
 
-BEHAVIOR = [Sumitsubo::Feature::MARKER]
+BEHAVIOR = [Sumitsubo::Mechanism::Behavior::MARKER]
 
 # A language's answer, said outright.
 class Offered

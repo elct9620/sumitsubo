@@ -1,6 +1,6 @@
-require "sumitsubo/feature/declared"
-require "sumitsubo/feature/kept"
-require "sumitsubo/feature/compared"
+require "sumitsubo/mechanism/behavior/declared"
+require "sumitsubo/mechanism/behavior/kept"
+require "sumitsubo/mechanism/behavior/compared"
 require "sumitsubo/specification/builder/behavior"
 require "sumitsubo/check/claim"
 require "sumitsubo/check/reach"
@@ -51,7 +51,7 @@ module Sumitsubo
       end
 
       def seed(root)
-        Seed.new(Feature.path_in(root), nil)
+        Seed.new(Behavior.path_in(root), nil)
       end
 
       # Which kinds of block this form reads, asked before a document is
@@ -79,14 +79,14 @@ module Sumitsubo
       def rewrites(config, feature, lines)
         scenarios = feature.statements
         misplaced = config.switched?(specification, ARRANGE) ? Specification::Arrange.misplaced(scenarios, lines) : []
-        ahead = config.switched?(specification, ORDER) ? Feature.ahead(scenarios) : []
+        ahead = config.switched?(specification, ORDER) ? Behavior.ahead(scenarios) : []
         return [] if misplaced.empty? && ahead.empty?
 
         said = {}
         ahead.each { |pair| said[pair[0].line] = unordered(pair[0], pair[1]) }
         misplaced.each { |scenario| said[scenario.arrangement.from] = unarranged(scenario) }
         written = misplaced.empty? ? lines : Specification::Arrange.written(misplaced, lines)
-        written = Feature.ordered(scenarios, written) unless ahead.empty?
+        written = Behavior.ordered(scenarios, written) unless ahead.empty?
         Specification::Rewrite.between(lines, written, said)
       end
 
@@ -98,8 +98,8 @@ module Sumitsubo
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
       def declared(config, specifications)
-        features = specifications.all(Feature.path_in(config.root), self)
-        Feature.refuse_ambiguity(features)
+        features = specifications.all(Behavior.path_in(config.root), self)
+        Behavior.refuse_ambiguity(features)
         features
       end
 
@@ -118,27 +118,27 @@ module Sumitsubo
       # every claim the marker leaves in the files the features reach.
       def keep(config, specifications, source, relations)
         features = declared(config, specifications)
-        Feature.keep(Reach.of(features, relations), source, relations, specification)
+        Behavior.keep(Reach.of(features, relations), source, relations, specification)
       end
 
       # The claims the run kept for this mechanism, as its checks compare them.
       def claims(relations)
-        Feature.claimed_in(relations, specification)
+        Behavior.claimed_in(relations, specification)
       end
 
       # The markers the run kept for this mechanism with no code below them.
       def dangling(relations)
-        Feature.dangling_in(relations, specification)
+        Behavior.dangling_in(relations, specification)
       end
 
       # Which feature declares each scenario.
       def declaring(features)
-        Feature.declaring_in(features)
+        Behavior.declaring_in(features)
       end
 
       # Every scenario a claim could name, said the way a claim says it.
       def stated(features)
-        Feature.stated_in(features)
+        Behavior.stated_in(features)
       end
 
       # The statements a key written elsewhere names: every one declared under
@@ -162,8 +162,8 @@ module Sumitsubo
         @unclaimed.run(scenarios, within).each { |one| findings.add(one) }
         @stale.run(scenarios, within).each { |one| findings.add(one) }
         @misplaced.run(claimed, declared_by, reach).each { |one| findings.add(one) }
-        @unresolved.run(Feature.named(claimed), scenarios).each { |one| findings.add(one) }
-        @nameless.run(Feature.nameless(claimed)).each { |one| findings.add(one) }
+        @unresolved.run(Behavior.named(claimed), scenarios).each { |one| findings.add(one) }
+        @nameless.run(Behavior.nameless(claimed)).each { |one| findings.add(one) }
         # A marker standing in front of nothing names a scenario without
         # witnessing one, so it is answered once, by itself, rather than through
         # the comparisons above.
