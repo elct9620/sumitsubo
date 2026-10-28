@@ -159,17 +159,7 @@ module Sumitsubo
         said = {}
         misplaced.each { |contract| said[contract.arrangement.from] = unarranged(contract) }
         written = Specification::Arrange.written(misplaced, lines)
-        # Written out here and in the other mechanism rather than shared:
-        # Spinel 2026.09.12 cannot build one module function both call
-        # ("cannot box ... into a poly value"). Master a060aef1e can.
-        found = []
-        lines.each_index do |at|
-          finding = said[at + 1]
-          next if written[at] == lines[at] && finding.nil?
-
-          found.push(Specification::Rewrite.new(finding, at + 1, written[at]))
-        end
-        found
+        Specification::Rewrite.between(lines, written, said)
       end
 
       # Every specification this mechanism keeps, and everything that can be

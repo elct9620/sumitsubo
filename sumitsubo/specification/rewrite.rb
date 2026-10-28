@@ -13,6 +13,18 @@ module Sumitsubo
     # twice, held together so that what `fmt` reports and what it would do
     # cannot drift apart. A line only carried along by another's move has no
     # finding of its own: the finding is where the move was asked for.
-    Rewrite = Struct.new(:finding, :line, :text)
+    class Rewrite < Struct.new(:finding, :line, :text)
+      # Each line whose written form differs, or that a finding was asked at.
+      def self.between(lines, written, said)
+        found = []
+        lines.each_index do |at|
+          finding = said[at + 1]
+          next if written[at] == lines[at] && finding.nil?
+
+          found.push(new(finding, at + 1, written[at]))
+        end
+        found
+      end
+    end
   end
 end
