@@ -34,9 +34,6 @@ module Sumitsubo
             ["specifications", "the specifications to switch"],
             [BUDGET, "the limits to measure"]]
 
-    # Where the run started is `here` rather than `start`: on Spinel 2026.09.12
-    # a receiver with no type of its own answers a capture's `start` instead,
-    # and the build fails. Fixed on master at a116c85db.
     attr_reader :base, :root, :exclusion, :here
 
     # The directory a run is configured from: the nearest one at or above the

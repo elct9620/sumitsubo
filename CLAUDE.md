@@ -135,10 +135,10 @@ The command is `sumi`, shipped as a single native executable.
 - `.claude/hooks/` holds this repository to the same promises inside a
   session: the suite runs before a turn is allowed to end.
 - Targets are Linux x86_64, Linux aarch64, and macOS aarch64. Windows gets no
-  executable — the Spinel runtime depends on POSIX structurally — and reaches
-  the tool through the image instead. That image compiles nothing: it holds a
-  Linux executable a release already built, which is what keeps one build path
-  answering for both ways of shipping.
+  executable — Spinel's Windows target is best effort, and nothing here plans
+  for it — and reaches the tool through the image instead. That image compiles
+  nothing: it holds a Linux executable a release already built, which is what
+  keeps one build path answering for both ways of shipping.
 
 ## Compiler
 
@@ -167,18 +167,18 @@ AOT compiler for Ruby. Its constraints shape the design:
   back. An error carries whatever context it needs by itself.
 - String literals are frozen by default.
 - There is no RubyGems. The standard library is what Spinel's own packages
-  provide: json, csv, erb, set, strscan, stringio, pathname, optparse, digest,
-  base64, forwardable, prelude. A configuration file is JSON for that reason,
-  and YAML is a direction rather than a capability. A specification is
-  Markdown, which no package answers for: it is read through a grammar this
-  build links in.
+  provide, which is the `packages/` directory of the installed compiler. A
+  configuration file is JSON; yaml is carried as well, so moving to it is a
+  choice the tool has not made. A specification is Markdown, which no package
+  answers for: it is read through a grammar this build links in.
 - `spin` compiles with the compiler's require gate on, so a file naming one of
   those packages requires it first and a require nothing can satisfy fails the
   build. That is what keeps a source file reading the same here as under the
   CRuby run that takes a snapshot.
 - Those packages are Spinel's own implementations, and some are subsets:
-  optparse answers nothing at all from `to_s` and lets an unknown flag through
-  instead of raising, and `erb` answers a template unchanged. Rendering is
-  built as strings for that reason: templates would let a project word its own
-  pages, and there is no engine to move the wording to. A snapshot taken from
-  CRuby can therefore record behavior the executable does not have.
+  `erb` renders nothing but `<%= name %>` from `result_with_hash`, since
+  anything more needs `eval`, and json words a parse error its own way.
+  Rendering is built as strings for that reason: templates would let a project
+  word its own pages, and there is no engine to move the wording to. A
+  snapshot taken from CRuby can therefore record behavior the executable does
+  not have.

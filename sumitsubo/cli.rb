@@ -110,9 +110,8 @@ module Sumitsubo
       rescue OptionParser::ParseError
         understood = false
       end
-      # Unrecognised input means help. CRuby raises and is caught above,
-      # Spinel leaves the argument in `rest`, so reaching one answer on
-      # both runtimes takes both routes.
+      # Unrecognised input means help: an unknown flag raises and is caught
+      # above, and a word that is no flag is left in `rest`.
       understood = false unless rest.empty?
 
       if show_version && understood

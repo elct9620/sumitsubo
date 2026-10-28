@@ -31,7 +31,7 @@ jobs:
         include:
           # One runner per target: `spin build` on the native host is
           # the whole build, so no cross toolchain is involved. Windows
-          # has no entry — the runtime depends on POSIX structurally.
+          # has no entry — Spinel's target for it is best effort.
           - name: linux-x86_64
             runner: ubuntu-latest
           - name: linux-aarch64
