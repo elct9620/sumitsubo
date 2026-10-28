@@ -6,7 +6,7 @@ require "sumitsubo/source"
 require "sumitsubo/specification"
 require "sumitsubo/check/related"
 require "sumitsubo/mechanism/contract/kept"
-require "sumitsubo/vocabulary/kept"
+require "sumitsubo/mechanism/glossary/kept"
 
 # What each stage keeps, handed in as data and read back the way the next one
 # asks. Nothing reaches the grammar, so `--regen` can write the snapshot.
@@ -87,7 +87,7 @@ word = Sumitsubo::Source::Mention.new(path: "app/order.rb", line: 2, used: "Purc
 mentioned.add(Sumitsubo::Relation.mentions(word, reference("glossary", "Order")))
 rejected = statement("Purchase", "Order is what the domain calls it.", ".spec/glossary.md", 12)
 scope = { "app/order.rb" => { "Order" => statement("Order", "What a customer asks for.", ".spec/glossary.md", 9, [rejected]) } }
-Sumitsubo::Vocabulary.mentioned(mentioned.naming(Sumitsubo::Relation::MENTIONS, "glossary"), scope, base, Pathname.pwd).each do |one|
+Sumitsubo::Mechanism::Glossary.mentioned(mentioned.naming(Sumitsubo::Relation::MENTIONS, "glossary"), scope, base, Pathname.pwd).each do |one|
   puts "  #{one.path}:#{one.line} #{one.term} rejects #{one.used}: #{one.reason}"
 end
 

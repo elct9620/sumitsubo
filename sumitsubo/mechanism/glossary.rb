@@ -1,7 +1,7 @@
 require "sumitsubo/check/reach"
 require "sumitsubo/check/region"
-require "sumitsubo/vocabulary/declared"
-require "sumitsubo/vocabulary/kept"
+require "sumitsubo/mechanism/glossary/declared"
+require "sumitsubo/mechanism/glossary/kept"
 require "sumitsubo/specification/builder/glossary"
 require "sumitsubo/finding"
 require "sumitsubo/place"
@@ -41,7 +41,7 @@ module Sumitsubo
       end
 
       def seed(root)
-        Seed.new(Vocabulary.path_in(root), Vocabulary::SEED)
+        Seed.new(Glossary.path_in(root), Glossary::SEED)
       end
 
       # Which kinds of block this form reads, asked before a document is
@@ -70,14 +70,14 @@ module Sumitsubo
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
       def declared(config, specifications)
-        [specifications.one(Vocabulary.at(Vocabulary.path_in(config.root), config.here), self)]
+        [specifications.one(Glossary.at(Glossary.path_in(config.root), config.here), self)]
       end
 
       # Every term the vocabulary declares, which is what a statement
       # elsewhere names by its key. One switched off and never written declares
       # nothing, the way a directory nobody wrote does.
       def statements(config, specifications)
-        return [] unless config.verify?(specification) || Vocabulary.path_in(config.root).exist?
+        return [] unless config.verify?(specification) || Glossary.path_in(config.root).exist?
 
         declared(config, specifications).map { |one| one.statements }.flatten
                                          .map { |section| section.statements }.flatten
@@ -103,7 +103,7 @@ module Sumitsubo
       # Every rejected word the source writes, kept for whoever asks after.
       def keep(config, specifications, source, relations)
         scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
-        Vocabulary.keep(scope, config.base, source, relations, specification, config.here)
+        Glossary.keep(scope, config.base, source, relations, specification, config.here)
       end
 
       # The terms a key written elsewhere names. A term means what the section
@@ -115,7 +115,7 @@ module Sumitsubo
         return found if found.length < 2
 
         scope = scope_of(config, specifications, relations, declared(config, specifications)[0])
-        held = scope[Vocabulary.from_base(writer.path, config.base, config.here)]
+        held = scope[Glossary.from_base(writer.path, config.base, config.here)]
         return found if held.nil? || held[key].nil?
 
         [held[key]]
@@ -124,15 +124,15 @@ module Sumitsubo
       def verify(config, findings, specifications, source, relations)
         vocabulary = declared(config, specifications)[0]
         path = vocabulary.path
-        @barren.run(Vocabulary.covers(vocabulary, path), config.base, config.exclusion)
+        @barren.run(Glossary.covers(vocabulary, path), config.base, config.exclusion)
                .each { |one| findings.add(one) }
         @unscoped.run(vocabulary.statements).each { |one| findings.add(one) }
         kept = relations.naming(Relation::MENTIONS, specification)
-        mentions = Vocabulary.uses(
-          Vocabulary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base, config.here),
+        mentions = Glossary.uses(
+          Glossary.mentioned(kept, scope_of(config, specifications, relations, vocabulary), config.base, config.here),
           vocabulary, config.base, config.here
         )
-        aside = Vocabulary.set_aside(vocabulary)
+        aside = Glossary.set_aside(vocabulary)
         @rejected.run(mentions, aside, config.base, config.here).each { |one| findings.add(one) }
         @stale.run(mentions, aside, path).each { |one| findings.add(one) }
       end
@@ -142,8 +142,8 @@ module Sumitsubo
       # Each file's vocabulary: the sections covering it laid over one another,
       # and the specifications beside it covered where the files they reach are.
       def scope_of(config, specifications, relations, vocabulary)
-        reached = Vocabulary.reaches(beside(config, specifications), config.base, relations, config.here)
-        Vocabulary.scope(vocabulary, config.base, config.exclusion, reached)
+        reached = Glossary.reaches(beside(config, specifications), config.base, relations, config.here)
+        Glossary.scope(vocabulary, config.base, config.exclusion, reached)
       end
 
       # Every specification the mechanisms beside this one keep. One switched
