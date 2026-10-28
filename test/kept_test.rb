@@ -5,7 +5,7 @@ require "sumitsubo/relation/repository"
 require "sumitsubo/source"
 require "sumitsubo/specification"
 require "sumitsubo/check/related"
-require "sumitsubo/definition/kept"
+require "sumitsubo/mechanism/contract/kept"
 require "sumitsubo/vocabulary/kept"
 
 # What each stage keeps, handed in as data and read back the way the next one
@@ -63,7 +63,7 @@ puts "--- a claim read back for a check ---"
 claims = Sumitsubo::Relation::Repository.new
 command = Sumitsubo::Source::Claim.new("app/order.rb", 9, 9, "@command", "verify")
 claims.add(Sumitsubo::Relation.claim(command, reference("contract", "verify")))
-Sumitsubo::Definition.read(claims.naming(Sumitsubo::Relation::CLAIM, "contract")).each do |one|
+Sumitsubo::Mechanism::Contract.read(claims.naming(Sumitsubo::Relation::CLAIM, "contract")).each do |one|
   puts "  contract #{one.key.spoken} at #{one.place.spoken} said #{one.said}"
 end
 
@@ -77,7 +77,7 @@ declared = Sumitsubo::Relation::Repository.new
   spelled = Sumitsubo::Source::Spelled.new(declaration: found, language: language)
   declared.add(Sumitsubo::Relation.declares(spelled, reference("contract", name)))
 end
-held = Sumitsubo::Definition.declared_from(declared.naming(Sumitsubo::Relation::DECLARES, "contract"))
+held = Sumitsubo::Mechanism::Contract.declared_from(declared.naming(Sumitsubo::Relation::DECLARES, "contract"))
 held.keys.each { |language| puts "  #{language} #{held[language].map { |one| "#{one.name}:#{one.line}" }.inspect}" }
 
 # @behavior K-005

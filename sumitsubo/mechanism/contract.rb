@@ -1,9 +1,9 @@
 require "sumitsubo/check/claim"
 require "sumitsubo/check/declaration"
 require "sumitsubo/check/reach"
-require "sumitsubo/definition/declared"
-require "sumitsubo/definition/kept"
-require "sumitsubo/definition/compared"
+require "sumitsubo/mechanism/contract/declared"
+require "sumitsubo/mechanism/contract/kept"
+require "sumitsubo/mechanism/contract/compared"
 require "sumitsubo/reach"
 require "sumitsubo/relation"
 require "sumitsubo/specification/builder/contract"
@@ -54,10 +54,10 @@ module Sumitsubo
         end
 
         def run(findings, definitions, relations, mechanism)
-          reach = Reach.of(Definition.claimed(definitions), relations)
-          claims = Definition.read(relations.naming(Relation::CLAIM, mechanism))
-          stated = Definition.stated_in(definitions)
-          registering = Definition.registering_claims(definitions)
+          reach = Reach.of(Contract.claimed(definitions), relations)
+          claims = Contract.read(relations.naming(Relation::CLAIM, mechanism))
+          stated = Contract.stated_in(definitions)
+          registering = Contract.registering_claims(definitions)
           # What the two checks below compare is the claims that can implement
           # what they name; the rest answer for themselves further down.
           within = Check::Claim.within(claims, registering, reach)
@@ -66,12 +66,12 @@ module Sumitsubo
           @stale.run(stated, within).each { |one| findings.add(one) }
           @duplicated.run(within, stated).each { |one| findings.add(one) }
           @misplaced.run(claims, registering, reach).each { |one| findings.add(one) }
-          @unresolved.run(Definition.named(claims), stated).each { |one| findings.add(one) }
-          @nameless.run(Definition.nameless(claims)).each { |one| findings.add(one) }
+          @unresolved.run(Contract.named(claims), stated).each { |one| findings.add(one) }
+          @nameless.run(Contract.nameless(claims)).each { |one| findings.add(one) }
           # A marker standing in front of nothing names an interface without
           # implementing one, so it is answered once, by itself, rather than
           # through the comparisons above.
-          @dangling.run(Definition.read(relations.naming(Relation::DANGLING, mechanism))).each { |one| findings.add(one) }
+          @dangling.run(Contract.read(relations.naming(Relation::DANGLING, mechanism))).each { |one| findings.add(one) }
         end
       end
 
@@ -92,17 +92,17 @@ module Sumitsubo
         end
 
         def run(findings, definitions, source, relations, mechanism)
-          reach = Reach.of(Definition.defined(definitions), relations)
-          declared = Definition.defining(
-            definitions, Definition.declared_from(relations.naming(Relation::DECLARES, mechanism)), reach
+          reach = Reach.of(Contract.defined(definitions), relations)
+          declared = Contract.defining(
+            definitions, Contract.declared_from(relations.naming(Relation::DECLARES, mechanism)), reach
           )
-          grouped = Definition.declared_in(declared)
+          grouped = Contract.declared_in(declared)
 
-          stated = Definition.stated_names(definitions)
+          stated = Contract.stated_names(definitions)
           @undefined.run(stated, grouped).each { |one| findings.add(one) }
           @stale.run(stated, grouped).each { |one| findings.add(one) }
-          @conflicting.run(Definition.spelled_names(definitions), grouped).each { |one| findings.add(one) }
-          @mismatched.run(Definition.registered_in(definitions, source), grouped).each { |one| findings.add(one) }
+          @conflicting.run(Contract.spelled_names(definitions), grouped).each { |one| findings.add(one) }
+          @mismatched.run(Contract.registered_in(definitions, source), grouped).each { |one| findings.add(one) }
         end
       end
 
@@ -125,7 +125,7 @@ module Sumitsubo
       # A seed with no content is a directory: a project registers one kind of
       # contract per file, so there is a place rather than a file to create.
       def seed(root)
-        Seed.new(Definition.path_in(root), nil)
+        Seed.new(Contract.path_in(root), nil)
       end
 
       # Which kinds of block this form reads, asked before a document is
@@ -170,8 +170,8 @@ module Sumitsubo
       # `fmt` asks for this and nothing else, and `verify` asks for it first,
       # so the two commands say the same thing about a reference line.
       def declared(config, specifications)
-        definitions = specifications.all(Definition.path_in(config.root), self)
-        Definition.refuse_ambiguity(definitions)
+        definitions = specifications.all(Contract.path_in(config.root), self)
+        Contract.refuse_ambiguity(definitions)
         definitions
       end
 
@@ -189,7 +189,7 @@ module Sumitsubo
       # What the source says about each contract, kept for whoever asks after:
       # every claim and declaration in the files the definitions reach.
       def keep(config, specifications, source, relations)
-        Definition.keep(declared(config, specifications), source, relations, specification)
+        Contract.keep(declared(config, specifications), source, relations, specification)
       end
 
       # The statements a key written elsewhere names: every one declared under
