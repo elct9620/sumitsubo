@@ -347,9 +347,9 @@ Every file has one place, and where it sits is what says what it is.
 │  │                                               one another
 │  │
 │  ├─ what a form means to its own mechanism, a file to each stage
-│  │  {vocabulary,definition,feature}/declared.rb  what a document declares
-│  │  {vocabulary,definition,feature}/kept.rb      what is kept from source
-│  │  {definition,feature}/compared.rb             what the checks are handed
+│  │  mechanism/*/declared.rb                      what a document declares
+│  │  mechanism/*/kept.rb                          what is kept from source
+│  │  mechanism/{contract,behavior}/compared.rb    what the checks are handed
 │  │
 │  ├─ the comparison
 │  │  mechanism.rb                                 the register
