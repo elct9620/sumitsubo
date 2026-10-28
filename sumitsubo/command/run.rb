@@ -1,5 +1,4 @@
 require "sumitsubo/place"
-require "sumitsubo/error"
 require "sumitsubo/finding/repository"
 require "sumitsubo/finding/report"
 require "sumitsubo/mechanism"
@@ -67,13 +66,7 @@ module Sumitsubo
           next unless @config.verify?(mechanism.specification)
           next if @specifications.broken?(mechanism)
 
-          begin
-            yield mechanism
-          rescue Sumitsubo::Misshapen => e
-            @specifications.refuse(mechanism, e.refusals)
-          rescue Sumitsubo::Error => e
-            @specifications.unreadable(mechanism, e.message)
-          end
+          @specifications.guard(mechanism) { yield mechanism }
           @specifications.tell(mechanism, @findings)
         end
       end

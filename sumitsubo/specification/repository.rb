@@ -1,4 +1,5 @@
 require "pathname"
+require "sumitsubo/error"
 require "sumitsubo/finding"
 require "sumitsubo/place"
 require "sumitsubo/specification"
@@ -50,21 +51,17 @@ module Sumitsubo
         !@broken[mechanism.specification].nil?
       end
 
-      # A mechanism whose specifications were refused as a whole. Only the
-      # first answer is kept, since asking again reads the same documents.
-      def refuse(mechanism, refusals)
-        return if broken?(mechanism)
-
-        @broken[mechanism.specification] = true
-        refusals.each { |one| kept(mechanism).push(mechanism.finding_for(one)) }
-      end
-
-      # A mechanism nothing could be read from at all, worded by the error.
-      def unreadable(mechanism, message)
-        return if broken?(mechanism)
-
-        @broken[mechanism.specification] = true
-        @failed[mechanism.specification] = message
+      # What a mechanism does with its specifications, or nil where they cannot
+      # be read: what its form refused as a whole is kept, and any other failure
+      # is worded by the error. Either way the mechanism is passed over after.
+      def guard(mechanism)
+        yield
+      rescue Sumitsubo::Misshapen => e
+        refuse(mechanism, e.refusals)
+        nil
+      rescue Sumitsubo::Error => e
+        abandon(mechanism, e.message)
+        nil
       end
 
       # What this mechanism could not read, added to the findings once however
@@ -79,7 +76,7 @@ module Sumitsubo
         return if @failed[name].nil? || !@said[name].nil?
 
         @said[name] = true
-        findings.unreadable(@failed[name])
+        findings.add_unreadable(@failed[name])
       end
 
       # Every specification a directory holds. A directory nobody wrote
@@ -119,6 +116,23 @@ module Sumitsubo
       end
 
       private
+
+      # A mechanism whose specifications were refused as a whole. Only the
+      # first answer is kept, since asking again reads the same documents.
+      def refuse(mechanism, refusals)
+        return if broken?(mechanism)
+
+        @broken[mechanism.specification] = true
+        refusals.each { |one| kept(mechanism).push(mechanism.finding_for(one)) }
+      end
+
+      # A mechanism nothing could be read from at all, worded by the error.
+      def abandon(mechanism, message)
+        return if broken?(mechanism)
+
+        @broken[mechanism.specification] = true
+        @failed[mechanism.specification] = message
+      end
 
       # The one specification a file holds. A mechanism keeping one has nothing
       # left to compare where it cannot be read, so the refusal is raised rather

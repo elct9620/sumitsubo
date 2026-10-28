@@ -1,4 +1,3 @@
-require "sumitsubo/error"
 require "sumitsubo/relation"
 require "sumitsubo/check/reference"
 
@@ -71,15 +70,7 @@ module Sumitsubo
         name = mechanism.specification
         return @statements[name] if @statements.key?(name)
 
-        @statements[name] = begin
-          mechanism.statements(@config, @specifications)
-        rescue Sumitsubo::Misshapen => e
-          @specifications.refuse(mechanism, e.refusals)
-          nil
-        rescue Sumitsubo::Error => e
-          @specifications.unreadable(mechanism, e.message)
-          nil
-        end
+        @statements[name] = @specifications.guard(mechanism) { mechanism.statements(@config, @specifications) }
       end
 
       # A mechanism's statements whether or not it is switched on, with

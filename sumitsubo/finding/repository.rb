@@ -22,7 +22,7 @@ module Sumitsubo
 
       # A mechanism nothing could be read from. It answers at no place: what was
       # absent, unreadable, or ambiguous is named in the message itself.
-      def unreadable(message)
+      def add_unreadable(message)
         @unread.push(message)
       end
 
